@@ -1,14 +1,15 @@
 <template>
 	<div class="container">
 		<div class="wrapper">
+			<h3 class="page-title">库存调拨</h3>
 			<el-form ref="form" :model="form" inline>
 				<el-form-item label="调入仓">
-					<el-select>
+					<el-select v-model="form.inPutAddress">
 						
 					</el-select>
 				</el-form-item>
 				<el-form-item label="调出仓">
-					<el-select>
+					<el-select v-model="form.outPutAddress">
 						
 					</el-select>
 				</el-form-item>
@@ -20,7 +21,7 @@
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="select">查询</el-button>
-					<el-button>新增</el-button>
+					<el-button @click="add">新增</el-button>
 				</el-form-item>
 			</el-form>
 			<el-table :data="tableData">
@@ -59,12 +60,39 @@
 			return {
 				tableData:[
 				
-				]
+				],
+				form:{
+					
+				}
 			}
+		},
+		created(){
+			this.select()
 		},
 		methods:{
 			select(){//查询
+				let self = this
 				
+				let requestData = {token: window.localStorage.getItem('token')}
+				
+				if(self.advanceSearch){//高级搜索
+					requestData = Object.assign(requestData,self.shallowCopy(self.form))
+				}else{//简单搜索
+					requestData = Object.assign(requestData,self.shallowCopy(self.easyForm))
+				}
+				
+				self.$http.post('/ui/list',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('list',response)
+					if(data.code == 10000){
+						self.tableData = data.data
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
+			add(){
+				this.$router.push('/stockallocation/add')
 			}
 		}
 	}

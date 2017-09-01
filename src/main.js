@@ -4,11 +4,11 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
+import 'element-ui/lib/theme-default/index.css?12'
 import './assets/css/total.css'
 import Vuex from 'vuex'
-import moment from 'moment';
-import {Loading,Notification} from 'element-ui';
+import {Loading,Message} from 'element-ui';
+import './assets/js/commonFunctions'
 Vue.config.productionTip = false
 
 var qs = require('qs')
@@ -17,6 +17,8 @@ Vue.prototype.qs = qs
 var axios = require('axios')
 Vue.prototype.$http = axios
 
+var moment = require('moment')
+Vue.prototype.moment = moment
 Vue.use(ElementUI)
 Vue.use(Vuex);
 var loadingInstance;
@@ -28,11 +30,7 @@ axios.interceptors.request.use(function (config) {
   }, function (error) {
     // 对请求错误做些什么
     
-     Notification.error({
-	      title: '错误',
-	      message: response.data.message,
-	      duration:1000
-	    });
+     Message.error('出错啦');
     return Promise.reject(error);
   });
 
@@ -40,18 +38,12 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(function (response) {
     // 对响应数据做点什么
     //loadingInstance.close();
-    if(response.data.code != "10000"){
-       
-       Notification.error({
-	      title: '错误',
-	      message: response.data.message,
-	      duration:1000
-	    });
+    if(response.data.code && response.data.code != 10000){
+       Message.error(response.data.message);
     }
     return response;
   }, function (error) {
     // 对响应错误做点什么
-    store.commit('showLoading',false);
     return Promise.reject(error);
   });
   

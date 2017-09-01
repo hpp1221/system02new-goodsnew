@@ -22,39 +22,78 @@ export default new Router({
 	        component: require('@/pages/IndexPage'),
         },
         {
-	        path: '/goodsin',//商品入库
-	        name: 'GoodsIn',
-	        component: require('@/pages/stockmanage/GoodsIn'),
+	        path: '/goodsin/list',//商品入库
+	        component: require('@/pages/stockmanage/goodsin/List'),
         },
         {
-	        path: '/goodsout',//商品出库
-	        name: 'GoodsOut',
-	        component: require('@/pages/stockmanage/GoodsOut'),
+	        path: '/goodsin/add',//添加入库
+	        component: require('@/pages/stockmanage/goodsin/Add'),
         },
         {
-	        path: '/goodshouse',//商品库存
-	        name: 'GoodsHouse',
-	        component: require('@/pages/stockmanage/GoodsHouse'),
+	        path: '/goodsin/detail',//入库明细
+	        component: require('@/pages/stockmanage/goodsin/Detail'),
         },
         {
-	        path: '/stockallocation',//库存调拨
-	        name: 'StockAllocation',
-	        component: require('@/pages/stockmanage/StockAllocation'),
+	        path: '/goodsout/list',//商品出库
+	        component: require('@/pages/stockmanage/goodsout/List'),
         },
         {
-	        path: '/stocking',//库存盘点
-	        name: 'Stocking',
-	        component: require('@/pages/stockmanage/Stocking'),
+	        path: '/goodsout/add',//添加出库
+	        component: require('@/pages/stockmanage/goodsout/Add'),
         },
         {
-	        path: '/stockdetail',//出入库明细
-	        name: 'StockDetail',
-	        component: require('@/pages/stockmanage/StockDetail'),
+	        path: '/goodsout/detail',//入库明细
+	        component: require('@/pages/stockmanage/goodsout/Detail'),
         },
         {
-	        path: '/goodssummary',//商品收发汇总
-	        name: 'GoodsSummary',
-	        component: require('@/pages/stockmanage/GoodsSummary'),
+	        path: '/goodsstore/list',//商品库存
+	        component: require('@/pages/stockmanage/goodsstore/List'),
+        },
+        {
+	        path: '/stockallocation/list',//库存调拨
+	        component: require('@/pages/stockmanage/stockallocation/List'),
+        },
+        {
+	        path: '/stockallocation/add',//添加库存调拨
+	        component: require('@/pages/stockmanage/stockallocation/Add'),
+        },
+        {
+	        path: '/stockallocation/detail',//添加库存调拨
+	        component: require('@/pages/stockmanage/stockallocation/Detail'),
+        },
+        {
+	        path: '/stocking/stocking',//库存盘点
+	        component: require('@/pages/stockmanage/stocking/stocking'),
+        },
+        {
+	        path: '/inoutdetail/list',//出入库明细
+	        component: require('@/pages/stockmanage/inoutdetail/List'),
+        },
+        {
+	        path: '/stocksingledetail',//单个明细
+	        component: require('@/pages/stockmanage/StockSingleDetail'),
+        },
+        {
+	        path: '/goodssummary/list',//商品收发汇总
+	        component: require('@/pages/stockmanage/goodssummary/List'),
+        },
+        
+        
+        {
+	        path: '/createorder',//创建订单
+	        component: require('@/pages/ordermanage/CreateOrder'),
+        },
+        {
+	        path: '/orderlist',//订单列表
+	        component: require('@/pages/ordermanage/OrderList'),
+        },
+        {
+	        path: '/personalorder',//个人订单
+	        component: require('@/pages/ordermanage/PersonalOrder'),
+        },
+        {
+	        path: '/orderdetail',//订单详情
+	        component: require('@/pages/ordermanage/OrderDetail'),
         },
       ]
     },
