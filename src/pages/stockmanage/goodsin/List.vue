@@ -5,7 +5,7 @@
 			<el-form ref="form" :model="form" inline>
 				<el-form-item>
 					<el-select placeholder="全部仓库" v-model="form.addressId">
-						<el-option :label="t.address" :key="t.id" :value="t.id" v-for="t in totalStores"></el-option>
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item>
@@ -38,7 +38,7 @@
 						<span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="storeHouseAddress" label="所属仓库">
+				<el-table-column prop="selfAddress" label="所属仓库">
 					
 				</el-table-column>
 				<el-table-column prop="type" label="类型">
@@ -53,7 +53,9 @@
 					
 				</el-table-column>
 				<el-table-column label="操作">
-					<el-button type="text">查看明细</el-button>
+					<template scope="scope">
+						<el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
+					</template>
 				</el-table-column>
 			</el-table>
 		</div>
@@ -83,17 +85,15 @@
 		methods:{
 			select(){//查询
 				let self = this
-				let dateRange = self.form.dateRange
 				let requestData = {token: window.localStorage.getItem('token')}
-				if(typeof(self.form.dateRange) === 'object'){
+				if(self.form.dateRange instanceof Array){
 					requestData.startDate = self.form.dateRange[0].getTime()
 					requestData.endDate = self.form.dateRange[1].getTime()
 				}
 				requestData = Object.assign(requestData,self.shallowCopy(self.form))
-				self.form.dateRange = dateRange
 				self.$http.post('/ui/recordList',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log('list',response)
+				    console.log('入库list',response)
 					if(data.code == 10000){
 						self.tableData = data.data
 					}
@@ -113,6 +113,9 @@
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
+			},
+			seeDetail(id){
+				this.$router.push({path:'/goodsin/detail',query:{id:id}})
 			}
 		}
 	}

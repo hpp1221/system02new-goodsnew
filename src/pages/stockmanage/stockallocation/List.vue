@@ -25,13 +25,13 @@
 				</el-form-item>
 			</el-form>
 			<el-table :data="tableData">
-				<el-table-column prop="" label="调拨单号">
+				<el-table-column prop="tradeNo" label="调拨单号">
 					
 				</el-table-column>
-				<el-table-column prop="" label="调出仓库">
+				<el-table-column prop="outPutAddress" label="调出仓库">
 					
 				</el-table-column>
-				<el-table-column prop="" label="调入仓库">
+				<el-table-column prop="inPutAddress" label="调入仓库">
 					
 				</el-table-column>
 				<el-table-column prop="" label="调出时间">
@@ -40,14 +40,16 @@
 				<el-table-column prop="" label="调入时间">
 					
 				</el-table-column>
-				<el-table-column prop="" label="制单人">
+				<el-table-column prop="createUserName" label="制单人">
 					
 				</el-table-column>
 				<el-table-column prop="" label="状态">
 					
 				</el-table-column>
 				<el-table-column label="操作">
-					<el-button type="text">查看详情</el-button>
+					<template scope="scope">
+						<el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
+					</template>
 				</el-table-column>
 			</el-table>
 		</div>
@@ -81,9 +83,9 @@
 					requestData = Object.assign(requestData,self.shallowCopy(self.easyForm))
 				}
 				
-				self.$http.post('/ui/list',self.qs.stringify(requestData)).then(function (response) {
+				self.$http.post('/ui/allocationRecordList',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log('list',response)
+				    console.log('allocationRecordList',response)
 					if(data.code == 10000){
 						self.tableData = data.data
 					}
@@ -93,6 +95,9 @@
 			},
 			add(){
 				this.$router.push('/stockallocation/add')
+			},
+			seeDetail(id){
+				this.$router.push({path:'/stockallocation/detail',query:{id:id}})
 			}
 		}
 	}

@@ -5,7 +5,7 @@
 			<el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
 				<el-form-item label="仓库" prop="selfAddress">
 					<el-select placeholder="全部仓库" v-model="form.selfAddress">
-						<el-option :label="t.address" :key="t.id" :value="t.id" v-for="t in totalStores"></el-option>
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="入库日期">
@@ -20,7 +20,7 @@
 						<el-table-column
       						type="index"
       						width="70"
-					      	>
+					    >
 					    </el-table-column>
 					    <el-table-column width="70">
       						<template scope="scope">

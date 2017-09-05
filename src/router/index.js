@@ -7,20 +7,21 @@ export default new Router({
   routes: [
     {
       path: '/login',
-      name: 'Login',
       component: require('@/pages/Login')
     },
     {
       path: '/',
-      name: 'Index',
       component: require('@/pages/Index'),
       redirect: '/index',
       children:[
       	{
 	        path: '/index',
-	        name: 'IndexPage',
 	        component: require('@/pages/IndexPage'),
         },
+        {
+      		path: '/error',//错误页面
+		      component: require('@/pages/Error')
+		    },
         {
 	        path: '/goodsin/list',//商品入库
 	        component: require('@/pages/stockmanage/goodsin/List'),

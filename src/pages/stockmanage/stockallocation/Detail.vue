@@ -4,7 +4,7 @@
 			<h3 class="page-title">调拨详情</h3>
 			<div class="goodsinout-detail-top">
 				<div class="left">
-					<p>调拨单号: <span>DB-2389321</span> <span>(在途)</span></p>
+					<p>调拨单号: <span>{{detailData.tradeNo}}</span> <span>(在途)</span></p>
 				</div>
 				<div class="right">
 					<el-button type="text">入库</el-button>
@@ -15,36 +15,33 @@
 			</div>
 			<div class="goodsinout-detail-top">
 				<div class="left">
-					<p>调出仓: <span>测试</span></p>
+					<p>调出仓: <span>{{detailData.outPutAddress}}</span></p>
 					<p>调出时间: <span>测试</span></p>
-					<p>调入仓: <span>测试</span></p>
+					<p>调入仓: <span>{{detailData.inPutAddress}}</span></p>
 					<p>调入时间: <span>测试</span></p>
 				</div>
 			</div>
-			<el-table :data="tableData" show-summary>
-				<el-table-column label="商品编码">
+			<el-table :data="detailData.goods" show-summary>
+				<el-table-column label="商品编码" prop="number">
 					
 				</el-table-column>
-				<el-table-column label="商品名称">
+				<el-table-column label="商品名称" prop="name">
 					
 				</el-table-column>
-				<el-table-column label="规格">
+				<el-table-column label="规格" prop="sku">
 					
 				</el-table-column>
-				<el-table-column label="单位">
+				<el-table-column label="单位" prop="unit">
 					
 				</el-table-column>
-				<el-table-column label="调拨数量">
-					
-				</el-table-column>
-				<el-table-column label="备注">
+				<el-table-column label="调拨数量" prop="num">
 					
 				</el-table-column>
 			</el-table>
 			<div class="goodsinout-detail-bottom">
-				<p>备注说明: <span></span></p>
-				<p>经办人: <span></span></p>
-				<p>制单人: <span></span></p>
+				<p>备注说明: <span>{{detailData.remark}}</span></p>
+				<p>经办人: <span>{{detailData.tradeNoHandler}}</span></p>
+				<p>制单人: <span>{{detailData.createUserName}}</span></p>
 				<p>操作日志
 					<el-switch
   						v-model="operationLogVisible"
@@ -78,10 +75,30 @@
 				tableData:[
 					
 				],
+				detailData:{},
 				operationLogVisible:false
 			}
 		},
+		created(){
+			this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error')
+		},
 		methods:{
+			select(id){
+				let self = this
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					id:id	
+				}
+				self.$http.post('/ui/getAllocationRecordDetail',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('调拨详情',response)
+					if(data.code == 10000){
+						self.detailData = data.data
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 			save(){//保存
 				
 			},

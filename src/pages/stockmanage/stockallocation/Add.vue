@@ -4,22 +4,14 @@
 			<h3 class="page-title">添加库存调拨</h3>
 			<el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
 				<el-form-item label="调出仓" prop="fromAddress">
-					<el-select v-model="form.fromAddress">
-						<el-option v-for="ts in totalStores" 
-							:key="ts.id" 
-							:value="ts.id"
-							:label="ts.name">
-						</el-option>
+					<el-select placeholder="全部仓库" v-model="form.fromAddress">
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				
 				<el-form-item label="调入仓" prop="selfAddress">
-					<el-select v-model="form.selfAddress">
-						<el-option v-for="ts in totalStores" 
-							:key="ts.id" 
-							:value="ts.id"
-							:label="ts.name">
-						</el-option>
+					<el-select placeholder="全部仓库" v-model="form.selfAddress">
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				
@@ -137,7 +129,9 @@
 				listIndex:'',//现在正在添加的某个list的下标
 			}
 		},
-		
+		created(){
+			this.getAddressList()
+		},
 		methods:{
 			save(formName){//保存
 				this.$refs[formName].validate((valid) => {
@@ -212,7 +206,19 @@
 			deleteLine(index){
 				this.form.data.length === 1?this.$message('请至少调拨一个商品') : this.form.data.splice(index,1)
 			},
-			
+			getAddressList(){
+				let self = this
+				let requestData = {token: window.localStorage.getItem('token')}
+				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('addressList',response)
+					if(data.code == 10000){
+						self.totalStores = data.data
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 		}
 	}
 </script>
