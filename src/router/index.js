@@ -96,6 +96,10 @@ export default new Router({
 	        path: '/orderdetail',//订单详情
 	        component: require('@/pages/ordermanage/OrderDetail'),
         },
+        {
+	        path: '/ordersummary',//订单
+	        component: require('@/pages/ordermanage/OrderSummary'),
+        },
       ]
     },
   ]

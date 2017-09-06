@@ -4,31 +4,20 @@
 			<h3 class="page-title">出入库明细</h3>
 			<el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch">
 				<el-form-item>
-					<el-select placeholder="全部仓库" v-model="form.addressId">
-						<el-option label="深圳仓" value="1"></el-option>
+					<el-select placeholder="全部仓库" v-model="easyForm.addressName">
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
-				<!--<el-form-item>
-					<el-select placeholder="全部出入库类型" v-model="form.type">
-						<el-option label="全部出库类型" :value="-1"></el-option>
-						<el-option label="其他入库" :value="1"></el-option>
-						<el-option label="采购入库" :value="2"></el-option>
-						<el-option label="销售退货" :value="3"></el-option>
-						<el-option label="调拨入库" :value="4"></el-option>
-						<el-option label="盘盈" :value="5"></el-option>
-						<el-option label="销售出库" :value="6"></el-option>
-						<el-option label="调拨出库" :value="7"></el-option>
-						<el-option label="盘亏" :value="8"></el-option>
-						<el-option label="采购退回" :value="9"></el-option>
-						<el-option label="其他出库" :value="10"></el-option>
-					</el-select>
-				</el-form-item>-->
 				<el-form-item>
 					<el-date-picker
       					type="daterange"
       					placeholder="选择日期范围"
-      					v-model="form.dateRange">
+      					v-model="easyForm.dateRange">
     				</el-date-picker>
+				</el-form-item>
+				<el-form-item>
+					<el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">
+					</el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -59,14 +48,26 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品分类">
-					<el-select v-model="form.series">
-						<el-option label="分类1" value="1">
-							
-						</el-option>
+					<el-select v-model="form.goodsSeriesId">
+						<el-option label="全部分类" :value="-1"></el-option>
+						<el-option label="日常用品" :value="1"></el-option>
+						<el-option label="儿童玩具" :value="2"></el-option>
+						<el-option label="妈妈用品" :value="3"></el-option>
+						<el-option label="儿童车床" :value="4"></el-option>
+						<el-option label="纸质用品" :value="5"></el-option>
+						<el-option label="其他用品" :value="6"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品品牌">
-					<el-input v-model="form.brandName" class="form-input"></el-input>
+					<el-select v-model="form.goodsBrandId">
+						<el-option label="全部分类" :value="-1"></el-option>
+						<el-option label="日常用品" :value="1"></el-option>
+						<el-option label="儿童玩具" :value="2"></el-option>
+						<el-option label="妈妈用品" :value="3"></el-option>
+						<el-option label="儿童车床" :value="4"></el-option>
+						<el-option label="纸质用品" :value="5"></el-option>
+						<el-option label="其他用品" :value="6"></el-option>
+					</el-select>
 				</el-form-item>
 				<el-form-item label="出入库时间">
 					<el-date-picker
@@ -78,13 +79,15 @@
 				<el-form-item label="所属仓库">
 					<el-checkbox-group v-model="form.address">
     					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="默认仓"></el-checkbox>
+					    <el-checkbox :label="t.address" v-for="t in totalStores" :key="t.id" :value="t.address"></el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="商品标签">
-					<el-checkbox-group v-model="form.tagId">
+					<el-checkbox-group v-model="form.tags">
     					<el-checkbox label="全选"></el-checkbox>
 					    <el-checkbox label="新品上架"></el-checkbox>
+					    <el-checkbox label="热卖推荐"></el-checkbox>
+					    <el-checkbox label="清仓优惠"></el-checkbox>
 					    <el-checkbox label="热卖推荐"></el-checkbox>
 					    <el-checkbox label="清仓优惠"></el-checkbox>
   					</el-checkbox-group>
@@ -154,44 +157,61 @@
 				form:{
 					keyword:'',
 					type:-1,
-					series:'',
-					brandName:'',
+					goodsSeriesId:'',
+					goodsBrandId:'',
 					dateRange:'',
 					address:'',
 					tagId:''
 				},
 				easyForm:{//简单查询
-					storeHouseAddress:'',//所属仓库
+					addressName:'',//仓库名
 					keyword:'',//关键词
-					dateRange:''
+					dateRange:'',
 				},
 				advanceSearch:false,//高级搜索
+				totalStores:[]
 			}
 		},
 		created(){
 			this.select()
+			this.getAddressList()
 		},
 		methods:{
 			select(){//查询
 				let self = this
-				let dateRange = self.form.dateRange
 				let requestData = {token: window.localStorage.getItem('token')}
-				if(typeof(self.form.dateRange) === 'object'){
-					requestData.startDate = self.form.dateRange[0].getTime()
-					requestData.endDate = self.form.dateRange[1].getTime()
+				
+				if(self.advanceSearch){//高级搜索
+					requestData = Object.assign(requestData,self.shallowCopy(self.form))
+				}else{//简单搜索
+					requestData = Object.assign(requestData,self.shallowCopy(self.easyForm))
 				}
+				
 				requestData = Object.assign(requestData,self.shallowCopy(self.form))
-				self.form.dateRange = dateRange
-				self.$http.post('/ui/recordList',self.qs.stringify(requestData)).then(function (response) {
+				
+				self.$http.post('/ui/recordListBySku',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log('list',response)
+				    console.log('出入库明细',response)
 					if(data.code == 10000){
 						self.tableData = data.data
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-			}
+			},
+			getAddressList(){
+				let self = this
+				let requestData = {token: window.localStorage.getItem('token')}
+				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('addressList',response)
+					if(data.code == 10000){
+						self.totalStores = data.data
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 		}
 	}
 </script>
