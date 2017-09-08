@@ -3,8 +3,8 @@
 		<div class="wrapper">
 			<el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
 				<el-form-item>
-					<el-select placeholder="全部仓库" v-model="easyForm.storeHouseAddress">
-						<el-option label="深圳仓" value="1"></el-option>
+					<el-select placeholder="全部仓库" v-model="easyForm.address" multiple>
+						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item>
@@ -38,18 +38,12 @@
 				</el-form-item>
 				<el-form-item label="所属仓库">
 					<el-checkbox-group v-model="form.address">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="深圳仓"></el-checkbox>
-					    <el-checkbox label="上海仓"></el-checkbox>
-					    <el-checkbox label="北京仓"></el-checkbox>
+					    <el-checkbox :label="t.address" v-for="t in totalStores" :key="t.address"></el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="商品标签">
-					<el-checkbox-group v-model="form.tagId">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="新品上架"></el-checkbox>
-					    <el-checkbox label="热卖推荐"></el-checkbox>
-					    <el-checkbox label="清仓优惠"></el-checkbox>
+					<el-checkbox-group v-model="form.tags">
+					    <el-checkbox :label="t.id" :key="t.id" v-for="t in totalSeries">{{t.name}}</el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="库存状态">
@@ -80,7 +74,7 @@
 				<el-table-column prop="unit" label="单位">
 					
 				</el-table-column>
-				<el-table-column prop="address" label="所属仓库">
+				<el-table-column prop="storeHouseAddress" label="所属仓库">
 					
 				</el-table-column>
 				<el-table-column prop="upLimit" label="库存上限">
@@ -116,7 +110,7 @@
 				advanceSearch:false,
 				form:{
 					brandName:'',//商品品牌
-					storeHouseAddress:'',//所属仓库
+					address:[],//所属仓库
 					tagId:'',//商品标签
 					storeStatus:'',//库存状态
 					goodsStatus:'',//商品状态
@@ -124,13 +118,46 @@
 					series:'',//商品分类
 				},
 				easyForm:{//简单查询
-					storeHouseAddress:'',//所属仓库
+					address:[],//所属仓库
 					keyword:'',//关键词
-				}
+				},
+				totalStores:[],
+				totalSeries:[
+					{
+						id:1,
+						name:'日常用品'
+					},
+					{
+						id:2,
+						name:'儿童玩具'
+					},
+					{
+						id:3,
+						name:'妈妈用品'
+					},
+					{
+						id:4,
+						name:'儿童车床'
+					},
+					{
+						id:5,
+						name:'纸质用品'
+					},
+					{
+						id:6,
+						name:'其他用品'
+					},
+				]
+			}
+		},
+		watch:{
+			advanceSearch:function(){//点击高级搜索和取消时重新查询
+				this.select()
 			}
 		},
 		created(){
 			this.select()
+			this.getAddressList()
 		},
 		methods:{
 			select(){//查询
@@ -154,7 +181,19 @@
 			    	console.log(error);
 			    });
 			},
-			
+			getAddressList(){
+				let self = this
+				let requestData = {token: window.localStorage.getItem('token')}
+				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('addressList',response)
+					if(data.code == 10000){
+						self.totalStores = data.data
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 		}
 	}
 </script>

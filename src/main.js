@@ -4,12 +4,15 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import VueEditor from 'vue-ueditor'
 import 'element-ui/lib/theme-default/index.css?12'
 import './assets/css/total.css'
 import Vuex from 'vuex'
 import {Loading,Message} from 'element-ui';
 import './assets/js/commonFunctions'
 Vue.config.productionTip = false
+
+Vue.component('VueEditor',VueEditor)
 
 var qs = require('qs')
 Vue.prototype.qs = qs

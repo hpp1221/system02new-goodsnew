@@ -40,17 +40,17 @@
 				</el-form-item>
 				<el-form-item label="订单状态">
 					<el-checkbox-group v-model="form.orderStatus">
-    					<el-checkbox v-for="t in totalOrderStatus" :label="t.name"></el-checkbox>
+    					<el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="付款状态">
 					<el-checkbox-group v-model="form.payType">
-    					<el-checkbox v-for="t in totalPaymentStatus" :label="t.name"></el-checkbox>
+    					<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="订单标签">
 					<el-checkbox-group v-model="form.storeStatus">
-    					<el-checkbox v-for="t in totalOrderTags" :label="t.name"></el-checkbox>
+    					<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item>

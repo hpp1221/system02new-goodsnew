@@ -100,6 +100,27 @@ export default new Router({
 	        path: '/ordersummary',//订单
 	        component: require('@/pages/ordermanage/OrderSummary'),
         },
+        
+        {
+	        path: '/goodslist',//商品列表
+	        component: require('@/pages/goodsmanage/GoodsList'),
+        },
+        {
+	        path: '/creategoods',//新增商品
+	        component: require('@/pages/goodsmanage/CreateGoods'),
+        },
+        {
+	        path: '/updategoods',//修改商品详情
+	        component: require('@/pages/goodsmanage/UpdateGoods'),
+        },
+        {
+	        path: '/multipleInputGoods',//修改商品详情
+	        component: require('@/pages/goodsmanage/MultipleInputGoods'),
+        },
+        {
+	        path: '/multipleInputImgs',//修改商品详情
+	        component: require('@/pages/goodsmanage/MultipleInputImgs'),
+        },
       ]
     },
   ]

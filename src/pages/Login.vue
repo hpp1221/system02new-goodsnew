@@ -9,10 +9,10 @@
 			    	<el-form :model="form" :rules="rules" ref="form" class="demo-ruleForm">
 						<el-form-item prop="username">
 							<input type="text" style="display:none;">
-					    	<el-input v-model="form.username" placeholder="用户名称" auto-complete="off" autofocus></el-input>
+					    	<el-input v-model="form.username" placeholder="用户名称" auto-complete="off" autofocus @keyup.enter.native="submitForm('form')"></el-input>
 						</el-form-item>
 		  				<el-form-item prop="password">
-		    				<el-input v-model="form.password" placeholder="输入密码" type="password"></el-input>
+		    				<el-input v-model="form.password" placeholder="输入密码" type="password" @keyup.enter.native="submitForm('form')"></el-input>
 		  				</el-form-item>
 		  				<el-form-item>
 		    				<el-checkbox label="两周内免密登录" name="type" v-model="form.twoWeek"></el-checkbox>

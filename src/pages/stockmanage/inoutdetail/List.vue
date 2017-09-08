@@ -4,7 +4,7 @@
 			<h3 class="page-title">出入库明细</h3>
 			<el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch">
 				<el-form-item>
-					<el-select placeholder="全部仓库" v-model="easyForm.addressName">
+					<el-select placeholder="全部仓库" v-model="easyForm.addressName" multiple>
 						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
@@ -50,23 +50,13 @@
 				<el-form-item label="商品分类">
 					<el-select v-model="form.goodsSeriesId">
 						<el-option label="全部分类" :value="-1"></el-option>
-						<el-option label="日常用品" :value="1"></el-option>
-						<el-option label="儿童玩具" :value="2"></el-option>
-						<el-option label="妈妈用品" :value="3"></el-option>
-						<el-option label="儿童车床" :value="4"></el-option>
-						<el-option label="纸质用品" :value="5"></el-option>
-						<el-option label="其他用品" :value="6"></el-option>
+						<el-option :label="t.name" :value="t.id" :key="t.id" v-for="t in totalSeries"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品品牌">
 					<el-select v-model="form.goodsBrandId">
 						<el-option label="全部分类" :value="-1"></el-option>
-						<el-option label="日常用品" :value="1"></el-option>
-						<el-option label="儿童玩具" :value="2"></el-option>
-						<el-option label="妈妈用品" :value="3"></el-option>
-						<el-option label="儿童车床" :value="4"></el-option>
-						<el-option label="纸质用品" :value="5"></el-option>
-						<el-option label="其他用品" :value="6"></el-option>
+						<el-option :label="t.name" :value="t.id" :key="t.id" v-for="t in totalSeries"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="出入库时间">
@@ -77,19 +67,13 @@
     				</el-date-picker>
 				</el-form-item>
 				<el-form-item label="所属仓库">
-					<el-checkbox-group v-model="form.address">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox :label="t.address" v-for="t in totalStores" :key="t.id" :value="t.address"></el-checkbox>
-  					</el-checkbox-group>
+					<el-checkbox-group v-model="form.addressName">
+					    <el-checkbox v-for="t in totalStores" :label="t.address" :key="t.address"></el-checkbox>
+					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item label="商品标签">
 					<el-checkbox-group v-model="form.tags">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="新品上架"></el-checkbox>
-					    <el-checkbox label="热卖推荐"></el-checkbox>
-					    <el-checkbox label="清仓优惠"></el-checkbox>
-					    <el-checkbox label="热卖推荐"></el-checkbox>
-					    <el-checkbox label="清仓优惠"></el-checkbox>
+					    <el-checkbox :label="t.id" :key="t.id" v-for="t in totalSeries">{{t.name}}</el-checkbox>
   					</el-checkbox-group>
 				</el-form-item>
 				<el-form-item>
@@ -98,22 +82,22 @@
 				</el-form-item>
 			</el-form>
 			<el-table :data="tableData">
-				<el-table-column prop="tradeNo" label="编码">
+				<el-table-column prop="number" label="编码">
 					
 				</el-table-column>
 				<el-table-column prop="goodsName" label="商品名称">
 					
 				</el-table-column>
-				<el-table-column prop="goodsSpec" label="规格">
+				<el-table-column prop="sku" label="规格">
 					
 				</el-table-column>
 				<el-table-column prop="unit" label="单位">
 					
 				</el-table-column>
-				<el-table-column prop="createUserName" label="所属仓库">
+				<el-table-column prop="addressName" label="所属仓库">
 					
 				</el-table-column>
-				<el-table-column prop="createUserName" label="类型">
+				<el-table-column label="类型">
 					<template scope="scope">
 						<span v-if="scope.row.type == 1">其他入库</span>
 						<span v-if="scope.row.type == 2">采购入库</span>
@@ -127,20 +111,24 @@
 						<span v-if="scope.row.type == 10">其他出库</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="createUserName" label="单号">
+				<el-table-column prop="tradeNo" label="单号">
 					
 				</el-table-column>
-				<el-table-column prop="createUserName" label="出入库日期">
+				<el-table-column prop="createTime" label="出入库日期" width="200">
+					<template scope="scope">
+						<span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
+					</template>
+				</el-table-column>
+				<el-table-column prop="count" label="出入库数量">
 					
 				</el-table-column>
-				<el-table-column prop="createUserName" label="出入库数量">
-					
-				</el-table-column>
-				<el-table-column prop="createUserName" label="库存量">
+				<el-table-column prop="currentInventory" label="库存量">
 					
 				</el-table-column>
 				<el-table-column label="操作">
-					<el-button type="text">查看明细</el-button>
+					<template scope="scope">
+						<el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
+					</template>
 				</el-table-column>
 			</el-table>
 		</div>
@@ -160,16 +148,51 @@
 					goodsSeriesId:'',
 					goodsBrandId:'',
 					dateRange:'',
-					address:'',
-					tagId:''
+					addressName:[],
+					tags:[],
+					createTime:'',
+					endTime:''
 				},
 				easyForm:{//简单查询
-					addressName:'',//仓库名
+					addressName:[],//仓库名
 					keyword:'',//关键词
 					dateRange:'',
+					createTime:'',
+					endTime:''
 				},
 				advanceSearch:false,//高级搜索
-				totalStores:[]
+				totalStores:[],
+				totalSeries:[
+					{
+						id:1,
+						name:'日常用品'
+					},
+					{
+						id:2,
+						name:'儿童玩具'
+					},
+					{
+						id:3,
+						name:'妈妈用品'
+					},
+					{
+						id:4,
+						name:'儿童车床'
+					},
+					{
+						id:5,
+						name:'纸质用品'
+					},
+					{
+						id:6,
+						name:'其他用品'
+					},
+				]
+			}
+		},
+		watch:{
+			advanceSearch:function(){//点击高级搜索和取消时重新查询
+				this.select()
 			}
 		},
 		created(){
@@ -182,13 +205,18 @@
 				let requestData = {token: window.localStorage.getItem('token')}
 				
 				if(self.advanceSearch){//高级搜索
+					if(self.form.dateRange instanceof Array){
+						self.form.createTime = self.form.dateRange[0]
+						self.form.endTime = self.form.dateRange[1]
+					}
 					requestData = Object.assign(requestData,self.shallowCopy(self.form))
 				}else{//简单搜索
+					if(self.easyForm.dateRange instanceof Array){
+						self.easyForm.createTime = self.easyForm.dateRange[0]
+						self.easyForm.endTime = self.easyForm.dateRange[1]
+					}
 					requestData = Object.assign(requestData,self.shallowCopy(self.easyForm))
 				}
-				
-				requestData = Object.assign(requestData,self.shallowCopy(self.form))
-				
 				self.$http.post('/ui/recordListBySku',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('出入库明细',response)
