@@ -13,7 +13,7 @@
 				</el-form-item>
 				<el-form-item label="2、导入数据">
 					<el-upload
-  						action="/ui/analysisExcel"
+  						action="/ui/goods/analysisExcel"
   						:on-success="uploadSuccess"
   						:on-remove="removeExcel"
   						:file-list="form.excelFile"
@@ -200,6 +200,8 @@
 				}
 			},
 			uploadSuccess(response, file, fileList){//成功上传的回调
+				console.log(response)
+				return
 				if(response.code == 10000){
 					this.form.excelFile = [file]
 					if(response.data.length > 0){

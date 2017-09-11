@@ -2,7 +2,7 @@
 	<div class="login-container">
 		<div class="login-box">
 			<div class="login-ivis-div">
-				<img src="../assets/images/ivis.jpg" alt="" />
+				<img src="../../assets/images/ivis.jpg" alt="" />
 			</div>
 			<el-tabs v-model="tabName">
     			<el-tab-pane label="登录" name="login">
@@ -25,7 +25,7 @@
 	    			<el-form :model="registerForm" :rules="registerRules" ref="registerForm" class="demo-ruleForm">
 						<el-form-item prop="username">
 							<input type="text" style="display:none;">
-					    	<el-input v-model="registerForm.username" placeholder="用户名称"></el-input>
+					    	<el-input v-model="registerForm.username" placeholder="公司名称,推荐公司首字母缩写,例如觇智科技(CZKJ)"></el-input>
 						</el-form-item>
 		  				<el-form-item prop="password">
 		    				<el-input v-model="registerForm.password" placeholder="输入密码" type="password"></el-input>
@@ -99,12 +99,11 @@
             				username:form.username,
             				password:form.password
             			}
-						self.$http.post('/ui/login.do',self.qs.stringify(requestData)).then(function (response) {
+						self.$http.post('/ui/user/login.do',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log(response)
 							if(data.code == 10000){
 								window.localStorage.setItem('token', data.data.token);
-								window.localStorage.setItem('twoWeek', form.twoWeek);
 								self.$router.push('/');
 							}else{
 								

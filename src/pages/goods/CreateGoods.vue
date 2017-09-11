@@ -52,7 +52,7 @@
 							:close-transition="false"
 							@close="handleClose(v,sindex)"
 							style="margin-left: 10px">
-							{{v.name}}
+							{{v}}
 						</el-tag>
 						<el-input
 							class="form-input"
@@ -155,11 +155,27 @@
 			  	</el-form-item>
 			  	<h4 class="item-title">商品描述</h4>
 				<el-form-item>
-					<editor :editorContent="form.goodsExtend.content"></editor>
+					<VueEditor
+						ueditorPath="../../static/ueditor1_4_3_3-utf8-net"
+						@ready="editorReady" 
+						style="width:100%;height:300px" 
+						:ueditorConfig="editorConfig">
+					</VueEditor>
+				</el-form-item>
+				<h4 class="item-title">添加附件</h4>
+				<el-form-item>
+					<!--<el-upload
+						class="upload-demo"
+						action="https://jsonplaceholder.typicode.com/posts/"
+						:on-change="handleChange"
+						:file-list="form.goodsExtend.annex">
+					  <el-button size="small" type="primary">点击上传</el-button>
+					  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+					</el-upload>-->
 				</el-form-item>
 			  	<el-form-item>
 			  		<el-button @click="submit('form')">创建</el-button>
-			  		<el-button>取消</el-button>
+			  		<el-button @click="getContent">取消</el-button>
 			  	</el-form-item>
 			</el-form>
 			
@@ -188,6 +204,8 @@
 				key:{},
 				inputValue:'',
 				goodsTags:[],//商品标签
+				editorInstance:{},//编辑器实例
+				editorConfig:{},//编辑器配置
 			}
 		},
 		watch:{
@@ -205,23 +223,30 @@
 	            deep:true
 			}
 		},
-		components:{
-			'editor':require('../../components/ueditor')
-		},
 		methods:{
+			editorReady(editorInstance){
+				editorInstance.setContent(this.form.goodsExtend.content);
+			    editorInstance.addListener('contentChange',() => {
+			        this.form.goodsExtend.content = editorInstance.getContent()
+			    });
+            },
+            getContent(){
+            	console.log(this.form.goodsExtend.content)
+            },
 			submit(formName){
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
-            			let self = this
-						let requestData = {token: window.localStorage.getItem('token')}
-						
-						requestData = Object.assign(requestData,self.shallowCopy(self.form))
-						
+            			let self = this;
+						let requestData = {token: window.localStorage.getItem('token')};
+						for(let i = 0;i < self.form.spec.length;i++){
+							self.$delete(self.form.spec[i],'inputVisible');
+						}
+						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/addGoods',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addGoods',response)
 							if(data.code == 10000){
-								self.$router.push('/goodslist')
+								self.$router.push('/goodslist');
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -233,16 +258,16 @@
         		});
 				
 			},
-			addSpec(){
-				this.form.spec.push({specName:'',specValue:[],inputVisible:false})
+			addSpec(){//添加规格
+				this.form.spec.push({specName:'',specValue:[],inputVisible:false});
 			},
-			showInput(index) {
+			showInput(index) {//显示规格输入框
         		this.form.spec[index].inputVisible = true;
       		},
-      		handleInputConfirm(s){
+      		handleInputConfirm(s){//规格属性确定
       			let inputValue = this.inputValue;
       			if(inputValue){
-      				s.specValue.push({name:this.inputValue});
+      				s.specValue.push(this.inputValue);
       			}
       			s.inputVisible = false;
       			this.inputValue = '';
@@ -250,19 +275,19 @@
       		handleClose(tag,index){//删除某规格属性
 				this.form.spec[index].specValue.splice(this.form.spec[index].specValue.indexOf(tag), 1);
 			},
-			deleteSpec(sindex){
-				this.form.spec.splice(sindex,1)
+			deleteSpec(sindex){//删除一条规格
+				this.form.spec.splice(sindex,1);
 			},
 			createGoodsDetail(tableMap,index){
-				let size = this.form.spec.length
-				let tableKey = this.form.spec[index].specName
+				let size = this.form.spec.length;
+				let tableKey = this.form.spec[index].specName;
 				for(let i = 0;i < this.form.spec[index].specValue.length;i++){//颜色
-					tableMap[tableKey] = this.form.spec[index].specValue[i].name
+					tableMap[tableKey] = this.form.spec[index].specValue[i];
 					
 					if(index < size - 1){
-						index++
-						this.createGoodsDetail(tableMap,index)
-						index--
+						index++;
+						this.createGoodsDetail(tableMap,index);
+						index--;
 					}else{
 						let singleSku = {
 							sku:{},
@@ -273,13 +298,13 @@
 							barCode:''
 						};
 						singleSku.sku = tableMap;
-						this.form.skus.push(JSON.parse(JSON.stringify(singleSku)))
+						this.form.skus.push(JSON.parse(JSON.stringify(singleSku)));
 					}
 				}
 			},
 			handleAvaterSuccess(response,file,fileList){
-				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key
-				this.getKey()
+				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key;
+				this.getKey();
 			},
 		}
 	}
