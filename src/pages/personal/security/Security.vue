@@ -58,6 +58,40 @@
 			    	<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
 			  	</div>
 			</el-dialog>
+			<el-dialog title="新手机绑定" v-model="phoneModalVisible">
+			  	<el-form :model="phoneForm" :rules="phoneRules" ref="phoneForm" label-width="100px">
+			    	<el-form-item label="输入旧密码" prop="pass">
+			      		<el-input type="password" v-model="pwdForm.oldPwd" auto-complete="off"></el-input>
+			    	</el-form-item>
+			    	<el-form-item label="输入新密码" prop="checkPass">
+					    <el-input type="password" v-model="pwdForm.newPwd" auto-complete="off"></el-input>
+					</el-form-item>
+				    <el-form-item label="确认新密码" :label-width="formLabelWidth">
+				      	<el-input type="password" v-model="pwdForm.newPwdAgain" auto-complete="off"></el-input>
+				    </el-form-item>
+			  	</el-form>
+			  	<div slot="footer">
+			    	<el-button @click="dialogFormVisible = false">取 消</el-button>
+			    	<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+			  	</div>
+			</el-dialog>
+			<el-dialog title="修改邮箱" v-model="emailModalVisible">
+			  	<el-form :model="emailForm" :rules="emailRules" ref="emailForm" label-width="100px">
+			    	<el-form-item label="邮箱" prop="pass">
+			      		<el-input v-model="emailForm.email" auto-complete="off"></el-input>
+			    	</el-form-item>
+			    	<el-form-item label="输入新密码" prop="checkPass">
+					    <el-input v-model="pwdForm.newPwd" auto-complete="off"></el-input>
+					</el-form-item>
+				    <el-form-item label="确认新密码" :label-width="formLabelWidth">
+				      	<el-input v-model="pwdForm.newPwdAgain" auto-complete="off"></el-input>
+				    </el-form-item>
+			  	</el-form>
+			  	<div slot="footer">
+			    	<el-button @click="dialogFormVisible = false">取 消</el-button>
+			    	<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+			  	</div>
+			</el-dialog>
 		</div>
 	</div>
 </template>
@@ -73,7 +107,16 @@
 					newPwd:'',//新密码
 					newPwdAgain:'',//确认新密码
 				},
+				phoneForm:{
+					
+				},
+				emailForm:{
+					
+				}
 			}
+		},
+		methods:{
+			
 		}
 	}
 </script>

@@ -155,7 +155,7 @@
 						    let data = response.data;
 						    console.log('addRecord',response)
 							if(data.code == 10000){
-								self.$router.push('/goodsin/list')
+								self.$router.push('/stock/goodsin/list')
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -167,7 +167,7 @@
 		        });
 			},
 			cancel(){//取消
-				this.$router.push('/goodsin/list')
+				this.$router.push('/stock/goodsin/list')
 			},
 			querySearchAsync(queryString, cb){
 				let self = this

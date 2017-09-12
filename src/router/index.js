@@ -23,125 +23,150 @@ export default new Router({
 		      component: require('@/pages/Error')
 		    },
         {
-	        path: '/goodsin/list',//商品入库
+	        path: '/stock/goodsin/list',//商品入库
 	        component: require('@/pages/stock/goodsin/List'),
         },
         {
-	        path: '/goodsin/add',//添加入库
+	        path: '/stock/goodsin/add',//添加入库
 	        component: require('@/pages/stock/goodsin/Add'),
         },
         {
-	        path: '/goodsin/detail',//入库明细
+	        path: '/stock/goodsin/detail',//入库明细
 	        component: require('@/pages/stock/goodsin/Detail'),
         },
         {
-	        path: '/goodsout/list',//商品出库
+	        path: '/stock/goodsout/list',//商品出库
 	        component: require('@/pages/stock/goodsout/List'),
         },
         {
-	        path: '/goodsout/add',//添加出库
+	        path: '/stock/goodsout/add',//添加出库
 	        component: require('@/pages/stock/goodsout/Add'),
         },
         {
-	        path: '/goodsout/detail',//入库明细
+	        path: '/stock/goodsout/detail',//入库明细
 	        component: require('@/pages/stock/goodsout/Detail'),
         },
         {
-	        path: '/goodsstore/list',//商品库存
+	        path: '/stock/goodsstore/list',//商品库存
 	        component: require('@/pages/stock/goodsstore/List'),
         },
         {
-	        path: '/stockallocation/list',//库存调拨
+	        path: '/stock/stockallocation/list',//库存调拨
 	        component: require('@/pages/stock/stockallocation/List'),
         },
         {
-	        path: '/stockallocation/add',//添加库存调拨
+	        path: '/stock/stockallocation/add',//添加库存调拨
 	        component: require('@/pages/stock/stockallocation/Add'),
         },
         {
-	        path: '/stockallocation/detail',//添加库存调拨
+	        path: '/stock/stockallocation/detail',//添加库存调拨
 	        component: require('@/pages/stock/stockallocation/Detail'),
         },
         {
-	        path: '/stocking/stocking',//库存盘点
+	        path: '/stock/stocking/stocking',//库存盘点
 	        component: require('@/pages/stock/stocking/stocking'),
         },
         {
-	        path: '/inoutdetail/list',//出入库明细
+	        path: '/stock/inoutdetail/list',//出入库明细
 	        component: require('@/pages/stock/inoutdetail/List'),
         },
         {
-	        path: '/goodssummary/list',//商品收发汇总
+	        path: '/stock/goodssummary/list',//商品收发汇总
 	        component: require('@/pages/stock/goodssummary/List'),
         },
         
         
         {
-	        path: '/createorder',//创建订单
+	        path: '/order/createorder',//创建订单
 	        component: require('@/pages/order/CreateOrder'),
         },
         {
-	        path: '/orderlist',//订单列表
+	        path: '/order/orderlist',//订单列表
 	        component: require('@/pages/order/OrderList'),
         },
         {
-	        path: '/personalorder',//个人订单
+	        path: '/order/personalorder',//个人订单
 	        component: require('@/pages/order/PersonalOrder'),
         },
         {
-	        path: '/orderdetail',//订单详情
+	        path: '/order/orderdetail',//订单详情
 	        component: require('@/pages/order/OrderDetail'),
         },
         {
-	        path: '/ordersummary',//订单
+	        path: '/order/ordersummary',//订单
 	        component: require('@/pages/order/OrderSummary'),
         },
         
         {
-	        path: '/goodslist',//商品列表
+	        path: '/goods/goodslist',//商品列表
 	        component: require('@/pages/goods/GoodsList'),
         },
         {
-	        path: '/creategoods',//新增商品
+	        path: '/goods/creategoods',//新增商品
 	        component: require('@/pages/goods/CreateGoods'),
         },
         {
-	        path: '/updategoods',//修改商品详情
+	        path: '/goods/updategoods',//修改商品详情
 	        component: require('@/pages/goods/UpdateGoods'),
         },
         {
-	        path: '/multipleInputGoods',//批量导入商品
+	        path: '/goods/multipleInputGoods',//批量导入商品
 	        component: require('@/pages/goods/MultipleInputGoods'),
         },
         {
-	        path: '/multipleInputImgs',//批量导入图片
+	        path: '/goods/multipleInputImgs',//批量导入图片
 	        component: require('@/pages/goods/MultipleInputImgs'),
         },
         
         {
-	        path: '/personcenter',//修改商品详情
+	        path: '/user/personcenter',//修改商品详情
 	        component: require('@/pages/user/PersonCenter'),
         },
         
         {
-	        path: '/user/authority',//用户权限
+	        path: '/personal/security/authority',//用户权限
 	        component: require('@/pages/personal/security/Authority'),
         },
         {
-	        path: '/user/changeEmail',//修改邮箱
+	        path: '/personal/security/changeEmail',//修改邮箱
 	        component: require('@/pages/personal/security/ChangeEmail'),
         },
         {
-	        path: '/user/changePassword',//修改密码
+	        path: '/personal/security/changePassword',//修改密码
 	        component: require('@/pages/personal/security/ChangePassword'),
         },
         {
-	        path: '/user/changephone',//修改手机
+	        path: '/personal/security/changephone',//修改手机
 	        component: require('@/pages/personal/security/ChangePhone'),
         },
         {
-	        path: '/user/security',//账户安全
+	        path: '/personal/security/security',//账户安全
 	        component: require('@/pages/personal/security/Security'),
+        },
+        {
+	        path: '/personal/company/basicinfo',//基础信息
+	        component: require('@/pages/personal/company/BasicInfo'),
+        },
+        {
+	        path: '/personal/company/department',//员工部门信息
+	        component: require('@/pages/personal/company/Department'),
+        },
+        
+        {
+	        path: '/supplier/leadin',//供应链导入
+	        component: require('@/pages/supplier/Leadin'),
+        },
+        {
+	        path: '/supplier/exportout',//供应链导出
+	        component: require('@/pages/supplier/ExportOut'),
+        },
+        {
+	        path: '/supplier/createsupplier',//供应链新增
+	        component: require('@/pages/supplier/CreateSupplier'),
+        },
+        {
+	        path: '/supplier/SupplierList',//供应链新增
+	        component: require('@/pages/supplier/SupplierList'),
         },
       ]
     },

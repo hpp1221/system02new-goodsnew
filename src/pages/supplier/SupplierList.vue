@@ -1,8 +1,8 @@
 <template>
 	<div class="container">
 		<div class="wrapper">
-			<h3 class="page-title">商品列表</h3>
-			<el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
+			<h3 class="page-title">供应商列表</h3>
+			<el-form ref="easyForm" :model="easyForm" inline class="request-form">
 				<el-form-item>
 					<el-select placeholder="商品分类" v-model="easyForm.storeHouseAddress">
 						<el-option label="玩具" value="1"></el-option>
@@ -16,86 +16,12 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
-				</el-form-item>
-				<el-form-item>
 					<el-button @click="select">查询</el-button>
 				</el-form-item>
-				<el-form-item>
-					<el-dropdown trigger="click">
-						<el-button>导入</el-button>
-						<el-dropdown-menu slot="dropdown">
-						    <el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>
-						    <el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
-					
-				</el-form-item>
-				<el-form-item>
+				<el-form-item style="float: right;">
+					<el-button>导入</el-button>
 					<el-button @click="outputFile">导出</el-button>
-				</el-form-item>
-				<el-form-item>
 					<el-button @click="createGoods">新增</el-button>
-				</el-form-item>
-			</el-form>
-			<el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-				<el-form-item label="关键词">
-					<el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
-						
-					</el-input>
-				</el-form-item>
-				<el-form-item label="商品分类">
-					<el-select v-model="form.series">
-						<el-option label="分类1" value="1">
-							
-						</el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="商品品牌">
-					<el-input placeholder="请选择商品品牌" v-model="form.brandName" class="form-input">
-						
-					</el-input>
-				</el-form-item>
-				<el-form-item label="所属供应商">
-					<el-input class="form-input">
-						
-					</el-input>
-				</el-form-item>
-				<el-form-item label="商品标签">
-					<el-checkbox-group v-model="form.tagId">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="新品上架"></el-checkbox>
-					    <el-checkbox label="热卖推荐"></el-checkbox>
-					    <el-checkbox label="清仓优惠"></el-checkbox>
-  					</el-checkbox-group>
-				</el-form-item>
-				<el-form-item label="所属仓库">
-					<el-checkbox-group v-model="form.tagId">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="新品上架"></el-checkbox>
-					    <el-checkbox label="热卖推荐"></el-checkbox>
-					    <el-checkbox label="清仓优惠"></el-checkbox>
-  					</el-checkbox-group>
-				</el-form-item>
-				<el-form-item label="库存状态">
-					<el-checkbox-group v-model="form.storeStatus">
-    					<el-checkbox label="全选"></el-checkbox>
-					    <el-checkbox label="高于库存上限值"></el-checkbox>
-					    <el-checkbox label="低于库存下限值"></el-checkbox>
-					    <el-checkbox label="库存<=0商品"></el-checkbox>
-  					</el-checkbox-group>
-				</el-form-item>
-				<el-form-item label="商品状态">
-					<el-radio class="radio" v-model="form.goodsStatus" label="1">上架</el-radio>
-  					<el-radio class="radio" v-model="form.goodsStatus" label="-1">下架</el-radio>
-				</el-form-item>
-				<el-form-item label="商品来源">
-					<el-radio class="radio" v-model="form.goodsStatus" label="1">上架</el-radio>
-  					<el-radio class="radio" v-model="form.goodsStatus" label="-1">下架</el-radio>
-				</el-form-item>
-				<el-form-item>
-					<el-button @click="select">查询</el-button>
-					<el-button type="text" @click="advanceSearch = false">取消高级搜索</el-button>
 				</el-form-item>
 			</el-form>
 			<div class="goodslist-check-div" v-if="multipleSelection.length > 0">
@@ -111,34 +37,22 @@
       				type="selection"
 			    	width="55">
 			    </el-table-column>
-				<el-table-column prop="goodsImg" label="商品图片">
+				<el-table-column prop="goodsImg" label="供应商名称">
 					
 				</el-table-column>
-				<el-table-column prop="goodsCode" label="商品编码">
+				<el-table-column prop="goodsCode" label="供应商编码">
 					
 				</el-table-column>
-				<el-table-column prop="goodsName" label="商品名称">
+				<el-table-column prop="goodsName" label="联系电话">
 					
 				</el-table-column>
-				<el-table-column prop="sku" label="规格">
+				<el-table-column prop="sku" label="地址">
 					
 				</el-table-column>
-				<el-table-column prop="unit" label="单位">
+				<el-table-column prop="unit" label="手机">
 					
 				</el-table-column>
-				<el-table-column prop="marketPrice" label="市场价">
-					
-				</el-table-column>
-				<el-table-column prop="costPrice" label="参考成本价">
-					
-				</el-table-column>
-				<el-table-column prop="onTheWay" label="品牌">
-					
-				</el-table-column>
-				<el-table-column prop="inStoreHouse" label="库存数量">
-					
-				</el-table-column>
-				<el-table-column prop="inStoreHouse" label="所属供应商">
+				<el-table-column prop="marketPrice" label="创建时间">
 					
 				</el-table-column>
 				<el-table-column label="操作">
@@ -147,7 +61,6 @@
 							<el-button type="text" icon="more"></el-button>
 							<el-dropdown-menu slot="dropdown">
 							    <el-dropdown-item @click="update">修改</el-dropdown-item>
-							    <el-dropdown-item>明细</el-dropdown-item>
 							    <el-dropdown-item>删除</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>

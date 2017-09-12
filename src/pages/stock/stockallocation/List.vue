@@ -94,10 +94,10 @@
 			    });
 			},
 			add(){
-				this.$router.push('/stockallocation/add')
+				this.$router.push('/stock/stockallocation/add')
 			},
 			seeDetail(id){
-				this.$router.push({path:'/stockallocation/detail',query:{id:id}})
+				this.$router.push({path:'/stock/stockallocation/detail',query:{id:id}})
 			}
 		}
 	}

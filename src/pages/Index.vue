@@ -36,23 +36,36 @@
 			}
 		},
 		created(){
-			this.getMenu()
+			this.getMenu();
+			this.getMyInfo();
 		},
 		components:{
 			'menu-tree':require('../components/Menu')
 		},
 		methods:{
-			getMenu(){//获取菜单
+			getMyInfo(){
 				let self = this
-				let requestData = {
-					token: window.localStorage.getItem('token')
-				}
-				self.$http.get('/ui/user/menu',requestData).then(function (response) {
+				let requestData = {params:{token: window.localStorage.getItem('token')}};
+				self.$http.get('/ui/user/getMyInfo',requestData).then(function (response) {
 				    let data = response.data;
-				    console.log(response)
+				    console.log(response);
 				    
 					if(data.code == 10000){
-						self.menuList = self.setMenuStatus(data.data)
+						
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
+			getMenu(){//获取菜单
+				let self = this;
+				let requestData = {params:{token: window.localStorage.getItem('token')}};
+				self.$http.get('/ui/user/menu',requestData).then(function (response) {
+				    let data = response.data;
+				    console.log(response);
+				    
+					if(data.code == 10000){
+						self.menuList = self.setMenuStatus(data.data);
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
@@ -60,9 +73,9 @@
 			},
 			setMenuStatus(data){
 				for(let i = 0;i < data.length;i++){
-					data[i].show = false
+					data[i].show = false;
 				}
-				return data
+				return data;
 			},
 			handleIconClick(){//头部搜索
 				

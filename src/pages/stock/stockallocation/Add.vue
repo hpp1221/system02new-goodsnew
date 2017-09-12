@@ -147,7 +147,7 @@
 						    let data = response.data;
 						    console.log('addAllocationRecord',response)
 							if(data.code == 10000){
-								self.$router.push('/stockallocation/list')
+								self.$router.push('/stock/stockallocation/list')
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -190,7 +190,7 @@
 				
 			},
 			cancel(){//取消
-				this.$router.push('/stockallocation/list')
+				this.$router.push('/stock/stockallocation/list')
 			},
 			addLine(){
 				this.form.data.push({

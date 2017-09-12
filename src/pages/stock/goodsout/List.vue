@@ -115,7 +115,7 @@
 			    });
 			},
 			seeDetail(id){
-				this.$router.push({path:'/goodsout/detail',query:{id:id}})
+				this.$router.push({path:'/stock/goodsout/detail',query:{id:id}})
 			}
 		}
 	}

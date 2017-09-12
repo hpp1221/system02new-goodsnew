@@ -115,7 +115,7 @@
 			    });
 			},
 			seeDetail(id){
-				this.$router.push({path:'/goodsin/detail',query:{id:id}})
+				this.$router.push({path:'/stock/goodsin/detail',query:{id:id}})
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 		<div class="wrapper">
 			<h3 class="page-title">新增商品</h3>
 			
-			<el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px" inline>
+			<el-form ref="form" :model="form" class="request-form" label-width="120px">
 				<h4 class="item-title">基础信息</h4>
 				<el-form-item label="是否立即上架">
 					<el-checkbox true-label="1" false-label="0" v-model="form.up">立即上架</el-checkbox>
@@ -14,19 +14,17 @@
 				</el-form-item>
 				<el-form-item label="商品品牌">
 					<el-select placeholder="请选择商品品牌" v-model="form.brandName">
-						<el-option label="上架" value="1"></el-option>
+						<el-option label="上架" value="0"></el-option>
 						<el-option label="下架" value="1"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品分类">
 					<el-select v-model="form.catId">
-						<el-option value="1" label="一级分类"></el-option>
+						<el-option :value="t.id" :label="t.name" :key="t.id" v-for="t in totalCategories"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="计量单位">
-					<el-select v-model="form.unit">
-						<el-option value="1" label="个"></el-option>
-					</el-select>
+					<el-input v-model="form.unit" class="form-input"></el-input>
 				</el-form-item>
 				<el-form-item label="关键字">
 					<el-input placeholder="搜索关键字" class="form-input" v-model="form.keyword"></el-input>
@@ -192,8 +190,10 @@
 			return {
 				form:{
 					up:0,//是否上架，1是，0否
-					goodsName:'',
+					name:'',
+					brandName:'',
 					spec:[],
+					catId:'',
 					skus:[],
 					goodsExtend:{
 						imgs:[],
@@ -206,6 +206,32 @@
 				goodsTags:[],//商品标签
 				editorInstance:{},//编辑器实例
 				editorConfig:{},//编辑器配置
+				totalCategories:[
+					{
+						id:1,
+						name:'日常用品'
+					},
+					{
+						id:2,
+						name:'儿童玩具'
+					},
+					{
+						id:3,
+						name:'妈妈用品'
+					},
+					{
+						id:4,
+						name:'儿童车床'
+					},
+					{
+						id:5,
+						name:'纸质用品'
+					},
+					{
+						id:6,
+						name:'其他用品'
+					},
+				]
 			}
 		},
 		watch:{
@@ -246,7 +272,7 @@
 						    let data = response.data;
 						    console.log('addGoods',response)
 							if(data.code == 10000){
-								self.$router.push('/goodslist');
+								self.$router.push('/goods/goodslist');
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
