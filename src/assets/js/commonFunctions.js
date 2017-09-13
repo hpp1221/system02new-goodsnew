@@ -1,13 +1,25 @@
-import Vue from 'vue'
-Vue.prototype.shallowCopy = function(obj){
-	let newObj = {}
+import Vue from 'vue';
+Vue.prototype.shallowCopy = function(obj){//将对象中的数据迭代出来
+	let newObj = {};
 	for(let o in obj){
-		obj[o] instanceof Array? newObj[o] = JSON.stringify(obj[o]) : newObj[o] = obj[o]
+		typeof(obj[o]) === 'object'? newObj[o] = JSON.stringify(obj[o]) : newObj[o] = obj[o];
 		if(obj[o] instanceof Date){
-			newObj[o] = obj[o].pattern('yyyy-MM-dd HH:mm:ss')
+			newObj[o] = obj[o].pattern('yyyy-MM-dd HH:mm:ss');
 		}
 	}
-	return newObj
+	return newObj;
+}
+Vue.prototype.getUserInfo = function(){//获取用户信息
+	let self = this;
+	let requestData = {params:{token: window.localStorage.getItem('token')}};
+	self.$http.get('/ui/user/getMyInfo',requestData).then(function (response) {
+	    let data = response.data;
+		if(data.code == 10000){
+			window.localStorage.setItem('userinfo',JSON.stringify(data.data));
+		}
+    }).catch(function (error) {
+    	console.log(error);
+    });
 }
 Date.prototype.pattern=function(fmt) {         
     var o = {         

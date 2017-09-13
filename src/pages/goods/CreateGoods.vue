@@ -5,32 +5,32 @@
 			
 			<el-form ref="form" :model="form" class="request-form" label-width="120px">
 				<h4 class="item-title">基础信息</h4>
-				<el-form-item label="是否立即上架">
-					<el-checkbox true-label="1" false-label="0" v-model="form.up">立即上架</el-checkbox>
-				</el-form-item>
 				<el-form-item label="商品名称">
 					<el-input placeholder="请输入商品名称" v-model="form.name" class="form-input">
 					</el-input>
 				</el-form-item>
 				<el-form-item label="商品品牌">
-					<el-select placeholder="请选择商品品牌" v-model="form.brandName">
-						<el-option label="上架" value="0"></el-option>
-						<el-option label="下架" value="1"></el-option>
+					<el-select placeholder="请选择商品品牌" v-model="form.brandName" value-key="catName">
+						<el-option :label="t.catName" :value="t" :key="t.catName" v-for="t in totalBrandList"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品分类">
-					<el-select v-model="form.catId">
-						<el-option :value="t.id" :label="t.name" :key="t.id" v-for="t in totalCategories"></el-option>
+					<el-select v-model="form.catId" placeholder="请选择商品分类" value-key="id">
+						<el-option v-for="t in totalCategories" 
+							:key="t.id"
+							:label="t.name"
+							:value="t">
+						</el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="计量单位">
-					<el-input v-model="form.unit" class="form-input"></el-input>
+					<el-input placeholder="请输入计量单位" v-model="form.unit" class="form-input"></el-input>
 				</el-form-item>
 				<el-form-item label="关键字">
 					<el-input placeholder="搜索关键字" class="form-input" v-model="form.keyword"></el-input>
 				</el-form-item>
 				<el-form-item label="所属供应商名称">
-					<el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplier"></el-input>
+					<el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
 				</el-form-item>
 				<el-form-item label="商品标签">
 					<el-checkbox :label="t.name" v-for="t in goodsTags" :key="t.id"></el-checkbox>
@@ -135,6 +135,12 @@
 					        	</el-input>
 					      	</template>
 					    </el-table-column>
+					    <el-table-column
+					      	label="是否上架"
+					      	type="selection"
+					      	width="180">
+					      	123
+					    </el-table-column>
 				  	</el-table>
 			  	</el-form-item>
 			  	
@@ -189,12 +195,12 @@
 		data(){
 			return {
 				form:{
-					up:0,//是否上架，1是，0否
 					name:'',
 					brandName:'',
 					spec:[],
 					catId:'',
 					skus:[],
+					supplierName:'',
 					goodsExtend:{
 						imgs:[],
 						content:'',
@@ -231,7 +237,8 @@
 						id:6,
 						name:'其他用品'
 					},
-				]
+				],
+				totalBrandList:[],
 			}
 		},
 		watch:{
@@ -249,6 +256,9 @@
 	            deep:true
 			}
 		},
+		created(){
+			this.getBrandList();
+		},
 		methods:{
 			editorReady(editorInstance){
 				editorInstance.setContent(this.form.goodsExtend.content);
@@ -259,15 +269,29 @@
             getContent(){
             	console.log(this.form.goodsExtend.content)
             },
+            getBrandList(){//得到品牌列表
+            	let self = this;
+				let requestData = {token: window.localStorage.getItem('token')};
+				self.$http.post('/ui/brandList',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('brandList',response)
+					if(data.code == 10000){
+						self.totalBrandList = data.data;
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+            },
 			submit(formName){
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
             			let self = this;
-						let requestData = {token: window.localStorage.getItem('token')};
+						
 						for(let i = 0;i < self.form.spec.length;i++){
 							self.$delete(self.form.spec[i],'inputVisible');
 						}
-						requestData = Object.assign(requestData,self.shallowCopy(self.form));
+						let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.form)};
+						//requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/addGoods',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addGoods',response)
@@ -321,7 +345,8 @@
 							price:'',
 							img:'',
 							number:'',
-							barCode:''
+							barCode:'',
+							isUp:0
 						};
 						singleSku.sku = tableMap;
 						this.form.skus.push(JSON.parse(JSON.stringify(singleSku)));

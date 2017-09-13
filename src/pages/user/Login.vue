@@ -85,7 +85,8 @@
           			]
 				},
 				tabName:'login',
-				verifyText:'获取验证码'
+				verifyText:'获取验证码',
+				phoneAvailable:false,//手机是否可用
 				
 			}
 		},
@@ -134,7 +135,7 @@
 							if(data.code == 10000){
 								self.$message.success('注册成功');
 							}else{
-								self.$message.success(data.message);
+								self.$message.error(data.message);
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -165,9 +166,9 @@
 				self.$http.post('/ui/user/checkUserCelCount.do',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 					if(data.code == 10000){
-						self.$message.success('手机号可用');
+						self.phoneAvailable = true;
 					}else{
-						self.$message.error('手机号已被使用');
+						self.phoneAvailable = false;
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
@@ -181,6 +182,10 @@
       		},
       		getVerifyCode(){//获取短信验证码
       			let self = this;
+      			if(!self.phoneAvailable){
+      				self.$message.error('该手机号已被使用');
+      				return;
+      			}
       			self.verifyText = 60;
       			var messageCount = setInterval(function(){
       				self.verifyText--;
@@ -189,14 +194,14 @@
       					clearInterval(messageCount);
       				}
       			},1000);
-      			let requestData = {params:{phone:self.registerForm.phone}};
+      			let requestData = {params:{phone:self.registerForm.phone,type:1}};//1代表注册,2代表修改
       			self.$http.get('/ui/user/getMessage.do',requestData).then(function (response) {
 				    let data = response.data;
 				    console.log(response);
 					if(data.code == 10000){
 						self.$message.success('已成功发送');
 					}else{
-						self.$message.error('发送失败');
+						self.$message.error(data.message);
 					}
 			    }).catch(function (error) {
 			    	console.log(error);

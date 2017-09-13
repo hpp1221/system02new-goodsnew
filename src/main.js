@@ -10,6 +10,7 @@ import './assets/css/total.css'
 import Vuex from 'vuex'
 import {Loading,Message} from 'element-ui';
 import './assets/js/commonFunctions'
+import store from './vuex/store';
 Vue.config.productionTip = false
 
 Vue.component('VueEditor',VueEditor)
@@ -54,6 +55,7 @@ axios.interceptors.response.use(function (response) {
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

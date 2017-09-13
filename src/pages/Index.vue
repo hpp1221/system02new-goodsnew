@@ -44,25 +44,14 @@
 		},
 		methods:{
 			getMyInfo(){
-				let self = this
-				let requestData = {params:{token: window.localStorage.getItem('token')}};
-				self.$http.get('/ui/user/getMyInfo',requestData).then(function (response) {
-				    let data = response.data;
-				    console.log(response);
-				    
-					if(data.code == 10000){
-						
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
+				this.getUserInfo();
 			},
 			getMenu(){//获取菜单
 				let self = this;
 				let requestData = {params:{token: window.localStorage.getItem('token')}};
-				self.$http.get('/ui/user/menu',requestData).then(function (response) {
+				self.$http.get('/ui/index/menus',requestData).then(function (response) {
 				    let data = response.data;
-				    console.log(response);
+				    console.log('menus',response);
 				    
 					if(data.code == 10000){
 						self.menuList = self.setMenuStatus(data.data);

@@ -27,7 +27,7 @@
 				if(item.children){//外层节点显示出孩子
 					item.show = !item.show
 				}else{//最内节点则跳转
-					this.$router.push(item.uri)
+					this.$router.push(item.url)
 				}
 			},
 		}
