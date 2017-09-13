@@ -168,6 +168,22 @@ export default new Router({
 	        path: '/supplier/SupplierList',//供应链新增
 	        component: require('@/pages/supplier/SupplierList'),
         },
+         {
+	        path: '/personal/client/clientmanagement',//客户管理
+	        component: require('@/pages/personal/client/ClientManagement'),
+        },
+        {
+	        path: '/personal/client/inputclient',//客户导入
+	        component: require('@/pages/personal/client/InputClient'),
+        },
+        {
+	        path: '/personal/client/updateclient',//修改客户详情
+	        component: require('@/pages/personal/client/UpdateClient'),
+        },
+         {
+	        path: '/personal/client/createclient',//新增客户
+	        component: require('@/pages/personal/client/CreateClient'),
+        }
       ]
     },
   ]
