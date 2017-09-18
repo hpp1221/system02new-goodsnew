@@ -128,18 +128,6 @@ export default new Router({
 	        component: require('@/pages/personal/security/Authority'),
         },
         {
-	        path: '/personal/security/changeEmail',//修改邮箱
-	        component: require('@/pages/personal/security/ChangeEmail'),
-        },
-        {
-	        path: '/personal/security/changePassword',//修改密码
-	        component: require('@/pages/personal/security/ChangePassword'),
-        },
-        {
-	        path: '/personal/security/changephone',//修改手机
-	        component: require('@/pages/personal/security/ChangePhone'),
-        },
-        {
 	        path: '/personal/security/security',//账户安全
 	        component: require('@/pages/personal/security/Security'),
         },

@@ -21,6 +21,19 @@ Vue.prototype.getUserInfo = function(){//获取用户信息
     	console.log(error);
     });
 }
+Vue.prototype.randomString = function(len) {
+  　　 len = len || 32;
+  　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+  　　var maxPos = $chars.length;
+  　　var pwd = '';
+  　　for (let i = 0; i < len; i++) {
+  　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+  　　}
+  　　return pwd;
+  }
+Vue.prototype.getKey = function(){//获取上传key
+	return {key:(new Date()).valueOf() + this.randomString(8)};
+}
 Date.prototype.pattern=function(fmt) {         
     var o = {         
     "M+" : this.getMonth()+1, //月份         
