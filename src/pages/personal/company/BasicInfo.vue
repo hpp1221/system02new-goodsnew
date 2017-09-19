@@ -12,9 +12,16 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item label="所属行业">
-					<el-radio :key="t.value" :label="t.value" v-model="form.industryType" v-for="t in totalIndustryTypes">
-					{{t.name}}
-					</el-radio>
+					<el-radio-group @change="industryChanged" v-model="form.industryType">
+						<el-radio 
+							:key="t.value" 
+							:label="t.value" 
+							v-for="t in totalIndustryTypes" 
+							:disabled="type"
+							>
+						{{t.name}}
+						</el-radio>
+					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="邮编">
 					<el-input placeholder="请输入邮编" v-model="form.postcode" class="form-input">
@@ -52,7 +59,40 @@
 			  		<el-input placeholder="请输入服务热线" class="form-input" v-model="form.hotline"></el-input>
 			  	</el-form-item>
 			  	<el-form-item label="对外联系人">
-			  		
+			  		<el-button v-if="!form.externalContacts" @click="addLine">添加</el-button>
+			  		<el-table :data="form.externalContacts" v-else>
+			  			<el-table-column
+      						type="index"
+      						width="70"
+					    >
+					    </el-table-column>
+					    <el-table-column width="70">
+      						<template scope="scope">
+      							<i class="el-icon-plus" @click="addLine"></i>
+      							<i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
+      						</template>
+					    </el-table-column>
+			  			<el-table-column label="姓名">
+			  				<template scope="scope">
+			  					<el-input v-model="scope.row.name"></el-input>
+			  				</template>
+			  			</el-table-column>
+			  			<el-table-column label="手机">
+			  				<template scope="scope">
+			  					<el-input v-model="scope.row.cel"></el-input>
+			  				</template>
+			  			</el-table-column>
+			  			<el-table-column label="QQ">
+			  				<template scope="scope">
+			  					<el-input v-model="scope.row.qq"></el-input>
+			  				</template>
+			  			</el-table-column>
+			  			<el-table-column label="邮箱">
+			  				<template scope="scope">
+			  					<el-input v-model="scope.row.email"></el-input>
+			  				</template>
+			  			</el-table-column>
+			  		</el-table>
 			  	</el-form-item>
 			  	<el-form-item label="公司logo">
 			  		<el-upload
@@ -104,29 +144,60 @@
 					cel:'',//手机
 					qq:'',
 					email:'',
+					externalContacts:[{
+						name:'',
+						cel:'',
+						qq:'',
+						email:'',
+					}],
 					tin:'',//纳税人识别号
 					invoiceTitle:'',//发票抬头
 					hotline:'',//服务热线
 					detailAddress:'',//详细地址
 					tel:'',//电话
 					fax:'',//传真
-					detail:'',//公司地址
+					address:'',//公司地址
 					introduction:'',//公司介绍
+					
 				},
 				key:{},
-				totalIndustryTypes:[]
+				totalIndustryTypes:[],
+				type:false,//false是添加true是修改
 			}
 		},
 		created(){
+			this.selectCompanyById();//查询公司信息
 			this.key = this.getKey();
 			this.getIndustry();
 		},
 		methods:{
+			selectCompanyById(){
+				let self = this;
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
+				};
+				self.$http.post('/ui/company/selectCompanyById',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('selectCompanyById',response)
+					if(data.code == 10000){
+						if(data.data.companyId){
+							self.type = true;
+						}
+						self.form = self.formPass(self.form,data.data);
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 			submit(formName){
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
             			let self = this;
-						let requestData = {token: window.localStorage.getItem('token')};
+						let requestData = {
+							token: window.localStorage.getItem('token'),
+							companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
+						};
 						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/company/addCompany',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
@@ -148,8 +219,8 @@
 				this.form.logo = file.url;
 				this.key = this.getKey();
 			},
-			beforeLogoUpload(){
-				
+			beforeLogoUpload(file){
+				return this.checkImg(file);
 			},
 			getIndustry(){
 				let self = this;
@@ -163,7 +234,40 @@
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-			}
+			},
+			industryChanged(){
+				if(this.type === false && this.form.industryType){
+					this.$confirm('公司所属行业一旦选定将无法更改！', '提示', {
+			          	confirmButtonText: '确定',
+			          	showCancelButton:false,
+			          	closeOnClickModal:false,
+			          	type: 'warning'
+			        }).then(() => {
+			        })
+				}
+			},
+			addLine(){
+				let obj = {
+					name:'',
+					cel:'',
+					qq:'',
+					email:'',
+				}
+				if(this.form.externalContacts === null){
+					let arr = [];
+					arr.push(obj);
+					this.form.externalContacts = arr;
+				}else{
+					this.form.externalContacts.push(obj);
+				}
+			},
+			deleteLine(index){
+				if(this.form.externalContacts.length === 1){
+					this.form.externalContacts = null;
+				}else{
+					this.form.externalContacts.splice(index,1);
+				}
+			},
 		}
 	}
 </script>

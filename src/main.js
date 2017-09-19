@@ -6,6 +6,7 @@ import router from './router'
 import ElementUI from 'element-ui'
 import VueEditor from 'vue-ueditor'
 import 'element-ui/lib/theme-default/index.css?12'
+import 'element-ui/lib/theme-default/table.css?12'
 import './assets/css/total.css'
 import Vuex from 'vuex'
 import {Loading,Message} from 'element-ui';

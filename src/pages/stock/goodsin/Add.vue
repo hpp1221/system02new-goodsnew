@@ -149,7 +149,7 @@
 						for(let i = 0;i < self.form.data.length;i++){
 							self.$delete(self.form.data[i],'combination')
 						}
-						requestData = Object.assign(requestData,self.shallowCopy(self.form))
+						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						
 						self.$http.post('/ui/addRecord',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
@@ -225,7 +225,7 @@
 				})
 			},
 			deleteLine(index){
-				this.form.data.length === 1?this.$message('请至少入库一个商品') : this.form.data.splice(index,1)
+				this.form.data.length === 1?this.$message('请至少入库一个商品') : this.form.data.splice(index,1);
 			},
 		}
 	}
