@@ -26,7 +26,7 @@
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="select">查询</el-button>
-					<el-button>新增</el-button>
+					<el-button @click="jumpToAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
 			<el-table :data="tableData">
@@ -73,22 +73,27 @@
 					type:-1,
 					addressId:'',
 					status:-1,//-1代表出库
-					dateRange:''
+					dateRange:'',
+					startDate:'',
+					endDate:''
 				},
 				totalStores:[]
 			}
 		},
 		created(){
-			this.select()
-			this.getAddressList()
+			let self = this;
+			self.select();
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			select(){//查询
 				let self = this
 				let requestData = {token: window.localStorage.getItem('token')}
 				if(self.form.dateRange instanceof Array){
-					requestData.startDate = self.form.dateRange[0].getTime()
-					requestData.endDate = self.form.dateRange[1].getTime()
+					self.form.startDate = self.form.dateRange[0];
+					self.form.endDate = self.form.dateRange[1];
 				}
 				requestData = Object.assign(requestData,self.shallowCopy(self.form))
 				self.$http.post('/ui/recordList',self.qs.stringify(requestData)).then(function (response) {
@@ -101,21 +106,11 @@
 			    	console.log(error);
 			    });
 			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			},
 			seeDetail(id){
-				this.$router.push({path:'/stock/goodsout/detail',query:{id:id}})
+				this.$router.push({path:'/stock/goodsout/detail',query:{id:id}});
+			},
+			jumpToAdd(){
+				this.$router.push('/stock/goodsout/add');
 			}
 		}
 	}

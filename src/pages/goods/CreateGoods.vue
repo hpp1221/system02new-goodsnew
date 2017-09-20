@@ -165,6 +165,7 @@
 					  	<el-form-item>
 					  		<el-upload
 								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
+								:http-request="uploadImg"
 								:data="key"
 								list-type="picture-card"
 								:file-list="form.goodsExtend.imgs"
@@ -338,6 +339,7 @@
 					  	<el-form-item>
 					  		<el-upload
 								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
+								:http-request="uploadImg"
 								:data="key"
 								list-type="picture-card"
 								:file-list="form.goodsExtend.imgs"
@@ -471,11 +473,38 @@
 		},
 		created(){
 			this.key = this.getKey();
-			this.getBrandList();//获取品牌列表
-			this.getTagList();//获取标签列表
+			let self = this;
+			self.getBrandList(function(data){
+				self.totalBrandList = data;
+			});//获取品牌列表
+			self.getTagList(function(data){
+				self.goodsTags = data;
+			});//获取标签列表
 			this.getCatList();//获取分类列表
 		},
 		methods:{
+			getImgAccess(file){
+				let self = this;
+				let policy = {
+					"expiration":"2018-01-01T12:00:00.000Z",
+					"conditions":[
+						{"bucket":"sassfiles"}
+					]
+				};
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					policy:JSON.stringify(policy)
+				};
+				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('imgSignature',response)
+					if(data.code == 10000){
+						self.upload(data.data,file);
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			},
 			exportGoods(){//引入商品
 				let self = this;
 				self.exportGoodsVisible = true;
@@ -593,32 +622,6 @@
 			    	console.log(error);
 			    });
             },
-            getBrandList(){//得到品牌列表
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/brandList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('brandList',response)
-					if(data.code == 10000){
-						self.totalBrandList = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
-            getTagList(){
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/tagList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('tagList',response)
-					if(data.code == 10000){
-						self.goodsTags = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
 			submit(formName){
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
@@ -717,6 +720,71 @@
 				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key;
 				this.getKey();
 			},
+			uploadImg(file){
+				let self = this;
+				let imgAccess = self.getImgAccess(file);
+			},
+			upload(imgAccess,file){
+				let self = this;
+				console.log('文件',file)
+				console.log(imgAccess)
+				let formData = new FormData();
+				formData.append('key');
+//				formData.append('OSSAccessKeyId',imgAccess.OSSAccessKeyId);
+//				formData.append('Signature',imgAccess.Signature);
+//				formData.append('policy',imgAccess.policy);
+				formData.append('file',file.file);
+				let config = {
+              		headers: {
+                		'Content-Type': 'multipart/form-data'
+              		}
+            	}
+				let requestUrl = 'http://upload.qiniu.com';
+//				let requestData = {params:{
+//					Expires:imgAccess.Expires,
+//					OSSAccessKeyId:imgAccess.OSSAccessKeyId,
+//					Signature:imgAccess.Signature
+//				}};
+				self.$http.put(requestUrl,formData,config).then(function (response) {
+				    let data = response.data;
+				    console.log('response',response)
+					if(data.code == 10000){
+						self.getKey();
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+			}
+//			upload(imgAccess,file){
+//				let self = this;
+//				console.log('文件',file)
+//				console.log(imgAccess)
+//				let formData = new FormData();
+//				formData.append('OSSAccessKeyId',imgAccess.OSSAccessKeyId);
+//				formData.append('Signature',imgAccess.Signature);
+//				formData.append('policy',imgAccess.policy);
+//				formData.append('file',file.file);
+//				let config = {
+//            		headers: {
+//              		'Content-Type': 'multipart/form-data'
+//            		}
+//          	}
+//				let requestUrl = 'http://sassfiles.oss-cn-shanghai.aliyuncs.com/' + self.key.key + '.png';
+////				let requestData = {params:{
+////					Expires:imgAccess.Expires,
+////					OSSAccessKeyId:imgAccess.OSSAccessKeyId,
+////					Signature:imgAccess.Signature
+////				}};
+//				self.$http.put(requestUrl,formData,config).then(function (response) {
+//				    let data = response.data;
+//				    console.log('response',response)
+//					if(data.code == 10000){
+//						self.getKey();
+//					}
+//			    }).catch(function (error) {
+//			    	console.log(error);
+//			    });
+//			}
 		}
 	}
 </script>

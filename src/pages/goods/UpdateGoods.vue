@@ -144,16 +144,13 @@
 					  	
 					  	<h4 class="item-title">商品图片</h4>
 					  	<el-form-item>
-					  		<!--<el-upload
-								action="https://jsonplaceholder.typicode.com/posts/"
+					  		<el-upload
+								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
+								:data="key"
 								list-type="picture-card"
-								:on-preview="handlePictureCardPreview"
-								:on-remove="handleRemove">
-								<i class="el-icon-plus"></i>
+								:file-list="form.goodsExtend.imgs"
+								disabled>
 							</el-upload>
-							<el-dialog v-model="dialogVisible" size="tiny">
-							  	<img width="100%" :src="dialogImageUrl" alt="">
-							</el-dialog>-->
 					  	</el-form-item>
 					  	<h4 class="item-title">商品描述</h4>
 						<el-form-item>
@@ -166,14 +163,13 @@
 						</el-form-item>
 						<h4 class="item-title">添加附件</h4>
 						<el-form-item>
-							<!--<el-upload
+							<el-upload
 								class="upload-demo"
-								action="https://jsonplaceholder.typicode.com/posts/"
-								:on-change="handleChange"
-								:file-list="form.goodsExtend.annex">
-							  <el-button size="small" type="primary">点击上传</el-button>
-							  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-							</el-upload>-->
+								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
+								:data="key"
+								:file-list="form.goodsExtend.annex"
+								disabled>
+							</el-upload>
 						</el-form-item>
 					  	<el-form-item>
 					  		<el-button @click="updateSku('form')">创建</el-button>
@@ -467,8 +463,13 @@
 		},
 		created(){
 			this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');
-			this.getBrandList();
-			this.getTagList();
+			let self = this;
+			self.getBrandList(function(data){
+				self.totalBrandList = data.data;
+			});//获取品牌列表
+			self.getTagList(function(data){
+				self.goodsTags = data.data;
+			});//获取标签列表
 		},
 		methods:{
 			select(skuId){
@@ -476,15 +477,16 @@
 				let requestData = {token: window.localStorage.getItem('token'),skuId:skuId};
 				self.$http.post('/ui/goodsDetail',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log('form',response)
+				    
 					if(data.code == 10000){
-						self.form = data.data;
+						self.form = self.formPass(self.form,data.data);
 						self.form.spec = JSON.parse(self.form.spec);
 						self.form.brand = JSON.parse(self.form.brand);
 						self.form.cat = JSON.parse(self.form.cat);
 						self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
 						self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
-						self.form.goodsSkuList[0].sku = JSON.parse(self.form.goodsSkuList[0].sku)
+						self.form.goodsSkuList[0].sku = JSON.parse(self.form.goodsSkuList[0].sku);
+						console.log('form',self.form)
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
@@ -498,32 +500,6 @@
             },
             cancel(){
             	this.$router.push('/goods/goodslist');
-            },
-            getBrandList(){//得到品牌列表
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/brandList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('brandList',response)
-					if(data.code == 10000){
-						self.totalBrandList = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
-            getTagList(){
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/tagList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('tagList',response)
-					if(data.code == 10000){
-						self.goodsTags = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
             },
 			updateSku(formName){
 				this.$refs[formName].validate((valid) => {

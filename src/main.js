@@ -11,6 +11,7 @@ import './assets/css/total.css'
 import Vuex from 'vuex'
 import {Loading,Message} from 'element-ui';
 import './assets/js/commonFunctions'
+import './assets/js/getDatas'
 import store from './vuex/store';
 Vue.config.productionTip = false
 

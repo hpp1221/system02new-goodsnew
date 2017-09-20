@@ -155,13 +155,13 @@
 			</el-table>
 			<el-dialog title="批量设置标签" v-model="dialogTableVisible">
 			  	<el-table :data="multipleSelection">
-			  		<el-table-column label="商品编码">
+			  		<el-table-column label="商品编码" prop="barCode">
 					
 					</el-table-column>
-					<el-table-column label="商品名称" prop="goodsName">
+					<el-table-column label="商品名称" prop="name">
 						
 					</el-table-column>
-					<el-table-column label="规格" prop="goodsSpec">
+					<el-table-column label="规格" prop="sku">
 						
 					</el-table-column>
 					<el-table-column label="商品上架">
@@ -170,24 +170,8 @@
 						</template>
 					</el-table-column>
 			  	</el-table>
-			</el-dialog>
-			<el-dialog title="批量设置标签" v-model="dialogTableVisible">
-			  	<el-table :data="multipleSelection">
-			  		<el-table-column label="商品编码">
-					
-					</el-table-column>
-					<el-table-column label="商品名称" prop="goodsName">
-						
-					</el-table-column>
-					<el-table-column label="规格" prop="goodsSpec">
-						
-					</el-table-column>
-					<el-table-column label="商品上架">
-						<template scope="scope">
-							<el-checkbox>新品上架</el-checkbox>
-						</template>
-					</el-table-column>
-			  	</el-table>
+			  	<el-button @click="sureSetTags">确定</el-button>
+			  	<el-button @click="dialogTableVisible = false">取消</el-button>
 			</el-dialog>
 		</div>
 	</div>
@@ -251,11 +235,20 @@
 			}
 		},
 		created(){
-			this.select();
-			this.getBrandList();//获取品牌列表
-			this.getCatList();//获取分类列表
-			this.getTagList();//获取标签列表
-			this.getAddressList();
+			let self = this;
+			self.select();
+			self.getBrandList(function(data){
+				self.totalBrandList = data;
+			});//获取品牌列表
+			self.getTagList(function(data){
+				self.goodsTags = data;
+				self.form.tags = data;
+			});//获取标签列表
+			self.getAddressList(function(data){
+				self.totalAddressList = data.data;
+				self.form.addressList = data.data;
+			});
+			self.getCatList();//获取分类列表
 		},
 		methods:{
 			select(){//查询
@@ -279,47 +272,6 @@
 			    	console.log(error);
 			    });
 			},
-			getBrandList(){//得到品牌列表
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/brandList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('brandList',response)
-					if(data.code == 10000){
-						self.totalBrandList = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
-            getAddressList(){
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('brandList',response)
-					if(data.code == 10000){
-						self.totalAddressList = data.data;
-						self.form.addressList = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
-            getTagList(){
-            	let self = this;
-				let requestData = {token: window.localStorage.getItem('token')};
-				self.$http.post('/ui/tagList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('tagList',response)
-					if(data.code == 10000){
-						self.goodsTags = data.data;
-						self.form.tags = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-            },
 			getCatList(){//获取分类最外层列表
             	let self = this;
 				let requestData = {params:{token: window.localStorage.getItem('token')}};
@@ -360,6 +312,9 @@
 			    	console.log(error);
 			    });
             },
+            sureSetTags(){//确定设置标签
+            	
+            },
 			handleSelectionChange(val){
 				this.multipleSelection = val;
 				console.log(val);
@@ -380,32 +335,55 @@
 				this.$router.push('/goods/multipleInputImgs');
 			},
 			putOnSale(){//上架
-			    this.$confirm('请确认是否批量上架？', '提示', {
+				let self = this;
+			    self.$confirm('请确认是否批量上架？', '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
 		          	type: 'warning'
 		        }).then(() => {
-		          	this.$message({
-		            	type: 'success',
-		            	message: '您已成功上架!'
-		          	});
-		        }).catch(() => {
-		          	this.$message({
+		        	console.log('123')
+					let requestData = {
+						token: window.localStorage.getItem('token'),
+						skuList:JSON.stringify(self.multipleSelection),
+						type:1
+					};
+					self.$http.post('/ui/upOrDownGoods',self.qs.stringify(requestData)).then(function (response) {
+					    let data = response.data;
+					    console.log(data);
+					    if(data.code == 10000){
+					    	self.$router.go(0);
+						}
+				    }).catch(function (error) {
+				    	console.log(error);
+				    });
+		       }).catch(() => {
+		          	self.$message({
 		            	type: 'info',
 		            	message: '您已取消上架'
 		          	});          
 		        });
 			},
 			downSale(){//下架
-				this.$confirm('请确认是否批量下架？', '提示', {
+				let self = this;
+				self.$confirm('请确认是否批量下架？', '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
 		          	type: 'warning'
 		        }).then(() => {
-		          	this.$message({
-		            	type: 'success',
-		            	message: '您已成功下架!'
-		          	});
+		          	let requestData = {
+						token: window.localStorage.getItem('token'),
+						skuList:JSON.stringify(self.multipleSelection),
+						type:0
+					};
+					self.$http.post('/ui/upOrDownGoods',self.qs.stringify(requestData)).then(function (response) {
+					    let data = response.data;
+					    console.log(data);
+					    if(data.code == 10000){
+					    	self.$router.go(0);
+						}
+				    }).catch(function (error) {
+				    	console.log(error);
+				    });
 		        }).catch(() => {
 		          	this.$message({
 		            	type: 'info',

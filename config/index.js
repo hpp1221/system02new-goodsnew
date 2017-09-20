@@ -29,14 +29,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/ui': {
-<<<<<<< HEAD
             //target: 'http://192.168.41.78:8081',
             target: 'http://192.168.41.216:8081',
-=======
-            target: 'http://192.168.41.93:8081',
+            //target: 'http://192.168.41.93:8081',
             //target: 'http://192.168.41.216:8081',
             //target: 'http://192.168.41.216:8081',
->>>>>>> 5532f8ed15f23453318e94f8b1cabdaafdc11a95
             //target: 'http://192.168.41.97:8081',
             changeOrigin: true,
             pathRewrite: {
