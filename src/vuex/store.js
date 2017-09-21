@@ -8,6 +8,7 @@ Vue.use(Vuex);
 // 创建一个对象来保存应用启动时的初始状态
 const state = {
   'userinfo': {},
+  'pageNum':1,
   'menuShow': false,
   'loadingShow': false,
   'news': 5
@@ -17,6 +18,9 @@ const mutations = {
   // TODO: 放置我们的状态变更函数
   UPDATE_USERINFO(state, userinfo) {
     state.userinfo = userinfo;
+  },
+  UPDATE_PAGENUM(state, pagenum){
+  	
   },
   UPDATE_MENUSHOW(state) {
     state.menuShow = !state.menuShow;

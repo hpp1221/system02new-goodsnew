@@ -168,10 +168,15 @@ export default new Router({
 	        path: '/personal/client/updateclient',//修改客户详情
 	        component: require('@/pages/personal/client/UpdateClient'),
         },
-         {
+        {
 	        path: '/personal/client/createclient',//新增客户
 	        component: require('@/pages/personal/client/CreateClient'),
-        }
+        },
+        
+        {
+	        path: '/personal/role/list',//角色列表
+	        component: require('@/pages/personal/role/list'),
+        },
       ]
     },
   ]
