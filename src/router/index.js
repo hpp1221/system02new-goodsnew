@@ -177,6 +177,14 @@ export default new Router({
 	        path: '/personal/role/list',//角色列表
 	        component: require('@/pages/personal/role/list'),
         },
+        {
+	        path: '/personal/role/add',//新建角色
+	        component: require('@/pages/personal/role/add'),
+        },
+        {
+	        path: '/personal/role/update',//修改角色
+	        component: require('@/pages/personal/role/update'),
+        },
       ]
     },
   ]
