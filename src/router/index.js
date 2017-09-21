@@ -141,24 +141,20 @@ export default new Router({
         },
         
         {
-	        path: '/supplier/leadin',//供应商导入
-	        component: require('@/pages/supplier/Leadin'),
+	        path: '/supplier/suppliers/leadin',//供应商导入
+	        component: require('@/pages/supplier/suppliers/Leadin'),
         },
         {
-	        path: '/supplier/exportout',//供应商导出
-	        component: require('@/pages/supplier/ExportOut'),
+	        path: '/supplier/suppliers/createsupplier',//供应商新增
+	        component: require('@/pages/supplier/suppliers/CreateSupplier'),
         },
         {
-	        path: '/supplier/createsupplier',//供应商新增
-	        component: require('@/pages/supplier/CreateSupplier'),
-        },
-        {
-	        path: '/supplier/supplierlist',//供应商管理
-	        component: require('@/pages/supplier/SupplierList'),
+	        path: '/supplier/suppliers/supplierlist',//供应商管理
+	        component: require('@/pages/supplier/suppliers/SupplierList'),
         },
          {
-	        path: '/supplier/updatesupplier',//修改供应商详情
-	        component: require('@/pages/supplier/UpdateSupplier'),
+	        path: '/supplier/suppliers/updatesupplier',//修改供应商详情
+	        component: require('@/pages/supplier/suppliers/UpdateSupplier'),
         },
          {
 	        path: '/personal/client/clientmanagement',//客户管理
