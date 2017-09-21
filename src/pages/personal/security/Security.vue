@@ -24,7 +24,7 @@
 					<p class="label-value" v-if="userInfo.email">你验证的邮箱：<span>{{userInfo.email}}</span></p>
 					<p class="label-value" v-else>未验证邮箱</p>
 					
-					<el-button type="text" class="update-button" v-if="userInfo.email">修改</el-button>
+					<el-button type="text" class="update-button" v-if="userInfo.email" @click="emailModalVisible = true">修改</el-button>
 					<el-button type="text" class="update-button" v-else>去验证</el-button>
 				</div>
 				<div class="user-security-repeat-div">
@@ -46,14 +46,14 @@
 				</div>
 			</div>
 			<el-dialog title="密码修改" v-model="pwdModalVisible" size="tiny">
-			  	<el-form :model="pwdForm" :rules="pwdRules" ref="pwdForm" label-width="80px">
+			  	<el-form :model="pwdForm" :rules="pwdRules" ref="pwdForm" label-width="90px">
 			    	<el-form-item label="输入旧密码" prop="oldPwd">
 			      		<el-input type="password" v-model="pwdForm.oldPwd" auto-complete="off"></el-input>
 			    	</el-form-item>
 			    	<el-form-item label="输入新密码" prop="pwd">
 					    <el-input type="password" v-model="pwdForm.pwd" auto-complete="off" ></el-input>
 					</el-form-item>
-				    <el-form-item label="确认新密码" prop="pwdAgain" :label-width="formLabelWidth">
+				    <el-form-item label="确认新密码" prop="pwdAgain">
 				      	<el-input type="password" v-model="pwdForm.pwdAgain" auto-complete="off" ></el-input>
 				    </el-form-item>
 			  	</el-form>
@@ -63,9 +63,9 @@
 			  	</div>
 			</el-dialog>
 			<el-dialog title="新手机绑定" v-model="phoneModalVisible" size="tiny">
-			  	<el-form :model="phoneForm" :rules="phoneRules" ref="phoneForm" label-width="80px">
+			  	<el-form :model="phoneForm" :rules="phoneRules" ref="phoneForm" label-width="100px">
 			    	<el-form-item prop="phone" label="手机">
-	    				<el-input v-model="phoneForm.phone" placeholder="输入手机号" style="width: 300px;" @blur="checkPhone"></el-input>
+	    				<el-input v-model="phoneForm.phone" placeholder="输入手机号" style="width: 300px;"></el-input>
 	    				<el-button type="text" class="verify-code" @click="getVerifyCode" v-if="verifyText =='获取验证码'">获取验证码</el-button>
 	    				<el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
 	  				</el-form-item>
@@ -78,22 +78,35 @@
 			    	<el-button type="primary" @click="sureChangePhone">确 定</el-button>
 			  	</div>
 			</el-dialog>
-			<el-dialog title="修改邮箱" v-model="emailModalVisible">
-			  	<el-form :model="emailForm" :rules="emailRules" ref="emailForm" label-width="100px">
-			    	<el-form-item label="邮箱" prop="pass">
-			      		<el-input v-model="emailForm.email" auto-complete="off"></el-input>
-			    	</el-form-item>
-			    	<el-form-item label="输入新密码" prop="checkPass">
-					    <el-input v-model="pwdForm.newPwd" auto-complete="off"></el-input>
-					</el-form-item>
-				    <el-form-item label="确认新密码" :label-width="formLabelWidth">
-				      	<el-input v-model="pwdForm.newPwdAgain" auto-complete="off"></el-input>
-				    </el-form-item>
+			<el-dialog title="修改邮箱" v-model="emailModalVisible" size="tiny">
+			  	<el-form :model="emailForm" :rules="emailRules" ref="emailForm" label-width="100px" v-if="!changeEmailVisible">
+			    	<el-form-item prop="phone" label="手机">
+	    				<el-input v-model="userInfo.cel" style="width: 300px;" disabled></el-input>
+	    				<el-button type="text" class="verify-code" @click="getEmailVerifyCode" v-if="verifyText =='获取验证码'">获取验证码</el-button>
+	    				<el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
+	  				</el-form-item>
+	  				<el-form-item prop="code" label="验证码">
+	    				<el-input v-model="emailForm.code" placeholder="输入验证码"></el-input>
+	  				</el-form-item>
+	  				<el-form-item>
+	  					<el-button @click="emailModalVisible = false">取 消</el-button>
+				    	<el-button type="primary" @click="confirmEmailFirst">确 定</el-button>
+	  				</el-form-item>
 			  	</el-form>
-			  	<div slot="footer">
-			    	<el-button @click="dialogFormVisible = false">取 消</el-button>
-			    	<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-			  	</div>
+			  	<el-form :model="changeEmailForm" ref="changeEmailForm" v-else label-width="100px">
+			    	<el-form-item prop="email" label="邮箱">
+	    				<el-input v-model="changeEmailForm.email" style="width: 300px;"></el-input>
+	    				<el-button type="text" class="verify-code" @click="sendEmail" v-if="verifyText =='获取验证码'">发送邮件</el-button>
+	    				<el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
+	  				</el-form-item>
+	  				<el-form-item prop="code" label="验证码">
+	    				<el-input v-model="changeEmailForm.code" placeholder="输入验证码"></el-input>
+	  				</el-form-item>
+	  				<el-form-item>
+	  					<el-button @click="emailModalVisible = false;changeEmailVisible = false">取 消</el-button>
+			    		<el-button type="primary" @click="sureChangeEmail">确 定</el-button>
+	  				</el-form-item>
+			  	</el-form>
 			</el-dialog>
 		</div>
 	</div>
@@ -132,6 +145,8 @@
 				rate:3.5,
 				pwdModalVisible:false,//修改密码模态框
 				phoneModalVisible:false,//修改手机模态框
+				changeEmailVisible:false,
+				emailModalVisible:false,
 				pwdForm:{
 					oldPwd:'',//老密码
 					pwd:'',//新密码
@@ -142,8 +157,13 @@
 					code:''
 				},
 				emailForm:{
-					
+					code:''
 				},
+				changeEmailForm:{
+					email:'',
+					code:''
+				},
+				
 				pwdRules:{
 					oldPwd: [
 						{
@@ -170,11 +190,8 @@
 					
 				},
 				verifyText:'获取验证码',
-				phoneAvailable:false
+				messageCount:''
 			}
-		},
-		created(){
-			console.log(JSON.parse(window.localStorage.getItem('userinfo')));
 		},
 		computed:{
 			userInfo:function(){
@@ -198,6 +215,7 @@
 								self.pwdModalVisible = false;
 								self.$message.success('修改成功！');
 								self.getUserInfo();
+								location.reload();
 							}else{
 								self.$message.error(data.message);
 							}
@@ -224,6 +242,7 @@
 						self.phoneModalVisible = false;
 						self.$message.success('修改成功！');
 						self.getUserInfo();
+						location.reload();
 					}else{
 						self.$message.error(data.message);
 					}
@@ -233,46 +252,142 @@
 			},
 			getVerifyCode(){//获取短信验证码
       			let self = this;
-      			if(!self.phoneAvailable){
-      				self.$message.error('该手机号已被使用');
-      				return;
-      			}
+    			let requestData = {
+    				token: window.localStorage.getItem('token'),
+    				phone:self.phoneForm.phone
+    			};
+				self.$http.post('/ui/user/checkUserCelCount.do',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+					if(data.code == 10000){
+						self.verifyText = 60;
+		      			var messageCount = setInterval(function(){
+		      				self.verifyText--;
+		      				if(self.verifyText === 0){
+		      					self.verifyText = '获取验证码';
+		      					clearInterval(messageCount);
+		      				}
+		      			},1000);
+		      			let requestData = {params:{phone:self.phoneForm.phone,type:2}};//1代表修改
+		      			self.$http.get('/ui/user/getMessage.do',requestData).then(function (response) {
+						    let data = response.data;
+						    console.log(response);
+							if(data.code == 10000){
+								self.$message.success('已成功发送');
+							}else{
+								self.$message.error(data.message);
+							}
+					    }).catch(function (error) {
+					    	console.log(error);
+					    });
+					}else{
+						self.$message.error(data.message);
+      					return;
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+      			
+      			
+      		},
+      		getEmailVerifyCode(){//验证身份
+      			let self = this;
       			self.verifyText = 60;
-      			var messageCount = setInterval(function(){
+      			self.messageCount = setInterval(function(){
       				self.verifyText--;
       				if(self.verifyText === 0){
       					self.verifyText = '获取验证码';
-      					clearInterval(messageCount);
+      					clearInterval(self.messageCount);
       				}
       			},1000);
-      			let requestData = {params:{phone:self.phoneForm.phone,type:2}};//1代表修改
+      			let requestData = {params:{
+      				token: window.localStorage.getItem('token'),
+	      			phone:self.userInfo.cel,
+	      			type:3}
+      			};//3代表修改邮箱
       			self.$http.get('/ui/user/getMessage.do',requestData).then(function (response) {
 				    let data = response.data;
 				    console.log(response);
 					if(data.code == 10000){
 						self.$message.success('已成功发送');
 					}else{
-						self.$message.error('发送失败');
+						self.$message.error(data.message);
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-      			
       		},
-      		checkPhone(){
+      		confirmEmailFirst(){//修改邮箱时验证手机
       			let self = this;
-    			let requestData = {phone:self.phoneForm.phone};
-				self.$http.post('/ui/user/checkUserCelCount.do',self.qs.stringify(requestData)).then(function (response) {
+      			
+      			let requestData = {token: window.localStorage.getItem('token'),phone:self.userInfo.cel,code:self.emailForm.code};//3代表修改邮箱
+      			self.$http.post('/ui/user/checkMsg.do',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
+				    console.log(response);
 					if(data.code == 10000){
-						self.phoneAvailable = true;
+						self.$message.success('验证身份通过');
+						self.changeEmailVisible = true;
+						self.verifyText = '获取验证码';
+		      			clearInterval(self.messageCount);
 					}else{
-						self.phoneAvailable = false;
+						self.$message.error(data.message);
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
       		},
+      		sendEmail(){
+      			let self = this;
+    			let requestData = {token: window.localStorage.getItem('token'),email:self.changeEmailForm.email};
+				self.$http.post('/ui/user/selectUserCountByEmail.do',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log(response)
+					if(data.code == 10000){
+						self.verifyText = 60;
+		      			self.messageCount = setInterval(function(){
+		      				self.verifyText--;
+		      				if(self.verifyText === 0){
+		      					self.verifyText = '获取验证码';
+		      					clearInterval(self.messageCount);
+		      				}
+		      			},1000);
+		      			let requestData = {params:{email:self.changeEmailForm.email,type:1}};//1修改邮箱
+		      			self.$http.get('/ui/user/getEmailMessage.do',requestData).then(function (response) {
+						    let data = response.data;
+						    console.log(response);
+							if(data.code == 10000){
+								self.$message.success('已成功发送');
+							}else{
+								self.$message.error(data.message);
+							}
+					    }).catch(function (error) {
+					    	console.log(error);
+					    });
+					}else{
+						self.$message.error(data.message);
+      					return;
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+	      	},
+	      	sureChangeEmail(){
+	      		let self = this;
+	      		let requestData = {token: window.localStorage.getItem('token'),email:self.changeEmailForm.email,code:self.changeEmailForm.code};//1修改邮箱
+      			self.$http.post('/ui/user/updateUserEmail.do',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log(response);
+					if(data.code == 10000){
+						self.changeEmailVisible = false;
+						self.$message.success('修改成功！');
+						self.getUserInfo();
+						location.reload();
+					}else{
+						self.$message.error(data.message);
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
+	      	},
 		}
 	}
 </script>

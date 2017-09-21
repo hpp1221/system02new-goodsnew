@@ -162,6 +162,7 @@
 						id:6
 					}
 				],
+				excelAnalysisStatus:false,
 				excelResponse:[{
 					number:'',
 					name:'',
@@ -207,7 +208,7 @@
 					this.$message.error('请选择盘点仓库')
 	    			return
 				}
-				this.excelResponse instanceof Array ? this.active++ : this.$message.error('请添加盘点数据');
+				this.excelAnalysisStatus? this.active++ : this.$message.error('请添加盘点数据');
 			},
 			getExcel(){//下载excelmodel
 				if(this.form.addressId && this.form.catId){
@@ -220,18 +221,7 @@
 					if(response.data.length > 0){
 						for(let i = 0;i < response.data.length;i++){
 							if(response.data[i].relNum != response.data[i].inStoreHouse){
-								this.excelResponse[i].number = response.data[i].number
-								this.excelResponse[i].name = response.data[i].name
-								this.excelResponse[i].sku = response.data[i].sku
-								this.excelResponse[i].code = response.data[i].code
-								this.excelResponse[i].status = response.data[i].status
-								this.excelResponse[i].catName = response.data[i].catName
-								this.excelResponse[i].unit = response.data[i].unit
-								this.excelResponse[i].upLimit = response.data[i].upLimit
-								this.excelResponse[i].downLimit = response.data[i].downLimit
-								this.excelResponse[i].inStoreHouse = response.data[i].inStoreHouse
-								this.excelResponse[i].relNum = response.data[i].relNum
-								this.excelResponse[i].remark = response.data[i].remark
+								this.excelResponse = response.data;
 							}
 						}
 					}
@@ -242,7 +232,8 @@
 				
 			},
 			removeExcel(){//清空文件
-				this.form.excelFile = []
+				this.form.excelFile = [];
+				this.excelAnalysisStatus = false;
 			},
 			goBack(){//返回上一步
 				this.active--;

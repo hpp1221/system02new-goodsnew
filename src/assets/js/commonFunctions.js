@@ -9,17 +9,49 @@ Vue.prototype.shallowCopy = function(obj){//将对象中的数据迭代出来
 	}
 	return newObj;
 }
+Vue.prototype.formPass = function(myForm,responseForm){//将服务器的form一一传入自己的form
+	for(let o in myForm){
+		myForm[o] = responseForm[o];
+	}
+	return myForm;
+}
 Vue.prototype.getUserInfo = function(){//获取用户信息
 	let self = this;
 	let requestData = {params:{token: window.localStorage.getItem('token')}};
 	self.$http.get('/ui/user/getMyInfo',requestData).then(function (response) {
 	    let data = response.data;
+	    console.log('getMyInfo',response)
 		if(data.code == 10000){
 			window.localStorage.setItem('userinfo',JSON.stringify(data.data));
 		}
     }).catch(function (error) {
     	console.log(error);
     });
+}
+Vue.prototype.randomString = function(len) {//随机数
+  　　 len = len || 32;
+  　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+  　　var maxPos = $chars.length;
+  　　var pwd = '';
+  　　for (let i = 0; i < len; i++) {
+  　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+  　　}
+  　　return pwd;
+}
+Vue.prototype.getKey = function(){//获取上传key
+	return {key:(new Date()).valueOf() + this.randomString(8)};
+}
+Vue.prototype.checkImg = function(file){
+	const isIMG = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isLt2M = file.size / 1024 / 1024 < 2;
+
+    if (!isIMG) {
+      	this.$message.error('图片格式错误!');
+    }
+    if (!isLt2M) {
+      	this.$message.error('上传头像图片大小不能超过 2MB!');
+    }
+    return isIMG && isLt2M;
 }
 Date.prototype.pattern=function(fmt) {         
     var o = {         

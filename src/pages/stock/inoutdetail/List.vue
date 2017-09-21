@@ -196,8 +196,11 @@
 			}
 		},
 		created(){
-			this.select()
-			this.getAddressList()
+			let self = this;
+			self.select();
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			select(){//查询
@@ -222,19 +225,6 @@
 				    console.log('出入库明细',response)
 					if(data.code == 10000){
 						self.tableData = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
 					}
 			    }).catch(function (error) {
 			    	console.log(error);

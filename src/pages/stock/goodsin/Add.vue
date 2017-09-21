@@ -138,7 +138,15 @@
 			}
 		},
 		created(){
-			this.getAddressList()
+			let self = this;
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
+		},
+		computed:{
+			'userinfo':function(){
+				return JSON.parse(window.localStorage.getItem('userinfo'));
+			}
 		},
 		methods:{
 			save(formName){//保存
@@ -149,7 +157,7 @@
 						for(let i = 0;i < self.form.data.length;i++){
 							self.$delete(self.form.data[i],'combination')
 						}
-						requestData = Object.assign(requestData,self.shallowCopy(self.form))
+						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						
 						self.$http.post('/ui/addRecord',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
@@ -170,12 +178,13 @@
 				this.$router.push('/stock/goodsin/list')
 			},
 			querySearchAsync(queryString, cb){
-				let self = this
+				let self = this;
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					keyword: queryString,
+					addressName:self.form.selfAddress,
 					companyId:1
-				}
+				};
 				self.$http.post('/ui/goodsInfo',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('addAllocationRecord',response)
@@ -193,19 +202,6 @@
 			    	console.log(error);
 			    });
 				
-			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
 			},
 			handleSelect(item){
 				this.form.data[this.listIndex] = item
@@ -225,7 +221,7 @@
 				})
 			},
 			deleteLine(index){
-				this.form.data.length === 1?this.$message('请至少入库一个商品') : this.form.data.splice(index,1)
+				this.form.data.length === 1?this.$message('请至少入库一个商品') : this.form.data.splice(index,1);
 			},
 		}
 	}

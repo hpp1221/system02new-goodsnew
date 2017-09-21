@@ -5,6 +5,7 @@
 			<el-form ref="form" :model="form" inline>
 				<el-form-item>
 					<el-select placeholder="全部仓库" v-model="form.addressId">
+						<el-option label="全部" :value="-1"></el-option>
 						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
@@ -26,7 +27,7 @@
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="select">查询</el-button>
-					<el-button>新增</el-button>
+					<el-button @click="jumpToAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
 			<el-table :data="tableData">
@@ -71,26 +72,31 @@
 				],
 				form:{
 					type:-1,
-					addressId:'',
+					addressId:-1,
 					status:1,//1代表入库
-					dateRange:''
+					dateRange:'',
+					startDate:'',
+					endDate:''
 				},
 				totalStores:[]
 			}
 		},
 		created(){
-			this.select()
-			this.getAddressList()
+			let self = this;
+			self.select();
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			select(){//查询
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
+				let self = this;
+				let requestData = {token: window.localStorage.getItem('token')};
 				if(self.form.dateRange instanceof Array){
-					requestData.startDate = self.form.dateRange[0].getTime()
-					requestData.endDate = self.form.dateRange[1].getTime()
+					self.form.startDate = self.form.dateRange[0];
+					self.form.endDate = self.form.dateRange[1];
 				}
-				requestData = Object.assign(requestData,self.shallowCopy(self.form))
+				requestData = Object.assign(requestData,self.shallowCopy(self.form));
 				self.$http.post('/ui/recordList',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('入库list',response)
@@ -101,21 +107,11 @@
 			    	console.log(error);
 			    });
 			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			},
 			seeDetail(id){
 				this.$router.push({path:'/stock/goodsin/detail',query:{id:id}})
+			},
+			jumpToAdd(){//跳到增加入库页面
+				this.$router.push('/stock/goodsin/add');
 			}
 		}
 	}

@@ -31,7 +31,7 @@
 		    				<el-input v-model="registerForm.password" placeholder="输入密码" type="password"></el-input>
 		  				</el-form-item>
 		  				<el-form-item prop="phone">
-		    				<el-input v-model="registerForm.phone" placeholder="输入手机号" style="width: 300px;" @blur="checkPhone"></el-input>
+		    				<el-input v-model="registerForm.phone" placeholder="输入手机号" style="width: 300px;"></el-input>
 		    				<el-button type="text" class="verify-code" @click="getVerifyCode" v-if="verifyText =='获取验证码'">获取验证码</el-button>
 		    				<el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
 		  				</el-form-item>
@@ -160,20 +160,6 @@
 			    	console.log(error);
 			    });
       		},
-      		checkPhone(){
-      			let self = this;
-    			let requestData = {phone:self.registerForm.phone};
-				self.$http.post('/ui/user/checkUserCelCount.do',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-					if(data.code == 10000){
-						self.phoneAvailable = true;
-					}else{
-						self.phoneAvailable = false;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-      		},
       		forgetPwd(){//忘记密码跳转
       			
       		},
@@ -182,26 +168,33 @@
       		},
       		getVerifyCode(){//获取短信验证码
       			let self = this;
-      			if(!self.phoneAvailable){
-      				self.$message.error('该手机号已被使用');
-      				return;
-      			}
-      			self.verifyText = 60;
-      			var messageCount = setInterval(function(){
-      				self.verifyText--;
-      				if(self.verifyText === 0){
-      					self.verifyText = '获取验证码';
-      					clearInterval(messageCount);
-      				}
-      			},1000);
-      			let requestData = {params:{phone:self.registerForm.phone,type:1}};//1代表注册,2代表修改
-      			self.$http.get('/ui/user/getMessage.do',requestData).then(function (response) {
+    			let requestData = {phone:self.registerForm.phone};
+				self.$http.post('/ui/user/checkUserCelCount.do',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log(response);
 					if(data.code == 10000){
-						self.$message.success('已成功发送');
+						self.verifyText = 60;
+		      			var messageCount = setInterval(function(){
+		      				self.verifyText--;
+		      				if(self.verifyText === 0){
+		      					self.verifyText = '获取验证码';
+		      					clearInterval(messageCount);
+		      				}
+		      			},1000);
+		      			let requestData = {params:{phone:self.registerForm.phone,type:1}};//1代表修改
+		      			self.$http.get('/ui/user/getMessage.do',requestData).then(function (response) {
+						    let data = response.data;
+						    console.log(response);
+							if(data.code == 10000){
+								self.$message.success('已成功发送');
+							}else{
+								self.$message.error(data.message);
+							}
+					    }).catch(function (error) {
+					    	console.log(error);
+					    });
 					}else{
-						self.$message.error(data.message);
+						self.$message.error('该手机号已被使用');
+      					return;
 					}
 			    }).catch(function (error) {
 			    	console.log(error);

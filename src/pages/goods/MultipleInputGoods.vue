@@ -13,7 +13,7 @@
 				</el-form-item>
 				<el-form-item label="2、导入数据">
 					<el-upload
-  						action="/ui/goods/analysisExcel"
+  						action="/ui/analysisGoodsExcel"
   						:on-success="uploadSuccess"
   						:on-remove="removeExcel"
   						:file-list="form.excelFile"
@@ -31,43 +31,51 @@
 			<el-form v-if="active == 2">
 				<el-form-item>
 					<el-table :data="excelResponse" border>
-						<el-table-column label="商品编码" prop="number">
+						<el-table-column label="商品编码" prop="goodsNumber">
 							
 						</el-table-column>
-						<el-table-column label="商品名称" prop="name">
+						<el-table-column label="商品名称" prop="goodsName">
 							
 						</el-table-column>
-						<el-table-column label="规格" prop="sku">
-							
-						</el-table-column>
-						<el-table-column label="条形码">
-							
-						</el-table-column>
-						<el-table-column label="商品状态" prop="status">
+						<el-table-column label="商品品牌" prop="brandName">
 							
 						</el-table-column>
 						<el-table-column label="商品分类" prop="catName">
 							
 						</el-table-column>
-						<el-table-column label="单位" prop="unit">
+						<el-table-column label="多规格字段设置" prop="spec">
 							
 						</el-table-column>
-						<el-table-column label="库存上限" prop="upLimit">
+						<el-table-column label="规格内容" prop="sku">
 							
 						</el-table-column>
-						<el-table-column label="库存下限" prop="downLimit">
+						<el-table-column label="商品介绍" prop="content">
 							
 						</el-table-column>
-						<el-table-column label="库存数量" prop="inStoreHouse">
+						<el-table-column label="计量单位" prop="unit">
 							
 						</el-table-column>
-						<el-table-column label="盘点数量" prop="relNum">
+						<el-table-column label="条形码" prop="goodsBarCode">
 							
 						</el-table-column>
-						<el-table-column label="备注" prop="remark">
+						<el-table-column label="关键词" prop="keyword">
 							
 						</el-table-column>
-						
+						<el-table-column label="状态" prop="relNum">
+							<template scope="scope">
+								<span v-if="scope.row.isUp">上架</span>
+								<span v-else>下架</span>
+							</template>
+						</el-table-column>
+						<el-table-column label="参考价(元)" prop="price">
+							
+						</el-table-column>
+						<el-table-column label="市场价(元)" prop="marketPrice">
+							
+						</el-table-column>
+						<el-table-column label="供应商名称" prop="supplierName">
+							
+						</el-table-column>
 					</el-table>
 				</el-form-item>
 				<el-form-item>
@@ -78,14 +86,15 @@
 			</el-form>
 			<el-form v-if="active == 3">
 				<el-form-item>
-					<download-excel
+					<p>成功导入{{exportResult.success}},失败{{exportResult.fail}}</p>
+					<!--<download-excel
 						class="btn btn-default"
 						:data="excelResponse"
 						:fields="json_fields"
 						:meta="json_meta"
 						button_text="下载导入数据"
 						name="filename.xls">
-					</download-excel>
+					</download-excel>-->
 				</el-form-item>
 			</el-form>
 				
@@ -147,33 +156,26 @@
 						id:6
 					}
 				],
-				excelResponse:[{
-					number:'',
-					name:'',
-					sku:'',
-					code:'',
-					status:'',
-					catName:'',
-					unit:'',
-					upLimit:'',
-					downLimit:'',
-					inStoreHouse:'',
-					relNum:'',
-					remark:''
-				}],//excel解析后的数据
+				excelResponse:[],//excel解析后的数据
+				excelAnalysisStatus:false,
 				json_fields : {
 		    		"商品编码": "String",
 				    "商品名称": "String",
-				    "规格": "String",
+				    "商品品牌": "String",
+				    "一级分类": "String",
+				    "二级分类": "String",
+				    "三级分类": "String",
+				    "四级分类": "String",
+				    "多规格字段设置": "String",
+				    "规格内容": "String",
+				    "商品介绍": "String",
+				    "计量单位": "String",
 				    "条形码": "String",
-				    "商品状态": "String",
-				    "商品分类": "String",
-				    "单位": "String",
-				    "库存上限": "String",
-				    "库存下限": "String",
-				    "库存数量": "String",
-				    "实际数量": "String",
-				    "备注": "String",
+				    "关键词": "String",
+				    "状态": "String",
+				    "参考价(元)": "String",
+				    "市场价(元)": "String",
+				    "供应商名称": "String",
 				},
 				json_meta: [
 					[{
@@ -181,6 +183,10 @@
 						"value": "utf-8"
 					}]
 				],
+				exportResult:{
+					success:'',
+					fail:''
+				}
 			}
 		},
 		components:{
@@ -188,54 +194,50 @@
 		},
 		methods:{
 			next(){//下一步
-				if(!this.form.addressId){
-					this.$message.error('请选择盘点仓库')
-	    			return
-				}
-				this.excelResponse instanceof Array ? this.active++ : this.$message.error('请添加盘点数据');
+				this.excelAnalysisStatus? this.active++ : this.$message.error('请传入商品excel');
 			},
 			getExcel(){//下载excelmodel
-				if(this.form.addressId && this.form.catId){
-					location.href = '/ui/export?addressId=' + this.form.addressId + '&catId=' + this.form.catId
-				}
+				location.href = '/ui/exportGoodsDemo';
 			},
 			uploadSuccess(response, file, fileList){//成功上传的回调
-				console.log(response)
-				return
 				if(response.code == 10000){
-					this.form.excelFile = [file]
+					this.excelAnalysisStatus = true;
+					fileList = [file];
+					this.form.excelFile = [file];
 					if(response.data.length > 0){
 						for(let i = 0;i < response.data.length;i++){
-							if(response.data[i].relNum != response.data[i].inStoreHouse){
-								this.excelResponse[i].number = response.data[i].number
-								this.excelResponse[i].name = response.data[i].name
-								this.excelResponse[i].sku = response.data[i].sku
-								this.excelResponse[i].code = response.data[i].code
-								this.excelResponse[i].status = response.data[i].status
-								this.excelResponse[i].catName = response.data[i].catName
-								this.excelResponse[i].unit = response.data[i].unit
-								this.excelResponse[i].upLimit = response.data[i].upLimit
-								this.excelResponse[i].downLimit = response.data[i].downLimit
-								this.excelResponse[i].inStoreHouse = response.data[i].inStoreHouse
-								this.excelResponse[i].relNum = response.data[i].relNum
-								this.excelResponse[i].remark = response.data[i].remark
-							}
+							this.excelResponse = response.data;
 						}
 					}
 				}else{
-					this.form.excelFile = []
+					this.form.excelFile = [];
 					this.$message.error(response.message);
 				}
 				
 			},
 			removeExcel(){//清空文件
-				this.form.excelFile = []
+				this.form.excelFile = [];
+				this.excelAnalysisStatus = false;
 			},
 			goBack(){//返回上一步
 				this.active--;
 			},
 			sureExport(){//确定导入
-				this.active++
+				let self = this;
+				self.active++;
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					goodsList:JSON.stringify(self.excelResponse)
+				};
+				self.$http.post('/ui/inputGoods',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+				    console.log('inputGoods',response)
+					if(data.code == 10000){
+						self.exportResult = {success:data.success,fail:data.fail};
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
 			}
 		}
 	}

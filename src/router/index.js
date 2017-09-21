@@ -128,18 +128,6 @@ export default new Router({
 	        component: require('@/pages/personal/security/Authority'),
         },
         {
-	        path: '/personal/security/changeEmail',//修改邮箱
-	        component: require('@/pages/personal/security/ChangeEmail'),
-        },
-        {
-	        path: '/personal/security/changePassword',//修改密码
-	        component: require('@/pages/personal/security/ChangePassword'),
-        },
-        {
-	        path: '/personal/security/changephone',//修改手机
-	        component: require('@/pages/personal/security/ChangePhone'),
-        },
-        {
 	        path: '/personal/security/security',//账户安全
 	        component: require('@/pages/personal/security/Security'),
         },
@@ -184,10 +172,23 @@ export default new Router({
 	        path: '/personal/client/updateclient',//修改客户详情
 	        component: require('@/pages/personal/client/UpdateClient'),
         },
-         {
+        {
 	        path: '/personal/client/createclient',//新增客户
 	        component: require('@/pages/personal/client/CreateClient'),
-        }
+        },
+        
+        {
+	        path: '/personal/role/list',//角色列表
+	        component: require('@/pages/personal/role/list'),
+        },
+        {
+	        path: '/personal/role/add',//新建角色
+	        component: require('@/pages/personal/role/add'),
+        },
+        {
+	        path: '/personal/role/update',//修改角色
+	        component: require('@/pages/personal/role/update'),
+        },
       ]
     },
   ]
