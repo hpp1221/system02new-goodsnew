@@ -31,8 +31,8 @@ module.exports = {
         '/ui': {
             target: 'http://192.168.41.93:8081',
             //target: 'http://192.168.41.216:8081',
-            //target: 'http://192.168.41.216:8081',
-            //target: 'http://192.168.41.97:8081',
+//            target: 'http://192.168.41.216:8081',
+//            target: 'http://192.168.41.97:8081',
             changeOrigin: true,
             pathRewrite: {
               '^/ui': '/ui'
