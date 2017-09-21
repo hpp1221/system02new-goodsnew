@@ -42,7 +42,6 @@
 		data() {
 			return {
 				form: {
-					up: 0, //是否上架，1是，0否
 					goodsName: '',
 					spec: [],
 					skus: [],
@@ -54,9 +53,6 @@
 				},
 				key: {},
 				inputValue: '',
-				goodsTags: [], //商品标签
-				editorInstance: {}, //编辑器实例
-				editorConfig: {}, //编辑器配置
 			}
 		},
 		watch: {

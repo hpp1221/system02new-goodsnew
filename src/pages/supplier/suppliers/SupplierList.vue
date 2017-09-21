@@ -51,7 +51,11 @@
 				</el-table-column>
 			</el-table>
 			<div class="block">
+<<<<<<< HEAD:src/pages/supplier/suppliers/SupplierList.vue
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo" :page-sizes="pageSizes" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+=======
+				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+>>>>>>> 9af3cb20fe9a9170b82584f75aed4790579002ce:src/pages/supplier/suppliers/SupplierList.vue
 				</el-pagination>
 			</div>
 		</div>
@@ -65,6 +69,7 @@
 			return {
 				tableData: [],
 				input2: '',
+				excelAnalysisStatus: false,
 				multipleSelection: [],
 				supplierIdVal: [],
 				total: 0,
@@ -166,6 +171,7 @@
 				})
 			},
 			outputSupplier() { //导出供应商
+			
 				let self = this
 				let supplierString = ''
 				for(let i = 0; i < self.multipleSelection.length; i++) {
@@ -181,6 +187,7 @@
 
 			},
 			handleSelectionChange(val) {
+				this.excelAnalysisStatus = true;
 				this.multipleSelection = val;
 			},
 			toggleSelection(rows) {
