@@ -95,7 +95,8 @@
 			  		</el-table>
 			  	</el-form-item>
 			  	<el-form-item label="公司logo">
-			  		<el-upload
+			  		<uploadoneimg :fileList="form.logo" @getFileList="getLogo"></uploadoneimg>
+			  		<!--<el-upload
 			  			class="avatar-uploader"
 					  	action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
 					  	:show-file-list="false"
@@ -104,7 +105,7 @@
 					  	:before-upload="beforeLogoUpload">
 					  	<img v-if="form.logo" :src="form.logo" class="avatar">
 					  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
+					</el-upload>-->
 			  	</el-form-item>
 			  	<el-form-item label="详细地址">
 			  		<el-input placeholder="请输入公司详细地址" class="form-input" v-model="form.detailAddress"></el-input>
@@ -160,18 +161,19 @@
 					introduction:'',//公司介绍
 					
 				},
-				key:{},
 				totalIndustryTypes:[],
 				type:false,//false是添加true是修改
 			}
 		},
 		created(){
-			this.selectCompanyById();//查询公司信息
-			this.key = this.getKey();
+			if(JSON.parse(window.localStorage.getItem('userinfo'))) this.selectCompanyById();//查询公司信息
 			this.getIndustry();
 		},
+		components:{
+			'uploadoneimg':require('../../../components/uploadoneimg')
+		},
 		methods:{
-			selectCompanyById(){
+			selectCompanyById(){//查询公司信息
 				let self = this;
 				let requestData = {
 					token: window.localStorage.getItem('token'),
@@ -190,7 +192,10 @@
 			    	console.log(error);
 			    });
 			},
-			submit(formName){
+			getLogo(file){//获取logo
+				this.form.logo = file;
+			},
+			submit(formName){//保存
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
             			let self = this;
@@ -213,14 +218,6 @@
 	            		return false;
 	          		}
         		});
-			},
-			handleLogoSuccess(res, file){
-				console.log(file)
-				this.form.logo = file.url;
-				this.key = this.getKey();
-			},
-			beforeLogoUpload(file){
-				return this.checkImg(file);
 			},
 			getIndustry(){
 				let self = this;
@@ -246,7 +243,7 @@
 			        })
 				}
 			},
-			addLine(){
+			addLine(){//添加对外联系人
 				let obj = {
 					name:'',
 					cel:'',
@@ -261,7 +258,7 @@
 					this.form.externalContacts.push(obj);
 				}
 			},
-			deleteLine(index){
+			deleteLine(index){//删除一行对外联系人
 				if(this.form.externalContacts.length === 1){
 					this.form.externalContacts = null;
 				}else{

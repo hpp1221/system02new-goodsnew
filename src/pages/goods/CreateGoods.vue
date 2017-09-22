@@ -47,14 +47,15 @@
 					  		<el-button class="button-new-tag" size="small" @click="addSpec">添加规格</el-button>
 					  		<div v-for="(s,sindex) in form.spec" style="margin-top: 10px;">
 						  		<i class="el-icon-minus" @click="deleteSpec(sindex)"></i>
-						  		<el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName"></el-input>
+						  		<el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName" size="mini"></el-input>
 						  		<el-tag
 									:key="v.name"
+									
 									v-for="v in s.specValue"
 									:closable="true"
 									:close-transition="false"
 									@close="handleClose(v,sindex)"
-									style="margin-left: 10px">
+									style="margin-left: 10px;">
 									{{v}}
 								</el-tag>
 								<el-input
@@ -66,7 +67,7 @@
 									@keyup.enter.native="handleInputConfirm(s)"
 									@blur="handleInputConfirm(s)">
 								</el-input>
-								<el-button v-else class="button-new-tag" size="small" @click="showInput(sindex)">添加属性</el-button>
+								<el-button v-else size="small" @click="showInput(sindex)">添加属性</el-button>
 					    	</div>
 					  	</el-form-item>
 					  	<el-form-item>
@@ -79,18 +80,8 @@
 							      	label="主图"
 							      	width="180">
 							      	<template scope="scope">
-										<el-upload
-									  		class="avatar-uploader"
-									  		action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-									  		:data="key"
-									  		:show-file-list="false"
-									 		:on-success="skuImgSuccess"
-									  		list-type="picture"
-									  		style="margin: 10px;width: 120px;height: 120px;"
-									  		>
-									  	<img v-if="scope.row.img" :src="scope.row.img" class="avatar" @click="rememberIndex(scope)">
-									  	<i v-else class="el-icon-plus avatar-uploader-icon" @click="rememberIndex(scope)"></i>
-										</el-upload>
+							      		<uploadoneimg :fileList="scope.row.img" 
+								@getFileList="getSkuImg" @click.native="rememberIndex(scope)"></uploadoneimg>
 							      	</template>
 							    </el-table-column>
 						    	<el-table-column
@@ -163,16 +154,8 @@
 					  	
 					  	<h4 class="item-title">商品图片</h4>
 					  	<el-form-item>
-					  		<el-upload
-								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:http-request="uploadImg"
-								:data="key"
-								list-type="picture-card"
-								:file-list="form.goodsExtend.imgs"
-								:on-success="handleGoodsImgSuccess"
-								:on-remove="handleGoodsImgRemove">
-								<i class="el-icon-plus"></i>
-							</el-upload>
+							<uploadmultipleimg :fileList="form.goodsExtend.imgs" 
+								@getFileList="getFileList"></uploadmultipleimg>
 					  	</el-form-item>
 					  	<h4 class="item-title">商品描述</h4>
 						<el-form-item>
@@ -185,16 +168,8 @@
 						</el-form-item>
 						<h4 class="item-title">添加附件</h4>
 						<el-form-item>
-							<el-upload
-								class="upload-demo"
-								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:data="key"
-								:on-success="handleAnnexSuccess"
-								:on-remove="handleAnnexRemove"
-								:file-list="form.goodsExtend.annex">
-							  <el-button size="small" type="primary">点击上传</el-button>
-							  <div slot="tip" class="el-upload__tip">商品附件最大20M，仅支持PDF、word、txt、excel、jpg、png、bmp、gif、rar、zip格式</div>
-							</el-upload>
+							<uploadfiles :fileList="form.goodsExtend.annex" 
+								@getFileList="getAnnex"></uploadfiles>
 						</el-form-item>
 					  	<el-form-item>
 					  		<el-button @click="submit('form')" type="primary">创建</el-button>
@@ -339,12 +314,9 @@
 					  	<el-form-item>
 					  		<el-upload
 								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:http-request="uploadImg"
 								:data="key"
 								list-type="picture-card"
 								:file-list="form.goodsExtend.imgs"
-								:on-success="handleGoodsImgSuccess"
-								:on-remove="handleGoodsImgRemove"
 								disabled>
 							</el-upload>
 					  	</el-form-item>
@@ -362,9 +334,6 @@
 							<el-upload
 								class="upload-demo"
 								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:data="key"
-								:on-success="handleAnnexSuccess"
-								:on-remove="handleAnnexRemove"
 								:file-list="form.goodsExtend.annex"
 								disabled>
 							</el-upload>
@@ -437,7 +406,6 @@
 					},
 					isPlatform:1//是否为平台商品，1是0否
 				},
-				key:{},
 				inputValue:'',
 				goodsTags:[],//商品标签
 				editorInstance:{},//编辑器实例
@@ -471,8 +439,12 @@
 	            deep:true
 			}
 		},
+		components:{
+			'uploadmultipleimg':require('../../components/uploadmultipleimg'),
+			'uploadfiles':require('../../components/uploadfiles'),
+			'uploadoneimg':require('../../components/uploadoneimg'),
+		},
 		created(){
-			this.key = this.getKey();
 			let self = this;
 			self.getBrandList(function(data){
 				self.totalBrandList = data;
@@ -483,17 +455,23 @@
 			this.getCatList();//获取分类列表
 		},
 		methods:{
+			getFileList(file){//商品图片
+				this.form.goodsExtend.imgs.push(file);
+			},
+			getAnnex(file){//附件
+				this.form.goodsExtend.annex.push(file);
+			},
+			getSkuImg(file){//sku图片
+				this.form.skus[this.skuImgIndex].img = file;
+			},
+			rememberIndex(scope){//点击sku图片记录index
+				this.skuImgIndex = scope.$index;
+			},
 			getImgAccess(file){
 				let self = this;
-				let policy = {
-					"expiration":"2018-01-01T12:00:00.000Z",
-					"conditions":[
-						{"bucket":"sassfiles"}
-					]
-				};
 				let requestData = {
 					token: window.localStorage.getItem('token'),
-					policy:JSON.stringify(policy)
+					bucketName: 'sass'
 				};
 				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
@@ -523,10 +501,6 @@
 			cancel(){
 				this.$router.push('/goods/goodslist');
 			},
-			skuImgSuccess(res,file){//sku图片上传成功
-				this.form.skus[this.skuImgIndex].img = file.url;
-				this.key = this.getKey();
-			},
 			sureExport(id){//确定引入
 				let self = this;
 				self.exportGoodsVisible = true;
@@ -540,7 +514,6 @@
 						self.exportForm.spec = JSON.parse(self.exportForm.spec);
 						self.exportForm.brand = JSON.parse(self.exportForm.brand);
 						self.exportForm.cat = JSON.parse(self.exportForm.cat);
-						
 						self.exportForm.goodsExtend.annex = JSON.parse(self.exportForm.goodsExtend.annex);
 						self.exportForm.goodsExtend.imgs = JSON.parse(self.exportForm.goodsExtend.imgs);
 						for(let i = 0;i < self.exportForm.goodsSkuList.length;i++){
@@ -552,23 +525,6 @@
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-			},
-			handleGoodsImgSuccess(response, file, fileList){//商品图片成功回调
-				this.form.goodsExtend.imgs = fileList;
-				this.key = this.getKey();
-			},
-			handleGoodsImgRemove(file, fileList){//商品图片移除某图片的回调
-				this.form.goodsExtend.imgs = fileList;
-			},
-			handleAnnexSuccess(response, file, fileList){
-				this.form.goodsExtend.annex = fileList;
-				this.key = this.getKey();
-			},
-			handleAnnexRemove(file, fileList){
-				this.form.goodsExtend.annex = fileList;
-			},
-			rememberIndex(scope){
-				this.skuImgIndex = scope.$index;
 			},
 			editorReady(editorInstance){
 				editorInstance.setContent(this.form.goodsExtend.content);
@@ -716,75 +672,6 @@
 					}
 				}
 			},
-			handleAvaterSuccess(response,file,fileList){
-				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key;
-				this.getKey();
-			},
-			uploadImg(file){
-				let self = this;
-				let imgAccess = self.getImgAccess(file);
-			},
-			upload(imgAccess,file){
-				let self = this;
-				console.log('文件',file)
-				console.log(imgAccess)
-				let formData = new FormData();
-				formData.append('key');
-//				formData.append('OSSAccessKeyId',imgAccess.OSSAccessKeyId);
-//				formData.append('Signature',imgAccess.Signature);
-//				formData.append('policy',imgAccess.policy);
-				formData.append('file',file.file);
-				let config = {
-              		headers: {
-                		'Content-Type': 'multipart/form-data'
-              		}
-            	}
-				let requestUrl = 'http://upload.qiniu.com';
-//				let requestData = {params:{
-//					Expires:imgAccess.Expires,
-//					OSSAccessKeyId:imgAccess.OSSAccessKeyId,
-//					Signature:imgAccess.Signature
-//				}};
-				self.$http.put(requestUrl,formData,config).then(function (response) {
-				    let data = response.data;
-				    console.log('response',response)
-					if(data.code == 10000){
-						self.getKey();
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			}
-//			upload(imgAccess,file){
-//				let self = this;
-//				console.log('文件',file)
-//				console.log(imgAccess)
-//				let formData = new FormData();
-//				formData.append('OSSAccessKeyId',imgAccess.OSSAccessKeyId);
-//				formData.append('Signature',imgAccess.Signature);
-//				formData.append('policy',imgAccess.policy);
-//				formData.append('file',file.file);
-//				let config = {
-//            		headers: {
-//              		'Content-Type': 'multipart/form-data'
-//            		}
-//          	}
-//				let requestUrl = 'http://sassfiles.oss-cn-shanghai.aliyuncs.com/' + self.key.key + '.png';
-////				let requestData = {params:{
-////					Expires:imgAccess.Expires,
-////					OSSAccessKeyId:imgAccess.OSSAccessKeyId,
-////					Signature:imgAccess.Signature
-////				}};
-//				self.$http.put(requestUrl,formData,config).then(function (response) {
-//				    let data = response.data;
-//				    console.log('response',response)
-//					if(data.code == 10000){
-//						self.getKey();
-//					}
-//			    }).catch(function (error) {
-//			    	console.log(error);
-//			    });
-//			}
 		}
 	}
 </script>

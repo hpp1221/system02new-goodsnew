@@ -28,19 +28,6 @@ Vue.prototype.getUserInfo = function(){//获取用户信息
     	console.log(error);
     });
 }
-Vue.prototype.randomString = function(len) {//随机数
-  　　 len = len || 32;
-  　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
-  　　var maxPos = $chars.length;
-  　　var pwd = '';
-  　　for (let i = 0; i < len; i++) {
-  　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
-  　　}
-  　　return pwd;
-}
-Vue.prototype.getKey = function(){//获取上传key
-	return {key:(new Date()).valueOf() + this.randomString(8)};
-}
 Vue.prototype.checkImg = function(file){
 	const isIMG = file.type === 'image/jpeg' || file.type === 'image/png';
     const isLt2M = file.size / 1024 / 1024 < 2;

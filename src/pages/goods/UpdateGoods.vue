@@ -408,7 +408,6 @@
 						annex:[]
 					}
 				},
-				key:{},
 				inputValue:'',
 				goodsTags:[],//商品标签
 				editorConfig1:{
@@ -596,10 +595,6 @@
 						this.form.skus.push(JSON.parse(JSON.stringify(singleSku)));
 					}
 				}
-			},
-			handleAvaterSuccess(response,file,fileList){
-				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key;
-				this.getKey();
 			},
 		}
 	}
