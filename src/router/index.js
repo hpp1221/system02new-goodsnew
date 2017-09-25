@@ -185,6 +185,23 @@ export default new Router({
 	        path: '/personal/role/update',//修改角色
 	        component: require('@/pages/personal/role/update'),
         },
+        
+        {
+	        path: '/personal/user/add',//添加用户
+	        component: require('@/pages/personal/user/add'),
+        },
+        {
+	        path: '/personal/user/list',//子用户列表
+	        component: require('@/pages/personal/user/list'),
+        },
+        {
+	        path: '/personal/user/update',//修改用户
+	        component: require('@/pages/personal/user/update'),
+        },
+        {
+	        path: '/personal/user/myinfo',//用户信息
+	        component: require('@/pages/personal/user/myinfo'),
+        },
       ]
     },
   ]

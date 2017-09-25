@@ -14,7 +14,7 @@
 			<div class="header-four">
 				<img src="../assets/images/question.png" alt="" id="question"/>
 				<img src="../assets/images/bell.png" alt="" id="bell" />
-				<img src="../assets/images/person.png" alt="" id="person" />
+				<img src="../assets/images/person.png" alt="" id="person" @click="personcenter"/>
 			</div>
 		</div>
 		<div class="index-left-menu">
@@ -68,6 +68,9 @@
 			},
 			handleIconClick(){//头部搜索
 				
+			},
+			personcenter(){//跳转个人中心
+				this.$router.push('/personal/user/myinfo');
 			}
 		}
 	}

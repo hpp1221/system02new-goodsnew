@@ -2,10 +2,9 @@
 	<div class="container">
 		<div class="wrapper">
 			<el-upload
-				action="/ui/analysisExcel"
-				:on-success="uploadSuccess"
-				:on-remove="removeFile"
-				:file-list="files"
+				action="http://upload.qiniu.com/"
+				:http-request="upload"
+				:before-upload="beforeUpload"
 				multiple
 				drag
 				style="width: 300px;">
@@ -26,26 +25,140 @@
 				<p>7、单张图片不得大于20M，大于20M上传后，不会显示该图片。</p>
 				<p>8、支持一次性上传多个图片压缩文件，并且每个压缩文件大小不能超过200M。</p>
 			</div>
+			
 		</div>
 	</div>
 </template>
 
 <script>
+	var JSZip = require('jszip');
 	export default{
 		data(){
 			return {
 				files:[],
-				explainVisible:false
+				explainVisible:false,
+				file_obj:{},
+				key:{
+					token:'',
+					file:''
+				},
+				successFiles:[],
+				fileNum:0,
+				successNum:0
 			}
 		},
+		created(){
+			//this.getBaseData();
+			this.getImgAccess();
+		},
 		methods:{
-			uploadSuccess(){
-				
+			upload(){
+//				let url = 'http://upload.qiniu.com/';
+//				let formData = new FormData();
+//				formData.append('token',this.key.token);
+//				formData.append('file',this.files);
+//				let self = this;
+//				let config = {
+//					headers: {
+//                      'Content-Type': 'application/x-www-form-urlencoded'
+//                  }
+//				}
+//				self.$http.post(url,formData,config).then(function (response) {
+//				    console.log(response)
+//			    }).catch(function (error) {
+//			    	console.log(error);
+//			    });
+			},
+			beforeUpload(file){
+				let self = this;
+				self.fileNum = 0;
+				self.successNum = 0;
+				var Zip = new JSZip();
+				let url = 'http://upload.qiniu.com/';
+				let config = {
+					headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+				};
+				var promise =  new Promise(function(resolve,reject){
+					Zip.loadAsync(file).then(function (zip) {
+						for(let z in zip.files){
+							if((zip.files[z].name.split('/')).length - 1 !== 1){
+								reject('压缩包不符合格式')
+							}
+							if(!zip.files[z].dir){
+								self.fileNum++;
+							}
+						}
+						resolve(zip)
+					});
+				});
+				promise.then(function(zip){
+					for(let z in zip.files){
+						if(!zip.files[z].dir){
+							Zip.file(zip.files[z].name).async("base64").then(function(result){
+								let uploadFile = 'data:image/' + zip.files[z].name.substring(zip.files[z].name.length-3,zip.files[z].name.length) + ';base64,' + result;
+								let formData = new FormData();
+								formData.append('token',self.key.token);
+								formData.append('file',uploadFile);
+								self.$http.post(url,formData,config).then(function (response) {
+								    console.log(response)
+								    self.uploadSuccess(self.imgDomain + response.data.key,zip.files[z].name);
+							    }).catch(function (error) {
+							    	console.log(error);
+							    });
+							})
+							
+						}
+						
+					}
+				},function(value){
+					alert(value);
+				});
+				return promise;
+			},
+			uploadSuccess(url,fileName){
+				this.successFiles.push({fileName:fileName,url:url});
+				this.successNum++;
+				console.log('successnum',this.successNum)
+				if(this.successNum === this.fileNum){
+					let self = this;
+					console.log(self.successFiles)
+					let requestData = {
+						token: window.localStorage.getItem('token'),
+						picList: JSON.stringify(self.successFiles),
+						companyId:1
+					};
+					self.$http.post('ui/importPicture',self.qs.stringify(requestData)).then(function (response) {
+				    	let data = response.data;
+				    	if(data.code == 10000){
+				    		console.log('sb')
+				    	}
+					}).catch(function (error) {
+				    	console.log(error);
+				    });
+				}
+			},
+			getImgAccess(){
+				let self = this;
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					bucketName: 'sass'
+				};
+				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
+				    let data = response.data;
+					if(data.code == 10000){
+						self.key.token = data.data;
+					}
+			    }).catch(function (error) {
+			    	console.log(error);
+			    });
 			},
 			removeFile(){
 				
 			},
 			showExplain(){
+				
 				this.explainVisible = !this.explainVisible;
 			}
 		}
