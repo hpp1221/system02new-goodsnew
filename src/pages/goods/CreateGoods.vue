@@ -80,8 +80,14 @@
 							      	label="主图"
 							      	width="180">
 							      	<template scope="scope">
-							      		<uploadoneimg :fileList="scope.row.img" 
-								@getFileList="getSkuImg" @click.native="rememberIndex(scope)"></uploadoneimg>
+							      		<uploadoneimg 
+							      			:fileList="scope.row.img" 
+											@getFileList="getSkuImg" 
+											@click.native="rememberIndex(scope)"
+											:token="imgToken" 
+											v-if="imgToken"
+											>
+							      		</uploadoneimg>
 							      	</template>
 							    </el-table-column>
 						    	<el-table-column
@@ -154,8 +160,12 @@
 					  	
 					  	<h4 class="item-title">商品图片</h4>
 					  	<el-form-item>
-							<uploadmultipleimg :fileList="form.goodsExtend.imgs" 
-								@getFileList="getFileList"></uploadmultipleimg>
+							<uploadmultipleimg 
+								:fileList="form.goodsExtend.imgs" 
+								@getFileList="getFileList" 
+								:token="imgToken" 
+								v-if="imgToken">
+							</uploadmultipleimg>
 					  	</el-form-item>
 					  	<h4 class="item-title">商品描述</h4>
 						<el-form-item>
@@ -168,8 +178,12 @@
 						</el-form-item>
 						<h4 class="item-title">添加附件</h4>
 						<el-form-item>
-							<uploadfiles :fileList="form.goodsExtend.annex" 
-								@getFileList="getAnnex"></uploadfiles>
+							<uploadfiles 
+								:fileList="form.goodsExtend.annex" 
+								@getFileList="getAnnex" 
+								:token="imgToken"
+								v-if="imgToken">
+							</uploadfiles>
 						</el-form-item>
 					  	<el-form-item>
 					  		<el-button @click="submit('form')" type="primary">创建</el-button>
@@ -382,7 +396,8 @@
 					name:'',
 					brand:'',
 					spec:[],
-					cat:[],
+					cat:[{"name":"儿童玩具","id":"2"},{"name":"小汽车","id":"8"}
+					],
 					skus:[],
 					supplierName:'',
 					goodsExtend:{
@@ -421,20 +436,16 @@
 				exportGoodsVisible:false,//导入商品
 				exportGoodsList:[],
 				activeName:'first',
-				skuImgIndex:0
+				skuImgIndex:0,
+				imgToken:''
 			}
 		},
 		watch:{
-			
 			'form.spec':{
 				handler:function(val,oldVal){
-                    //要执行的任务
-                    //这里不知道怎么才能修改到this.data的数据，有知道的麻烦告知
-                    //现在知道的就是通过直接修改Store.state的方式来更新数据，当然效果和修改this.data是一样的
 	            	this.form.skus = [];
         			this.createGoodsDetail({},0);
 				},
-				
 	            // 深度观察
 	            deep:true
 			}
@@ -452,6 +463,9 @@
 			self.getTagList(function(data){
 				self.goodsTags = data;
 			});//获取标签列表
+			self.getImgAccess(function(data){
+				self.imgToken = data;
+			});//获取图片token
 			this.getCatList();//获取分类列表
 		},
 		methods:{
@@ -462,26 +476,10 @@
 				this.form.goodsExtend.annex.push(file);
 			},
 			getSkuImg(file){//sku图片
-				this.form.skus[this.skuImgIndex].img = file;
+				this.form.skus[this.skuImgIndex].img = file.url;
 			},
 			rememberIndex(scope){//点击sku图片记录index
 				this.skuImgIndex = scope.$index;
-			},
-			getImgAccess(file){
-				let self = this;
-				let requestData = {
-					token: window.localStorage.getItem('token'),
-					bucketName: 'sass'
-				};
-				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('imgSignature',response)
-					if(data.code == 10000){
-						self.upload(data.data,file);
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
 			},
 			exportGoods(){//引入商品
 				let self = this;
@@ -551,12 +549,15 @@
 							}
 						}
 						self.totalCategories = data.data;
+						console.log('123123',self.totalCategories)
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
             },
             getCatChild(val) {//获取子集分类
+            	console.log(val)
+            	return
             	let self = this;
 				let requestData = {params:{token: window.localStorage.getItem('token'),catId:JSON.parse(val).id}};
 				self.$http.get('/ui/catList',requestData).then(function (response) {

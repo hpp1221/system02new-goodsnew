@@ -20,7 +20,6 @@ Vue.prototype.getUserInfo = function(){//获取用户信息
 	let requestData = {params:{token: window.localStorage.getItem('token')}};
 	self.$http.get('/ui/user/getMyInfo',requestData).then(function (response) {
 	    let data = response.data;
-	    console.log('getMyInfo',response)
 		if(data.code == 10000){
 			window.localStorage.setItem('userinfo',JSON.stringify(data.data));
 		}

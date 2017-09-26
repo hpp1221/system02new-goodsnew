@@ -26,6 +26,10 @@
 					<el-input type="number" placeholder="请输入手机" v-model="form.cel" class="form-input">
 					</el-input>
 				</el-form-item>
+				<el-form-item label="密码" prop="pwd">
+					<el-input type="password" placeholder="为空表示不修改密码" v-model="form.pwd" class="form-input">
+					</el-input>
+				</el-form-item>
 				<el-form-item label="部门负责人">
 					<el-radio v-model="form.departmentManager" :label="true">是</el-radio>
 					<el-radio v-model="form.departmentManager" :label="false">否</el-radio>
@@ -127,11 +131,11 @@
 				form:{
 					loginId:'',
 					name:'',
-					sex:1,
+					sex:true,
 					avatar:'',
 					nickname:'',
 					cel:'',
-					departmentManager:0,
+					departmentManager:false,
 					email:'',
 					pwd:'',
 					department:'',
@@ -202,6 +206,7 @@
 				    console.log('selectUserById',response)
 					if(data.code == 10000){
 						self.formPass(self.form,data.data);
+						self.form.pwd = '';
 					}
 			    }).catch(function (error) {
 			    	console.log(error);

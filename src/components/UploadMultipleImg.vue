@@ -6,7 +6,8 @@
 		:file-list="fileList"
 		:before-upload="beforeUpload"
 		:on-success="handleSuccess"
-		:on-remove="handleRemove">
+		:on-remove="handleRemove"
+		:disabled="disabled">
 		<i class="el-icon-plus"></i>
 	</el-upload>
 </template>
@@ -24,34 +25,23 @@
 		props:{
 			fileList:{
 				type:Array
+			},
+			token:{
+				type:String
+			},
+			disabled:{
+				type:Boolean,
+				default:false
 			}
 		},
 		created(){
-			this.getImgAccess();
+			this.key.token = this.token;
 		},
 		methods:{
 			beforeUpload(file){
 				let checkFormat = this.checkImg(file);
 				if(!checkFormat) return false;
 				if(!this.key.token) return false;
-			},
-//			uploadImg(file){
-//				let imgAccess = this.getImgAccess(file);
-//			},
-			getImgAccess(){
-				let self = this;
-				let requestData = {
-					token: window.localStorage.getItem('token'),
-					bucketName: 'sass'
-				};
-				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-					if(data.code == 10000){
-						self.key.token = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
 			},
 			handleSuccess(response, file, fileList){
 				this.$emit('getFileList',{
@@ -60,7 +50,10 @@
 				});
 			},
 			handleRemove(file, fileList){
-				
+				this.$emit('removeFile',{
+					name:file.name,
+					url:file.url
+				});
 			}
 		}
 	}

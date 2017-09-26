@@ -37,15 +37,12 @@
 		},
 		created(){
 			this.getMenu();
-			this.getMyInfo();
+			
 		},
 		components:{
 			'menu-tree':require('../components/Menu')
 		},
 		methods:{
-			getMyInfo(){
-				this.getUserInfo();
-			},
 			getMenu(){//获取菜单
 				let self = this;
 				let requestData = {params:{token: window.localStorage.getItem('token')}};

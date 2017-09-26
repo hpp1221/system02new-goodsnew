@@ -25,10 +25,13 @@
 		props:{
 			fileList:{
 				type:String
+			},
+			token:{
+				type:String
 			}
 		},
 		created(){
-			this.getImgAccess();
+			this.key.token = this.token;
 		},
 		methods:{
 			beforeUpload(file){
@@ -36,26 +39,11 @@
 				if(!checkFormat) return false;
 				if(!this.key.token) return false;
 			},
-//			uploadImg(file){
-//				let imgAccess = this.getImgAccess(file);
-//			},
-			getImgAccess(){
-				let self = this;
-				let requestData = {
-					token: window.localStorage.getItem('token'),
-					bucketName: 'sass'
-				};
-				self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-					if(data.code == 10000){
-						self.key.token = data.data;
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			},
 			handleSuccess(response, file, fileList){
-				this.$emit('getFileList',this.imgDomain + response.key);
+				this.$emit('getFileList',{
+					name:file.name,
+					url:this.imgDomain + response.key
+				});
 			},
 			handleRemove(file, fileList){
 				

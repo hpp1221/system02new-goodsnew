@@ -96,8 +96,8 @@
 				let self = this;
 				let requestData = {
 					token: window.localStorage.getItem('token'),
-					size:self.pageSize,
-					pageNum:self.pageNum
+					pageSize:self.pageSize,
+					pageNo:self.pageNum
 				};
 				self.$http.post('/ui/role/selectRoleListPage',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
