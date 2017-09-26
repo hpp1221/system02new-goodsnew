@@ -59,7 +59,7 @@
 			  		<el-input placeholder="请输入服务热线" class="form-input" v-model="form.hotline"></el-input>
 			  	</el-form-item>
 			  	<el-form-item label="对外联系人">
-			  		<el-button v-if="!form.externalContacts" @click="addLine">添加</el-button>
+			  		<el-button v-if="form.externalContacts.length == 0" @click="addLine">添加</el-button>
 			  		<el-table :data="form.externalContacts" v-else>
 			  			<el-table-column
       						type="index"

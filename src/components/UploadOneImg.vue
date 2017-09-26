@@ -6,6 +6,7 @@
 	  	:show-file-list="false"
 	  	:on-success="handleSuccess"
 	  	:before-upload="beforeUpload"
+	  	:disabled="disabled"
 	  	style="margin: 10px;width: 120px;height: 120px;">
 	  	<img v-if="fileList" :src="fileList" class="avatar">
 	  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -28,6 +29,10 @@
 			},
 			token:{
 				type:String
+			},
+			disabled:{
+				type:Boolean,
+				default:false
 			}
 		},
 		created(){

@@ -19,7 +19,8 @@
 							<el-cascader
 							  	:options="totalCategories"
 							  	v-model="form.cat"
-							  	@active-item-change="getCatChild"
+							  	@active-item-change="getCatList"
+							  	:show-all-levels="false"
 							  	:props="props">
 							</el-cascader>
 							<!--<el-select v-model="form.cat" placeholder="请选择商品分类" value-key="id">
@@ -205,15 +206,15 @@
 							</el-select>
 						</el-form-item>
 						<el-form-item label="商品分类">
-							<el-input v-model="exportForm.cat.name" class="form-input" disabled>
-							</el-input>
-							<!--<el-select v-model="form.cat" placeholder="请选择商品分类" value-key="id">
-								<el-option v-for="t in totalCategories" 
-									:key="t.id"
-									:label="t.name"
-									:value="t">
-								</el-option>
-							</el-select>-->
+							<el-cascader
+							  	:options="totalCategories"
+							  	v-model="exportForm.cat"
+							  	@active-item-change="getCatList"
+							  	@click.native="clickCat"
+							  	disabled
+							  	:show-all-levels="false"
+							  	:props="props">
+							</el-cascader>
 						</el-form-item>
 						<el-form-item label="计量单位">
 							<el-input placeholder="请输入计量单位" v-model="exportForm.unit" class="form-input" disabled></el-input>
@@ -225,35 +226,40 @@
 							<el-input placeholder="请输入供应商名称" class="form-input" v-model="exportForm.supplierName" disabled></el-input>
 						</el-form-item>
 						
-						
 						<h4 class="item-title">商品规格</h4>
 						
 					  	<el-form-item label="商品规格">
- 					  		<div v-for="(s,sindex) in exportForm.spec" style="margin-top: 10px;">
+					  		<div v-for="(s,sindex) in exportForm.spec" style="margin-top: 10px;">
 						  		<el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName" disabled></el-input>
 						  		<el-tag
 									:key="v.name"
 									v-for="v in s.specValue"
 									:closable="false"
-									style="margin-left: 10px">
+									:close-transition="false"
+									@close="handleClose(v,sindex)"
+									style="margin-left: 10px"
+									>
 									{{v}}
 								</el-tag>
 					    	</div>
 					  	</el-form-item>
 					  	<el-form-item>
 					  		<el-table
-							    :data="exportForm.goodsSkuList"
+							    :data="exportForm.skus"
 							    border
-							    v-if="exportForm.goodsSkuList.length > 0"
+							    v-if="exportForm.skus.length > 0"
 							    style="width: 100%">
 							    <el-table-column
 							      	label="主图"
 							      	width="180">
 							      	<template scope="scope">
-							      		<div style="width: 40px;height: 40px;">
-							      			<img :src="scope.row.img"/>
-							      		</div>
-							      		
+							      		<uploadoneimg 
+							      			:fileList="scope.row.img" 
+											@click.native="rememberIndex(scope)"
+											:disabled="true"
+											:token="imgToken" 
+											v-if="imgToken">
+							      		</uploadoneimg>
 							      	</template>
 							    </el-table-column>
 						    	<el-table-column
@@ -316,7 +322,7 @@
 							      	label="商品标签"
 							      	width="180">
 							      	<template scope="scope">
-							      		<el-select multiple v-model="scope.row.tags" value-key="id" disabled>
+							      		<el-select v-model="scope.row.tagList" value-key="id" multiple disabled>
 							      			<el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
 							      		</el-select>
 							      	</template>
@@ -326,34 +332,34 @@
 					  	
 					  	<h4 class="item-title">商品图片</h4>
 					  	<el-form-item>
-					  		<el-upload
-								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:data="key"
-								list-type="picture-card"
-								:file-list="form.goodsExtend.imgs"
-								disabled>
-							</el-upload>
+							<uploadmultipleimg 
+								:fileList="exportForm.goodsExtend.imgs" 
+								:disabled="true"
+								:token="imgToken" 
+								v-if="imgToken">
+							</uploadmultipleimg>
 					  	</el-form-item>
 					  	<h4 class="item-title">商品描述</h4>
 						<el-form-item>
 							<VueEditor
 								ueditorPath="../../static/ueditor1_4_3_3-utf8-net"
 								@ready="editorReady2" 
-								style="width:500px;height:300px" 
-								:ueditorConfig="editorConfig2">
+								style="width:500px;height:300px"
+								:ueditorConfig="editorConfig2"
+								v-if="exportForm.name">
 							</VueEditor>
 						</el-form-item>
 						<h4 class="item-title">添加附件</h4>
 						<el-form-item>
-							<el-upload
-								class="upload-demo"
-								action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
-								:file-list="form.goodsExtend.annex"
-								disabled>
-							</el-upload>
+							<uploadfiles 
+								:fileList="exportForm.goodsExtend.annex" 
+								:disabled="true"
+								:token="imgToken" 
+								v-if="imgToken">
+							</uploadfiles>
 						</el-form-item>
 					  	<el-form-item>
-					  		<el-button @click="submitExportGoods('exportForm')" type="primary">创建</el-button>
+					  		<el-button @click="submitExportGoods('exportForm')">创建</el-button>
 					  		<el-button @click="cancel">取消</el-button>
 					  	</el-form-item>
 					</el-form>
@@ -372,9 +378,6 @@
 						
 					</el-table-column>
 					<el-table-column label="商品单位" prop="unit">
-						
-					</el-table-column>
-					<el-table-column label="供应商" prop="supplierName">
 						
 					</el-table-column>
 					<el-table-column>
@@ -396,8 +399,7 @@
 					name:'',
 					brand:'',
 					spec:[],
-					cat:[{"name":"儿童玩具","id":"2"},{"name":"小汽车","id":"8"}
-					],
+					cat:[],
 					skus:[],
 					supplierName:'',
 					goodsExtend:{
@@ -408,18 +410,23 @@
 					isPlatform:0//是否为平台商品，1是0否
 				},
 				exportForm:{
+					id:'',
 					name:'',
 					brand:'',
 					spec:[],
 					cat:[],
+					unit:'',
 					skus:[],
 					supplierName:'',
+					keyword:'',
+					goodsSkuList:[],
+					tags:[],
 					goodsExtend:{
 						imgs:[],
 						content:'',
 						annex:[]
 					},
-					isPlatform:1//是否为平台商品，1是0否
+					isPlatForm:0
 				},
 				inputValue:'',
 				goodsTags:[],//商品标签
@@ -437,7 +444,8 @@
 				exportGoodsList:[],
 				activeName:'first',
 				skuImgIndex:0,
-				imgToken:''
+				imgToken:'',
+				originCat:''
 			}
 		},
 		watch:{
@@ -501,24 +509,27 @@
 			},
 			sureExport(id){//确定引入
 				let self = this;
-				self.exportGoodsVisible = true;
+				self.exportGoodsVisible = false;
 				let requestData = {token: window.localStorage.getItem('token'),goodsId:id};
 				self.$http.post('/ui/showGoodsDetail',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
-				    console.log('showGoodsDetail',response)
+				    console.log('showGoodsDetail1',response)
 					if(data.code == 10000){
-						self.exportGoodsVisible = false;
-						self.exportForm = data.data;
+						self.exportForm = self.formPass(self.exportForm,data.data);
 						self.exportForm.spec = JSON.parse(self.exportForm.spec);
 						self.exportForm.brand = JSON.parse(self.exportForm.brand);
-						self.exportForm.cat = JSON.parse(self.exportForm.cat);
+						self.originCat = [JSON.parse(self.exportForm.cat)];
+						let cat = JSON.parse(self.exportForm.cat);
+						
+						cat.res = cat;
+						self.totalCategories = [cat];
+						self.exportForm.cat = [cat];
 						self.exportForm.goodsExtend.annex = JSON.parse(self.exportForm.goodsExtend.annex);
 						self.exportForm.goodsExtend.imgs = JSON.parse(self.exportForm.goodsExtend.imgs);
-						for(let i = 0;i < self.exportForm.goodsSkuList.length;i++){
-							self.exportForm.goodsSkuList[i].sku = JSON.parse(self.exportForm.goodsSkuList[i].sku);
-							self.exportForm.goodsSkuList[i].tags = self.exportForm.goodsSkuList[i].tagList;
+						self.exportForm.skus = JSON.parse(self.exportForm.skus);
+						for(let i = 0;i < self.exportForm.skus.length;i++){
+							self.exportForm.skus[i].sku = JSON.parse(self.exportForm.skus[i].sku);
 						}
-						console.log('exportForm',self.exportForm)
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
@@ -536,48 +547,46 @@
 			        this.exportForm.goodsExtend.content = editorInstance.getContent()
 			    });
             },
-            getCatList(){
+            getCatList(val){
             	let self = this;
-				let requestData = {params:{token: window.localStorage.getItem('token')}};
+            	var requestData;
+            	if(val === undefined){
+            		requestData = {params:{token: window.localStorage.getItem('token')}};
+            	}else{
+            		requestData = {params:{token: window.localStorage.getItem('token'),catId:val[val.length-1].id}};
+            	}
 				self.$http.get('/ui/catList',requestData).then(function (response) {
 				    let data = response.data;
 				    console.log('catList',response)
 					if(data.code == 10000){
 						for(let i = 0;i < data.data.length;i++){
+							data.data[i].res = JSON.parse(data.data[i].res);
 							if(parseInt(data.data[i].hasChild) > 0){
 								data.data[i].children = [];
 							}
 						}
-						self.totalCategories = data.data;
-						console.log('123123',self.totalCategories)
+						if(val === undefined){
+							self.totalCategories = data.data;
+		            	}else{
+		            		self.insertCat(self.totalCategories,val,data.data,0);
+		            	}
+						
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
             },
-            getCatChild(val) {//获取子集分类
-            	console.log(val)
-            	return
-            	let self = this;
-				let requestData = {params:{token: window.localStorage.getItem('token'),catId:JSON.parse(val).id}};
-				self.$http.get('/ui/catList',requestData).then(function (response) {
-				    let data = response.data;
-				    console.log(data);
-					if(data.code == 10000){
-						for(let i = 0;i < self.totalCategories.length;i++){
-							if(self.totalCategories[i].id === JSON.parse(val).id){
-								for(let j = 0;j < data.data.length;j++){
-									if(parseInt(data.data[j].hasChild) > 0){
-										data.data[j].children = [];
-									}
-								}
-								self.totalCategories[i].children = data.data;
-							}
-						}
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
+            insertCat(arr,val,data,level){//val:所有父级的数组,data:当前获取到的数据
+            	for(let i = 0;i < arr.length;i++){
+            		if(arr[i].id === val[level].id){
+            			if(val.length === level + 1){
+            				arr[i].children = data;
+            			}else{
+            				level++;
+            				this.insertCat(arr[i].children,val,data,level);
+            			}
+            		}
+            	}
             },
 			submit(formName){
 				this.$refs[formName].validate((valid) => {
@@ -588,7 +597,6 @@
 							self.$delete(self.form.spec[i],'inputVisible');
 						}
 						let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.form)};
-						//requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/addGoods',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addGoods',response)
@@ -609,7 +617,7 @@
           			if (valid) {
             			let self = this;
             			self.exportForm.isPlatForm = 0;
-						self.exportForm.cat = [self.exportForm.cat];
+						self.exportForm.cat = self.originCat;
 						let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.exportForm)};
 						//requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/addGoods',self.qs.stringify(requestData)).then(function (response) {
