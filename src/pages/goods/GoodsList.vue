@@ -109,7 +109,7 @@
 			    </el-table-column>
 				<el-table-column label="商品图片">
 					<template scope="scope">
-						<img :src="scope.row.img" alt="" />
+						<img :src="scope.row.img" alt="" style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
 					</template>
 				</el-table-column>
 				<el-table-column prop="number" label="商品编码">
@@ -144,7 +144,7 @@
 						<el-dropdown trigger="click">
 							<el-button type="text" icon="more"></el-button>
 							<el-dropdown-menu slot="dropdown">
-							    <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
+							    <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
 							    <el-dropdown-item>明细</el-dropdown-item>
 							    <el-dropdown-item>删除</el-dropdown-item>
 							</el-dropdown-menu>
@@ -173,6 +173,7 @@
 			  	<el-button @click="sureSetTags">确定</el-button>
 			  	<el-button @click="dialogTableVisible = false">取消</el-button>
 			</el-dialog>
+			<pagination @getPageSize="getPageSize" @getPageNum="getPageNum" :totalPage="totalPage"></pagination>
 		</div>
 	</div>
 </template>
@@ -216,6 +217,9 @@
 					cat:[],//所属仓库
 					type:'',//1是上架，0是下架
 				},
+				pageSize:5,
+				pageNum:1,
+				totalPage:10,
 				multipleSelection: [],//选中项
 				dialogTableVisible:false,//设置标签表格是否可见
 				totalCategories:[],//分类列表
@@ -231,6 +235,12 @@
 		},
 		watch:{
 			advanceSearch:function(){//点击高级搜索和取消时重新查询
+				this.select();
+			},
+			pageSize:function(newVal,oldVal){
+				this.select();
+			},
+			pageNum:function(newVal,oldVal){
 				this.select();
 			}
 		},
@@ -250,11 +260,24 @@
 			});
 			self.getCatList();//获取分类列表
 		},
+		components:{
+			'pagination':require('../../components/pagination')
+		},
 		methods:{
+			getPageSize(val){
+				this.pageSize = val;
+			},
+			getPageNum(val){
+				this.pageNum = val;
+			},
 			select(){//查询
 				let self = this;
 				
-				let requestData = {token: window.localStorage.getItem('token')};
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					pageSize:self.pageSize,
+					pageNo:self.pageNum
+				};
 				
 				if(self.advanceSearch){//高级搜索
 					requestData = Object.assign(requestData,self.shallowCopy(self.form));
@@ -266,7 +289,8 @@
 				    let data = response.data;
 				    console.log('skuList',response)
 					if(data.code == 10000){
-						self.tableData = data.data
+						self.tableData = data.data.list;
+						self.totalPage = data.data.total;
 					}
 			    }).catch(function (error) {
 			    	console.log(error);
@@ -319,8 +343,8 @@
 				this.multipleSelection = val;
 				console.log(val);
 			},
-			update(id){//修改商品详情
-				this.$router.push({path:'/goods/updateGoods',query:{id:id}});
+			update(id,goodsId){//修改商品详情
+				this.$router.push({path:'/goods/updateGoods',query:{id:id,goodsId:goodsId}});
 			},
 			createGoods(){
 				this.$router.push('/goods/createGoods');

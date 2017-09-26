@@ -129,7 +129,7 @@
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					pageSize:self.pageSize,
-					pageNum:self.pageNum
+					pageNo:self.pageNum
 				};
 				//requestData = Object.assign(requestData,self.shallowCopy(self.form));
 				self.$http.post('/ui/role/selectRoleListPage',self.qs.stringify(requestData)).then(function (response) {

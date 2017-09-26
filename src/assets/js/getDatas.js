@@ -30,10 +30,25 @@ Vue.prototype.getAddressList = function(callback){//获取地址列表
 	let requestData = {token: window.localStorage.getItem('token')};
 	self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
 	    let data = response.data;
-	    console.log('brandList',response)
+	    console.log('addressList',response)
 		if(data.code == 10000){
 			callback(data.data);
 			
+		}
+    }).catch(function (error) {
+    	console.log(error);
+    });
+}
+Vue.prototype.getImgAccess = function(callback){//获取图片token
+	let self = this;
+	let requestData = {
+		token: window.localStorage.getItem('token'),
+		bucketName: 'sass'
+	};
+	self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
+	    let data = response.data;
+		if(data.code == 10000){
+			callback(data.data);
 		}
     }).catch(function (error) {
     	console.log(error);
