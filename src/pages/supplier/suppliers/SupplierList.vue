@@ -4,12 +4,12 @@
 			<h3 class="page-title">供应商列表</h3>
 			<el-form ref="form" :model="form" inline class="request-form">
 				<el-form-item label="快速查询">
-					<el-input placeholder="请输入供应商名称/联系电话/手机/编码" class="fast-query" icon="search" v-model="input2" :on-icon-click="select">
+					<el-input placeholder="请输入供应商名称/联系电话/手机/编码" class="fast-query" icon="search" v-model="form.query" :on-icon-click="handleIconClick">
 					</el-input>
 				</el-form-item>
 				<el-form-item style="float: right;">
 					<el-button @click="leadInSupplier">导入</el-button>
-					<el-button @click="outputSupplier">导出</el-button>
+					<el-button plain @click="outputSupplier">导出</el-button>
 					<el-button @click="createSupplier">新增</el-button>
 				</el-form-item>
 			</el-form>
@@ -51,11 +51,7 @@
 				</el-table-column>
 			</el-table>
 			<div class="block">
-<<<<<<< HEAD:src/pages/supplier/suppliers/SupplierList.vue
-				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo" :page-sizes="pageSizes" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
-=======
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
->>>>>>> 9af3cb20fe9a9170b82584f75aed4790579002ce:src/pages/supplier/suppliers/SupplierList.vue
 				</el-pagination>
 			</div>
 		</div>
@@ -69,16 +65,18 @@
 			return {
 				tableData: [],
 				input2: '',
-				excelAnalysisStatus: false,
 				multipleSelection: [],
 				supplierIdVal: [],
 				total: 0,
-				pageSize:10,
-				pageNo: 1
+				pageSize: 10,
+				pageNo: 1,
+				form: {
+					query: ''
+				}
 			}
 		},
 		created() {
-			//			this.select();
+			this.select();
 			this.getSupplierList()
 		},
 		mounted() {
@@ -93,48 +91,51 @@
 				};
 				self.$http.post('/ui/supplier/listByPage', self.qs.stringify(params)).then(function(response) {
 					console.log(response)
-					console.log('code', response.data.code)
+					console.log('code', response.data.data)
 
 					if(response.data.code === 10000) {
-						let data = []
-						for(let i = 0; i < response.data.data.length; i++) {
-							var obj = {}
-							obj.name = response.data.data[i].name
-							obj.supplierId = response.data.data[i].supplierId
-							obj.number = response.data.data[i].number
-							obj.tel = response.data.data[i].tel
-							obj.address = response.data.data[i].address
-							obj.phone = response.data.data[i].phone
-							data[i] = obj
-						}
-						self.tableData = data
+						self.tableData = response.data.data
 					}
 
 				}).catch(function(error) {
 					console.log(error);
 				})
 
-				self.$http.post('/ui/supplier/getSupplierCount').then(res => {
+				self.$http.post('/ui/supplier/getSupplierCountByQuery').then(res => {
 					this.total = res.data.data
 				})
 			},
-			//			select() { //查询
-			//				let self = this
-			//
-			//				let requestData = {
-			//					token: window.localStorage.getItem('token')
-			//					id:self.input2//id是后台给的url后跟的参数
-			//				}
-			//				self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function(response) {
-			//					let data = response.data;
-			//					console.log('list', response)
-			//					if(data.code == 10000) {
-			//						self.tableData = data.data
-			//					}
-			//				}).catch(function(error) {
-			//					console.log(error);
-			//				});
-			//			},
+			select() { //查询
+				let self = this
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					pageSize: self.pageSize,
+					pageNo: self.pageNo,
+					query: self.form.query
+				}
+				self.$http.post('/ui/supplier/listByPageAndQuery', self.qs.stringify(requestData)).then(function(response) {
+					let data = response.data;
+					console.log('list', response)
+					if(data.code == 10000) {
+						self.tableData = data.data
+					}
+				}).catch(function(error) {
+					console.log(error);
+				});
+				let params = {
+					query: self.form.query
+				}
+				self.$http.post('/ui/supplier/getSupplierCountByQuery', self.qs.stringify(params)).then(res => {
+					console.log('926', res)
+					if(res.data.code == 10000) {
+						self.total = res.data.data
+					}
+
+				})
+			},
+			handleIconClick(ev) {
+				this.select();
+			},
 			updateSupplier(supplierId) { //修改供应商详情
 				this.$router.push({
 					path: '/supplier/suppliers/updatesupplier',
@@ -171,23 +172,21 @@
 				})
 			},
 			outputSupplier() { //导出供应商
-			
 				let self = this
 				let supplierString = ''
 				for(let i = 0; i < self.multipleSelection.length; i++) {
 					supplierString += ',' + self.multipleSelection[i].supplierId
+					supplierString = supplierString.substring(1, supplierString.length)
+					let requestData = {
+						params: {
+							supplierIds: supplierString
+						}
+					};
+					location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
 				}
-				supplierString = supplierString.substring(1, supplierString.length)
-				let requestData = {
-					params: {
-						supplierIds: supplierString
-					}
-				};
-				location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
 
 			},
 			handleSelectionChange(val) {
-				this.excelAnalysisStatus = true;
 				this.multipleSelection = val;
 			},
 			toggleSelection(rows) {
@@ -209,11 +208,11 @@
 			},
 			handleSizeChange(val) {
 				this.pageSize = val;
-				this.getSupplierList()
+				this.select()
 			},
 			handleCurrentChange(val) {
 				this.pageNo = val;
-				this.getSupplierList()
+				this.select()
 			}
 		}
 	}

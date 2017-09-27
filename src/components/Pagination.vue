@@ -1,12 +1,8 @@
 <template>
 	<el-pagination
-		@size-change="handleSizeChange"
-	    @current-change="handleCurrentChange"
-	    :current-page="pageNum"
-	    :page-sizes="pageSizes"
-	    :page-size="pageSize"
-	    layout="total, sizes, prev, pager, next, jumper"
-	    :total="totalPage" style="margin-top:20px">
+		@getPageSize="getPageSize" 
+		@getPageNum="getPageNum"
+	    :total="total" style="margin-top:20px">
 	</el-pagination>
 </template>
 
@@ -14,7 +10,7 @@
 	export default{
 		data(){
 			return {
-				pageNum:1,//页码
+				pageNo:1,//页码
 		        pageSize:5,//一页的数量
 		        pageSizes:[5, 10, 15, 20],//页码选择
 			}

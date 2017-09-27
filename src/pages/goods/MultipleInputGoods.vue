@@ -1,4 +1,4 @@
- c<template>
+<template>
 	<div class="container">
 		<div class="wrapper">
 			<h3 class="page-title">批量导入商品</h3>
