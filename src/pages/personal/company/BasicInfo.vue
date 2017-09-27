@@ -59,7 +59,7 @@
 			  		<el-input placeholder="请输入服务热线" class="form-input" v-model="form.hotline"></el-input>
 			  	</el-form-item>
 			  	<el-form-item label="对外联系人">
-			  		<el-button v-if="form.externalContacts.length == 0" @click="addLine">添加</el-button>
+			  		<el-button v-if="!form.externalContacts" @click="addLine">添加</el-button>
 			  		<el-table :data="form.externalContacts" v-else>
 			  			<el-table-column
       						type="index"
@@ -95,8 +95,7 @@
 			  		</el-table>
 			  	</el-form-item>
 			  	<el-form-item label="公司logo">
-			  		<uploadoneimg :fileList="form.logo" @getFileList="getLogo"></uploadoneimg>
-			  		<!--<el-upload
+			  		<el-upload
 			  			class="avatar-uploader"
 					  	action="http://ivis.oss-cn-shanghai.aliyuncs.com/"
 					  	:show-file-list="false"
@@ -105,7 +104,7 @@
 					  	:before-upload="beforeLogoUpload">
 					  	<img v-if="form.logo" :src="form.logo" class="avatar">
 					  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>-->
+					</el-upload>
 			  	</el-form-item>
 			  	<el-form-item label="详细地址">
 			  		<el-input placeholder="请输入公司详细地址" class="form-input" v-model="form.detailAddress"></el-input>
@@ -161,19 +160,18 @@
 					introduction:'',//公司介绍
 					
 				},
+				key:{},
 				totalIndustryTypes:[],
 				type:false,//false是添加true是修改
 			}
 		},
 		created(){
-			if(JSON.parse(window.localStorage.getItem('userinfo'))) this.selectCompanyById();//查询公司信息
+			this.selectCompanyById();//查询公司信息
+			this.key = this.getKey();
 			this.getIndustry();
 		},
-		components:{
-			'uploadoneimg':require('../../../components/uploadoneimg')
-		},
 		methods:{
-			selectCompanyById(){//查询公司信息
+			selectCompanyById(){
 				let self = this;
 				let requestData = {
 					token: window.localStorage.getItem('token'),
@@ -192,10 +190,7 @@
 			    	console.log(error);
 			    });
 			},
-			getLogo(file){//获取logo
-				this.form.logo = file;
-			},
-			submit(formName){//保存
+			submit(formName){
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
             			let self = this;
@@ -218,6 +213,14 @@
 	            		return false;
 	          		}
         		});
+			},
+			handleLogoSuccess(res, file){
+				console.log(file)
+				this.form.logo = file.url;
+				this.key = this.getKey();
+			},
+			beforeLogoUpload(file){
+				return this.checkImg(file);
 			},
 			getIndustry(){
 				let self = this;
@@ -243,7 +246,7 @@
 			        })
 				}
 			},
-			addLine(){//添加对外联系人
+			addLine(){
 				let obj = {
 					name:'',
 					cel:'',
@@ -258,7 +261,7 @@
 					this.form.externalContacts.push(obj);
 				}
 			},
-			deleteLine(index){//删除一行对外联系人
+			deleteLine(index){
 				if(this.form.externalContacts.length === 1){
 					this.form.externalContacts = null;
 				}else{
