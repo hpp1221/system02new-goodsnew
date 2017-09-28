@@ -14,13 +14,6 @@
 	<natures>
 		<nature>com.aptana.projects.webnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/metchange-new1</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Users/hpp_h/Desktop/metchange-new1</locationURI>
-		</link>
-	</linkedResources>
 	<filteredResources>
 		<filter>
 			<id>1503464348464</id>
@@ -41,20 +34,7 @@
 			</matcher>
 		</filter>
 		<filter>
-<<<<<<< HEAD
-			<id>1505978244435</id>
-			<name></name>
-			<type>26</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-node_modules</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1505978677443</id>
-=======
-			<id>1505963806545</id>
->>>>>>> 9af3cb20fe9a9170b82584f75aed4790579002ce
+			<id>1505979411029</id>
 			<name></name>
 			<type>26</type>
 			<matcher>

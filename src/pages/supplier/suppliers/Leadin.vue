@@ -47,7 +47,6 @@
 
 			</el-form>
 			<el-form v-if="active == 3">
-				
 			</el-form>
 
 		</div>
@@ -115,7 +114,7 @@
 			},
 			sureExport() { //确定导入
 				this.active++
-				let self = this
+					let self = this
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					supplierList: JSON.stringify(self.excelResponse)
@@ -123,6 +122,12 @@
 				self.$http.post('/ui/supplier/insertSupplierList', self.qs.stringify(requestData)).then(function(res) {
 					let data = res.data;
 					if(data.code == 10000) {
+						self.$router.push('/supplier/suppliers/supplierlist');
+					} else if(data.code == 1001) {
+						self.$router.push('/supplier/suppliers/supplierlist');
+					} else if(data.code == 1000) {
+						self.$router.push('/supplier/suppliers/supplierlist');
+					} else if(data.code == 1002) {
 						self.$router.push('/supplier/suppliers/supplierlist');
 					}
 				}).catch(function(error) {

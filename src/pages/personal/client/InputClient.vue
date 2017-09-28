@@ -3,71 +3,53 @@
 		<div class="wrapper">
 			<h3 class="page-title">客户导入</h3>
 			<el-steps :active="active">
-				<el-step title="上传导入文件"></el-step>
-				<el-step title="导入文件预览"></el-step>
+				<el-step title="上传数据"></el-step>
+				<el-step title="预览数据"></el-step>
 				<el-step title="导入完成"></el-step>
 			</el-steps>
-			<el-form v-if="active == 1" label-width="150px">
+			<el-form v-if="active == 1" label-width="150px" label-position="left">
 				<el-form-item label="1、数据模板下载">
 					<el-button type="text" @click="getExcel">下载模板</el-button>
 				</el-form-item>
-				<el-form-item label="2、添加客户数据">
-					<el-upload action="/ui/analysisExcel" :on-success="uploadSuccess" :on-remove="removeExcel" :file-list="form.excelFile" style="width: 300px;">
+				<el-form-item label="2、导入数据">
+					<el-upload action="/ui/importVips" :on-success="uploadSuccess" :on-remove="removeExcel" :file-list="form.excelFile" multiple style="width: 300px;">
 						<el-button size="small" type="primary">点击上传</el-button>
-						<div slot="tip" class="el-upload__tip">
-							<i class="el-icon-warning inputClient-icon"></i>
-							<ul class="inputClient-detail">
-								<li>文件后缀名必须为:xls或xlsx(即Excel格式)，文件大小不得大于10M</li>
-								<li>客户名称不允许为空，不允许重复，一旦为空或者重复，则本行数据不允许导入</li>
-								<li>客户编码不允许重复，一旦重复，则本行数据不允许导入</li>
-								<li>客户级别允许为空，为空则此客户分入系统默认的"普通"级别</li>
-							</ul>
-						</div>
+						<div slot="tip" class="el-upload__tip">请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除</div>
 					</el-upload>
-
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="next">下一步</el-button>
 				</el-form-item>
 			</el-form>
 			<el-form v-if="active == 2">
-				<el-form-item class="inputclient-view">
+				<el-form-item>
 					<el-table :data="excelResponse" border>
-						<el-table-column label="客户名称" prop="customerName">
+						<el-table-column prop="name" label="供应商名称">
+						</el-table-column>
+						<el-table-column prop="num" label="供应商编码">
 
 						</el-table-column>
-						<el-table-column label="客户编码" prop="clientCode">
+						<el-table-column prop="tphone" label="联系电话">
 
 						</el-table-column>
-						<el-table-column label="客户姓名" prop="clientName">
+						<el-table-column prop="address" label="地址">
 
 						</el-table-column>
-						<el-table-column label="客户手机" prop="clientMobile">
+						<el-table-column prop="mphone" label="手机">
 
 						</el-table-column>
-						<el-table-column label="客户电话" prop="clientTel">
+						<el-table-column prop="vip_level" label="客户级别">
 
 						</el-table-column>
-						<el-table-column label="客户级别" prop="clientClass">
-
-						</el-table-column>
-						<el-table-column label="客户地址" prop="clientAddress">
-
-						</el-table-column>
-
 					</el-table>
 				</el-form-item>
-				<el-form-item>
-
+				<el-form-item :data="excelResponse">
 					<el-button @click="goBack">返回上一步</el-button>
 					<el-button @click="sureExport">确定导入</el-button>
 				</el-form-item>
+
 			</el-form>
 			<el-form v-if="active == 3">
-				<el-form-item>
-					<download-excel class="btn btn-default" :data="excelResponse" :fields="json_fields" :meta="json_meta" button_text="下载导入数据" name="filename.xls">
-					</download-excel>
-				</el-form-item>
 			</el-form>
 
 		</div>
@@ -84,23 +66,15 @@
 					catId: -1,
 					excelFile: []
 				},
-				excelResponse: [{
-					customerName: '觇智科技',
-					clientCode: '3402',
-					clientName: '觇智科技',
-					clientMobile: '0517-12345678',
-					clientTel: '18326578901',
-					clientClass: 'VIP1',
-					clientAddress: '兴耀科技园'
-				}], //excel解析后的数据
+				excelResponse: [], //excel解析后的数据
+				excelAnalysisStatus: false, //excelResponse默认是数组，不传数据也可以直接下一步，所以要先false
 				json_fields: {
-					"客户名称": "String",
-					"客户编码": "String",
-					"客户姓名": "String",
-					"客户手机": "String",
-					"客户电话": "String",
-					"客户级别": "String",
-					"客户地址": "String",
+					"供应商名称": "String",
+					"供应商编码": "Number",
+					"联系电话": "Number",
+					"地址": "String",
+					"手机": "Number",
+					"客户级别": "Number"
 				},
 				json_meta: [
 					[{
@@ -115,28 +89,18 @@
 		},
 		methods: {
 			next() { //下一步
-				this.active++;
+				this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
 			},
 			getExcel() { //下载excelmodel
-				if(this.form.addressId && this.form.catId) {
-					location.href = '/ui/export?addressId=' + this.form.addressId + '&catId=' + this.form.catId
-				}
+				location.href = '/ui/downVip'
 			},
 			uploadSuccess(response, file, fileList) { //成功上传的回调
-				if(response.code == 10000) {
-					this.form.excelFile = [file]
-					if(response.data.length > 0) {
-						for(let i = 0; i < response.data.length; i++) {
-							if(response.data[i].relNum != response.data[i].inStoreHouse) {
-								this.excelResponse[i].customerName = response.data[i].customerName
-								this.excelResponse[i].clientCode = response.data[i].clientCode
-								this.excelResponse[i].clientName = response.data[i].clientName
-								this.excelResponse[i].clientMobile = response.data[i].clientMobile
-								this.excelResponse[i].clientTel = response.data[i].clientTel
-								this.excelResponse[i].clientClass = response.data[i].clientClass
-								this.excelResponse[i].clientAddress = response.data[i].clientAddress
-							}
-						}
+				this.excelAnalysisStatus = true;
+				fileList = [file];
+				this.form.excelFile = [file]
+				if(response.length > 0) {
+					for(let i = 0; i < response.length; i++) {
+						this.excelResponse = response;
 					}
 				} else {
 					this.form.excelFile = []
@@ -146,22 +110,27 @@
 			},
 			removeExcel() { //清空文件
 				this.form.excelFile = []
+				this.excelAnalysisStatus = false;
 			},
 			goBack() { //返回上一步
 				this.active--;
 			},
 			sureExport() { //确定导入
 				this.active++
+				let self = this
+				let requestData = {
+					token: window.localStorage.getItem('token'),
+					vips: JSON.stringify(self.excelResponse)
+				};
+				self.$http.post('/ui/insertvipList', self.qs.stringify(requestData)).then(function(res) {
+					let data = res.data;
+					if(data.code == 0) {
+						self.$router.push('/personal/client/clientmanagement');
+					}
+				}).catch(function(error) {
+					console.log(error);
+				});
 			}
 		}
 	}
 </script>
-<style>
-	.inputclient-view {
-		text-align: center;
-	}
-	
-	.el-table th>.cell {
-		text-align: center;
-	}
-</style>

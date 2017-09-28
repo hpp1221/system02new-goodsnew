@@ -18,7 +18,7 @@
 				</el-form-item>
 				<el-form-item label="供应商地址">
 					<el-input placeholder="请输入供应商地址" v-model="form.address" class="form-input">
-						</el-input>
+					</el-input>
 				</el-form-item>
 				<el-form-item label="供应商编码">
 					<el-input placeholder="请输入供应商编码" v-model="form.number" class="form-input">
@@ -29,7 +29,7 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button @click.native="submit('form')">保存</el-button>
+					<el-button plain @click.native="submit('form')">保存</el-button>
 				</el-form-item>
 			</el-form>
 
@@ -42,78 +42,45 @@
 		data() {
 			return {
 				form: {
-					goodsName: '',
-					spec: [],
-					skus: [],
-					goodsExtend: {
-						imgs: [],
-						content: '',
-						annex: []
-					}
+					name: '',
+					tel: '',
+					phone: '',
+					address: '',
+					email: ''
 				},
-				key: {},
-				inputValue: '',
 			}
 		},
-		watch: {
-
-			'form.spec': {
-				handler: function(val, oldVal) {
-					//要执行的任务
-					//这里不知道怎么才能修改到this.data的数据，有知道的麻烦告知
-					//现在知道的就是通过直接修改Store.state的方式来更新数据，当然效果和修改this.data是一样的
-					this.form.skus = [];
-					this.createGoodsDetail({}, 0);
-				},
-
-				// 深度观察
-				deep: true
-			}
-		},
+		watch: {},
 		methods: {
-			editorReady(editorInstance) {
-				editorInstance.setContent(this.form.goodsExtend.content);
-				editorInstance.addListener('contentChange', () => {
-					this.form.goodsExtend.content = editorInstance.getContent()
-				});
-			},
-			getContent() {
-				console.log(this.form.goodsExtend.content)
-			},
-			submit(formName) {//保存
+			submit(formName) { //保存
 				this.$refs[formName].validate((valid) => {
-          			if (valid) {
-            			let self = this;
-						
-						for(let i = 0;i < self.form.spec.length;i++){
-							self.$delete(self.form.spec[i],'inputVisible');
-						}
-						let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.form)};
-						requestData = Object.assign(requestData,self.shallowCopy(self.form));
-						self.$http.post('/ui/supplier/createSupplier',self.qs.stringify(requestData)).then(function (response) {
-						    let data = response.data;
-						    console.log('addGoods',response)
-							if(response.data.code == 10000){
+					if(valid) {
+						let self = this;
+						let requestData = {
+							token: window.localStorage.getItem('token')
+						};
+						requestData = Object.assign(requestData, self.shallowCopy(self.form));
+						self.$http.post('/ui/supplier/createSupplier', self.qs.stringify(requestData)).then(function(response) {
+							let data = response.data;
+							if(data.code == 10000) {
 								self.$router.push('/supplier/suppliers/supplierlist');
-							}
-					    }).catch(function (error) {
-					    	console.log(error);
-					    });
-          			} else {
-	            		console.log('error submit!!');
-	            		return false;
-	          		}
-        		});
+							} else if(data.code == 1001) {
 
-			},
-			handleAvaterSuccess(response, file, fileList) {
-				this.form.skus[this.imgIndex].img = 'http://ivis.oss-cn-shanghai.aliyuncs.com/' + this.key.key;
-				this.getKey();
+							} else if(data.code == 1000) {
+
+							} else if(data.code == 1002) {
+
+							}
+						}).catch(function(error) {
+							console.log(error)
+						});
+					} else {
+						console.log('error submit!!');
+						return false;
+					}
+				});
+
 			},
 		}
 	}
 </script>
-
-<style>
-
-</style>
