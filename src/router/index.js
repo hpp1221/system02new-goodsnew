@@ -124,9 +124,33 @@ export default new Router({
           component: require('@/pages/user/PersonCenter'),
         },
 				{
-					path: '/dictionary/dictionaryclassify/DictionaryClassifyList', //用户权限
-					component: require('@/pages/dictionary/dictionaryclassify/DictionaryClassifyList'),
+					path: '/dictionary/dictionaryclassify', //商品分类
+					component: require('@/pages/dictionary/DictionaryClassify'),
 				},
+        {
+          path: '/dictionary/dictionarybrand', //商品品牌
+          component: require('@/pages/dictionary/DictionaryBrand'),
+        },
+        {
+          path: '/dictionary/dictionarylabel', //商品标签
+          component: require('@/pages/dictionary/DictionaryLabel'),
+        },
+        {
+          path: '/dictionary/measurementunit', //计量单位
+          component: require('@/pages/dictionary/MeasurementUnit'),
+        },
+        {
+          path: '/dictionary/clientlevel', //客户级别
+          component: require('@/pages/dictionary/ClientLevel'),
+        },
+        {
+          path: '/dictionary/notificationcategories', //通知分类
+          component: require('@/pages/dictionary/NotificationCategories'),
+        },
+        {
+          path: '/dictionary/storehouse', //仓库
+          component: require('@/pages/dictionary/StoreHouse'),
+        },
 				{
 					path: '/personal/security/security', //账户安全
 					component: require('@/pages/personal/security/Security'),
