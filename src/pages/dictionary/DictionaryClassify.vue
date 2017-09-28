@@ -66,7 +66,7 @@
             <i class="el-icon-edit" @click="updateDictionaryClassify = true">修改</i>
           </li>
           <li>
-            <i class="el-icon-arrow-up" @click="stick ">置顶</i>
+            <i class="el-icon-arrow-up">置顶</i>
           </li>
           <li>
             <i class="el-icon-delete">删除</i>
@@ -140,9 +140,6 @@
         },
         formLabelWidth: '120px'
       };
-    },
-    components:{
-      'icon':require('../../../assets/css/iconfont.css')
     },
     methods: {
       handleNodeClick(data) {//树形控件

@@ -43,7 +43,7 @@
 
 				</el-table-column>
 				<el-table-column prop="vip_level" label="客户级别">
-					<template scope="scope">						
+					<template scope="scope">
 						<span v-if="scope.row.vip_level == '0'">VIP1</span>
 						<span v-if="scope.row.vip_level == '1'">VIP2</span>
 						<span v-if="scope.row.vip_level == '2'">VIP3</span>
@@ -187,10 +187,10 @@
 					params: {
 						vipIds: supplierString
 					}
-				};				
-				location.href = '/ui/exportVips?vipIds=' + supplierString;		
+				};
+				location.href = '/ui/exportVips?vipIds=' + supplierString;
 			},
-			handleSelectionChange(val) {	
+			handleSelectionChange(val) {
 				this.multipleSelection = val;
 			},
 			toggleSelection(rows) {
