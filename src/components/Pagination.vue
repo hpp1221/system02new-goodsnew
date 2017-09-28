@@ -23,19 +23,13 @@
       if(localStorage.getItem('pageSize')){
         this.pageSize = parseInt(localStorage.getItem('pageSize'))
       }
+      this.$emit('getPageSize',this.pageSize);
+      this.$emit('getPageNum',this.pageNum);
     },
     props:{
       totalPage:{
         type:Number,
         default:10
-      }
-    },
-    watch:{
-      pageNum:function(newVal,oldVal){
-
-      },
-      pageSize:function(newVal,oldVal){
-
       }
     },
     methods:{

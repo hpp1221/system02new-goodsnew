@@ -186,11 +186,11 @@
         this.selectCount();
         this.statisticsType === '1'?this.selectGoodsList():this.selectOrdersList();
       },
-      pageSize:function () {//改变一页显示的数量
-
+      pageSize2:function () {//改变一页显示的数量
+        this.selectOrdersList();
       },
-      pageNum:function () {//改变页码
-
+      pageNum2:function () {//改变页码
+        this.selectOrdersList();
       }
     },
     methods: {
