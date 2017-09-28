@@ -5,6 +5,7 @@
 			<el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="120px" style="width:700px">
 				<h4 class="item-title">基础信息</h4>
 				<el-form-item label="登录账号" prop="loginId">
+          <span>{{companySuffix}}</span>
 					<el-input placeholder="请输入登录账号" v-model="form.loginId" class="form-input"></el-input>
 				</el-form-item>
 				<el-form-item label="真实姓名" prop="name">
@@ -55,7 +56,7 @@
 					<el-input type="number" placeholder="请输入QQ" v-model="form.qq" class="form-input">
 					</el-input>
 				</el-form-item>
-				
+
 				<el-form-item label="账户角色">
 					<el-select placeholder="请输入账户角色" class="form-input" v-model="form.roleIds" multiple>
 						<el-option v-for="t in totalRoleList" :key="t.roleId" :value="t.roleId" :label="t.name"></el-option>
@@ -89,7 +90,7 @@
 						}else{
 							callback(new Error(data.message));
 						}
-						
+
 				    }).catch(function (error) {
 				    	console.log(error);
 				    });
@@ -109,7 +110,7 @@
 						}else{
 							callback(new Error(data.message));
 						}
-						
+
 				    }).catch(function (error) {
 				    	console.log(error);
 				    });
@@ -129,11 +130,11 @@
 						}else{
 							callback(new Error(data.message));
 						}
-						
+
 				    }).catch(function (error) {
 				    	console.log(error);
 				    });
-		          	
+
 		        }
 	      	};
 			var pwdValidator = (rule, value, callback) => {
@@ -175,7 +176,7 @@
 				rules:{
 					loginId: [
 						{
-							validator: usernameValidator, 
+							validator: usernameValidator,
 			            	trigger:'blur'
 						}
 					],
@@ -184,46 +185,65 @@
 					],
 					cel: [
 						{
-							validator: celValidator, 
+							validator: celValidator,
 			            	trigger:'blur'
 						}
 					],
 					email: [
 						{
-							validator: emailValidator, 
+							validator: emailValidator,
 			            	trigger:'blur'
 						}
 					],
 					pwd: [
 			            {
-			            	validator: pwdValidator, 
+			            	validator: pwdValidator,
 			            	trigger:'change'
 			            }
 			        ],
 			        pwdAgain: [
 			            {
-			            	validator: pwdAgainValidator, 
+			            	validator: pwdAgainValidator,
 			            	trigger:'change'
 			            }
 			        ],
 				},
+        companySuffix:'',//公司loginId前缀
 				totalRoleList:[],
 				totalDepartmentList:[],
 				type:false,//false是添加true是修改
 			}
 		},
 		created(){
-			//if(JSON.parse(window.localStorage.getItem('userinfo'))) this.selectCompanyById();//查询公司信息
-			this.getRoleList();
+			this.getPrimaryUserLoginId();
+      this.getRoleList();
 			this.getDepartmentList();
 		},
 		components:{
 			'uploadoneimg':require('../../../components/uploadoneimg')
 		},
+    computed:{
+		  userinfo:function () {
+        return JSON.parse(window.localStorage.getItem('userinfo'));
+      }
+    },
 		methods:{
 			getLogo(file){//获取logo
 				this.form.avatar = file;
 			},
+      getPrimaryUserLoginId(){
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.$http.post('/ui/user/selectPrimaryUserLoginId',self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('selectPrimaryUserLoginId',response)
+          if(data.code == 10000){
+              self.companySuffix = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
 			submit(formName){//保存
 				this.$refs[formName].validate((valid) => {
           			if (valid) {

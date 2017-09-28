@@ -15,34 +15,34 @@
 			</div>
 			<el-table :data="detailData.list">
 				<el-table-column label="主图" prop="goodsNo">
-					
+
 				</el-table-column>
 				<el-table-column label="商品编码" prop="goodsName">
-					
+
 				</el-table-column>
 				<el-table-column label="商品名称" prop="goodsSpec">
-					
+
 				</el-table-column>
 				<el-table-column label="规格" prop="goodsUnit">
-					
+
 				</el-table-column>
 				<el-table-column label="数量" prop="num">
-					
+
 				</el-table-column>
 				<el-table-column label="单位" prop="num">
-					
+
 				</el-table-column>
 				<el-table-column label="商品参数" prop="num">
-					
+
 				</el-table-column>
 				<el-table-column label="单价" prop="num">
-					
+
 				</el-table-column>
 				<el-table-column label="金额小计" prop="num">
-					
+
 				</el-table-column>
 				<el-table-column label="备注" prop="num">
-					
+
 				</el-table-column>
 			</el-table>
 		</div>
@@ -54,7 +54,7 @@
 		data(){
 			return {
 				detailData:{
-					
+
 				}
 			}
 		},
@@ -63,12 +63,12 @@
 		},
 		methods:{
 			select(id){
-				let self = this
+				let self = this;
 				let requestData = {
 					token: window.localStorage.getItem('token'),
-					id:id	
-				}
-				self.$http.post('/ui/getRecord',self.qs.stringify(requestData)).then(function (response) {
+					id:id
+				};
+				self.$http.post('/ui/order/detail',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('出库详情',response)
 					if(data.code == 10000){
