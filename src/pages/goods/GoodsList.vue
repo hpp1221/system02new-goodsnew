@@ -109,7 +109,7 @@
         </el-table-column>
         <el-table-column label="商品图片">
           <template scope="scope">
-            <img :src="scope.row.img" alt="" />
+            <img :src="scope.row.img" alt="" style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
         <el-table-column prop="number" label="商品编码">
@@ -144,7 +144,7 @@
             <el-dropdown trigger="click">
               <el-button type="text" icon="more"></el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
                 <el-dropdown-item>明细</el-dropdown-item>
                 <el-dropdown-item>删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -275,7 +275,7 @@
 
         let requestData = {
           token: window.localStorage.getItem('token'),
-          size:self.pageSize,
+          pageSize:self.pageSize,
           pageNo:self.pageNum
         };
 
@@ -343,8 +343,8 @@
         this.multipleSelection = val;
         console.log(val);
       },
-      update(id){//修改商品详情
-        this.$router.push({path:'/goods/updateGoods',query:{id:id}});
+      update(id,goodsId){//修改商品详情
+        this.$router.push({path:'/goods/updateGoods',query:{id:id,goodsId:goodsId}});
       },
       createGoods(){
         this.$router.push('/goods/createGoods');
@@ -442,3 +442,6 @@
     }
   }
 </script>
+
+<style>
+</style>
