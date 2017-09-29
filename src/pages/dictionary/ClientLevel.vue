@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">客户级别</h3>
-      <el-button class="clientlevel-create" @click="CreateclientLevel = true">新增</el-button>
+      <el-button class="dictionarycreate" @click="CreateclientLevel = true">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增客户级别" :visible.sync="CreateclientLevel">
         <el-form :model="createForm">

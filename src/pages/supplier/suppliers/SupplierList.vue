@@ -50,10 +50,8 @@
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="block">
-				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNo" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
-				</el-pagination>
-			</div>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right">
+      </pagination>
 		</div>
 	</div>
 </template>
@@ -67,25 +65,28 @@
 				input2: '',
 				multipleSelection: [],
 				supplierIdVal: [],
-				total: 0,
-				pageSize: 10,
-				pageNo: 1,
+        pageSize:5,
+        pageNum:1,
+        totalPage:10,
 				form: {
 					query: ''
 				}
 			}
 		},
 		created() {
-			this.select();
 			this.getSupplierList()
 		},
-		mounted() {
-
-		},
+    components:{
+      'pagination':require('../../../components/pagination')
+    },
 		methods: {
+      pageChanged(page){
+        this.select(page.size,page.num);
+      },
 			getSupplierList() { //供应商管理列表
 				let self = this
 				let params = {
+          token: window.localStorage.getItem('token'),
 					pageSize: self.pageSize,
 					pageNo: self.pageNo
 				};
@@ -96,21 +97,20 @@
 					if(response.data.code === 10000) {
 						self.tableData = response.data.data
 					}
-
 				}).catch(function(error) {
 					console.log(error);
 				})
 
 				self.$http.post('/ui/supplier/getSupplierCountByQuery').then(res => {
-					this.total = res.data.data
+					self.totalPage = res.data.data
 				})
 			},
-			select() { //查询
+			select(size,num) { //查询
 				let self = this
 				let requestData = {
 					token: window.localStorage.getItem('token'),
-					pageSize: self.pageSize,
-					pageNo: self.pageNo,
+          pageNo: num,
+          pageSize: size,
 					query: self.form.query
 				}
 				self.$http.post('/ui/supplier/listByPageAndQuery', self.qs.stringify(requestData)).then(function(response) {
@@ -128,7 +128,7 @@
 				self.$http.post('/ui/supplier/getSupplierCountByQuery', self.qs.stringify(params)).then(res => {
 					console.log('926', res)
 					if(res.data.code == 10000) {
-						self.total = res.data.data
+						self.totalPage = res.data.data
 					}
 
 				})
@@ -205,14 +205,6 @@
 			},
 			leadInSupplier() { //导入供应商
 				this.$router.push('/supplier/suppliers/leadin');
-			},
-			handleSizeChange(val) {
-				this.pageSize = val;
-				this.select()
-			},
-			handleCurrentChange(val) {
-				this.pageNo = val;
-				this.select()
 			}
 		}
 	}
