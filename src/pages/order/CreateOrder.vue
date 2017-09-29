@@ -32,7 +32,7 @@
           </el-table-column>
           <el-table-column label="数量">
             <template scope="scope">
-              <el-input v-model="scope.row.num" type="number"></el-input>
+              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)" @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="单位" prop="goodsUnit">
@@ -110,14 +110,16 @@
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
           }],
-//          orderShipment: {
+          orderShipment: {
 //            customer: '',
 //            userPhone: '',
-//
-//          },
+            deliveryInfo:'收货地址'
+
+          },
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
+//          deliveryInfo:''
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
@@ -140,9 +142,9 @@
     },
     watch: {
       'form.orderDetails': {
-        handler: (val, oldVal) => {
+        handler:  function(val, oldVal){
           for (let i = 0; i < val.length; i++) {
-            val[i].subtotal = parseInt(val[i].num) * parseInt(val[i].price)
+            this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num),val[i].price);
           }
         },
         // 深度观察
@@ -159,6 +161,9 @@
       }
     },
     methods: {
+      judgeNum(value,index){
+        this.form.orderDetails[index].num = value.replace(/\D/g,'')
+      },
       querySearchAsync(queryString, cb){
         let self = this;
         let requestData = {
@@ -186,7 +191,16 @@
 
       },
       handleSelect(item){
-        console.log(item);
+        let list = this.form.orderDetails;
+        for(let i = 0;i < list.length;i++){
+            if(item.goodsNo === list[i].goodsNo){
+                this.$message.error('已有此类商品');
+              this.form.orderDetails[this.listIndex].goodsNo = ''
+              this.form.orderDetails[this.listIndex].goodsName = ''
+              this.form.orderDetails[this.listIndex].combination = ''
+                return
+            }
+        }
         this.form.orderDetails[this.listIndex] = item
       },
       handleClick(index){
@@ -208,7 +222,7 @@
         });
       },
       addLine(){
-        this.form.data.push({
+        this.form.orderDetails.push({
           goodsNo: '',//商品编号
           goodsName: '',//商品名
           goodsSpec: '',//规格

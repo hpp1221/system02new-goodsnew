@@ -31,19 +31,19 @@
             </el-col>
           </el-row>
           <el-table :data="goodsData" border>
-            <el-table-column prop="productSpecNumber" label="商品编码">
+            <el-table-column prop="goodsNo" label="商品编码">
 
             </el-table-column>
-            <el-table-column prop="productSpecName" label="商品名称">
+            <el-table-column prop="goodsName" label="商品名称">
 
             </el-table-column>
-            <el-table-column prop="specification" label="规格">
+            <el-table-column prop="goodsSpec" label="规格">
 
             </el-table-column>
-            <el-table-column prop="buyNumber" label="数量">
+            <el-table-column prop="num" label="数量">
 
             </el-table-column>
-            <el-table-column prop="unit" label="单位">
+            <el-table-column prop="goodUnit" label="单位">
 
             </el-table-column>
 
@@ -51,7 +51,7 @@
 
             </el-table-column>
           </el-table>
-          <pagination @getPageSize="getPageSize1" @getPageNum="getPageNum1" :totalPage="totalPage1"></pagination>
+          <pagination @setChanged="pageChanged1" :totalPage="totalPage1"></pagination>
         </el-tab-pane>
         <el-tab-pane label="订单明细统计" name="2">
           <el-date-picker
@@ -116,7 +116,7 @@
 
             <!--</el-table-column>-->
           </el-table>
-          <pagination @getPageSize="getPageSize2" @getPageNum="getPageNum2" :totalPage="totalPage2"></pagination>
+          <pagination @setChanged="pageChanged2" :totalPage="totalPage2"></pagination>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -128,14 +128,14 @@
     data(){
       return {
         goodsData: [],
-        orderData:[],
+        orderData: [],
         statisticsType: '1',
         countAmount: '',
         countOrder: '',
         countGoods: '',
         dateRange: '',
-        startTime:'',
-        endTime:'',
+        startTime: '',
+        endTime: '',
         pageSize1: 5,//商品统计
         pageNum1: 1,
         totalPage1: 10,
@@ -176,41 +176,34 @@
     },
     created(){
       this.selectCount();
-      this.selectGoodsList();
     },
     watch: {
-      statisticsType:function(newVal,oldVal){//改变统计方式
-        newVal === '1'?this.selectGoodsList():this.selectOrdersList();
+      statisticsType: function (newVal, oldVal) {//改变统计方式
+        newVal === '1' ? this.selectGoodsList(this.pageSize1,this.pageNum1) : this.selectOrdersList(this.pageSize2,this.pageNum2);
       },
-      dateRange:function(){//改变日期范围，重新查总数和列表
+      dateRange: function () {//改变日期范围，重新查总数和列表
         this.selectCount();
-        this.statisticsType === '1'?this.selectGoodsList():this.selectOrdersList();
+        this.selectGoodsList(this.pageSize1,this.pageNum1);
+        this.selectOrdersList(this.pageSize2,this.pageNum2);
       },
-      pageSize2:function () {//改变一页显示的数量
-        this.selectOrdersList();
-      },
-      pageNum2:function () {//改变页码
-        this.selectOrdersList();
-      }
+
     },
     methods: {
-      getPageSize1(val){
-          this.statisticsType === '1'?this.pageSize1 = val : this.pageSize1 = val;
+      pageChanged1(page){
+        this.pageSize1 = page.size;
+        this.pageNum1 = page.num;
+        this.selectGoodsList(page.size, page.num);
       },
-      getPageNum1(val){
-        this.statisticsType === '1'?this.pageNum1 = val : this.pageNum1 = val;
-      },
-      getPageSize2(val){
-        this.statisticsType === '1'?this.pageSize2 = val : this.pageSize2 = val;
-      },
-      getPageNum2(val){
-        this.statisticsType === '1'?this.pageNum2 = val : this.pageNum2 = val;
+      pageChanged2(page){
+        this.pageSize2 = page.size;
+        this.pageNum2 = page.num;
+        this.selectOrdersList(page.size, page.num);
       },
       selectCount(){
         let self = this;
-        if(self.dateRange instanceof Array){
-          self.startTime = self.dateRange[0];
-          self.endTime = self.dateRange[1];
+        if (self.dateRange instanceof Array) {
+          self.startTime = self.dateRange[0].pattern('yyyy-MM-dd HH:mm:ss');
+          self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -229,18 +222,18 @@
           console.log(error);
         });
       },
-      selectGoodsList(){
+      selectGoodsList(size, num){
         let self = this;
-        if(self.dateRange instanceof Array){
-          self.startTime = self.dateRange[0];
-          self.endTime = self.dateRange[1];
+        if (self.dateRange instanceof Array) {
+          self.startTime = self.dateRange[0].pattern('yyyy-MM-dd HH:mm:ss');
+          self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
           token: window.localStorage.getItem('token'),
-          startTime: self.startTime,
-          endTime: self.endTime,
-          pageSize:self.pageSize1,
-          pageNo:self.pageNum1
+          startTime:self.startTime,
+          endTime:self.endTime,
+          pageSize: size,
+          pageNo: num
         };
         self.$http.post('/ui/order/goods/details', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
@@ -256,18 +249,18 @@
           console.log(error);
         });
       },
-      selectOrdersList(){
+      selectOrdersList(size, num){
         let self = this;
-        if(self.dateRange instanceof Array){
-          self.startTime = self.dateRange[0];
-          self.endTime = self.dateRange[1];
+        if (self.dateRange instanceof Array) {
+          self.startTime = self.dateRange[0].pattern('yyyy-MM-dd HH:mm:ss');
+          self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
           token: window.localStorage.getItem('token'),
           startTime: self.startTime,
           endTime: self.endTime,
-          pageSize:self.pageSize2,
-          pageNo:self.pageNum2
+          pageSize: size,
+          pageNo: num
         };
         self.$http.post('/ui/order/details', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

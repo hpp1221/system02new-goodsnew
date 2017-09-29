@@ -14,33 +14,41 @@
   export default{
     data(){
       return {
-        pageNum:1,//页码
-        pageSize:5,//一页的数量
-        pageSizes:[5, 10, 15, 20],//页码选择
+        pageNum: 1,//页码
+        pageSize: 5,//一页的数量
+        pageSizes: [5, 10, 15, 20],//页码选择
       }
     },
     created(){
-      if(localStorage.getItem('pageSize')){
+      if (localStorage.getItem('pageSize')) {
         this.pageSize = parseInt(localStorage.getItem('pageSize'))
       }
-      this.$emit('getPageSize',this.pageSize);
-      this.$emit('getPageNum',this.pageNum);
+      this.changed();
     },
-    props:{
-      totalPage:{
-        type:Number,
-        default:10
-      }
+    props: {
+      totalPage: {
+        type: Number,
+        default: 10
+      },
     },
-    methods:{
+    watch: {
+      pageNum: function () {
+        this.changed();
+      },
+      pageSize: function () {
+        this.changed();
+      },
+    },
+    methods: {
+      changed(){
+        this.$emit('setChanged', {size: this.pageSize, num: this.pageNum});
+      },
       handleSizeChange(val) {
         this.pageSize = val;
-        this.$emit('getPageSize',val);
-        localStorage.setItem('pageSize',val)
+        localStorage.setItem('pageSize', val)
       },
       handleCurrentChange(val) {
         this.pageNum = val;
-        this.$emit('getPageNum',val);
       },
     }
   }

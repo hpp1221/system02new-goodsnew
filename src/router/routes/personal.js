@@ -43,4 +43,21 @@ export default [
     path: '/personal/role/update', //修改角色
     component: resolve => require(['@/pages/personal/role/update'], resolve)
   },
+
+  {
+    path: '/personal/user/list', //用户列表
+    component: resolve => require(['@/pages/personal/user/list'], resolve)
+  },
+  {
+    path: '/personal/user/add', //新建用户
+    component: resolve => require(['@/pages/personal/user/add'], resolve)
+  },
+  {
+    path: '/personal/user/update', //修改用户
+    component: resolve => require(['@/pages/personal/user/update'], resolve)
+  },
+  {
+    path: '/personal/user/myinfo', //个人信息
+    component: resolve => require(['@/pages/personal/user/myinfo'], resolve)
+  },
 ]
