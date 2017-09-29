@@ -29,7 +29,7 @@
       totalPage: {
         type: Number,
         default: 10
-      },
+      }
     },
     watch: {
       pageNum: function () {

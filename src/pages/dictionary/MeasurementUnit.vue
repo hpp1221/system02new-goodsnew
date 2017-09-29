@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">商品品牌</h3>
+      <h3 class="dictionaryclassifytitle">计量单位</h3>
       <div class="dictionaryclassify-create">
-        <el-button class="create" @click="dictionaryClassifyCreate = true">新增</el-button>
+        <el-button class="dictionarycreate" @click="dictionaryClassifyCreate = true">新增</el-button>
       </div>
       <!--新增弹框-->
       <el-dialog title="新增计量单位" :visible.sync="dictionaryClassifyCreate">
@@ -18,15 +18,14 @@
         </div>
       </el-dialog>
       <div class="dictionaryclassify-main">
-        <ul class="dictionarybrand-content">
-          <li><i class="el-icon-star-on"></i> 包</li>
-          <li><i class="el-icon-star-on"></i> 个</li>
-        </ul>
-        <ul class="dictionaryclassify-operation">
-          <li>
-            <i class="el-icon-delete">删除</i>
-          </li>
-        </ul>
+
+        <!--<ul class="dictionarybrand-content">-->
+          <!--<li><i class="iconfont icon-erp-R"></i> 包</li>-->
+          <!--<li><i class="iconfont icon-erp-R"></i> 个</li>-->
+        <!--</ul>-->
+        <div class="dictionaryclassify-operation">
+          <el-button class="el-icon-delete icon-deletechilddependent" @click="createChildDependent = true">删除</el-button>
+        </div>
       </div>
     </div>
   </div>

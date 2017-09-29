@@ -3,7 +3,7 @@
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">商品分类</h3>
       <div class="dictionaryclassify-create">
-        <el-button class="create" @click="dictionaryClassifyCreate = true">新增</el-button>
+        <el-button class="dictionarycreate" @click="dictionaryClassifyCreate = true">新增</el-button>
       </div>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="dictionaryClassifyCreate">
@@ -57,68 +57,66 @@
         </div>
       </el-dialog>
       <div class="dictionaryclassify-main">
-        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-        <ul class="dictionaryclassify-operation">
-          <li>
-            <i class="el-icon-plus" @click="createChildDependent = true">新增子部门</i>
-          </li>
-          <li>
-            <i class="el-icon-edit" @click="updateDictionaryClassify = true">修改</i>
-          </li>
-          <li>
-            <i class="el-icon-arrow-up">置顶</i>
-          </li>
-          <li>
-            <i class="el-icon-delete">删除</i>
-          </li>
-        </ul>
+        <el-tree
+          :data="data2"
+          show-checkbox
+          default-expand-all
+          node-key="id"
+          ref="tree"
+          highlight-current
+          :props="defaultProps">
+        </el-tree>
+        <div class="dictionaryclassify-operation">
+          <el-button class="el-icon-plus  icon-createchilddependent" @click="createChildDependent = true">新增子部门</el-button>
+          <el-button class="el-icon-edit icon-updatechilddependent" @click="updateDictionaryClassify = true">修改</el-button>
+          <el-button class="iconfont icon-erp-zhiding-" @click="createChildDependent = true">置顶</el-button>
+          <el-button class="el-icon-delete icon-deletechilddependent" @click="createChildDependent = true">删除</el-button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import ElButton from "../../../node_modules/element-ui/packages/button/src/button.vue";
+
   export default {
+    components: {ElButton},
     data() {
       return {
-        data: [{
-          label: '母婴',
+        data2: [{
+          id: 1,
+          label: '一级 1',
           children: [{
-            label: '奶粉',
-            children: [
-              {
-                label: '奶粉一号'
-              },
-              {
-                label: '奶粉二号'
-              }]
-          },
-            {
-              label: '纸尿裤',
-              children: [
-                {
-                  label: '拉拉裤'
-                },
-                {
-                  label: '达达裤'
-                }]
-            }]
-        }, {//树形控件
-          label: '母婴2',
-          children: [{
-            label: '奶粉2',
-            children: [
-              {
-                label: '奶粉2-1'
-              }, {
-                label: '奶粉2-2'
-              }
-            ]
-          }, {
-            label: '纸尿裤2',
+            id: 4,
+            label: '二级 1-1',
             children: [{
-              label: '拉拉裤2'
-            }, {label: '达达裤2'}]
+              id: 9,
+              label: '三级 1-1-1'
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
+          }]
+        }, {
+          id: 2,
+          label: '一级 2',
+          children: [{
+            id: 5,
+            label: '二级 2-1'
+          }, {
+            id: 6,
+            label: '二级 2-2'
+          }]
+        }, {
+          id: 3,
+          label: '一级 3',
+          children: [{
+            id: 7,
+            label: '二级 3-1'
+          }, {
+            id: 8,
+            label: '二级 3-2'
           }]
         }],
         defaultProps: {

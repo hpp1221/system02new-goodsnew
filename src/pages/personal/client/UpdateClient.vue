@@ -62,7 +62,7 @@
 					num: '',
 					vip_level: ''
 				},
-				rules: {
+				rules: {//基本验证
 					name: [{
 							required: true,
 							message: '请输入客户名称',
@@ -91,7 +91,6 @@
 						trigger: 'blur'
 					}],
 					vipQQ: [{
-
 						required: true,
 						message: '请输入客户QQ',
 						trigger: 'blur'
@@ -120,8 +119,7 @@
 			};
 		},
 		created() {
-			this.$route.query.id ? 　this.select(this.$route.query.id) : this.$router.push('/error')
-			//this.select()
+			this.$route.query.id ? 　this.select(this.$route.query.id) : this.$router.push('/error')//判断是否接收到要修改的记录的id
 		},
 		methods: {
 			select(id) {
@@ -136,7 +134,7 @@
 					if(data.error_code == 0){
 						self.ruleForm = response.data.data;
 					}
-					
+
 				}).catch(function(error) {
 					console.log(error);
 				});
