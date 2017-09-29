@@ -26,7 +26,7 @@
 					<el-select v-model="ruleForm.vipSex">
 						<el-option label="男" value="0">男</el-option>
 						<el-option label="女" value="1">女</el-option>
-						
+
 					</el-select>
 				</el-form-item>
 				<el-form-item label="客户编码" class="createclient-list">
@@ -52,7 +52,7 @@
 	export default {
 		data() {
 			return {
-				ruleForm: {
+				ruleForm: {//新增表单
 					name: '',
 					tphone: '',
 					mphone: '',
@@ -63,7 +63,7 @@
 					num: '',
 					vip_level: ''
 				},
-				rules: {
+				rules: {//基本验证
 					name: [{
 							required: true,
 							message: '请输入客户名称',
@@ -120,7 +120,7 @@
 			};
 		},
 		methods: {
-			submitForm(formName) { //保存
+			submitForm(formName) { //新增后保存
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						let self = this;
@@ -132,7 +132,7 @@
 							let data = response.data;
 							if(data.code == 0) {
 								self.$router.push('/personal/client/clientmanagement');
-							} 
+							}
 						}).catch(function(error) {
 							console.log(error)
 						});
@@ -143,7 +143,7 @@
 				});
 
 			},
-			resetForm(formName) {
+			resetForm(formName) {//取消
 				let self = this
 				self.$refs[formName].resetFields()
 				self.$router.push('/personal/client/clientmanagement')
