@@ -42,10 +42,13 @@
 		data() {
 			return {
 				form:{
-					
-				},
-				key: {},
-				inputValue: ''
+					name:'',
+					tel:'',
+					phone:'',
+					address:'',
+					number:'',
+					email:''
+				}
 			}
 		},
 		watch: {
@@ -63,9 +66,6 @@
 					supplierId: supplierId
 				}
 				self.$http.post('/ui/supplier/getById', self.qs.stringify(requestData)).then(function(response) {
-					//let data = response.data;
-//					console.log('修改详情', response)
-//					console.log('data',response.data.data)
 					if(response.data.code == 10000) {
 						self.form = response.data.data;
 					}
@@ -73,20 +73,25 @@
 					console.log(error);
 				});
 			},
-			getContent() {
-				console.log(this.form.goodsExtend.content)
-			},
 			submit(formName) {//修改后保存
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
             			let self = this;
-						let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.form)};
+						let requestData = {
+							token: window.localStorage.getItem('token')
+							};
 						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						self.$http.post('/ui/supplier/modifySupplier',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addGoods',response)
 							if(response.data.code == 10000){
 								self.$router.push('/supplier/suppliers/supplierlist');
+							}else if(data.code == 1001) {
+								
+							}else if(data.code == 1000){
+								
+							}else if(data.code == 1002){
+								
 							}
 					    }).catch(function (error) {
 					    	console.log(error);

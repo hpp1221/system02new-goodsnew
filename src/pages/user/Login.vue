@@ -111,7 +111,6 @@
 						    console.log(response);
 							if(data.code == 10000){
 								window.localStorage.setItem('token', data.data.token);
-								self.getUserInfo();
 								self.$router.push('/');
 							}else{
 								
