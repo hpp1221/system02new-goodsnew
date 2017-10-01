@@ -4,8 +4,8 @@
       <h3 class="page-title">订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
         <el-form-item>
-          <el-select placeholder="全部仓库" v-model="easyForm.storeHouseAddress">
-            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
+          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
+            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -66,9 +66,9 @@
         <el-table-column prop="orderNumber" label="订单号">
 
         </el-table-column>
-        <el-table-column prop="deliveryTime" label="下单时间" sortable>
+        <el-table-column label="下单时间" sortable>
           <template scope="scope">
-            <span>{{moment(scope.row.deliveryTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
+            <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="payAmount" label="金额">
@@ -93,7 +93,7 @@
           <el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
         </el-table-column>
       </el-table>
-      <pagination @getPageSize="getPageSize" @getPageNum="getPageNum" :totalPage="totalPage"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
@@ -194,36 +194,29 @@
       }
     },
     created(){
-      this.select()
       this.getAddressList()
     },
     watch: {
       advanceSearch: function () {//点击高级搜索和取消时重新查询
         this.select();
       },
-      pageSize: function (newVal, oldVal) {
-        this.select();
-      },
-      pageNum: function (newVal, oldVal) {
-        this.select();
-      }
+
     },
     components: {
       'pagination': require('../../components/pagination')
     },
     methods: {
-      getPageSize(val){
-        this.pageSize = val;
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num);
       },
-      getPageNum(val){
-        this.pageNum = val;
-      },
-      select(){//查询
+      select(size,num){//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum
+          pageSize: size,
+          pageNo: num
         };
         if (self.advanceSearch) {//高级搜索
           if (self.form.dateRange instanceof Array) {

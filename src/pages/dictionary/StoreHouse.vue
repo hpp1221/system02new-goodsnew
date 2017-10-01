@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">仓库</h3>
-      <el-button class="clientlevel-create" @click="createStore= true">新增</el-button>
+      <el-button class="dictionarycreate" @click="createStore= true">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增仓库" :visible.sync="createStore">
         <el-form :model="createForm">
