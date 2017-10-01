@@ -3,13 +3,13 @@
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">商品分类</h3>
       <div class="dictionaryclassify-create">
-        <el-button class="dictionarycreate" @click="dictionaryClassifyCreate = true">新增</el-button>
+        <el-button class="dictionarycreate" @click="ClassifyCreate">新增</el-button>
       </div>
       <!--新增弹框-->
-      <el-dialog title="新增商品分类" :visible.sync="dictionaryClassifyCreate">
+      <el-dialog title="新增商品分类" v-model="dictionaryClassifyCreate">
         <el-form :model="form">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-input v-model="form.input" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="上级分类" :label-width="formLabelWidth">
             <el-select v-model="form.region" placeholder="母婴">
@@ -58,7 +58,7 @@
       </el-dialog>
       <div class="dictionaryclassify-main">
         <el-tree
-          :data="data2"
+          :data="totalCategories"
           show-checkbox
           default-expand-all
           node-key="id"
@@ -85,79 +85,85 @@
   export default {
     data() {
       return {
-        data2: [],
+        totalCategories: [],
         defaultProps: {
           children: 'children',
-          label: 'name',
+          label: 'name'
         },
         dictionaryClassifyCreate: false,//新增
         createChildDependent: false,//新增子部门
         updateDictionaryClassify: false,//修改
         form: {
-          name: '',
+          input: '',
           region: ''
         },
         formLabelWidth: '120px'
       };
     },
     created() {
-      this.getFirstClass()
+      this.getCatChild()
     },
     methods: {
-      getFirstClass() { //一级分类
-        let self = this
-        let params = {
-          token: window.localStorage.getItem('token')
-        };
-        self.$http.get('/ui/catList', self.qs.stringify(params)).then(function (response) {
-          let data = response.data
-          console.log('0930', response)
-          if (data.code === 10000) {
-            for(let i = 0;i < data.data.length;i++){
-//              if(parseInt(data.data[i].hasChild) > 0){
-                data.data[i].children = [];
-//              }
-            }
-            self.data2 = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        })
-      },
-      getCatChild(data) {//获取一级以下的分类
+      getCatChild(val) {//商品分类
+        console.log('vall', val)
         let self = this;
-        let requestData = {
-          params:{
-            token: window.localStorage.getItem('token'),
-            catId:self.data.id
-          }
-        };
-        self.$http.get('/ui/catList',requestData).then(function (response) {
+        var requestData;
+        if (val === undefined) {
+          requestData = {params: {token: window.localStorage.getItem('token')}};
+        } else {
+          requestData = {params: {token: window.localStorage.getItem('token'), catId: val.id}};
+
+        }
+        self.$http.get('/ui/catList', requestData).then(function (response) {
           let data = response.data;
-          console.log('data22',response);
-          if(data.code == 10000){
-            for(let i = 0;i < self.data.length;i++){
-              if(self.data2[i].id == data.id){
-                for(let j = 0;j < data.data.length;j++){
-                  if(parseInt(data.data[j].hasChild) > 0){
-                    data.data[j].children = [];
-                  }
-                }
-                self.data2[i].children = data.data;
+          console.log('data22', response);
+          if (data.code == 10000) {
+            for (let i = 0; i < data.data.length; i++) {
+              if (parseInt(data.data[i].hasChild) > 0) {
+                data.data[i].children = [];
               }
+            }
+            if (val === undefined) {
+              self.totalCategories = data.data;
+            } else {
+              self.insertCat(self.totalCategories, val, data.data, 0);
             }
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      handleNodeClick(data) {//树形控件
-        console.log('tree',data);
+      insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].name === val.parent[level]) {
+            if (val.parent.length === level + 1) {
+              arr[i].children = data;
+            } else {
+              level++;
+              this.insertCat(arr[i].children, val, data, level);
+            }
+          }
+        }
       },
-//      getCheckedKeys() {
-//        this.dictionaryClassifyId=this.$refs.tree.getCheckedKeys();
-//        console.log('101',this.dictionaryClassifyId)
-//      },
+      handleNodeClick(data) {//树形控件
+        console.log('data', data)
+        let parentArr = data.parentIds.split('/')
+        this.getCatChild({parent: parentArr, id: data.id})
+        console.log('id', data);
+      },
+      ClassifyCreate() {
+        this.dictionaryClassifyCreate = true
+        self.$http.get('/ui/catList').then(function (response) {
+          let data = response.data;
+          console.log('data22', response);
+          if (data.code == 10000) {
+            self.form.input = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }
     }
-  };
+  }
+  ;
 </script>

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">通知分类</h3>
-      <el-button class="clientlevel-create" @click="CreateCategories = true">新增</el-button>
+      <el-button class="dictionarycreate" @click="CreateCategories = true">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增通知类型" :visible.sync="CreateCategories">
         <el-form :model="createForm">
@@ -35,13 +35,13 @@
           <template scope="scope">
             <el-button
               size="small"
-              @click="UpdateCategories = true " class="el-icon-edit updatecategories">修改</el-button>
+              @click="UpdateCategories = true " class="el-icon-edit icon-updatechilddependent">修改</el-button>
             <el-button
               size="small"
-              @click="handleTop(scope.$index, scope.row)" class="el-icon-arrow-up updatecategories">置顶</el-button>
+              @click="handleTop(scope.$index, scope.row)" class="iconfont icon-erp-zhiding-">置顶</el-button>
             <el-button
               size="small"
-              @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除</el-button>
+              @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete icon-deletechilddependent">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
