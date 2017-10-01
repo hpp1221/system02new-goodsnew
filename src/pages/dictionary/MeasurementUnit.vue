@@ -19,10 +19,10 @@
       </el-dialog>
       <div class="dictionaryclassify-main">
 
-        <!--<ul class="dictionarybrand-content">-->
-          <!--<li><i class="iconfont icon-erp-R"></i> 包</li>-->
-          <!--<li><i class="iconfont icon-erp-R"></i> 个</li>-->
-        <!--</ul>-->
+        <ul class="dictionarybrand-content">
+          <li><i class="iconfont icon-erp-R"></i> 包</li>
+          <li><i class="iconfont icon-erp-R"></i> 个</li>
+        </ul>
         <div class="dictionaryclassify-operation">
           <el-button class="el-icon-delete icon-deletechilddependent" @click="createChildDependent = true">删除</el-button>
         </div>

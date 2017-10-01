@@ -64,13 +64,17 @@
           node-key="id"
           ref="tree"
           highlight-current
+          @node-click="handleNodeClick"
           :props="defaultProps">
         </el-tree>
         <div class="dictionaryclassify-operation">
-          <el-button class="el-icon-plus  icon-createchilddependent" @click="createChildDependent = true">新增子部门</el-button>
-          <el-button class="el-icon-edit icon-updatechilddependent" @click="updateDictionaryClassify = true">修改</el-button>
-          <el-button class="iconfont icon-erp-zhiding-" @click="createChildDependent = true">置顶</el-button>
-          <el-button class="el-icon-delete icon-deletechilddependent" @click="createChildDependent = true">删除</el-button>
+          <el-button class="el-icon-plus  icon-createchilddependent" @click="createChildDependent">新增子部门
+          </el-button>
+          <el-button class="el-icon-edit icon-updatechilddependent" @click="updateDictionaryClassify">修改
+          </el-button>
+          <!--<el-button class="iconfont icon-erp-zhiding-" @click="getCheckedKeys">置顶</el-button>-->
+          <!--<el-button class="el-icon-delete icon-deletechilddependent" @click="deleteDictionaryClassify">删除-->
+          <!--</el-button>-->
         </div>
       </div>
     </div>
@@ -84,65 +88,79 @@
     components: {ElButton},
     data() {
       return {
-        data2: [{
-          id: 1,
-          label: '一级 1',
-          children: [{
-            id: 4,
-            label: '二级 1-1',
-            children: [{
-              id: 9,
-              label: '三级 1-1-1'
-            }, {
-              id: 10,
-              label: '三级 1-1-2'
-            }]
-          }]
-        }, {
-          id: 2,
-          label: '一级 2',
-          children: [{
-            id: 5,
-            label: '二级 2-1'
-          }, {
-            id: 6,
-            label: '二级 2-2'
-          }]
-        }, {
-          id: 3,
-          label: '一级 3',
-          children: [{
-            id: 7,
-            label: '二级 3-1'
-          }, {
-            id: 8,
-            label: '二级 3-2'
-          }]
-        }],
+        data2: [],
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name',
         },
         dictionaryClassifyCreate: false,//新增
-        createChildDependent:false,//新增子部门
-        updateDictionaryClassify:false,//修改
+        createChildDependent: false,//新增子部门
+        updateDictionaryClassify: false,//修改
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          region: ''
         },
         formLabelWidth: '120px'
       };
     },
+    created() {
+      this.getFirstClass()
+    },
     methods: {
+      getFirstClass() { //一级分类
+        let self = this
+        let params = {
+          token: window.localStorage.getItem('token')
+        };
+        self.$http.get('/ui/catList', self.qs.stringify(params)).then(function (response) {
+          let data = response.data
+          console.log('0930', response)
+          if (data.code === 10000) {
+            for(let i = 0;i < data.data.length;i++){
+//              if(parseInt(data.data[i].hasChild) > 0){
+                data.data[i].children = [];
+//              }
+            }
+            self.data2 = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        })
+      },
+      getCatChild(data) {//获取一级以下的分类
+        let self = this;
+        let requestData = {
+          params:{
+            token: window.localStorage.getItem('token'),
+            catId:self.data.id
+          }
+        };
+        self.$http.get('/ui/catList',requestData).then(function (response) {
+          let data = response.data;
+          console.log('data22',response);
+          if(data.code == 10000){
+            for(let i = 0;i < self.data.length;i++){
+              if(self.data2[i].id == data.id){
+                for(let j = 0;j < data.data.length;j++){
+                  if(parseInt(data.data[j].hasChild) > 0){
+                    data.data[j].children = [];
+                  }
+                }
+                self.data2[i].children = data.data;
+              }
+            }
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
       handleNodeClick(data) {//树形控件
-        console.log(data);
-      }
+        console.log('tree',data);
+      },
+//      getCheckedKeys() {
+//        this.dictionaryClassifyId=this.$refs.tree.getCheckedKeys();
+//        console.log('101',this.dictionaryClassifyId)
+//      },
     }
   };
 </script>

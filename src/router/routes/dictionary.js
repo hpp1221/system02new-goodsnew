@@ -30,4 +30,8 @@ export default [
     path: '/dictionary/storehouse', //仓库
     component: resolve => require(['@/pages/dictionary/StoreHouse'], resolve)
   },
+  {
+    path: '/dictionary/test', //仓库
+    component: resolve => require(['@/pages/dictionary/test'], resolve)
+  },
 ]
