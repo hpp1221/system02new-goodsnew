@@ -3,7 +3,7 @@
     <div class="wrapper">
       <h3 class="dictionaryclassifytitle">商品分类</h3>
       <div class="dictionaryclassify-create">
-        <el-button class="create" @click="dictionaryClassifyCreate = true">新增</el-button>
+        <el-button class="dictionarycreate" @click="dictionaryClassifyCreate = true">新增</el-button>
       </div>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="dictionaryClassifyCreate">
@@ -57,21 +57,25 @@
         </div>
       </el-dialog>
       <div class="dictionaryclassify-main">
-        <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-        <ul class="dictionaryclassify-operation">
-          <li>
-            <i class="el-icon-plus" @click="createChildDependent = true">新增子部门</i>
-          </li>
-          <li>
-            <i class="el-icon-edit" @click="updateDictionaryClassify = true">修改</i>
-          </li>
-          <li>
-            <i class="el-icon-arrow-up">置顶</i>
-          </li>
-          <li>
-            <i class="el-icon-delete">删除</i>
-          </li>
-        </ul>
+        <el-tree
+          :data="data2"
+          show-checkbox
+          default-expand-all
+          node-key="id"
+          ref="tree"
+          highlight-current
+          @node-click="handleNodeClick"
+          :props="defaultProps">
+        </el-tree>
+        <div class="dictionaryclassify-operation">
+          <el-button class="el-icon-plus  icon-createchilddependent" @click="createChildDependent">新增子部门
+          </el-button>
+          <el-button class="el-icon-edit icon-updatechilddependent" @click="updateDictionaryClassify">修改
+          </el-button>
+          <!--<el-button class="iconfont icon-erp-zhiding-" @click="getCheckedKeys">置顶</el-button>-->
+          <!--<el-button class="el-icon-delete icon-deletechilddependent" @click="deleteDictionaryClassify">删除-->
+          <!--</el-button>-->
+        </div>
       </div>
     </div>
   </div>
@@ -81,70 +85,79 @@
   export default {
     data() {
       return {
-        data: [{
-          label: '母婴',
-          children: [{
-            label: '奶粉',
-            children: [
-              {
-                label: '奶粉一号'
-              },
-              {
-                label: '奶粉二号'
-              }]
-          },
-            {
-              label: '纸尿裤',
-              children: [
-                {
-                  label: '拉拉裤'
-                },
-                {
-                  label: '达达裤'
-                }]
-            }]
-        }, {//树形控件
-          label: '母婴2',
-          children: [{
-            label: '奶粉2',
-            children: [
-              {
-                label: '奶粉2-1'
-              }, {
-                label: '奶粉2-2'
-              }
-            ]
-          }, {
-            label: '纸尿裤2',
-            children: [{
-              label: '拉拉裤2'
-            }, {label: '达达裤2'}]
-          }]
-        }],
+        data2: [],
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name',
         },
         dictionaryClassifyCreate: false,//新增
-        createChildDependent:false,//新增子部门
-        updateDictionaryClassify:false,//修改
+        createChildDependent: false,//新增子部门
+        updateDictionaryClassify: false,//修改
         form: {
           name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          region: ''
         },
         formLabelWidth: '120px'
       };
     },
+    created() {
+      this.getFirstClass()
+    },
     methods: {
+      getFirstClass() { //一级分类
+        let self = this
+        let params = {
+          token: window.localStorage.getItem('token')
+        };
+        self.$http.get('/ui/catList', self.qs.stringify(params)).then(function (response) {
+          let data = response.data
+          console.log('0930', response)
+          if (data.code === 10000) {
+            for(let i = 0;i < data.data.length;i++){
+//              if(parseInt(data.data[i].hasChild) > 0){
+                data.data[i].children = [];
+//              }
+            }
+            self.data2 = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        })
+      },
+      getCatChild(data) {//获取一级以下的分类
+        let self = this;
+        let requestData = {
+          params:{
+            token: window.localStorage.getItem('token'),
+            catId:self.data.id
+          }
+        };
+        self.$http.get('/ui/catList',requestData).then(function (response) {
+          let data = response.data;
+          console.log('data22',response);
+          if(data.code == 10000){
+            for(let i = 0;i < self.data.length;i++){
+              if(self.data2[i].id == data.id){
+                for(let j = 0;j < data.data.length;j++){
+                  if(parseInt(data.data[j].hasChild) > 0){
+                    data.data[j].children = [];
+                  }
+                }
+                self.data2[i].children = data.data;
+              }
+            }
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
       handleNodeClick(data) {//树形控件
-        console.log(data);
-      }
+        console.log('tree',data);
+      },
+//      getCheckedKeys() {
+//        this.dictionaryClassifyId=this.$refs.tree.getCheckedKeys();
+//        console.log('101',this.dictionaryClassifyId)
+//      },
     }
   };
 </script>
