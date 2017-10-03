@@ -143,6 +143,7 @@
       },
       openCreateModal(parent, now) {
         console.log('now',now)
+        event.stopPropagation()
         this.createChildDependent = true;
         this.childForm.parent = parent.data;
       },
