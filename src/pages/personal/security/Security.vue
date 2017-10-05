@@ -23,7 +23,7 @@
 					<div class="vertical-line"></div>
 					<p class="label-value" v-if="userInfo.email">你验证的邮箱：<span>{{userInfo.email}}</span></p>
 					<p class="label-value" v-else>未验证邮箱</p>
-					
+
 					<el-button type="text" class="update-button" v-if="userInfo.email" @click="emailModalVisible = true">修改</el-button>
 					<el-button type="text" class="update-button" v-else>去验证</el-button>
 				</div>
@@ -163,31 +163,31 @@
 					email:'',
 					code:''
 				},
-				
+
 				pwdRules:{
 					oldPwd: [
 						{
-							validator: oldPwdValidator, 
+							validator: oldPwdValidator,
 						}
 					],
 					pwd: [
 			            {
-			            	validator: pwdValidator, 
+			            	validator: pwdValidator,
 			            	trigger:'change'
 			            }
 			        ],
 			        pwdAgain: [
 			            {
-			            	validator: pwdAgainValidator, 
+			            	validator: pwdAgainValidator,
 			            	trigger:'change'
 			            }
 			        ],
 				},
 				phoneRules:{
-					
+
 				},
 				emailRules:{
-					
+
 				},
 				verifyText:'获取验证码',
 				messageCount:''
@@ -286,8 +286,8 @@
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-      			
-      			
+
+
       		},
       		getEmailVerifyCode(){//验证身份
       			let self = this;
@@ -318,7 +318,7 @@
       		},
       		confirmEmailFirst(){//修改邮箱时验证手机
       			let self = this;
-      			
+
       			let requestData = {token: window.localStorage.getItem('token'),phone:self.userInfo.cel,code:self.emailForm.code};//3代表修改邮箱
       			self.$http.post('/ui/user/checkMsg.do',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;

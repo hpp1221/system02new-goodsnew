@@ -90,7 +90,10 @@
 
         </el-table-column>
         <el-table-column label="操作">
-          <el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
+          <template scope="scope">
+            <el-button type="text" @click="seeDetail(scope.row.orderId)">查看明细</el-button>
+          </template>
+
         </el-table-column>
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
@@ -135,9 +138,6 @@
         ],
         totalOrderStatus: [
           {
-            name: '全选'
-          },
-          {
             name: '待订单审核'
           },
           {
@@ -161,9 +161,6 @@
         ],//订单状态
         totalPaymentStatus: [
           {
-            name: '全选'
-          },
-          {
             name: '未付款'
           },
           {
@@ -177,9 +174,6 @@
           },
         ],//付款状态
         totalOrderTags: [
-          {
-            name: '不限'
-          },
           {
             name: '特价单'
           },
@@ -200,7 +194,6 @@
       advanceSearch: function () {//点击高级搜索和取消时重新查询
         this.select();
       },
-
     },
     components: {
       'pagination': require('../../components/pagination')

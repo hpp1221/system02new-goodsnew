@@ -36,7 +36,7 @@
 						<td>{{m.updater}}</td>
 						<td>
 							<el-dropdown trigger="click">
-								<el-button type="text" icon="more"></el-button>
+                <i class="iconfont icon-more" style="cursor: pointer"></i>
 								<el-dropdown-menu slot="dropdown">
 									<el-dropdown-item @click.native="addDepartment(m.organizationId)">添加子菜单</el-dropdown-item>
 								    <el-dropdown-item @click.native="update(m.organizationId)">修改</el-dropdown-item>
@@ -70,15 +70,15 @@
 			<!--<el-table :data="tableData">
 				<el-table-column type="expand">
 					<template scope="scope">
-						
+
 					</template>
-					
+
 				</el-table-column>
 				<el-table-column prop="name" label="部门名称">
-					
+
 				</el-table-column>
 				<el-table-column prop="remarks" label="备注">
-					
+
 				</el-table-column>
 				<el-table-column label="创建时间">
 					<template scope="scope">
@@ -86,7 +86,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="creater" label="创建人">
-					
+
 				</el-table-column>
 				<el-table-column label="修改时间">
 					<template scope="scope">
@@ -94,7 +94,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="updater" label="修改人">
-					
+
 				</el-table-column>
 				<el-table-column label="操作">
 					<template scope="scope">
@@ -109,15 +109,15 @@
 					</template>
 				</el-table-column>
 			</el-table>-->
-			<el-dialog title="新增子部门" v-model="addDepartmentDialog" size="tiny">
+			<el-dialog title="新增子部门" :visible.sync="addDepartmentDialog" size="tiny">
 			  	<el-form ref="form" :model="addForm" label-width="90px">
 			  		<el-form-item label="部门名称">
 			  			<el-input v-model="addForm.name"></el-input>
 			  		</el-form-item>
 			  		<el-form-item label="上级部门">
 			  			<el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">
-			  				<el-option v-for="t in configs" 
-			  					:key="t.organizationId" 
+			  				<el-option v-for="t in configs"
+			  					:key="t.organizationId"
 			  					:value="t.organizationId"
 			  					:label="t.name"
 			  					>
@@ -134,15 +134,15 @@
 			  		</el-form-item>
 			  	</el-form>
 			</el-dialog>
-			<el-dialog title="修改部门信息" v-model="updateDepartmentDialog" size="tiny">
+			<el-dialog title="修改部门信息" :visible.sync="updateDepartmentDialog" size="tiny">
 			  	<el-form ref="form" :model="updateForm" label-width="90px">
 			  		<el-form-item label="部门名称">
 			  			<el-input v-model="updateForm.name"></el-input>
 			  		</el-form-item>
 			  		<el-form-item label="上级部门">
 			  			<el-select v-model="updateForm.pid" disabled v-if="updateForm.pid!=0">
-			  				<el-option v-for="t in configs" 
-			  					:key="t.organizationId" 
+			  				<el-option v-for="t in configs"
+			  					:key="t.organizationId"
 			  					:value="t.organizationId"
 			  					:label="t.name"
 			  					>
@@ -169,7 +169,7 @@
 			return {
 				tableData:[],
 				form:{
-					
+
 				},
 				addDepartmentDialog:false,
 				updateDepartmentDialog:false,
@@ -236,13 +236,13 @@
 						if(data.code == 10000){
 							self.addForm.pid = data.data.organizationId;
 							self.addForm.pids = data.data.pids;
-							
+
 						}
 				    }).catch(function (error) {
 				    	console.log(error);
 				    });
 				}
-				
+
 			},
 			sureAddDepartment(){
 				let self = this;
@@ -304,13 +304,13 @@
 		          	this.$message({
 		            	type: 'info',
 		            	message: '已取消删除'
-		          	});          
+		          	});
 		        });
 			},
 			update(id){//修改接口
 				let self = this;
 				self.updateDepartmentDialog = true;
-				
+
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					organizationId: id
@@ -342,7 +342,7 @@
 	    				if(document.getElementById(arr[i].organizationId)){
 		    				document.getElementById(arr[i].organizationId).style.display = "table-row";
 		    			}
-	    				
+
 	    			}else{
 	    				if(document.getElementById(arr[i].organizationId)){
 		    				document.getElementById(arr[i].organizationId).style.display = "none";

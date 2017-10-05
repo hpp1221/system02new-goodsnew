@@ -25,11 +25,6 @@ export default new Router({
           path: '/error', //错误页面
           component: require('@/pages/Error')
         },
-
-        {
-          path: '/user/personcenter', //修改商品详情
-          component: require('@/pages/user/PersonCenter'),
-        },
         {
           path: '/user/personcenter', //修改商品详情
           component: require('@/pages/user/PersonCenter'),

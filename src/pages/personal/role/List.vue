@@ -39,7 +39,7 @@
         <el-table-column>
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.roleId)">修改</el-dropdown-item>
                 <el-dropdown-item @click.native="deleteItem(scope.row.roleId)">删除</el-dropdown-item>
@@ -96,7 +96,8 @@
         });
       },
       update(id){
-        this.$router.push({path: '/personal/role/update', query: {id: id}})
+        let path = '/personal/role/update/' + id;
+        this.$router.push({path: path});
       },
       deleteItem(id){
         let self = this;

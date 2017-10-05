@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
+      <h3 class="page-title">创建订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
@@ -32,7 +33,8 @@
           </el-table-column>
           <el-table-column label="数量">
             <template scope="scope">
-              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)" @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
+              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
+                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="单位" prop="goodsUnit">
@@ -60,7 +62,8 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit"></i>客户名称：{{userinfo.cel}} 收货人： 联系电话：{{userinfo.cel}} 收货地址：</p>
+          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
+          </p>
         </el-form-item>
         <el-form-item label="交货日期">
           <el-date-picker
@@ -90,6 +93,26 @@
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
+      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
+        <el-form :model="editDeliveryForm" label-width="70px">
+          <el-form-item label="客户名称">
+            <el-input v-model="editDeliveryForm.customer"></el-input>
+          </el-form-item>
+          <el-form-item label="收货人">
+            <el-input v-model="editDeliveryForm.userName"></el-input>
+          </el-form-item>
+          <el-form-item label="联系方式">
+            <el-input v-model="editDeliveryForm.userPhone"></el-input>
+          </el-form-item>
+          <el-form-item label="仓库地址">
+            <el-input v-model="editDeliveryForm.userAddress"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer">
+          <el-button @click="sureEdit" type="primary">确定</el-button>
+          <el-button @click="editDeliveryVisible = false">取消</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -111,30 +134,38 @@
             goodsSkuId: '',//规格id
           }],
           orderShipment: {
-//            customer: '',
-//            userPhone: '',
-            deliveryInfo:'收货地址'
-
+            customer: '',//客户名称
+            userName: '',//收货人
+            userPhone: '',//联系方式
+            userAddress: '',//收货地址
           },
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
+          att:'',//附近
 //          deliveryInfo:''
+        },
+        editDeliveryForm: {
+          customer: '',
+          userName: '',
+          userPhone: '',
+          userAddress: ''
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
+        editDeliveryVisible: false,
         invoiceTypes: [
           {
-            id: 1,
+            id: 0,
             name: '不开发票'
           },
           {
-            id: 2,
+            id: 1,
             name: '电子发票'
           },
           {
-            id: 3,
+            id: 2,
             name: '普通发票'
           }
         ]
@@ -142,9 +173,9 @@
     },
     watch: {
       'form.orderDetails': {
-        handler:  function(val, oldVal){
+        handler: function (val, oldVal) {
           for (let i = 0; i < val.length; i++) {
-            this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num),val[i].price);
+            this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
           }
         },
         // 深度观察
@@ -153,18 +184,30 @@
 
     },
     created(){
-      console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
-    },
-    computed: {
-      userinfo: function () {
-        return JSON.parse(window.localStorage.getItem('userinfo'));
-      }
+        if(window.localStorage.getItem('userinfo')){
+            console.log('userinfo',JSON.parse(window.localStorage.getItem('userinfo')))
+         let userinfo =  JSON.parse(window.localStorage.getItem('userinfo'));
+         this.form.orderShipment.customer = userinfo.companyName;
+          this.form.orderShipment.userName = userinfo.name;
+          this.form.orderShipment.userPhone = userinfo.cel;
+          this.form.orderShipment.userAddress = userinfo.companyName;
+
+        }
+
     },
     methods: {
-      judgeNum(value,index){
-        this.form.orderDetails[index].num = value.replace(/\D/g,'')
+      judgeNum(value, index){//判断数量是否为整数
+        this.form.orderDetails[index].num = value.replace(/\D/g, '');
       },
-      querySearchAsync(queryString, cb){
+      editDelivery(){//显示修改模态框
+        this.editDeliveryVisible = true;
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+      },
+      sureEdit(){//确认修改
+        this.editDeliveryVisible = false;
+        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+      },
+      querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -190,26 +233,24 @@
         });
 
       },
-      handleSelect(item){
+      handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
-        for(let i = 0;i < list.length;i++){
-            if(item.goodsNo === list[i].goodsNo){
-                this.$message.error('已有此类商品');
-              this.form.orderDetails[this.listIndex].goodsNo = ''
-              this.form.orderDetails[this.listIndex].goodsName = ''
-              this.form.orderDetails[this.listIndex].combination = ''
-                return
-            }
+        for (let i = 0; i < list.length; i++) {
+          if (item.goodsNo === list[i].goodsNo) {
+            this.$message.error('已有此类商品');
+            this.form.orderDetails[this.listIndex].combination = ''
+            return
+          }
         }
         this.form.orderDetails[this.listIndex] = item
       },
-      handleClick(index){
+      handleClick(index){//存商品index
         this.listIndex = index
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
-
+        let requestData = {token: window.localStorage.getItem('token')};
+        requestData = Object.assign(requestData,self.shallowCopy(self.form));
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
@@ -221,7 +262,7 @@
           console.log(error);
         });
       },
-      addLine(){
+      addLine(){//添加一行
         this.form.orderDetails.push({
           goodsNo: '',//商品编号
           goodsName: '',//商品名
@@ -235,7 +276,7 @@
         })
       },
       deleteLine(index){
-        this.form.data.length === 1 ? this.$message('请至少选择一个商品') : this.form.data.splice(index, 1)
+        this.form.orderDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.orderDetails.splice(index, 1);
       },
     }
   }

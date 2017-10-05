@@ -5,15 +5,20 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import VueEditor from 'vue-ueditor'
-import 'element-ui/lib/theme-default/index.css?12'
-import 'element-ui/lib/theme-default/table.css?12'
+import VueLazyLoad from 'vue-lazyload'
+import 'element-ui/lib/theme-chalk/index.css?12'
+//import 'element-ui/lib/theme-chalk/table.css?12'
 import './assets/css/total.css'
 import './assets/font/iconfont.css'
+import './assets/icon/iconfont.css'
+import './assets/css/animate.min.css'
 import Vuex from 'vuex'
 import {Loading,Message} from 'element-ui';
 import './assets/js/commonFunctions'
 import './assets/js/getDatas'
 import './assets/js/PublicVariables'
+import errorImg from './assets/images/error.jpg'
+import loadingImg from './assets/images/loading.gif'
 import store from './vuex/store';
 Vue.config.productionTip = false
 
@@ -29,6 +34,12 @@ var moment = require('moment')
 Vue.prototype.moment = moment
 Vue.use(ElementUI)
 Vue.use(Vuex);
+Vue.use(VueLazyLoad, {
+  preLoad: 1.3,
+  error: errorImg,
+  loading: loadingImg,
+  attempt: 1
+})
 var loadingInstance;
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
