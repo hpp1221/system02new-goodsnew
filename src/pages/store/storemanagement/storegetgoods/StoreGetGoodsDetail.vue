@@ -1,9 +1,37 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">创建订单</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+      <el-form ref="titleForm" :model="titleForm" class="storegetgoods-nav storegetgoodsdetail-title">
+        <el-form-item class="storegetgoodsdetail-title-left">
+          <h3>门店要货详情</h3>
+        </el-form-item>
+        <el-form-item class="storegetgoodsdetail-title-right">
+          <el-button type="text" @click="leadInSupplier" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印</el-button>
+          <el-button type="text" @click="outputSupplier" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出</el-button>
+          <el-button type="text" @click="createSupplier" class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废</el-button>
+          <el-button @click="createSupplier">通过</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px">
+
+        <el-form-item label="单据编码" class="createstoregetgoods-number">
+          <el-input v-model="form.keyword">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="要货门店" class="createstoregetgoods-number">
+          <el-select placeholder="滨江店" v-model="form.type">
+            <el-option label="滨江店" value="-1"></el-option>
+            <el-option label="江干店" value="1"></el-option>
+            <el-option label="全部门店" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="要货人" class="createstoregetgoods-number">
+          <el-input v-model="form.person">
+          </el-input>
+        </el-form-item>
         <el-table :data="form.orderDetails" border>
+          <!--<el-table-column type="selection" width="55" prop="supplierId">-->
+          <!--</el-table-column>-->
           <el-table-column
             type="index"
             width="70">
@@ -31,7 +59,16 @@
           <el-table-column label="规格" prop="goodsSpec">
 
           </el-table-column>
-          <el-table-column label="数量">
+          <el-table-column label="要货仓库" prop="goodsSpec">
+
+          </el-table-column>
+          <el-table-column label="门店库存" prop="goodsSpec">
+
+          </el-table-column>
+          <el-table-column label="仓库库存" prop="goodsSpec">
+
+          </el-table-column>
+          <el-table-column label="要货数量">
             <template scope="scope">
               <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
                         @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
@@ -43,85 +80,30 @@
           <el-table-column label="单价" prop="price">
 
           </el-table-column>
-          <el-table-column label="小计" prop="subtotal">
+          <el-table-column label="金额" prop="price">
+
+          </el-table-column>
+          <el-table-column label="备注" prop="subtotal">
             <template scope="scope">
-              <span v-if="scope.row.subtotal">{{scope.row.subtotal}}</span>
-              <span v-else></span>
+              <i class="el-icon-plus" @click="addLine"></i>
             </template>
           </el-table-column>
         </el-table>
-        <!--<div class="order-table-total">
-                    <div class="top">
-                        <el-checkbox class="checkbox"></el-checkbox>
-                        <p class="checkbox">已申请特价，请输入获批订单金额</p>
-                        <el-input class="input"></el-input>
-                    </div>
-                    <div class="bottom">
-                        <p class="first-p">应付金额：</p>
-                        <p class="second-p">86.40</p>
-                    </div>
-                </div>-->
-        <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
-          </p>
-        </el-form-item>
-        <el-form-item label="交货日期">
-          <el-date-picker
-            v-model="form.deliveryTime"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="发票信息">
-          <el-select v-model="form.invoiceType">
-            <el-option v-for="i in invoiceTypes" :key="i.id" :value="i.id" :label="i.name"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注说明">
-          <el-input type="textarea" v-model="form.remark" class="form-input"></el-input>
-        </el-form-item>
-        <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">确定</el-button>
-          <el-button>取消</el-button>
+        <el-form-item class="createstoregetgoods-operation">
+          <el-button @click="sureEdit">确定</el-button>
+          <el-button @click="editDeliveryVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
-      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
-        <el-form :model="editDeliveryForm" label-width="70px">
-          <el-form-item label="客户名称">
-            <el-input v-model="editDeliveryForm.customer"></el-input>
-          </el-form-item>
-          <el-form-item label="收货人">
-            <el-input v-model="editDeliveryForm.userName"></el-input>
-          </el-form-item>
-          <el-form-item label="联系方式">
-            <el-input v-model="editDeliveryForm.userPhone"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库地址">
-            <el-input v-model="editDeliveryForm.userAddress"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer">
-          <el-button @click="sureEdit" type="primary">确定</el-button>
-          <el-button @click="editDeliveryVisible = false">取消</el-button>
-        </div>
-      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         form: {
+          type: '',
           orderDetails: [{
             goodsNo: '123',//商品编号
             goodsName: '',//商品名
@@ -142,7 +124,7 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          att:'',//附近
+          att: '',//附近
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -183,31 +165,34 @@
       }
 
     },
-    created(){
-        if(window.localStorage.getItem('userinfo')){
-            console.log('userinfo',JSON.parse(window.localStorage.getItem('userinfo')))
-         let userinfo =  JSON.parse(window.localStorage.getItem('userinfo'));
-         this.form.orderShipment.customer = userinfo.companyName;
-          this.form.orderShipment.userName = userinfo.name;
-          this.form.orderShipment.userPhone = userinfo.cel;
-          this.form.orderShipment.userAddress = userinfo.companyName;
+    created() {
+      if (window.localStorage.getItem('userinfo')) {
+        console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
+        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
+        this.form.orderShipment.customer = userinfo.companyName;
+        this.form.orderShipment.userName = userinfo.name;
+        this.form.orderShipment.userPhone = userinfo.cel;
+        this.form.orderShipment.userAddress = userinfo.companyName;
 
-        }
+      }
 
     },
     methods: {
-      judgeNum(value, index){//判断数量是否为整数
+      leadInSupplier(){
+
+      },
+      judgeNum(value, index) {//判断数量是否为整数
         this.form.orderDetails[index].num = value.replace(/\D/g, '');
       },
-      editDelivery(){//显示修改模态框
+      editDelivery() {//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
       },
-      sureEdit(){//确认修改
+      sureEdit() {//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
       },
-      querySearchAsync(queryString, cb){//商品关键字查询
+      querySearchAsync(queryString, cb) {//商品关键字查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -233,7 +218,7 @@
         });
 
       },
-      handleSelect(item){//判断是否已选该商品
+      handleSelect(item) {//判断是否已选该商品
         let list = this.form.orderDetails;
         for (let i = 0; i < list.length; i++) {
           if (item.goodsNo === list[i].goodsNo) {
@@ -244,13 +229,13 @@
         }
         this.form.orderDetails[this.listIndex] = item
       },
-      handleClick(index){//存商品index
+      handleClick(index) {//存商品index
         this.listIndex = index
       },
-      submit(){//提交订单
+      submit() {//提交订单
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData,self.shallowCopy(self.form));
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
@@ -262,7 +247,7 @@
           console.log(error);
         });
       },
-      addLine(){//添加一行
+      addLine() {//添加一行
         this.form.orderDetails.push({
           goodsNo: '',//商品编号
           goodsName: '',//商品名
@@ -275,7 +260,7 @@
           goodsSkuId: '',//规格id
         })
       },
-      deleteLine(index){
+      deleteLine(index) {
         this.form.orderDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.orderDetails.splice(index, 1);
       },
     }
