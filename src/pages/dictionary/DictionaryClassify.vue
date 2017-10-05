@@ -161,7 +161,6 @@
       },
       updateSure(){//修改确定
         let self = this
-
         let requestData = {
           id: self.updateForm.parent.id,
           parentId: self.updateForm.parent.parentId,

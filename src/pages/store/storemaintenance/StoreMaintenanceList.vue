@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">仓库</h3>
+      <h3 class="dictionaryclassifytitle">门店</h3>
       <el-button class="dictionarycreate" @click="createStoreHouse">新增</el-button>
       <!--新增弹框-->
-      <el-dialog title="新增仓库" v-model="createStore">
+      <el-dialog title="新增门店" v-model="createStore">
         <el-form :model="createForm">
-          <el-form-item label="仓库名称" :label-width="formLabelWidth">
+          <el-form-item label="门店名称" :label-width="formLabelWidth">
             <el-input v-model="createForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="仓库编码" :label-width="formLabelWidth">
+          <el-form-item label="门店编码" :label-width="formLabelWidth">
             <el-input v-model="createForm.number" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="仓库地址" :label-width="formLabelWidth">
+          <el-form-item label="门店地址" :label-width="formLabelWidth">
             <el-input v-model="createForm.address" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
@@ -22,15 +22,15 @@
         </div>
       </el-dialog>
       <!--修改弹框-->
-      <el-dialog title="修改仓库" v-model="updateStore">
+      <el-dialog title="修改门店" v-model="updateStore">
         <el-form :model="updateForm">
-          <el-form-item label="仓库名称" :label-width="formLabelWidth">
+          <el-form-item label="门店名称" :label-width="formLabelWidth">
             <el-input v-model="updateForm.name" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="仓库编码" :label-width="formLabelWidth">
+          <el-form-item label="门店编码" :label-width="formLabelWidth">
             <el-input v-model="updateForm.number" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="仓库地址" :label-width="formLabelWidth">
+          <el-form-item label="门店地址" :label-width="formLabelWidth">
             <el-input v-model="updateForm.address" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
@@ -39,14 +39,14 @@
           <el-button @click="updateStore = false">取 消</el-button>
         </div>
       </el-dialog>
-      <!--仓库表格-->
+      <!--门店表格-->
       <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%"
                 class="categories">
-        <el-table-column prop="name" label="仓库名称">
+        <el-table-column prop="name" label="门店名称">
         </el-table-column>
-        <el-table-column prop="number" label="仓库编码">
+        <el-table-column prop="number" label="门店编码">
         </el-table-column>
-        <el-table-column prop="address" label="仓库地址">
+        <el-table-column prop="address" label="门店地址">
         </el-table-column>
         <el-table-column>
           <template scope="scope">
@@ -94,7 +94,7 @@
       this.getStoreHouseList()
     },
     components: {
-      'pagination': require('../../components/pagination')
+      'pagination': require('../../../components/pagination')
     },
     methods: {
       pageChanged(page) {

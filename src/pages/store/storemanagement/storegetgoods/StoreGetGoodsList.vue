@@ -1,52 +1,33 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">仓库</h3>
-      <el-button class="dictionarycreate" @click="createStoreHouse">新增</el-button>
-      <!--新增弹框-->
-      <el-dialog title="新增仓库" v-model="createStore">
-        <el-form :model="createForm">
-          <el-form-item label="仓库名称" :label-width="formLabelWidth">
-            <el-input v-model="createForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库编码" :label-width="formLabelWidth">
-            <el-input v-model="createForm.number" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库地址" :label-width="formLabelWidth">
-            <el-input v-model="createForm.address" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="createStoreHouseSure">确 定</el-button>
-          <el-button @click="createStore = false">取 消</el-button>
-        </div>
-      </el-dialog>
-      <!--修改弹框-->
-      <el-dialog title="修改仓库" v-model="updateStore">
-        <el-form :model="updateForm">
-          <el-form-item label="仓库名称" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库编码" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.number" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库地址" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.address" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateStoreHouseSure">确 定</el-button>
-          <el-button @click="updateStore = false">取 消</el-button>
-        </div>
-      </el-dialog>
-      <!--仓库表格-->
+      <h3 class="dictionaryclassifytitle">门店要货</h3>
+      <el-button class="dictionarycreate" @click="createStoreGetGoods">新增</el-button>
+      <!--选择表单-->
+      <el-form :inline="true" :model="formInline" class="demo-form-inline storegetgoods-nav">
+        <el-form-item label="单据状态">
+          <el-select v-model="formInline.region" placeholder="活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="要货门店">
+          <el-select v-model="formInline.region" placeholder="活动区域">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item><el-form-item>
+        <el-button type="primary" @click="onSearch">高级搜索</el-button>
+      </el-form-item>
+      </el-form>
+      <!--门店要货表格-->
       <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%"
                 class="categories">
-        <el-table-column prop="name" label="仓库名称">
+        <el-table-column prop="name" label="门店名称">
         </el-table-column>
-        <el-table-column prop="number" label="仓库编码">
+        <el-table-column prop="number" label="门店编码">
         </el-table-column>
-        <el-table-column prop="address" label="仓库地址">
+        <el-table-column prop="address" label="门店地址">
         </el-table-column>
         <el-table-column>
           <template scope="scope">
@@ -72,35 +53,29 @@
     data() {
       return {
         tableData: [],
-        createStore: false,//新增
-        updateStore: false,//修改
-        createForm: {//新增
-          name: '',
-          number: '',
-          address: ''
-        },
-        updateForm: {//修改
-          name: '',
-          number: '',
-          address: ''
+        formInline: {
+          user: '',
+          region: ''
         },
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        formLabelWidth: '120px'
       };
     },
     created() {
       this.getStoreHouseList()
     },
     components: {
-      'pagination': require('../../components/pagination')
+      'pagination': require('../../../../components/pagination')
     },
     methods: {
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.getStoreHouseList(page.size, page.num);
+      },
+      onSearch(){
+
       },
       getStoreHouseList(size,num) {//仓库列表
         let self = this
