@@ -366,7 +366,7 @@
         </el-tab-pane>
       </el-tabs>
 
-      <el-dialog title="引入商品" v-model="exportGoodsVisible">
+      <el-dialog title="引入商品" :visible.sync="exportGoodsVisible">
         <el-table :data="exportGoodsList">
           <el-table-column label="商品名称" prop="name">
 

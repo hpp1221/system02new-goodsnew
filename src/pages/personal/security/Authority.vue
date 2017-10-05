@@ -7,49 +7,147 @@
           <el-button @click="addAuthority(0)">新增权限</el-button>
         </el-form-item>
       </el-form>
-      <table>
-        <thead>
-        <tr>
-          <th width="12%">权限名称</th>
-          <th width="12%">备注</th>
-          <th width="12%">创建时间</th>
-          <th width="12%">创建人</th>
-          <th width="12%">修改时间</th>
-          <th width="12%">修改人</th>
-          <th width="20%">操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="m in configs" :id="m.permissionId">
-          <td @click="showChild(m.permissionId,m.toggle)" style="cursor:pointer;user-select:none;text-align: left;">
-            <span v-if="m.level == 1" style="margin-left:30px">{{m.level}}.</span>
-            <span v-if="m.level == 2" style="margin-left:60px">{{m.level}}.</span>
-            <span v-if="m.level == 3" style="margin-left:90px">{{m.level}}.</span>
-            <span v-if="m.level > 3" style="margin-left:120px">{{m.level}}.</span>
-            <span class="permission-td-p">{{m.name}}</span>
-            <i class="el-icon-arrow-down" v-if="m.children && !m.toggle"></i>
-            <i class="el-icon-arrow-up" v-if="m.children && m.toggle"></i>
-          </td>
-          <td>{{m.remarks}}</td>
-          <td>{{moment(m.createTime).format('YYYY-MM-DD HH:mm:ss')}}</td>
-          <td>{{m.creater}}</td>
-          <td>{{moment(m.updateTime).format('YYYY-MM-DD HH:mm:ss')}}</td>
-          <td>{{m.updater}}</td>
-          <td>
+
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+      >
+        <el-table-column type="expand">
+          <template scope="scope">
+            <el-table :data="scope.row.children" :show-header="false">
+              <el-table-column
+                label="权限名称"
+                prop="name">
+              </el-table-column>
+              <el-table-column
+                label="备注"
+                prop="remark">
+              </el-table-column>
+              <el-table-column
+                label="创建时间"
+                prop="name">
+                <template scope="scope">
+                  {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="创建人"
+                prop="updater">
+              </el-table-column>
+              <el-table-column
+                label="修改时间"
+                prop="name">
+                <template scope="scope">
+                  {{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="修改人"
+                prop="updater">
+              </el-table-column>
+              <el-table-column>
+                <template scope="scope">
+                  <el-dropdown trigger="click">
+                    <i class="iconfont icon-more" style="cursor: pointer"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addAuthority(scope.row.permissionId)">添加子菜单</el-dropdown-item>
+                      <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
+                      <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="权限名称"
+          prop="name">
+        </el-table-column>
+        <el-table-column
+          label="备注"
+          prop="remark">
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          prop="name">
+          <template scope="scope">
+            {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="创建人"
+          prop="updater">
+        </el-table-column>
+        <el-table-column
+          label="修改时间"
+          prop="name">
+          <template scope="scope">
+            {{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="修改人"
+          prop="updater">
+        </el-table-column>
+        <el-table-column
+          label="操作">
+          <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addAuthority(m.permissionId)">添加子菜单</el-dropdown-item>
-                <el-dropdown-item @click.native="update(m.permissionId)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="deleteItem(m.permissionId)">删除</el-dropdown-item>
+                <el-dropdown-item @click.native="addAuthority(scope.row.permissionId)">添加子菜单</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-      <el-dialog title="新增子权限" v-model="addAuthorityDialog" size="tiny">
-        <el-form ref="form" :model="addForm" label-width="90px">
+          </template>
+        </el-table-column>
+      </el-table>
+      <!--<table>-->
+      <!--<thead>-->
+      <!--<tr>-->
+      <!--<th width="12%">权限名称</th>-->
+      <!--<th width="12%">备注</th>-->
+      <!--<th width="12%">创建时间</th>-->
+      <!--<th width="12%">创建人</th>-->
+      <!--<th width="12%">修改时间</th>-->
+      <!--<th width="12%">修改人</th>-->
+      <!--<th width="20%">操作</th>-->
+      <!--</tr>-->
+      <!--</thead>-->
+      <!--<tbody>-->
+      <!--<tr v-for="m in configs" :id="m.permissionId">-->
+      <!--<td @click="showChild(m.permissionId,m.toggle)" style="cursor:pointer;user-select:none;text-align: left;">-->
+      <!--<span v-if="m.level == 1" style="margin-left:30px">{{m.level}}.</span>-->
+      <!--<span v-if="m.level == 2" style="margin-left:60px">{{m.level}}.</span>-->
+      <!--<span v-if="m.level == 3" style="margin-left:90px">{{m.level}}.</span>-->
+      <!--<span v-if="m.level > 3" style="margin-left:120px">{{m.level}}.</span>-->
+      <!--<span class="permission-td-p">{{m.name}}</span>-->
+      <!--<i class="el-icon-arrow-down" v-if="m.children && !m.toggle"></i>-->
+      <!--<i class="el-icon-arrow-up" v-if="m.children && m.toggle"></i>-->
+      <!--</td>-->
+      <!--<td>{{m.remarks}}</td>-->
+      <!--<td>{{moment(m.createTime).format('YYYY-MM-DD HH:mm:ss')}}</td>-->
+      <!--<td>{{m.creater}}</td>-->
+      <!--<td>{{moment(m.updateTime).format('YYYY-MM-DD HH:mm:ss')}}</td>-->
+      <!--<td>{{m.updater}}</td>-->
+      <!--<td>-->
+      <!--<el-dropdown trigger="click">-->
+      <!--<el-button type="text" icon="more"></el-button>-->
+      <!--<el-dropdown-menu slot="dropdown">-->
+      <!--<el-dropdown-item @click.native="addAuthority(m.permissionId)">添加子菜单</el-dropdown-item>-->
+      <!--<el-dropdown-item @click.native="update(m.permissionId)">修改</el-dropdown-item>-->
+      <!--<el-dropdown-item @click.native="deleteItem(m.permissionId)">删除</el-dropdown-item>-->
+      <!--</el-dropdown-menu>-->
+      <!--</el-dropdown>-->
+      <!--</td>-->
+      <!--</tr>-->
+      <!--</tbody>-->
+      <!--</table>-->
+
+      <el-dialog title="新增子权限" :visible.sync="addAuthorityDialog" width="30%">
+        <el-form ref="form" :model="addForm" label-width="70px">
           <el-form-item label="权限名称">
             <el-input v-model="addForm.name"></el-input>
           </el-form-item>
@@ -58,8 +156,7 @@
               <el-option v-for="t in configs"
                          :key="t.permissionId"
                          :value="t.permissionId"
-                         :label="t.name"
-              >
+                         :label="t.name">
               </el-option>
             </el-select>
             <span v-else>无</span>
@@ -89,7 +186,7 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <el-dialog title="修改权限" v-model="updateAuthorityDialog" size="tiny">
+      <el-dialog title="修改权限" :visible.sync="updateAuthorityDialog" size="tiny">
         <el-form ref="form" :model="updateForm" label-width="90px">
           <el-form-item label="权限名称">
             <el-input v-model="updateForm.name"></el-input>
@@ -186,9 +283,9 @@
           console.log('selectPermissionList', response)
           if (data.code == 10000) {
             self.tableData = data.data;
-            self.configs = [];
-            self.hasNext(self.tableData);
-            console.log('configs', self.configs)
+//            self.configs = [];
+//            self.hasNext(self.tableData);
+//            console.log('configs', self.configs)
           }
         }).catch(function (error) {
           console.log(error);
@@ -296,17 +393,17 @@
           console.log(error);
         });
       },
-      hasNext(arr){
-        for (let i = 0; i < arr.length; i++) {
-          arr[i].pid == 0 ? this.$set(arr[i], 'show', true) : this.$set(arr[i], 'show', false);
-          this.$set(arr[i], 'toggle', false);
-          this.$set(arr[i], 'level', arr[i].pids.split(",").length);
-          this.configs.push(arr[i]);
-          if (arr[i].children) {
-            this.hasNext(arr[i].children);
-          }
-        }
-      },
+//      hasNext(arr){
+//        for (let i = 0; i < arr.length; i++) {
+//          arr[i].pid == 0 ? this.$set(arr[i], 'show', true) : this.$set(arr[i], 'show', false);
+//          this.$set(arr[i], 'toggle', false);
+//          this.$set(arr[i], 'level', arr[i].pids.split(",").length);
+//          this.configs.push(arr[i]);
+//          if (arr[i].children) {
+//            this.hasNext(arr[i].children);
+//          }
+//        }
+//      },
       showAll(arr){
         for (let i = 0; i < arr.length; i++) {
           if (arr[i].show) {

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">用户管理</h3>
-      <el-form :model="form" inline class="request-form">
+      <el-form ref="form" :model="form" inline class="request-form">
         <el-form-item>
           <el-button @click="addUser">新增用户</el-button>
         </el-form-item>
@@ -35,7 +35,7 @@
         <el-table-column>
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.userId)">修改</el-dropdown-item>
                 <el-dropdown-item v-if="scope.row.status == -1" @click.native="deleteItem(scope.row.userId,1)">启用
@@ -99,7 +99,8 @@
         });
       },
       update(id){
-        this.$router.push({path: '/personal/user/update', query: {id: id}})
+        let path = '/personal/user/update/' + id;
+        this.$router.push({path: path});
       },
       deleteItem(id, status){
         let self = this;

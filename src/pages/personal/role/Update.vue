@@ -57,7 +57,7 @@ export default{
 	},
 	created(){
 		this.selectPermissionList();
-		this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');
+		this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
 	},
 	methods:{
 		select(id){//查询该角色的权限

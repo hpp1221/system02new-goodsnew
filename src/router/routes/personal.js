@@ -7,6 +7,10 @@ export default [
     component: resolve => require(['@/pages/personal/security/Security'], resolve)
   },
   {
+    path: '/personal/security/authority', //权限
+    component: resolve => require(['@/pages/personal/security/Authority'], resolve)
+  },
+  {
     path: '/personal/company/basicinfo', //基础信息
     component: resolve => require(['@/pages/personal/company/BasicInfo'], resolve)
   },
@@ -41,7 +45,24 @@ export default [
     component: resolve => require(['@/pages/personal/role/add'], resolve)
   },
   {
-    path: '/personal/role/update', //修改角色
+    path: '/personal/role/update/:id', //修改角色
     component: resolve => require(['@/pages/personal/role/update'], resolve)
+  },
+
+  {
+    path: '/personal/user/add', //添加用户
+    component: resolve => require(['@/pages/personal/user/add'], resolve)
+  },
+  {
+    path: '/personal/user/list', //用户列表
+    component: resolve => require(['@/pages/personal/user/list'], resolve)
+  },
+  {
+    path: '/personal/user/myinfo', //我的信息
+    component: resolve => require(['@/pages/personal/user/myinfo'], resolve)
+  },
+  {
+    path: '/personal/user/update/:id', //修改用户
+    component: resolve => require(['@/pages/personal/user/update'], resolve)
   },
 ]

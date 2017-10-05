@@ -186,7 +186,7 @@
       }
     },
     created(){
-      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       this.getPrimaryUserLoginId();
       this.getRoleList();
       this.getDepartmentList();
