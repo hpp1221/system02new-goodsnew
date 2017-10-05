@@ -1,199 +1,118 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">商品列表</h3>
-      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
-        <el-form-item>
-          <el-cascader
-            :options="totalCategories"
-            v-model="easyForm.cat"
-            @active-item-change="getCatList"
-            placeholder="商品分类"
-            :props="props">
-          </el-cascader>
+      <h3 class="dictionaryclassifytitle">门店要货</h3>
+      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form storegetgoods-nav">
+        <el-form-item label="单据状态">
+          <el-select v-model="easyForm.region" placeholder="全部">
+            <el-option label="全部" value="shanghai"></el-option>
+            <el-option label="已完成" value="beijing"></el-option>
+            <el-option label="待审核通过" value="beijing"></el-option>
+            <el-option label="待退款确认" value="beijing"></el-option>
+            <el-option label="已作废" value="beijing"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-select placeholder="商品状态" v-model="easyForm.type">
-            <el-option label="全部" value="-1"></el-option>
-            <el-option label="上架" value="1"></el-option>
-            <el-option label="下架" value="0"></el-option>
+        <el-form-item label="要货门店">
+          <el-select placeholder="滨江店" v-model="easyForm.type">
+            <el-option label="滨江店" value="-1"></el-option>
+            <el-option label="江干店" value="1"></el-option>
+            <el-option label="全部门店" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="select(pageSize,pageNum)">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-dropdown trigger="click">
-            <el-button>导入</el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>
-              <el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="outputFile">导出</el-button>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item class="storegoodslist-create">
           <el-button @click="createGoods">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="关键词">
-          <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
-
+      <!--高级搜索列表-->
+      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form storegoods-bettersearchlist">
+        <el-form-item>
+          <p class="storegetgoodssearchlist-title">高级搜索</p>
+        </el-form-item>
+        <el-form-item label="单据编码" class="storenumber">
+          <el-input placeholder="请输入单据编码" v-model="form.keyword" class="long-input">
           </el-input>
         </el-form-item>
-        <el-form-item label="商品分类">
-          <el-cascader
-            :options="totalCategories"
-            v-model="form.cat"
-            @active-item-change="getCatList"
-            placeholder="商品分类"
-            :props="props">
-          </el-cascader>
+        <el-form-item label="要货时间" class="storetime">
+          <el-date-picker
+            v-model="value3"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="商品品牌">
-          <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-            <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属供应商">
+        <el-form-item label="要货门店">
           <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
         </el-form-item>
-        <el-form-item label="商品标签">
-          <el-checkbox-group v-model="form.tags">
-            <el-checkbox :label="t" v-for="t in goodsTags" :key="t.id">{{t.name}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="所属仓库">
-          <el-checkbox-group v-model="form.addressList">
-            <el-checkbox :label="t" v-for="t in totalAddressList" :key="t.id">{{t.address}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="库存状态">
-          <el-checkbox label="高于库存上限值" v-model="form.upLimit" :true-label="1" :false-label="0"></el-checkbox>
-          <el-checkbox label="低于库存下限值" v-model="form.downLimit" :true-label="1" :false-label="0"></el-checkbox>
-          <el-checkbox label="库存<=0商品" v-model="form.zero" :true-label="1" :false-label="0"></el-checkbox>
-        </el-form-item>
-        <el-form-item label="商品状态">
-          <el-radio class="radio" v-model="form.type" :label="-1">全部</el-radio>
-          <el-radio class="radio" v-model="form.type" :label="1">上架</el-radio>
-          <el-radio class="radio" v-model="form.type" :label="0">下架</el-radio>
-        </el-form-item>
-        <el-form-item label="商品来源">
-          <el-radio class="radio" v-model="form.source" :label="-1">全部</el-radio>
-          <el-radio class="radio" v-model="form.source" :label="0">手动新增</el-radio>
-          <el-radio class="radio" v-model="form.source" :label="1">批量导入</el-radio>
+        <!--<el-form-item label="库存状态">-->
+        <!--<el-checkbox label="高于库存上限值" v-model="form.upLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+        <!--<el-checkbox label="低于库存下限值" v-model="form.downLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+        <!--<el-checkbox label="库存<=0商品" v-model="form.zero" :true-label="1" :false-label="0"></el-checkbox>-->
+        <!--</el-form-item>-->
+        <el-form-item label="单据状态">
+          <el-checkbox v-model="form.type0" :label="-1">全选</el-checkbox>
+          <el-checkbox v-model="form.type1" :label="1">作废</el-checkbox>
+          <el-checkbox v-model="form.type2" :label="0">待确认审核</el-checkbox>
+          <el-checkbox v-model="form.type3" :label="-1">待发货审核</el-checkbox>
+          <el-checkbox v-model="form.type" :label="1">已完成</el-checkbox>
+          <el-checkbox v-model="form.type" :label="0">待收货确认</el-checkbox>
         </el-form-item>
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
-          <el-button type="text" @click="advanceSearch = false">取消高级搜索</el-button>
+          <el-button @click="advanceSearch = false">取消高级搜索</el-button>
+          <el-button @click="select(pageSize,pageNum)">清空</el-button>
         </el-form-item>
       </el-form>
-      <div class="goodslist-check-div" v-if="multipleSelection.length > 0">
-        <el-button icon="close" type="text" @click="cancelSelect"></el-button>
-        <span>已选择{{multipleSelection.length}}项</span>
-        <el-button icon="check" @click="putOnSale">上架</el-button>
-        <el-button icon="close" @click="downSale">下架</el-button>
-        <!--<el-button icon="delete" @click="deleteGoods">删除</el-button>-->
-        <el-button icon="setting" @click="setTags">设置标签</el-button>
-      </div>
-      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
-        <el-table-column
-          type="selection"
-          width="55">
+      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable"
+                class="storegetgoodstable">
+        <el-table-column prop="tradeNumber" label="单据编号">
         </el-table-column>
-        <el-table-column label="商品图片">
-          <template scope="scope">
-            <img v-lazy="scope.row.img" alt=""
-                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
-          </template>
-        </el-table-column>
-        <el-table-column prop="number" label="商品编码">
+        <el-table-column prop="stratTime" label="要货时间">
 
         </el-table-column>
-        <el-table-column prop="name" label="商品名称">
-
+        <el-table-column prop="storeId" label="要货门店">
         </el-table-column>
-        <el-table-column prop="sku" label="规格">
-
+        <el-table-column prop="companyId" label="要货人">
         </el-table-column>
-        <el-table-column prop="unit" label="单位">
-
+        <el-table-column prop="type" label="单据状态">
         </el-table-column>
-        <el-table-column prop="marketPrice" label="市场价">
-
+        <el-table-column prop="remark" label="备注">
         </el-table-column>
-        <el-table-column prop="price" label="参考成本价">
-
-        </el-table-column>
-        <el-table-column prop="brandName" label="品牌">
-
-        </el-table-column>
-        <el-table-column prop="inStoreHouse" label="库存数量">
-
-        </el-table-column>
-        <el-table-column prop="supplierName" label="所属供应商">
-
-        </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column>
           <template scope="scope">
             <el-dropdown trigger="click">
-              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <el-button type="text" icon="more"></el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">明细</el-dropdown-item>
-                <!--<el-dropdown-item>删除</el-dropdown-item>-->
+                <el-dropdown-item @click.native="updateSupplier(scope.row.supplierId)">单据详情</el-dropdown-item>
+                <el-dropdown-item @click.native="deleteSupplier(scope.row)">审核</el-dropdown-item>
+                <el-dropdown-item @click.native="deleteSupplier(scope.row)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
-        <el-table :data="multipleSelection">
-          <el-table-column label="商品编码" prop="barCode">
-
-          </el-table-column>
-          <el-table-column label="商品名称" prop="name">
-
-          </el-table-column>
-          <el-table-column label="规格" prop="sku">
-
-          </el-table-column>
-          <el-table-column label="商品上架">
-            <template scope="scope">
-              <el-checkbox>新品上架</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button @click="sureSetTags">确定</el-button>
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-      </el-dialog>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
     </div>
   </div>
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         tableData: [],
         advanceSearch: false,
+        value3: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
         form: {
           storeHouseAddress: '',//所属仓库
           tagId: '',//商品标签
           storeStatus: '',//库存状态
-          goodsStatus: '',//商品状态
           keyword: '',//关键词
           series: '',//商品分类
           cat: [],
-          brand: '',//商品品牌
           supplierName: '',//供应商名称
           tags: [],//标签
           source: -1,//商品来源,全部是-1，手动新增0，批量导入1
@@ -229,7 +148,7 @@
       },
 
     },
-    created(){
+    created() {
       let self = this;
       // self.select(this.pageSize,this.pageNum);
       self.getBrandList(function (data) {
@@ -246,16 +165,16 @@
       self.getCatList();//获取分类列表
     },
     components: {
-      'pagination': require('../../components/pagination')
+      'pagination': require('../../../../components/pagination')
     },
     methods: {
-      pageChanged(page){
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
 
-      select(size, num){//查询
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -286,7 +205,7 @@
           console.log(error);
         });
       },
-      getCatList(val){
+      getCatList(val) {
         let self = this;
         var requestData;
         if (val === undefined) {
@@ -315,7 +234,7 @@
           console.log(error);
         });
       },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
+      insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
           if (arr[i].id === val[level].id) {
             if (val.length === level + 1) {
@@ -327,35 +246,29 @@
           }
         }
       },
-      sureSetTags(){//确定设置标签
+      sureSetTags() {//确定设置标签
 
       },
-      handleSelectionChange(val){
+      handleSelectionChange(val) {
         this.multipleSelection = val;
-        console.log('10101',val);
+        console.log('10101', val);
       },
-      update(id, goodsId){//修改商品详情
-        this.$router.push({path: '/goods/updateGoods', query: {id: id, goodsId: goodsId}});
+      updateSupplier(id) {//要货单详情
+        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
       },
-      createGoods(){
+      createGoods() {
         this.$router.push('/goods/createGoods');
       },
-      outputFile(){//导出
-        console.log(this.multipleSelection)
-        let skuList = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          skuList.push(this.multipleSelection[i].id);
-        }
+      outputFile() {//导出
 
-        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
       },
-      multipleInputGoods(){
+      multipleInputGoods() {
         this.$router.push('/goods/multipleInputGoods');
       },
-      multipleInputImgs(){
+      multipleInputImgs() {
         this.$router.push('/goods/multipleInputImgs');
       },
-      putOnSale(){//上架
+      putOnSale() {//上架
         let self = this;
         self.$confirm('请确认是否批量上架？', '提示', {
           confirmButtonText: '确定',
@@ -384,7 +297,7 @@
           });
         });
       },
-      downSale(){//下架
+      downSale() {//下架
         let self = this;
         self.$confirm('请确认是否批量下架？', '提示', {
           confirmButtonText: '确定',
@@ -412,7 +325,7 @@
           });
         });
       },
-      deleteGoods(){//删除商品
+      deleteGoods() {//删除商品
         this.$confirm('请确认是否批量删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -429,10 +342,10 @@
           });
         });
       },
-      setTags(){//设置标签
+      setTags() {//设置标签
         this.dialogTableVisible = true;
       },
-      cancelSelect(){//取消选中
+      cancelSelect() {//取消选中
         this.$refs.multipleTable.clearSelection();
       }
 
