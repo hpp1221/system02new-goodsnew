@@ -1,12 +1,16 @@
 <template>
 	<ul class="menu-item-div">
-		
-		<li v-for="l in list" @click="clickMenu(l)">
-			<span class="left-blue"></span>
-			<i class="el-icon-delete2" v-if="l.pid == 0" style="margin-left: 30px;"></i>
+
+		<li v-for="l in list" @click="clickMenu(l)"
+        :id="l.permissionId"
+        @mouseenter="mousein(l.permissionId)"
+        @mouseleave="mouseout(l.permissionId)">
+			<!--<span class="left-blue"></span>-->
+			<i :class="l.icon" v-if="l.pid == 0"></i>
 			<span class="menu-name">{{l.name}}</span>
-			<menu-tree :list="l.children" v-if="l.children" v-show="l.show"></menu-tree>
+			<!--<menu-tree :list="l.children" v-if="l.children" v-show="l.show"></menu-tree>-->
 		</li>
+
 	</ul>
 </template>
 
@@ -15,7 +19,7 @@
 		name:"menu-tree",
 		data(){
 			return {
-				
+
 			}
 		},
 		props:{
@@ -30,6 +34,14 @@
 					this.$router.push(item.url)
 				}
 			},
+      mousein(id){
+			    event.stopPropagation()
+			    document.getElementById(id).style.backgroundColor="#00c1e1";
+      },
+      mouseout(id){
+        event.stopPropagation()
+        document.getElementById(id).style.backgroundColor="#333745";
+      }
 		}
 	}
 </script>

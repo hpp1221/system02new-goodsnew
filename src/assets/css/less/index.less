@@ -1,124 +1,125 @@
-.index-container{
-    width:100%;
-    height: 100%;
-    >.index-header{
-        background-color: #fff;
-        height: 50px;
-        position: absolute;
-        left: 160px;
-        right: 0;
-        border-bottom: 1px solid #c0bcbd;
-        >div{
-            position: absolute;
-            height: 100%;
-            
-        }
-        >.header-one{
-            width: 80px;
-            left: 0;
-            border-right: 1px solid #e4e4e4;
-            text-align: center;
-            img{
-                width: 22px;
-                height: 22px;
-                margin-top: 14px;
-                cursor: pointer;
-            }
-        }
-        >.header-two{
-            left: 80px;
-            img{
-                position: absolute;
-                width: 22px;
-                height: 22px;
-                top: 14px;
-                left: 20px;
-                cursor: pointer;
-            }
-            input{
-                position: absolute;
-                border: none;
-                outline: none;
-                left: 50px;
-                top:-13px;
-                width: 200px;
-                height: 40px;
-            }
-        }
-        >.header-three{
-            width: 80px;
-            right:150px;
-            border-left: 1px solid #e4e4e4;
-            text-align: center;
-            img{
-                width: 22px;
-                height: 22px;
-                margin-top: 14px;
-                cursor: pointer;
-            }
-        }
-        >.header-four{
-            right:0;
-            width: 150px;
-            border-left: 1px solid #e4e4e4;
-            overflow: hidden;
-            img{
-                width: 22px;
-                height: 22px;
-                top: 14px;
-                position: absolute;
-                cursor: pointer;
-            }
-            #question{
-                left: 20px;
-            }
-            #bell{
-                left: 62px;
-            }
-            #person{
-                right: 20px;
-            }
-        }
-        
+.header-left-div {
+  float: left;
+  height: 50px;
+  > .header-left-logo-div {
+    width: 50px;
+    border-right: 1px solid #2c3034;
+    img {
+      width: 40px;
+      margin-top: 7px;
     }
-    >.index-left-menu{
-        background-color:#354053;
-        width: 160px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        color: white;
-        >.index-logo{
-            height: 40px;
-            margin-top: 5px;
-            text-align: center;
-            img{
-                height: 40px;
-            }
-        }
-        >.menu-item-div{
-            height: 50px;
-            line-height: 50px;
-            cursor: pointer;
-            position: relative;
-            >.menu-name{
-                
-            }
-            .menu-item-div{
-                background-color: #2b3b4b;
-                text-align: center;
-                font-size: 14px;
-                .left-blue{
-                    position: absolute;
-                    left: 0;
-                    width: 5px;
-                    height: 50px;
-                    background-color: #5da5d7;
-                    z-index: 999;
-                }
-            }
-            
-        }
-    }
+  }
 }
+
+.header-right-div {
+  float: right;
+  height: 50px;
+  overflow: hidden;
+  > div {
+    float: left;
+    border-left: 1px solid #2c3034;
+  }
+  > .header-right-search-div {
+    width: 80px;
+    color: white;
+    line-height: 50px;
+    margin: 0;
+  }
+  > .header-right-message-div {
+    width: 50px;
+    line-height: 50px;
+  }
+  > .header-right-help-div {
+    width: 50px;
+    line-height: 50px;
+  }
+  > .header-right-avatar-div {
+    width: 80px;
+    img {
+      width: 20px;
+      margin-top: 12px;
+    }
+  }
+}
+
+.index-right-menu {
+  background-color: #4f5257;
+  float: left;
+  color: white;
+  width: 180px;
+  margin-left: 0px;
+  position: relative;
+  > .right-menu-title {
+    height: 72px;
+    line-height: 72px;
+    background-color: #383d41;
+    padding-left: 30px;
+  }
+
+  > .right-menu-item-div {
+
+    > .items {
+      a{
+        height: 40px;
+        padding-left: 30px;
+        line-height: 40px;
+        cursor: pointer;
+        font-size: 14px;
+        display: block;
+        color:white;
+      }
+
+
+    }
+  }
+}
+
+.index-left-small-menu {
+  background-color: #333745;
+  float: left;
+  color: white;
+  width: 50px;
+  > .index-logo {
+    height: 30px;
+    text-align: center;
+    cursor: pointer;
+  }
+  > .menu-item-div {
+    height: 40px;
+    width: 50px;
+    line-height: 40px;
+    cursor: pointer;
+    position: relative;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
+.index-left-menu {
+  background-color: #333745;
+  float: left;
+  color: white;
+  width: 160px;
+  > .index-logo {
+    height: 30px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  > .menu-item-div {
+    height: 40px;
+    width: 160px;
+    line-height: 40px;
+    cursor: pointer;
+    position: relative;
+    font-size: 14px;
+    text-align: center;
+    //.menu-item-div {
+    //  background-color: #2b3b4b;
+    //  background-color: black;
+    //  text-align: center;
+    //  font-size: 14px;
+    //}
+  }
+}
+

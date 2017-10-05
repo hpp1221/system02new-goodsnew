@@ -100,7 +100,7 @@
         <span>已选择{{multipleSelection.length}}项</span>
         <el-button icon="check" @click="putOnSale">上架</el-button>
         <el-button icon="close" @click="downSale">下架</el-button>
-        <el-button icon="delete" @click="deleteGoods">删除</el-button>
+        <!--<el-button icon="delete" @click="deleteGoods">删除</el-button>-->
         <el-button icon="setting" @click="setTags">设置标签</el-button>
       </div>
       <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
@@ -110,7 +110,7 @@
         </el-table-column>
         <el-table-column label="商品图片">
           <template scope="scope">
-            <img :src="scope.row.img" alt=""
+            <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
@@ -144,18 +144,17 @@
         <el-table-column label="操作">
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
-                <el-dropdown-item>明细</el-dropdown-item>
-                <el-dropdown-item>删除</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">明细</el-dropdown-item>
+                <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
-
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="批量设置标签" v-model="dialogTableVisible">
+      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
         <el-table :data="multipleSelection">
           <el-table-column label="商品编码" prop="barCode">
 
@@ -342,7 +341,13 @@
         this.$router.push('/goods/createGoods');
       },
       outputFile(){//导出
+        console.log(this.multipleSelection)
+        let skuList = [];
+        for (let i = 0; i < this.multipleSelection.length; i++) {
+          skuList.push(this.multipleSelection[i].id);
+        }
 
+        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
       },
       multipleInputGoods(){
         this.$router.push('/goods/multipleInputGoods');
