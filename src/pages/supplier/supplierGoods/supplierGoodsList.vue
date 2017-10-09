@@ -52,7 +52,6 @@
                 <el-dropdown-item @click.native="updateSupplier(scope.row.id)">修改</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-
           </template>
         </el-table-column>
       </el-table>

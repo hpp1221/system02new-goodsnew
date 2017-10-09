@@ -34,7 +34,7 @@
         </div>
       </el-dialog>
       <!--客户级别表格-->
-      <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%">
+      <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="level" label="客户级别">
 
         </el-table-column>
@@ -45,13 +45,12 @@
         <el-table-column>
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="updateClientLevel = true">修改</el-dropdown-item>
                 <el-dropdown-item>置顶</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-
           </template>
         </el-table-column>
       </el-table>

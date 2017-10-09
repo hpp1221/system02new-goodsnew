@@ -6,7 +6,7 @@
         <el-button class="dictionarycreate" @click="openFirstModal">新增一级类目</el-button>
       </div>
       <!--新增弹框-->
-      <el-dialog title="新增商品分类" v-model="createChildDependent">
+      <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
         <el-form :model="childForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
             <el-input v-model="childForm.name" auto-complete="off"></el-input>
@@ -21,7 +21,7 @@
         </div>
       </el-dialog>
       <!--修改弹框-->
-      <el-dialog title="修改商品分类信息" v-model="updateDictionaryClassify">
+      <el-dialog title="修改商品分类信息" :visible.sync="updateDictionaryClassify">
         <el-form :model="updateForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
             <el-input v-model="updateForm.parent.name" auto-complete="off"></el-input>
@@ -45,7 +45,7 @@
           @node-expand="handleNodeClick"
           :default-expanded-keys="defaultExpandedKeys"
           :render-content="renderContent"
-          v-if="totalCategories.length > 0" class="dictionaryclassify-tree">
+          v-if="totalCategories.length > 0">
         </el-tree>
       </div>
     </div>
@@ -125,14 +125,14 @@
       },
       renderContent(h, {node, data, store}) {
         return (
-          <span>
+          <span style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">
           <span>
           <span>{node.label}</span>
         </span>
-        <span style="float: right; margin-right: 20px">
-          <el-button size="mini" on-click={ () => this.openCreateModal(node, data) }>新增</el-button>
-        <el-button size="mini" on-click={ () => this.updateModal(node, data) }>修改</el-button>
-        <el-button size="mini" on-click={ () => this.deleteNode(node, data) }>删除</el-button>
+        <span>
+          <el-button style="font-size: 12px;" type="text" on-click={ () => this.openCreateModal(node, data) }>新增</el-button>
+        <el-button style="font-size: 12px;" type="text" on-click={ () => this.updateModal(node, data) }>修改</el-button>
+        <el-button style="font-size: 12px;" type="text" on-click={ () => this.deleteNode(node, data) }>删除</el-button>
         </span>
         </span>);
       },
