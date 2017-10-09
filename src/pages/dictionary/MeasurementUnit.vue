@@ -6,7 +6,7 @@
         <el-button class="dictionarycreate" @click="createUnit">新增</el-button>
       </div>
       <!--新增弹框-->
-      <el-dialog title="新增计量单位" v-model="dictionaryUnitCreate">
+      <el-dialog title="新增计量单位" :visible.sync="dictionaryUnitCreate">
         <el-form :model="form">
           <el-form-item label="单位名称" :label-width="formLabelWidth">
             <el-input v-model="form.name" auto-complete="off"></el-input>

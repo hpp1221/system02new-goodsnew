@@ -9,7 +9,7 @@
 
 .iconfont {
   font-family:"iconfont" !important;
-  font-size:16px;
+  font-size:14px;
   font-style:normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,8 +21,12 @@
 
 .icon-erp-dayin:before { content: "\e62b"; font-size: 18px; margin-right: 6px;}
 
-.icon-erp-R:before { content: "\e615"; }
-
+.icon-erp-R:before {
+  content: "\e615";
+  font-size: 20px;
+  padding-right: 8px;
+  font-weight: 600;
+}
 .icon-erp-daochu:before { content: "\e646"; font-size: 18px; margin-right: 6px;}
 
 .icon-erp-zhiding-:before { content: "\e698"; }
