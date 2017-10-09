@@ -19,11 +19,13 @@
           <i class="iconfont icon-feedback" style="font-size: 20px;"></i>
         </div>
         <div class="header-right-avatar-div">
-          <img src="../assets/images/person.png" alt="" id="person" @click="personcenter"/>
+          <div class="avater-div">
+            <img v-lazy="userinfo.avatar" alt="" @click="personcenter"/>
+          </div>
         </div>
       </div>
     </el-header>
-    <el-container>
+    <el-container style="height: 100%">
       <el-aside width="50px" class="left-aside" v-if="isCollapse">
         <i class="iconfont icon-enter"
            v-if="!rightMenuVisible && leftClick"
@@ -121,7 +123,14 @@
     },
     created(){
       this.getMenu();
+      this.getUserInfo();
     },
+    computed: {
+      'userinfo': function () {
+        return JSON.parse(localStorage.getItem('userinfo'));
+      }
+    },
+
     mounted(){
       let self = this;
       self.getMenu(function (data) {
@@ -131,12 +140,12 @@
         let rightMenuVisible = localStorage.getItem('rightMenuVisible');
         console.log(localStorage.getItem('collapseStatus'))
         console.log(localStorage.getItem('rightMenuVisible'))
-        if(collapseStatus === 'true'){
-            self.isCollapse = true;
+        if (collapseStatus === 'true') {
+          self.isCollapse = true;
         }
-        for(let i = 0;i < data.length;i++){
-          for(let j = 0;j < data[i].children.length;j++){
-            if(data[i].children[j].url === self.$router.currentRoute.path){
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < data[i].children.length; j++) {
+            if (data[i].children[j].url === self.$router.currentRoute.path) {
               let parentId = data[i].permissionId;
               let selfId = data[i].children[j].permissionId;
               let leftMenus = document.getElementsByClassName('menu-item-div')[0].childNodes;
@@ -144,9 +153,9 @@
                 leftMenus[t].style.backgroundColor = "#333745";
               }
               self.$nextTick(function () {
-                if(document.getElementById('leftbigmenu' + parentId)){
+                if (document.getElementById('leftbigmenu' + parentId)) {
                   document.getElementById('leftbigmenu' + parentId).style.backgroundColor = "#00c1e1";
-                }else{
+                } else {
                   document.getElementById('leftsmallmenu' + parentId).style.backgroundColor = "#00c1e1";
                 }
               })
@@ -171,7 +180,7 @@
           console.log('menus', response);
           if (data.code == 10000) {
             //self.menuList = data.data;
-             callback(data.data)
+            callback(data.data)
           }
         }).catch(function (error) {
           console.log(error);
@@ -240,12 +249,14 @@
     background-color: #333745 !important;
     text-align: center;
     position: relative;
+    height: 100%;
     z-index: 100;
   }
 
   .right-aside {
     background-color: #4f5257 !important;
     position: relative;
+    height: 100%;
     z-index: 50;
   }
 
@@ -258,6 +269,7 @@
   }
 
   body > .el-container {
+    height: 500px;
     margin-bottom: 40px;
   }
 

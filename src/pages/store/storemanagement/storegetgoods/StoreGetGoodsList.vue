@@ -92,6 +92,44 @@
         </el-table-column>
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <!--高级搜索列表-->
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+          <el-form-item label="单据编码">
+            <el-input placeholder="请输入单据编码" v-model="form.keyword" class="long-input">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="要货时间">
+            <el-date-picker
+              v-model="value3"
+              type="datetimerange"
+              :picker-options="pickerOptions"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              align="right">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="要货门店">
+            <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+          </el-form-item>
+          <!--<el-form-item label="库存状态">-->
+          <!--<el-checkbox label="高于库存上限值" v-model="form.upLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--<el-checkbox label="低于库存下限值" v-model="form.downLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--<el-checkbox label="库存<=0商品" v-model="form.zero" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--</el-form-item>-->
+          <el-form-item label="单据状态">
+            <el-checkbox v-model="form.type0" :label="-1">全选</el-checkbox>
+            <el-checkbox v-model="form.type1" :label="1">作废</el-checkbox>
+            <el-checkbox v-model="form.type2" :label="0">待确认审核</el-checkbox>
+            <el-checkbox v-model="form.type3" :label="-1">待发货审核</el-checkbox>
+            <el-checkbox v-model="form.type" :label="1">已完成</el-checkbox>
+            <el-checkbox v-model="form.type" :label="0">待收货确认</el-checkbox>
+          </el-form-item>
+        </el-form>
+        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+        <el-button @click="advanceSearch = false">取消</el-button>
+      </el-dialog>
     </div>
   </div>
 </template>
