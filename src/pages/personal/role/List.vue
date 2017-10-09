@@ -82,7 +82,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNum: num
+          pageNo: num
         };
         self.$http.post('/ui/role/selectRoleListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

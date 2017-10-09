@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">订单列表</h3>
-      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
           <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
             <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalOrderStatus"></el-option>
@@ -15,49 +15,7 @@
           <el-button @click="select">查询</el-button>
         </el-form-item>
       </el-form>
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="订单号">
-          <el-input placeholder="请输入订单号" v-model="form.orderNumber" class="long-input">
 
-          </el-input>
-        </el-form-item>
-        <el-form-item label="下单时间">
-          <el-date-picker
-            v-model="form.dateRange"
-            type="datetimerange"
-            placeholder="选择时间范围">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="收货信息">
-          <el-input placeholder="收货人/收货电话/经销商" v-model="form.deliveryInfo" class="form-input">
-
-          </el-input>
-        </el-form-item>
-        <el-form-item label="商品信息">
-          <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input">
-
-          </el-input>
-        </el-form-item>
-        <el-form-item label="订单状态">
-          <el-checkbox-group v-model="form.orderStatus">
-            <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="付款状态">
-          <el-checkbox-group v-model="form.payType">
-            <el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="订单标签">
-          <el-checkbox-group v-model="form.storeStatus">
-            <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="select">查询</el-button>
-          <el-button type="text" @click="advanceSearch = false">取消高级搜索</el-button>
-        </el-form-item>
-      </el-form>
       <el-table :data="tableData">
         <el-table-column
           type="selection"
@@ -97,6 +55,49 @@
         </el-table-column>
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+          <el-form-item label="订单号">
+            <el-input placeholder="请输入订单号" v-model="form.orderNumber" class="long-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="下单时间">
+            <el-date-picker
+              v-model="form.dateRange"
+              type="datetimerange"
+              placeholder="选择时间范围">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="收货信息">
+            <el-input placeholder="收货人/收货电话/经销商" v-model="form.deliveryInfo" class="form-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="商品信息">
+            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="订单状态">
+            <el-checkbox-group v-model="form.orderStatus">
+              <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="付款状态">
+            <el-checkbox-group v-model="form.payType">
+              <el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="订单标签">
+            <el-checkbox-group v-model="form.storeStatus">
+              <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-form>
+        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+        <el-button @click="advanceSearch = false">取消</el-button>
+      </el-dialog>
     </div>
   </div>
 </template>

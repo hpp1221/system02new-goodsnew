@@ -63,10 +63,6 @@
         form: {},
       }
     },
-    created(){
-      this.select();
-
-    },
     components: {
       'pagination': require('../../../components/pagination')
     },

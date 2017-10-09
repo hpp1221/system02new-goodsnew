@@ -17,7 +17,12 @@
 					<el-radio v-model="form.sex" :label="false">女</el-radio>
 				</el-form-item>
 				<el-form-item label="头像">
-					<uploadoneimg :fileList="form.avatar" @getFileList="getLogo"></uploadoneimg>
+					<uploadoneimg
+            :fileList="form.avatar"
+            @getFileList="getLogo"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadoneimg>
 				</el-form-item>
 				<el-form-item label="昵称">
 					<el-input placeholder="请输入昵称" v-model="form.nickname" class="form-input">
@@ -210,6 +215,7 @@
 				},
         companySuffix:'',//公司loginId前缀
 				totalRoleList:[],
+        imgToken:'',
 				totalDepartmentList:[],
 				type:false,//false是添加true是修改
 			}
@@ -218,6 +224,10 @@
 			this.getPrimaryUserLoginId();
       this.getRoleList();
 			this.getDepartmentList();
+			let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      });//获取图片token
 		},
 		components:{
 			'uploadoneimg':require('../../../components/uploadoneimg')
@@ -229,7 +239,7 @@
     },
 		methods:{
 			getLogo(file){//获取logo
-				this.form.avatar = file;
+				this.form.avatar = file.url;
 			},
       getPrimaryUserLoginId(){
         let self = this;

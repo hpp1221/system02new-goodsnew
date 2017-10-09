@@ -22,4 +22,16 @@ export default [
     path: '/order/ordersummary', //订单
     component: resolve => require(['@/pages/order/OrderSummary'], resolve)
   },
+  {
+    path: '/order/purchasereturn/list', //采购退货单
+    component: resolve => require(['@/pages/order/purchasereturn/list'], resolve)
+  },
+  {
+    path: '/order/purchasereturn/add', //添加采购退货单
+    component: resolve => require(['@/pages/order/purchasereturn/add'], resolve)
+  },
+  {
+    path: '/order/saleorder/list', //销售订单
+    component: resolve => require(['@/pages/order/saleorder/list'], resolve)
+  }
 ]

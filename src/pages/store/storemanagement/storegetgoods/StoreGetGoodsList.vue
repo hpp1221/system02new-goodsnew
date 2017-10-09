@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">门店要货</h3>
-      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form storegetgoods-nav">
+      <h3 class="page-title">门店要货</h3>
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="单据状态">
           <el-select v-model="easyForm.region" placeholder="全部">
             <el-option label="全部" value="shanghai"></el-option>
@@ -22,52 +22,12 @@
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
-        <el-form-item class="storegoodslist-create">
+        <el-form-item>
           <el-button @click="createGoods">新增</el-button>
         </el-form-item>
       </el-form>
-      <!--高级搜索列表-->
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form storegoods-bettersearchlist">
-        <el-form-item>
-          <p class="storegetgoodssearchlist-title">高级搜索</p>
-        </el-form-item>
-        <el-form-item label="单据编码" class="storenumber">
-          <el-input placeholder="请输入单据编码" v-model="form.keyword" class="long-input">
-          </el-input>
-        </el-form-item>
-        <el-form-item label="要货时间" class="storetime">
-          <el-date-picker
-            v-model="value3"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="要货门店">
-          <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
-        </el-form-item>
-        <!--<el-form-item label="库存状态">-->
-        <!--<el-checkbox label="高于库存上限值" v-model="form.upLimit" :true-label="1" :false-label="0"></el-checkbox>-->
-        <!--<el-checkbox label="低于库存下限值" v-model="form.downLimit" :true-label="1" :false-label="0"></el-checkbox>-->
-        <!--<el-checkbox label="库存<=0商品" v-model="form.zero" :true-label="1" :false-label="0"></el-checkbox>-->
-        <!--</el-form-item>-->
-        <el-form-item label="单据状态">
-          <el-checkbox v-model="form.type0" :label="-1">全选</el-checkbox>
-          <el-checkbox v-model="form.type1" :label="1">作废</el-checkbox>
-          <el-checkbox v-model="form.type2" :label="0">待确认审核</el-checkbox>
-          <el-checkbox v-model="form.type3" :label="-1">待发货审核</el-checkbox>
-          <el-checkbox v-model="form.type" :label="1">已完成</el-checkbox>
-          <el-checkbox v-model="form.type" :label="0">待收货确认</el-checkbox>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="select(pageSize,pageNum)">查询</el-button>
-          <el-button @click="advanceSearch = false">取消高级搜索</el-button>
-          <el-button @click="select(pageSize,pageNum)">清空</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable"
-                class="storegetgoodstable">
+
+      <el-table :data="tableData">
         <el-table-column prop="tradeNumber" label="单据编号">
         </el-table-column>
         <el-table-column prop="stratTime" label="要货时间">
@@ -95,6 +55,44 @@
         </el-table-column>
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <!--高级搜索列表-->
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+          <el-form-item label="单据编码">
+            <el-input placeholder="请输入单据编码" v-model="form.keyword" class="long-input">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="要货时间">
+            <el-date-picker
+              v-model="value3"
+              type="datetimerange"
+              :picker-options="pickerOptions"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              align="right">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="要货门店">
+            <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+          </el-form-item>
+          <!--<el-form-item label="库存状态">-->
+          <!--<el-checkbox label="高于库存上限值" v-model="form.upLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--<el-checkbox label="低于库存下限值" v-model="form.downLimit" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--<el-checkbox label="库存<=0商品" v-model="form.zero" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--</el-form-item>-->
+          <el-form-item label="单据状态">
+            <el-checkbox v-model="form.type0" :label="-1">全选</el-checkbox>
+            <el-checkbox v-model="form.type1" :label="1">作废</el-checkbox>
+            <el-checkbox v-model="form.type2" :label="0">待确认审核</el-checkbox>
+            <el-checkbox v-model="form.type3" :label="-1">待发货审核</el-checkbox>
+            <el-checkbox v-model="form.type" :label="1">已完成</el-checkbox>
+            <el-checkbox v-model="form.type" :label="0">待收货确认</el-checkbox>
+          </el-form-item>
+        </el-form>
+        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+        <el-button @click="advanceSearch = false">取消</el-button>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -105,7 +103,34 @@
       return {
         tableData: [],
         advanceSearch: false,
-        value3: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
+        value3: [],
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
         form: {
           storeHouseAddress: '',//所属仓库
           tagId: '',//商品标签
@@ -150,7 +175,6 @@
     },
     created() {
       let self = this;
-      // self.select(this.pageSize,this.pageNum);
       self.getBrandList(function (data) {
         self.totalBrandList = data;
       });//获取品牌列表
@@ -182,17 +206,33 @@
           pageNo: num
         };
 
-        if (self.advanceSearch) {//高级搜索
-          if (self.form.cat.length > 0) {
-            self.form.cat = [self.form.cat[self.form.cat.length - 1]];
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        } else {//简单搜索
-          if (self.easyForm.cat.length > 0) {
-            self.easyForm.cat = [self.easyForm.cat[self.easyForm.cat.length - 1]];
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
+        if (self.easyForm.cat.length > 0) {
+          self.easyForm.cat = [self.easyForm.cat[self.easyForm.cat.length - 1]];
         }
+
+        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('getGoodsRecordList', response)
+          if (data.code == 10000) {
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      advanceSelect(size, num) {//查询
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num
+        };
+
+        if (self.form.cat.length > 0) {
+          self.form.cat = [self.form.cat[self.form.cat.length - 1]];
+        }
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
 
         self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

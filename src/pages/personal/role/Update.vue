@@ -23,7 +23,6 @@
 					  	node-key="permissionId"
 					  	ref="tree"
 					  	highlight-current
-					  	check-strictly
 					  	:default-checked-keys="defaultPermission"
 					  	v-if="defaultPermission.length > 0"
 					  	:props="defaultProps" style="float:left;width:200px;border:none">
@@ -101,7 +100,7 @@ export default{
 			let requestData = {
 				token: window.localStorage.getItem('token'),
 				permissionIdStr:str,
-				roleId:self.$route.query.id
+				roleId:self.$route.params.id
 			};
 			requestData = Object.assign(requestData,self.shallowCopy(self.addForm));
 			self.$http.post('/ui/role/updateRole',self.qs.stringify(requestData)).then(function (response) {
