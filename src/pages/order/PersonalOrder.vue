@@ -162,7 +162,7 @@
 			    });
 			},
 			seeDetail(id){
-				this.$router.push({path:'/orderdetail',query:{id:id}})
+				this.$router.push({path:'/order/orderdetail',query:{id:id}})
 			}
 		}
 	}

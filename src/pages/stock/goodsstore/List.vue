@@ -1,6 +1,7 @@
 <template>
 	<div class="container">
 		<div class="wrapper">
+      <h3 class="page-title">商品库存</h3>
 			<el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
 				<el-form-item>
 					<el-select placeholder="全部仓库" v-model="easyForm.address" multiple>
@@ -21,19 +22,19 @@
 			<el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
 				<el-form-item label="关键词">
 					<el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
-						
+
 					</el-input>
 				</el-form-item>
 				<el-form-item label="商品分类">
 					<el-select v-model="form.series">
 						<el-option label="分类1" value="1">
-							
+
 						</el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="商品品牌">
 					<el-input placeholder="请选择商品品牌" v-model="form.brandName" class="form-input">
-						
+
 					</el-input>
 				</el-form-item>
 				<el-form-item label="所属仓库">
@@ -66,31 +67,31 @@
 			</el-form>
 			<el-table :data="tableData">
 				<el-table-column prop="goodsName" label="商品名称" sortable>
-					
+
 				</el-table-column>
 				<el-table-column prop="goodsSpec" label="规格">
-					
+
 				</el-table-column>
 				<el-table-column prop="unit" label="单位">
-					
+
 				</el-table-column>
 				<el-table-column prop="storeHouseAddress" label="所属仓库">
-					
+
 				</el-table-column>
 				<el-table-column prop="upLimit" label="库存上限">
-					
+
 				</el-table-column>
 				<el-table-column prop="downLimit" label="库存下限">
-					
+
 				</el-table-column>
 				<el-table-column prop="preOrder" label="预购量" sortable>
-					
+
 				</el-table-column>
 				<el-table-column prop="onTheWay" label="在途量">
-					
+
 				</el-table-column>
 				<el-table-column prop="inStoreHouse" label="库存量" sortable>
-					
+
 				</el-table-column>
 				<el-table-column label="操作">
 					<el-button type="text">查看明细</el-button>
@@ -105,7 +106,7 @@
 		data(){
 			return {
 				tableData:[
-				
+
 				],
 				advanceSearch:false,
 				form:{
@@ -156,39 +157,29 @@
 			}
 		},
 		created(){
-			this.select()
-			this.getAddressList()
+			let self = this;
+			self.select();
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			select(){//查询
 				let self = this
-				
+
 				let requestData = {token: window.localStorage.getItem('token')}
-				
+
 				if(self.advanceSearch){//高级搜索
 					requestData = Object.assign(requestData,self.shallowCopy(self.form))
 				}else{//简单搜索
 					requestData = Object.assign(requestData,self.shallowCopy(self.easyForm))
 				}
-				
+
 				self.$http.post('/ui/list',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('list',response)
 					if(data.code == 10000){
 						self.tableData = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
-			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
 					}
 			    }).catch(function (error) {
 			    	console.log(error);

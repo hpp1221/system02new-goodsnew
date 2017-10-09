@@ -103,7 +103,7 @@
 				
 			},
 			cancel(){//取消
-				this.$router.push('/goodsin')
+				this.$router.push('/stock/stockallocation/list')
 			}
 		}
 	}

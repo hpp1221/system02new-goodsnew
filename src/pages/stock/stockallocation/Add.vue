@@ -130,7 +130,10 @@
 			}
 		},
 		created(){
-			this.getAddressList()
+			let self = this;
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			save(formName){//保存
@@ -147,7 +150,7 @@
 						    let data = response.data;
 						    console.log('addAllocationRecord',response)
 							if(data.code == 10000){
-								self.$router.push('/stockallocation/list')
+								self.$router.push('/stock/stockallocation/list')
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -190,7 +193,7 @@
 				
 			},
 			cancel(){//取消
-				this.$router.push('/stockallocation/list')
+				this.$router.push('/stock/stockallocation/list')
 			},
 			addLine(){
 				this.form.data.push({
@@ -205,19 +208,6 @@
 			},
 			deleteLine(index){
 				this.form.data.length === 1?this.$message('请至少调拨一个商品') : this.form.data.splice(index,1)
-			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
 			},
 		}
 	}

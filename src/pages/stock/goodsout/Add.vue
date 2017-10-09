@@ -132,7 +132,10 @@
 			}
 		},
 		created(){
-			this.getAddressList()
+			let self = this;
+			self.getAddressList(function(data){
+				self.totalStores = data.data;
+			});
 		},
 		methods:{
 			save(formName){//保存
@@ -149,7 +152,7 @@
 						    let data = response.data;
 						    console.log('addRecord',response)
 							if(data.code == 10000){
-								self.$router.push('/goodsout/list')
+								self.$router.push('/stock/goodsout/list')
 							}
 					    }).catch(function (error) {
 					    	console.log(error);
@@ -161,16 +164,17 @@
 		        });
 			},
 			cancel(){//取消
-				this.$router.push('/goodsout/list')
+				this.$router.push('/stock/goodsout/list')
 			},
 			querySearchAsync(queryString, cb){
 				let self = this
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					keyword: queryString,
+					addressName: self.form.selfAddress,
 					companyId:1
 				}
-				self.$http.post('/ui/goodsInfo',self.qs.stringify(requestData)).then(function (response) {
+				self.$http.post('/ui/outPutGoodsInfo',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
 				    console.log('addAllocationRecord',response)
 				    console.log(response.data)
@@ -187,19 +191,6 @@
 			    	console.log(error);
 			    });
 				
-			},
-			getAddressList(){
-				let self = this
-				let requestData = {token: window.localStorage.getItem('token')}
-				self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-				    let data = response.data;
-				    console.log('addressList',response)
-					if(data.code == 10000){
-						self.totalStores = data.data
-					}
-			    }).catch(function (error) {
-			    	console.log(error);
-			    });
 			},
 			handleSelect(item){
 				this.form.data[this.listIndex] = item
