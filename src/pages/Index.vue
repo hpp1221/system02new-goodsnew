@@ -50,7 +50,6 @@
       </el-aside>
       <el-aside width="160px" class="left-aside" v-if="!isCollapse">
         <i class="iconfont icon-enter"
-
            v-if="!rightMenuVisible && leftClick"
            @click="changeRightMenuVisible"
            id="icon-left">
@@ -247,7 +246,6 @@
 
   .left-aside {
     background-color: #333745 !important;
-    text-align: center;
     position: relative;
     height: 100%;
     z-index: 100;

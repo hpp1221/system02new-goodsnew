@@ -140,12 +140,8 @@
         this.select();
       },
       updateSupplier(supplierId) { //修改供应商详情
-        this.$router.push({
-          path: '/supplier/suppliers/updatesupplier',
-          query: {
-            supplierId: supplierId
-          }
-        });
+        let url = '/supplier/suppliers/updatesupplier/' + supplierId;
+        this.$router.push(url);
       },
       deleteSupplier(row) { //删除单个供应商详情
         let self = this;

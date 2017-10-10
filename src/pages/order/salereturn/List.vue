@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">采购退货单列表</h3>
+      <h3 class="page-title">销售退货单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
         <el-form-item label="订单状态">
           <el-select placeholder="商品状态" v-model="easyForm.type">
@@ -12,8 +12,8 @@
             <el-option label="已作废" value="4"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="供应商">
-          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.supplier"></el-input>
+        <el-form-item label="客户">
+          <el-input placeholder="请输入客户名称/销售订单号" v-model="easyForm.client"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -22,12 +22,15 @@
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <el-form-item>
+          <el-button @click="createPurchaseReturn">导入</el-button>
+        </el-form-item>
+        <el-form-item>
           <el-button @click="createPurchaseReturn">新增</el-button>
         </el-form-item>
       </el-form>
       <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="退货单号">
-          <el-input placeholder="请输入退货单号" v-model="form.keyword" class="long-input">
+        <el-form-item label="销售单号">
+          <el-input placeholder="请输入销售单号" v-model="form.keyword" class="long-input">
 
           </el-input>
         </el-form-item>
@@ -40,10 +43,8 @@
             :picker-options="pickerOptions1">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="供应商名称">
-          <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-            <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-          </el-select>
+        <el-form-item label="客户名称">
+          <el-input v-model="form.clientName"></el-input>
         </el-form-item>
         <el-form-item label="退单状态">
           <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>

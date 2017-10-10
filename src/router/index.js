@@ -7,6 +7,7 @@ import Personal from './routes/personal'//个人中心模块
 import Dictionary from './routes/dictionary'//业务数据模块
 import Supplier from './routes/supplier'//供应商模块
 import Store from './routes/store'//门店模块
+import Client from './routes/client'//客户模块
 Vue.use(Router)
 
 export default new Router({
@@ -37,6 +38,7 @@ export default new Router({
         ...Dictionary,
         ...Supplier,
         ...Store,
+        ...Client,
       ]
     },
   ]

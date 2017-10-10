@@ -96,8 +96,8 @@
         });
       },
       update(id){
-        let path = '/personal/role/update/' + id;
-        this.$router.push({path: path});
+        let url = '/personal/role/update/' + id;
+        this.$router.push(url);
       },
       deleteItem(id){
         let self = this;

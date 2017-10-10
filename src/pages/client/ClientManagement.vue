@@ -1,32 +1,29 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h4 class="client-management-title">客户管理</h4>
-      <h5 class="client-management-clientlist">客户列表</h5>
-      <div class="client-management-class">
-        <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-          <el-form-item>
-            <span class="client-list-allclass">全部级别</span>
-            <el-select v-model="easyForm.vip_level" placeholder="全部级别">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-input placeholder="请输入客户名称/联系电话/手机/编码" icon="search" v-model="easyForm.condition"
-                      :on-icon-click="handleIconClick" class="client-input">
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="select(pageSize,pageNum)">查询</el-button>
-          </el-form-item>
-          <el-form-item style="float: right;">
-            <el-button @click="leadInClient">导入</el-button>
-            <el-button @click="outputClient">导出</el-button>
-            <el-button @click="createClient">新增</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+      <h3 class="page-title">客户列表</h3>
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
+        <el-form-item>
+          <span class="client-list-allclass">全部级别</span>
+          <el-select v-model="easyForm.vip_level" placeholder="全部级别">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-input placeholder="请输入客户名称/联系电话/手机/编码" icon="search" v-model="easyForm.condition"
+                    :on-icon-click="handleIconClick" class="client-input">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
+        </el-form-item>
+        <el-form-item style="float: right;">
+          <el-button @click="leadInClient">导入</el-button>
+          <el-button @click="outputClient">导出</el-button>
+          <el-button @click="createClient">新增</el-button>
+        </el-form-item>
+      </el-form>
       <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable"
                 class="clientmanagement-input">
         <el-table-column type="selection" width="55">
@@ -111,7 +108,7 @@
     },
 
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../components/pagination')
     },
     methods: {
       pageChanged(page) {
@@ -159,10 +156,8 @@
         this.select();
       },
       updateClient(id) { //修改客户详情
-        this.$router.push({
-          path: '/personal/client/updateclient',
-          query: {id: id}
-        });
+        let url = '/client/updateclient/' + id;
+        this.$router.push(url);
       },
       deleteClient(row) { //删除单个客户详情
         let self = this;
@@ -216,10 +211,10 @@
         }
       },
       createClient() { //新增客户
-        this.$router.push('/personal/client/createclient');
+        this.$router.push('/client/createclient');
       },
       leadInClient() { //导入客户
-        this.$router.push('/personal/client/inputclient');
+        this.$router.push('/client/inputclient');
       }
     }
   }

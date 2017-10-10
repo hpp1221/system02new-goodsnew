@@ -4,7 +4,7 @@
 			<h3 class="page-title">部门管理</h3>
 			<el-form :model="form" inline class="request-form">
 				<el-form-item>
-					<el-button @click="addDepartment(0)">新增子部门</el-button>
+					<el-button @click="addDepartment(0)">添加新部门</el-button>
 				</el-form-item>
 			</el-form>
 			<table>
@@ -38,7 +38,7 @@
 							<el-dropdown trigger="click">
                 <i class="iconfont icon-more" style="cursor: pointer"></i>
 								<el-dropdown-menu slot="dropdown">
-									<el-dropdown-item @click.native="addDepartment(m.organizationId)">添加子菜单</el-dropdown-item>
+									<el-dropdown-item @click.native="addDepartment(m.organizationId)">添加子部门</el-dropdown-item>
 								    <el-dropdown-item @click.native="update(m.organizationId)">修改</el-dropdown-item>
 								    <el-dropdown-item @click.native="deleteItem(m.organizationId)">删除</el-dropdown-item>
 								</el-dropdown-menu>
