@@ -56,8 +56,8 @@
     data(){
       return {
         form: {
-          username: '',
-          password: '',
+          username: 'czkj-12345',
+          password: 'a123456',
           twoWeek: false,
         },
         rules: {

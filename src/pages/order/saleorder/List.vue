@@ -1,108 +1,106 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">销售订单</h3>
-      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
-        <el-form-item label="订单状态">
-          <el-select placeholder="商品状态" v-model="easyForm.type">
-            <el-option label="全部" value="-1"></el-option>
-            <el-option label="已完成" value="1"></el-option>
-            <el-option label="待审核通过" value="2"></el-option>
-            <el-option label="待退款确认" value="3"></el-option>
-            <el-option label="已作废" value="4"></el-option>
+      <h3 class="page-title">采购订单列表</h3>
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
+        <el-form-item>
+          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
+            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalOrderStatus"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="客户">
-          <el-input placeholder="请输入客户名称/销售订单号" v-model="easyForm.client"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select(pageSize,pageNum)">查询</el-button>
+          <el-button @click="select">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="createPurchaseReturn">导入</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="createPurchaseReturn">新增</el-button>
+          <el-button @click="addOrder">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="销售单号">
-          <el-input placeholder="请输入销售单号" v-model="form.keyword" class="long-input">
 
-          </el-input>
-        </el-form-item>
-        <el-form-item label="下单时间">
-          <el-date-picker
-            v-model="form.orderTime"
-            type="datetime"
-            placeholder="选择日期时间"
-            align="right"
-            :picker-options="pickerOptions1">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="客户名称">
-          <el-input v-model="form.clientName"></el-input>
-        </el-form-item>
-        <el-form-item label="退单状态">
-          <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
-        </el-form-item>
-      </el-form>
       <el-table :data="tableData">
-        <el-table-column label="退单号">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column prop="orderNumber" label="订单号">
+
+        </el-table-column>
+        <el-table-column label="下单时间" sortable>
           <template scope="scope">
-            <img v-lazy="scope.row.img" alt=""
-                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
+            <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="number" label="下单时间">
+        <el-table-column prop="payAmount" label="金额">
 
         </el-table-column>
-        <el-table-column prop="name" label="供应商名称">
+        <el-table-column prop="orderStatus" label="出库/发货">
+          <template scope="scope">
+            <span v-if="scope.row.orderStatus == 1">其他入库</span>
+            <span v-if="scope.row.orderStatus == 2">采购入库</span>
+            <span v-if="scope.row.orderStatus == 3">销售退货</span>
+            <span v-if="scope.row.orderStatus == 4">调拨入库</span>
+            <span v-if="scope.row.orderStatus == 5">盘盈</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createUserName" label="状态">
 
         </el-table-column>
-        <el-table-column prop="sku" label="金额">
-
-        </el-table-column>
-        <el-table-column prop="unit" label="状态">
+        <el-table-column prop="createUserName" label="付款状态">
 
         </el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
-            <el-dropdown trigger="click">
-              <i class="iconfont icon-more" style="cursor: pointer"></i>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">退单详情</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">审核</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">作废</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button type="text" @click="seeDetail(scope.row.orderId)">查看明细</el-button>
           </template>
+
         </el-table-column>
       </el-table>
-      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
-        <el-table :data="multipleSelection">
-          <el-table-column label="商品编码" prop="barCode">
-
-          </el-table-column>
-          <el-table-column label="商品名称" prop="name">
-
-          </el-table-column>
-          <el-table-column label="规格" prop="sku">
-
-          </el-table-column>
-          <el-table-column label="商品上架">
-            <template scope="scope">
-              <el-checkbox>新品上架</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button @click="sureSetTags">确定</el-button>
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-      </el-dialog>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+          <el-form-item label="订单号">
+            <el-input placeholder="请输入订单号" v-model="form.orderNumber" class="long-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="下单时间">
+            <el-date-picker
+              v-model="form.dateRange"
+              type="datetimerange"
+              placeholder="选择时间范围">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="收货信息">
+            <el-input placeholder="收货人/收货电话/经销商" v-model="form.deliveryInfo" class="form-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="商品信息">
+            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="订单状态">
+            <el-checkbox-group v-model="form.orderStatus">
+              <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="付款状态">
+            <el-checkbox-group v-model="form.payType">
+              <el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="订单标签">
+            <el-checkbox-group v-model="form.storeStatus">
+              <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-form>
+        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+        <el-button @click="advanceSearch = false">取消</el-button>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -112,45 +110,94 @@
     data(){
       return {
         tableData: [],
-        advanceSearch: false,
-        form: {},
+        form: {
+//          payType: '',//付款状态
+          orderNumber: '',//订单编号
+//          orderStatus: '',//订单状态
+          dateRange: '',
+          deliveryInfo: '',//收货信息
+          goodsInfo: '',//商品信息
+          startTime: '',
+          endTime: ''
+        },
         easyForm: {//简单查询
 
-        },
-        pickerOptions1: {
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周前',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
         },
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
+        totalStores: [
+          {
+            name: '仓库1',
+            id: 1
+          },
+          {
+            name: '仓库2',
+            id: 2
+          },
+          {
+            name: '仓库3',
+            id: 3
+          }
+        ],
+        totalOrderStatus: [
+          {
+            name: '待订单审核'
+          },
+          {
+            name: '待财务审核'
+          },
+          {
+            name: '待出库审核'
+          },
+          {
+            name: '待发货确认'
+          },
+          {
+            name: '待收货确认'
+          },
+          {
+            name: '已完成'
+          },
+          {
+            name: '已作废'
+          },
+        ],//订单状态
+        totalPaymentStatus: [
+          {
+            name: '未付款'
+          },
+          {
+            name: '付款待审核'
+          },
+          {
+            name: '部分付款'
+          },
+          {
+            name: '已付款'
+          },
+        ],//付款状态
+        totalOrderTags: [
+          {
+            name: '特价单'
+          },
+          {
+            name: '非特价单'
+          },
+          {
+            name: '秒杀订单'
+          },
+        ],//订单标签
+        advanceSearch: false,
       }
+    },
+    created(){
+      this.getAddressList()
     },
     watch: {
       advanceSearch: function () {//点击高级搜索和取消时重新查询
         this.select();
       },
-    },
-    created(){
-      let self = this;
     },
     components: {
       'pagination': require('../../../components/pagination')
@@ -161,186 +208,57 @@
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
-      createPurchaseReturn(){//新增
-        this.$router.push('/order/purchasereturn/add');
+      addOrder(){
+        this.$router.push('/order/purchaseorder/add');
       },
-      select(size, num){//查询
+      select(size,num){//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
-
         if (self.advanceSearch) {//高级搜索
-
-          requestData = Object.assign(requestData, self.shallowCopy(self.form));
+          if (self.form.dateRange instanceof Array) {
+            self.form.startTime = self.form.dateRange[0]
+            self.form.endTime = self.form.dateRange[1]
+          }
+          requestData = Object.assign(requestData, self.shallowCopy(self.form))
         } else {//简单搜索
-
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
+          if (self.easyForm.dateRange instanceof Array) {
+            self.easyForm.startTime = self.easyForm.dateRange[0]
+            self.easyForm.endTime = self.easyForm.dateRange[1]
+          }
+          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         }
-
-        self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('skuList', response)
+
           if (data.code == 10000) {
             self.tableData = data.data.list;
+            console.log('list', self.tableData)
             self.totalPage = data.data.total;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
-        } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
-        }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
+      getAddressList(){
+        let self = this
+        let requestData = {token: window.localStorage.getItem('token')}
+        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('catList', response)
+          console.log('addressList', response)
           if (data.code == 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-            }
-
+            //self.totalStores = data.data
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
-      sureSetTags(){//确定设置标签
-
-      },
-      handleSelectionChange(val){
-        this.multipleSelection = val;
-        console.log('10101', val);
-      },
-      update(id, goodsId){//修改商品详情
-        this.$router.push({path: '/goods/updateGoods', query: {id: id, goodsId: goodsId}});
-      },
-      createGoods(){
-        this.$router.push('/goods/createGoods');
-      },
-      outputFile(){//导出
-        console.log(this.multipleSelection)
-        let skuList = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          skuList.push(this.multipleSelection[i].id);
-        }
-
-        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
-      },
-      multipleInputGoods(){
-        this.$router.push('/goods/multipleInputGoods');
-      },
-      multipleInputImgs(){
-        this.$router.push('/goods/multipleInputImgs');
-      },
-      putOnSale(){//上架
-        let self = this;
-        self.$confirm('请确认是否批量上架？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          console.log('123')
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            skuList: JSON.stringify(self.multipleSelection),
-            type: 1
-          };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
-              self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        }).catch(() => {
-          self.$message({
-            type: 'info',
-            message: '您已取消上架'
-          });
-        });
-      },
-      downSale(){//下架
-        let self = this;
-        self.$confirm('请确认是否批量下架？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            skuList: JSON.stringify(self.multipleSelection),
-            type: 0
-          };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
-              self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '您已取消下架'
-          });
-        });
-      },
-      deleteGoods(){//删除商品
-        this.$confirm('请确认是否批量删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '您已成功删除!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '您已取消删除'
-          });
-        });
-      },
-      setTags(){//设置标签
-        this.dialogTableVisible = true;
-      },
-      cancelSelect(){//取消选中
-        this.$refs.multipleTable.clearSelection();
+      seeDetail(id){
+        this.$router.push({path: '/order/orderdetail', query: {id: id}})
       }
-
     }
   }
 </script>

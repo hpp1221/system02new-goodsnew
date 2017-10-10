@@ -3,7 +3,7 @@
 		<div class="wrapper">
 			<h3 class="page-title">供应商新增</h3>
 
-			<el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px" inline>
+			<el-form ref="form" :model="form" class="request-form" label-width="100px">
 				<el-form-item label="供应商名称">
 					<el-input placeholder="请输入供应商名称" v-model="form.name" class="form-input">
 					</el-input>
@@ -29,7 +29,7 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button plain @click.native="submit('form')">保存</el-button>
+					<el-button type="primary" @click.native="submit('form')">保存</el-button>
 				</el-form-item>
 			</el-form>
 

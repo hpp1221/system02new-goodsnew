@@ -23,6 +23,8 @@
 					  	node-key="permissionId"
 					  	ref="tree"
 					  	highlight-current
+              check-strictly
+              @check-change="checkChange"
 					  	:default-checked-keys="defaultPermission"
 					  	v-if="defaultPermission.length > 0"
 					  	:props="defaultProps" style="float:left;width:200px;border:none">
@@ -75,6 +77,19 @@ export default{
 		    	console.log(error);
 		    });
 		},
+    checkChange(obj, isChecked, other){
+      let checkedKeys = this.$refs.tree.getCheckedKeys()
+      if (obj.pid.indexOf(checkedKeys) == -1 && obj.pid != 0) {
+        this.$refs.tree.setChecked(obj.pid, isChecked, false)
+      }
+      if (!isChecked) {
+        if (obj.children) {
+          for (let i = 0; i < obj.children.length; i++) {
+            this.$refs.tree.setChecked(obj.children[i].permissionId, false, true);
+          }
+        }
+      }
+    },
 		selectPermissionList(){//查询权限树
 			let self = this;
 			let requestData = {

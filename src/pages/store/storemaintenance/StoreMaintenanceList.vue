@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">门店</h3>
+      <h3 class="page-title">门店</h3>
       <el-button class="dictionarycreate" @click="createStoreHouse">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增门店" :visible.sync="createStore">

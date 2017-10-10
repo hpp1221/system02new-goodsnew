@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">订单列表</h3>
+      <h3 class="page-title">采购订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
           <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
@@ -13,6 +13,9 @@
         </el-form-item>
         <el-form-item>
           <el-button @click="select">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="addOrder">新增</el-button>
         </el-form-item>
       </el-form>
 
@@ -197,13 +200,16 @@
       },
     },
     components: {
-      'pagination': require('../../components/pagination')
+      'pagination': require('../../../components/pagination')
     },
     methods: {
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
+      },
+      addOrder(){
+        this.$router.push('/order/purchaseorder/add');
       },
       select(size,num){//查询
         let self = this;

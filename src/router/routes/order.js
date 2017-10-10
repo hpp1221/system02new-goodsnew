@@ -3,27 +3,20 @@
  */
 export default [
   {
-    path: '/order/createorder', //创建订单
-    component: resolve => require(['@/pages/order/CreateOrder'], resolve)
+    path: '/order/purchaseorder/add', //创建采购订单
+    component: resolve => require(['@/pages/order/purchaseorder/add'], resolve)
   },
   {
-    path: '/order/orderlist', //订单列表
-    component: resolve => require(['@/pages/order/OrderList'], resolve)
+    path: '/order/purchaseorder/list', //采购订单列表
+    component: resolve => require(['@/pages/order/purchaseorder/list'], resolve)
   },
   {
-    path: '/order/personalorder', //个人订单
-    component: resolve => require(['@/pages/order/PersonalOrder'], resolve)
+    path: '/order/purchaseorder/detail/:id', //采购订单详情
+    component: resolve => require(['@/pages/order/purchaseorder/detail'], resolve)
   },
+
   {
-    path: '/order/orderdetail', //订单详情
-    component: resolve => require(['@/pages/order/OrderDetail'], resolve)
-  },
-  {
-    path: '/order/ordersummary', //订单
-    component: resolve => require(['@/pages/order/OrderSummary'], resolve)
-  },
-  {
-    path: '/order/purchasereturn/list', //采购退货单
+    path: '/order/purchasereturn/list', //采购退货单列表
     component: resolve => require(['@/pages/order/purchasereturn/list'], resolve)
   },
   {
@@ -31,7 +24,45 @@ export default [
     component: resolve => require(['@/pages/order/purchasereturn/add'], resolve)
   },
   {
-    path: '/order/saleorder/list', //销售订单
+    path: '/order/purchasereturn/detail/:id', //采购退货单详情
+    component: resolve => require(['@/pages/order/purchasereturn/detail'], resolve)
+  },
+
+  {
+    path: '/order/saleorder/list', //销售订单列表
     component: resolve => require(['@/pages/order/saleorder/list'], resolve)
-  }
+  },
+  {
+    path: '/order/saleorder/add', //添加销售订单
+    component: resolve => require(['@/pages/order/saleorder/add'], resolve)
+  },
+  {
+    path: '/order/saleorder/detail/:id', //销售订单详情
+    component: resolve => require(['@/pages/order/saleorder/detail'], resolve)
+  },
+
+  {
+    path: '/order/salereturn/list', //销售退货单列表
+    component: resolve => require(['@/pages/order/salereturn/list'], resolve)
+  },
+  {
+    path: '/order/salereturn/add', //添加销售退货单
+    component: resolve => require(['@/pages/order/salereturn/add'], resolve)
+  },
+  {
+    path: '/order/salereturn/detail/:id', //销售退货单详情
+    component: resolve => require(['@/pages/order/salereturn/detail'], resolve)
+  },
+
+  {
+    path: '/order/personalorder', //个人订单
+    component: resolve => require(['@/pages/order/PersonalOrder'], resolve)
+  },
+  {
+    path: '/order/ordersummary', //订单
+    component: resolve => require(['@/pages/order/OrderSummary'], resolve)
+  },
+
+
+
 ]

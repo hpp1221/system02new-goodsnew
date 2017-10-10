@@ -34,12 +34,12 @@
 								</el-autocomplete>
 							</template>
 						</el-table-column>
-						
+
 						<el-table-column label="规格" prop="goodsSpec">
-							
+
 						</el-table-column>
 						<el-table-column label="单位" prop="goodsUnit">
-							
+
 						</el-table-column>
 						<el-table-column label="出库数量">
 							<template scope="scope">
@@ -49,7 +49,7 @@
 					</el-table>
 				</el-form-item>
 				<el-form-item label="出库单号" prop="tradeNo">
-					<el-input class="form-input" v-model="form.tradeNo"></el-input>
+					{{form.tradeNo}}
 				</el-form-item>
 				<el-form-item label="出库类型">
 					<el-select class="form-input" v-model="form.type" placeholder="选择出库类型">
@@ -136,8 +136,29 @@
 			self.getAddressList(function(data){
 				self.totalStores = data.data;
 			});
+			self.createTradeNo();
 		},
 		methods:{
+      createTradeNo(){
+        let str = 'OUT-';
+        let nowDate = new Date();
+        let year = nowDate.getFullYear();
+        let month = nowDate.getMonth() + 1;
+        if (month < 10) month = '0' + month;
+        let day = nowDate.getDate();
+        if (day < 10) day = '0' + day;
+        let hour = nowDate.getHours();
+        if (hour < 10) hour = '0' + hour;
+        let minutes = nowDate.getMinutes();
+        if (minutes < 10) minutes = '0' + minutes;
+        let seconds = nowDate.getSeconds();
+        if (seconds < 10) seconds = '0' + seconds;
+        str = str + year + month + day + hour + minutes + seconds;
+        for (let i = 0; i < 6; i++) {
+          str += Math.floor(Math.random() * 10);
+        }
+        this.form.tradeNo = str;
+      },
 			save(formName){//保存
 				this.$refs[formName].validate((valid) => {
           			if (valid) {
@@ -147,7 +168,7 @@
 							self.$delete(self.form.data[i],'combination')
 						}
 						requestData = Object.assign(requestData,self.shallowCopy(self.form))
-						
+
 						self.$http.post('/ui/addRecord',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addRecord',response)
@@ -190,7 +211,7 @@
 			    }).catch(function (error) {
 			    	console.log(error);
 			    });
-				
+
 			},
 			handleSelect(item){
 				this.form.data[this.listIndex] = item
