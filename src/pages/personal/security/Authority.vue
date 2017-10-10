@@ -153,7 +153,7 @@
           </el-form-item>
           <el-form-item label="上级权限">
             <el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">
-              <el-option v-for="t in configs"
+              <el-option v-for="t in tableData"
                          :key="t.permissionId"
                          :value="t.permissionId"
                          :label="t.name">
@@ -193,7 +193,7 @@
           </el-form-item>
           <el-form-item label="上级权限">
             <el-select v-model="updateForm.pid" disabled v-if="updateForm.pid!=0">
-              <el-option v-for="t in configs"
+              <el-option v-for="t in tableData"
                          :key="t.permissionId"
                          :value="t.permissionId"
                          :label="t.name"

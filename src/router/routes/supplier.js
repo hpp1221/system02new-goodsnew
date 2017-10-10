@@ -15,7 +15,7 @@ export default [
     component: resolve => require(['@/pages/supplier/suppliers/SupplierList'], resolve)
   },
   {
-    path: '/supplier/suppliers/updatesupplier', //修改供应商详情
+    path: '/supplier/suppliers/updatesupplier/:id', //修改供应商详情
     component: resolve => require(['@/pages/supplier/suppliers/UpdateSupplier'], resolve)
   },
   {

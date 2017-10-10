@@ -16,7 +16,8 @@
           </el-table-column>
           <el-table-column label="主图" width="80">
             <template scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                   v-if="scope.row.url"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称">
@@ -62,7 +63,8 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
+          <p><i class="el-icon-edit" @click="editDelivery"
+                style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
@@ -81,12 +83,12 @@
           <el-input type="textarea" v-model="form.remark" class="form-input"></el-input>
         </el-form-item>
         <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
+          <uploadfiles
+            :fileList="form.att"
+            @getFileList="getAtt"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadfiles>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit">确定</el-button>
@@ -142,7 +144,7 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          att:'',//附近
+          att: [],//附件
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -155,6 +157,7 @@
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
+        imgToken:'',
         invoiceTypes: [
           {
             id: 0,
@@ -183,29 +186,36 @@
       }
 
     },
+    components:{
+      'uploadfiles':require('../../../components/uploadfiles'),
+    },
     created(){
-        if(window.localStorage.getItem('userinfo')){
-            console.log('userinfo',JSON.parse(window.localStorage.getItem('userinfo')))
-         let userinfo =  JSON.parse(window.localStorage.getItem('userinfo'));
-         this.form.orderShipment.customer = userinfo.companyName;
-          this.form.orderShipment.userName = userinfo.name;
-          this.form.orderShipment.userPhone = userinfo.cel;
-          this.form.orderShipment.userAddress = userinfo.companyName;
-
-        }
-
+      if (window.localStorage.getItem('userinfo')) {
+        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
+        this.form.orderShipment.customer = userinfo.companyName;
+        this.form.orderShipment.userName = userinfo.name;
+        this.form.orderShipment.userPhone = userinfo.cel;
+        this.form.orderShipment.userAddress = userinfo.companyName;
+      }
+      let self = this;
+      self.getImgAccess(function(data){
+        self.imgToken = data;
+      });//获取图片token
     },
     methods: {
       judgeNum(value, index){//判断数量是否为整数
         this.form.orderDetails[index].num = value.replace(/\D/g, '');
       },
+      getAtt(file){//附件
+        this.form.att.push(file);
+      },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
@@ -250,7 +260,7 @@
       submit(){//提交订单
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData,self.shallowCopy(self.form));
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)

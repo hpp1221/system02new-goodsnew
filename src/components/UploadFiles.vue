@@ -10,7 +10,7 @@
     :disabled="disabled"
     style="width: 500px;">
     <el-button size="small" type="primary">点击上传</el-button>
-    <div slot="tip" class="el-upload__tip">商品附件最大20M，仅支持PDF、word、txt、excel、jpg、png、bmp、gif、rar、zip格式</div>
+    <div slot="tip" class="el-upload__tip">附件最大20M，仅支持PDF、word、txt、excel、jpg、png、bmp、gif、rar、zip格式</div>
   </el-upload>
 </template>
 

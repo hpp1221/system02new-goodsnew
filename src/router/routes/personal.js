@@ -20,23 +20,6 @@ export default [
   },
 
   {
-    path: '/personal/client/clientmanagement', //客户管理
-    component: resolve => require(['@/pages/personal/client/ClientManagement'], resolve)
-  },
-  {
-    path: '/personal/client/inputclient', //客户导入
-    component: resolve => require(['@/pages/personal/client/InputClient'], resolve)
-  },
-  {
-    path: '/personal/client/updateclient', //修改客户详情
-    component: resolve => require(['@/pages/personal/client/UpdateClient'], resolve)
-  },
-  {
-    path: '/personal/client/createclient', //新增客户
-    component: resolve => require(['@/pages/personal/client/CreateClient'], resolve)
-  },
-
-  {
     path: '/personal/role/list', //角色列表
     component: resolve => require(['@/pages/personal/role/list'], resolve)
   },

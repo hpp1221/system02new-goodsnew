@@ -4,9 +4,9 @@
 			<h3 class="page-title">商品入库</h3>
 			<el-form ref="form" :model="form" inline>
 				<el-form-item>
-					<el-select placeholder="全部仓库" v-model="form.addressId">
+					<el-select placeholder="全部仓库" v-model="form.addressId" filterable>
 						<el-option label="全部" :value="-1"></el-option>
-						<el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
+						<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item>
@@ -32,15 +32,15 @@
 			</el-form>
 			<el-table :data="tableData">
 				<el-table-column prop="tradeNo" label="单号">
-					
+
 				</el-table-column>
-				<el-table-column prop="createTime" label="入库日期">
+				<el-table-column prop="createTime" label="入库日期" sortable>
 					<template scope="scope">
 						<span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop="selfAddress" label="所属仓库">
-					
+
 				</el-table-column>
 				<el-table-column prop="type" label="类型">
 					<template scope="scope">
@@ -51,7 +51,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="createUserName" label="制单人">
-					
+
 				</el-table-column>
 				<el-table-column label="操作">
 					<template scope="scope">
@@ -68,7 +68,7 @@
 		data(){
 			return {
 				tableData:[
-				
+
 				],
 				form:{
 					type:-1,
@@ -85,7 +85,7 @@
 			let self = this;
 			self.select();
 			self.getAddressList(function(data){
-				self.totalStores = data.data;
+				self.totalStores = data;
 			});
 		},
 		methods:{
