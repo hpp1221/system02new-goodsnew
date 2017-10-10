@@ -3,7 +3,7 @@
  */
 export default [
   {
-    path: '/store/storemaintenance/storemaintenanceList', //门店维护
+    path: '/store/storemaintenance/storemaintenancelist', //门店维护
     component: resolve => require(['@/pages/store/storemaintenance/StoreMaintenanceList'], resolve)
   },
   {
