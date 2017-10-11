@@ -20,7 +20,15 @@
         </div>
         <div class="header-right-avatar-div">
           <div class="avater-div">
-            <img v-lazy="userinfo.avatar" alt="" @click="personcenter"/>
+            <el-dropdown trigger="click">
+              <img v-lazy="userinfo.avatar" alt="" v-if="userinfo"/>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="personcenter">个人信息</el-dropdown-item>
+                <el-dropdown-item @click.native="logout">注销</el-dropdown-item>
+                <!--<el-dropdown-item>删除</el-dropdown-item>-->
+              </el-dropdown-menu>
+            </el-dropdown>
+
           </div>
         </div>
       </div>
@@ -221,6 +229,19 @@
       personcenter(){//跳转个人中心
         this.$router.push('/personal/user/myinfo');
       },
+      logout(){//注销
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.$http.post('/ui/user/logout', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('logout', response);
+          if (data.code == 10000) {
+            self.$router.push('/login');
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }
     }
   }
 </script>

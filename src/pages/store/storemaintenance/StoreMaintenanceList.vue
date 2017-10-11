@@ -3,6 +3,7 @@
     <div class="wrapper">
       <h3 class="page-title">门店</h3>
       <el-button class="dictionarycreate" @click="createStoreHouse">新增</el-button>
+      <el-button class="dictionarycreate" @click="storeIntenance">所属仓库维护</el-button>
       <!--新增弹框-->
       <el-dialog title="新增门店" :visible.sync="createStore">
         <el-form :model="createForm">
@@ -87,7 +88,7 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        formLabelWidth: '120px'
+        formLabelWidth: '80px'
       };
     },
     created() {
@@ -124,6 +125,9 @@
       createStoreHouse() {//新增弹框
         this.createStore = true
         this.createForm = {data: {name: '', number: '', address: ''}};
+      },
+      storeIntenance(){
+        this.$router.push('/')
       },
       createStoreHouseSure() {//新增确定
         let self = this

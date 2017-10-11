@@ -4,7 +4,7 @@
       <h3 class="page-title">权限管理</h3>
       <el-form :model="form" inline class="request-form">
         <el-form-item>
-          <el-button @click="addAuthority(0)">新增权限</el-button>
+          <el-button @click="addAuthority(0,'无')">新增权限</el-button>
         </el-form-item>
       </el-form>
 
@@ -50,7 +50,7 @@
                   <el-dropdown trigger="click">
                     <i class="iconfont icon-more" style="cursor: pointer"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addAuthority(scope.row.permissionId)">添加子菜单</el-dropdown-item>
+                      <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单</el-dropdown-item>
                       <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
                       <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
                     </el-dropdown-menu>
@@ -96,7 +96,7 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addAuthority(scope.row.permissionId)">添加子菜单</el-dropdown-item>
+                <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单</el-dropdown-item>
                 <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
                 <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -152,14 +152,14 @@
             <el-input v-model="addForm.name"></el-input>
           </el-form-item>
           <el-form-item label="上级权限">
-            <el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">
-              <el-option v-for="t in tableData"
-                         :key="t.permissionId"
-                         :value="t.permissionId"
-                         :label="t.name">
-              </el-option>
-            </el-select>
-            <span v-else>无</span>
+            <!--<el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">-->
+              <!--<el-option v-for="t in tableData"-->
+                         <!--:key="t.permissionId"-->
+                         <!--:value="t.permissionId"-->
+                         <!--:label="t.name">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
+            <span>{{addForm.pname}}</span>
           </el-form-item>
           <el-form-item label="url">
             <el-input v-model="addForm.url"></el-input>
@@ -196,8 +196,7 @@
               <el-option v-for="t in tableData"
                          :key="t.permissionId"
                          :value="t.permissionId"
-                         :label="t.name"
-              >
+                         :label="t.name">
               </el-option>
             </el-select>
             <span v-else>无</span>
@@ -247,6 +246,7 @@
           icon: '',
           orders: '',
           type: 1,//1菜单2按钮
+          pname:''
         },
         updateForm: {
           name: '',
@@ -291,9 +291,10 @@
           console.log(error);
         });
       },
-      addAuthority(id){//打开添加权限模态框
+      addAuthority(id,name){//打开添加权限模态框
         let self = this;
         self.addAuthorityDialog = true;
+        self.addForm.pname = name;
         if (id !== 0) {
           let requestData = {
             token: window.localStorage.getItem('token'),
@@ -301,11 +302,10 @@
           };
           self.$http.post('/ui/permission/selectPermissionById', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
-            console.log('selectPermissionList', response)
+            console.log('添加', response)
             if (data.code == 10000) {
               self.addForm.pid = data.data.permissionId;
               self.addForm.pids = data.data.pids + ',' + self.addForm.pid;
-
             }
           }).catch(function (error) {
             console.log(error);
@@ -323,7 +323,11 @@
           let data = response.data;
           if (data.code == 10000) {
             self.addAuthorityDialog = false;
-            self.$router.go(0);
+            self.$message.success('操作成功');
+            setTimeout(function () {
+              self.$router.go(0);
+            },500);
+
           }
         }).catch(function (error) {
           console.log(error);

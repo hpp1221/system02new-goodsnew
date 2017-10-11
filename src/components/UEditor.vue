@@ -1,12 +1,13 @@
 <template>
 	<VueEditor
 		ueditorPath="../../static/ueditor1_4_3_3-utf8-net"
-		@ready="editorReady" 
-		style="width:100%;height:300px" 
+		@ready="editorReady"
+		style="width:100%;height:300px"
 		:ueditorConfig="editorConfig">
 	</VueEditor>
 </template>
 <script>
+  import VueUEditor from 'vue-ueditor'
 	export default{
 		data(){
 			return {
@@ -29,12 +30,12 @@
 			editorReady(editorInstance){
 				let self = this
 				self.editorInstance = editorInstance;
-				self.editorInstance.setContent(self.editorContent)  
+				self.editorInstance.setContent(self.editorContent)
 			    self.editorInstance.addListener('contentChange',() => {
 			        self.content = self.editorInstance.getContent()
 			    })
             },
-            
+
 		}
 	}
 </script>

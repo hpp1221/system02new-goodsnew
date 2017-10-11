@@ -1,5 +1,6 @@
 <template>
-  <div class="login-container">
+  <div class="login-container"
+       :style="{backgroundImage: 'url(' +bg + ')'}">
     <div class="login-box">
       <div class="login-ivis-div">
         <img src="../../assets/images/ivis.jpg" alt=""/>
@@ -55,6 +56,7 @@
   export default{
     data(){
       return {
+          bg:require('../../assets/images/login.jpg'),
         form: {
           username: 'czkj-12345',
           password: 'a123456',
