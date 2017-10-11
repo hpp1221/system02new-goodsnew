@@ -4,11 +4,11 @@
       <h3 class="dictionaryclassifytitle">门店要货</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form storegetgoods-nav">
         <el-form-item label="单据状态">
-          <!--<template scope="scope">-->
-          <!--<el-select v-model="easyForm.typeList" placeholder="全部">-->
-          <!--<el-option v-for="t in totalGetGoodsStatus" :key="t.value" :label="t.value"></el-option>-->
-          <!--</el-select>-->
-          <!--</template>-->
+          <el-select v-model="easyForm.typeList" placeholder="全部">
+            <el-option v-for="item in easyTypeLists" :label="item.label" :value="item.value" :key="item.value">
+              {{item.label}}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="要货门店">
           <el-select placeholder="全部门店" v-model="easyForm.storeId">
@@ -45,25 +45,17 @@
                       style="width: 80%"></el-input>
           </el-form-item>
           <el-form-item label="单据状态">
-            <template scope="scope">
-              <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
+            <el-checkbox-group v-model="form.typeList">
+              <el-checkbox v-for="item in typeLists" :label="item.value" :value="item.value" :key="item.value">
+                {{item.label}}
               </el-checkbox>
-              <div style="margin: 15px 0;"></div>
-              <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
-              </el-checkbox-group>
-            </template>
-            <!--<template scope="scope">-->
-            <!--<el-checkbox-group v-model="form.typeList">-->
-            <!--<el-checkbox v-for="t in totalGetGoodsStatus" :key="t.value" :label="t.value">-->
-            <!--</el-checkbox>-->
-            <!--</el-checkbox-group>-->
-            <!--</template>-->
+            </el-checkbox-group>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="advanceSelect(pageSize,pageNum)">确 定</el-button>
           <el-button @click="advanceSearch = false">取 消</el-button>
+          <el-button type="text" @click="resetForm">清空</el-button>
         </div>
       </el-dialog>
       <!--要货表格-->
@@ -78,9 +70,16 @@
         </el-table-column>
         <el-table-column prop="storeId" label="要货门店">
         </el-table-column>
-        <el-table-column prop="companyId" label="要货人">
+        <el-table-column prop="storeName" label="要货人">
         </el-table-column>
         <el-table-column prop="type" label="单据状态">
+          <template scope="scope">
+            <span v-if="scope.row.type == '0'">已完成</span>
+            <span v-if="scope.row.type == '1'">待审核通过</span>
+            <span v-if="scope.row.type == '2'">待发货确认</span>
+            <span v-if="scope.row.type == '3'">待收货确认</span>
+            <span v-if="scope.row.type == '4'">作废</span>
+          </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注">
         </el-table-column>
@@ -90,7 +89,7 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getGoodsNumberDetail(scope.row.id)">单据详情</el-dropdown-item>
-                <el-dropdown-item @click.native="deleteSupplier(scope.row)">审核</el-dropdown-item>
+                <el-dropdown-item @click.native="getGoodsExamine(scope.row)">审核</el-dropdown-item>
                 <el-dropdown-item @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -103,14 +102,9 @@
 </template>
 
 <script>
-  const cityOptions = ['上海', '北京', '广州', '深圳'];
   export default {
     data() {
       return {
-        checkAll: true,
-        checkedCities: [],
-        cities: cityOptions,
-        isIndeterminate: true,
         tableData: [],
         advanceSearch: false,
         form: {//高级搜索
@@ -122,39 +116,65 @@
           endTime: ''
         },
         easyForm: {//简单查询
-          typeList: '',
-          store: []
+          typeList: [],
+          storeId: ''
         },
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        storeIds:''
-//        totalGetGoodsStatus: [//单据状态
-//          {
-//            value:'',
-//            label: "全选"
-//          },
-//          {
-//            value:'4',
-//            label: "作废"
-//          },
-//          {
-//            value:'1',
-//            label: "待确认审核"
-//          },
-//          {
-//            value:'2',
-//            label: "待发货审核"
-//          },
-//          {
-//            value:'0',
-//            label: "已完成"
-//          },
-//          {
-//            value:'3',
-//            label: "待收货确认"
-//          },
-//        ],
+        storeIds: [],
+        easyTypeLists: [//简单查询的单据状态
+          {
+            value: '',
+            label: "全部"
+          },
+          {
+            value: '["4"]',
+            label: "作废"
+          },
+          {
+            value: '["1"]',
+            label: "待审核通过"
+          },
+          {
+            value: '["2"]',
+            label: "待发货确认"
+          },
+          {
+            value: '["0"]',
+            label: "已完成"
+          },
+          {
+            value: '["3"]',
+            label: "待收货确认"
+          },
+        ],
+        typeLists: [//高级查询的单据状态
+          {
+            value: '',
+            label: "全选"
+          },
+          {
+            value: '4',
+            label: "作废"
+          },
+          {
+            value: '1',
+            label: "待确认审核"
+          },
+          {
+            value: '2',
+            label: "待发货审核"
+          },
+          {
+            value: '0',
+            label: "已完成"
+          },
+          {
+            value: '3',
+            label: "待收货确认"
+          },
+        ],
 
       }
     },
@@ -165,36 +185,37 @@
       'pagination': require('../../../../components/pagination')
     },
     methods: {
-      handleCheckAllChange(event) {
-        this.checkedCities = event.target.checked ? cityOptions : [];
-        this.isIndeterminate = false;
+      getGoodsExamine(row){//审核
+        let self = this
+        self.type = parseInt(row.type)+1
+        self.tradeId = row.id
+        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine',query:{type:self.type,tradeId:self.tradeId}})
       },
-      handleCheckedCitiesChange(value) {
-        let checkedCount = value.length;
-        this.checkAll = checkedCount === this.cities.length;
-        this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
-      },
-//      select(size,num){
+//      getGoodsExamine(row){//审核
 //        let self = this
-//        let requestData = {
-//          token: window.localStorage.getItem('token'),
-//          pageSize: size,
-//          pageNo: num,
-//        };
-//        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
-//        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
-//          console.log('goodssss',response)
-//          let data = response.data;
-//          if (data.code == 10000) {
-//            self.tableData = data.data.list;
-//            console.log('list', self.tableData)
-//            self.totalPage = data.data.total;
-//          }
-//        }).catch(function (error) {
-//          console.log(error);
-//        });
+//        self.type = parseInt(row.type)+1
+//        self.tradeId = row.id
+//        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine',query:{type:self.type,tradeId:self.tradeId}})
 //      },
-      advanceSelect(size, num) {//查询
+      select(size, num) {//简单查询
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num,
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
+        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          if (data.code == 10000) {
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      advanceSelect(size, num) {//高级查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -207,27 +228,27 @@
             self.form.endTime = self.form.dateRange[1]
           }
           requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        } else {//简单搜索
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         }
         self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('goodssss', response)
           let data = response.data;
-
           if (data.code == 10000) {
             self.advanceSearch = false
-            self.tableData = data.data.list;
-            console.log('list', self.tableData)
-            self.totalPage = data.data.total;
+            self.tableData = data.data.list
+            self.totalPage = data.data.total
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
+      resetForm() {
+        let self = this
+        self.form= ''
+      },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.getGoodsList(page.size, page.num);
+//        this.select(page.size, page.num);
+//        this.advanceSelect(page.size, page.num)
       },
       getGoodsList(size, num) {//要货单列表
         let self = this;
@@ -238,7 +259,6 @@
         };
         self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('getgoodslist', response)
           if (data.code == 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
@@ -248,20 +268,15 @@
         });
         self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('aaaaa', response)
           if (data.code == 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              self.storeIds = data.data[i].name;
-            }
+            self.storeIds = data.data
           }
-          console.log('bbbb', self.storeIds)
         }).catch(function (error) {
           console.log(error);
         });
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
-        console.log('10101', val);
       },
       getGoodsNumberDetail(id) {//要货单详情
         this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});

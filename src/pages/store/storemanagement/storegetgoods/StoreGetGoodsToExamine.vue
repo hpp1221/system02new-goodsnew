@@ -97,7 +97,6 @@
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
-      <h3 class="el-icon-arrow-down">操作日志</h3>
     </div>
   </div>
 </template>
@@ -111,11 +110,44 @@
           storeId:'',
           storeName:''
         },
+        editDeliveryForm: {
+          customer: '',
+          userName: '',
+          userPhone: '',
+          userAddress: ''
+        },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
+        invoiceTypes: [
+          {
+            id: 0,
+            name: '不开发票'
+          },
+          {
+            id: 1,
+            name: '电子发票'
+          },
+          {
+            id: 2,
+            name: '普通发票'
+          }
+        ]
       }
+    },
+    watch: {},
+    created() {
+      if (window.localStorage.getItem('userinfo')) {
+        console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
+        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
+        this.form.orderShipment.customer = userinfo.companyName;
+        this.form.orderShipment.userName = userinfo.name;
+        this.form.orderShipment.userPhone = userinfo.cel;
+        this.form.orderShipment.userAddress = userinfo.companyName;
+
+      }
+
     },
     created(){
       this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');

@@ -1,9 +1,22 @@
 <template>
   <div class="container">
-    <div class="wrapper">
+    <div class="wrapper dictionary-wrapper">
       <h3 class="dictionaryclassifytitle">商品分类</h3>
       <div class="dictionaryclassify-create">
         <el-button class="dictionarycreate" @click="openFirstModal">新增一级类目</el-button>
+      </div>
+      <div class="dictionaryclassify-main">
+        <el-tree
+          :data="totalCategories"
+          :props="defaultProps"
+          accordion
+          node-key="id"
+          @node-click="handleNodeClick"
+          @node-expand="handleNodeClick"
+          :default-expanded-keys="defaultExpandedKeys"
+          :render-content="renderContent"
+          v-if="totalCategories.length > 0">
+        </el-tree>
       </div>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
@@ -35,19 +48,6 @@
           <el-button type="primary" @click="updateSure">确 定</el-button>
         </div>
       </el-dialog>
-      <div class="dictionaryclassify-main">
-        <el-tree
-          :data="totalCategories"
-          :props="defaultProps"
-          accordion
-          node-key="id"
-          @node-click="handleNodeClick"
-          @node-expand="handleNodeClick"
-          :default-expanded-keys="defaultExpandedKeys"
-          :render-content="renderContent"
-          v-if="totalCategories.length > 0">
-        </el-tree>
-      </div>
     </div>
   </div>
 </template>
