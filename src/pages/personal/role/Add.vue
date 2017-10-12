@@ -63,8 +63,9 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
+          companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/permission/selectPermissionList', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/permission/selectPermissionListByCompanyId', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectPermissionList', response)
           if (data.code == 10000) {

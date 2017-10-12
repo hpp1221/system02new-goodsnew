@@ -59,6 +59,9 @@ axios.interceptors.response.use(function (response) {
   if(response.data.code && response.data.code != 10000){
     Message.error(response.data.message);
   }
+  if(response.data.code == 30000){
+    router.push('/login')
+  }
   return response;
 }, function (error) {
   // 对响应错误做点什么

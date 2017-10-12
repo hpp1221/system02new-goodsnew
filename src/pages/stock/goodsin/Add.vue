@@ -4,7 +4,13 @@
       <h3 class="page-title">添加入库</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="仓库" prop="selfAddress">
-          <el-select placeholder="全部仓库" v-model="form.selfAddress" value-key="id">
+          <el-select
+            v-model="form.selfAddress"
+            value-key="id"
+            filterable
+            :loading="addressLoading"
+            @visible-change="getAddress"
+          >
             <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
@@ -15,7 +21,7 @@
             v-model="form.createTime">
           </el-date-picker>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="form.selfAddress">
           <el-table :data="form.data">
             <el-table-column
               type="index"
@@ -65,7 +71,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input type="textarea" class="long-input" v-model="form.remark"></el-input>
+          <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
         </el-form-item>
         <el-form-item label="经办人">
           <el-input class="form-input" v-model="form.tradeNoHandler"></el-input>
@@ -134,15 +140,14 @@
         ],
         goodsInfoList: [],
         listIndex: '',//现在正在添加的某个list的下标
+        addressLoading: false,//仓库列表加载图片
       }
     },
+
     created(){
-      let self = this;
-      self.getAddressList(function (data) {
-        self.totalStores = data;
-      });
-      self.createTradeNo();
+      this.createTradeNo();
     },
+
     computed: {
       'userinfo': function () {
         return JSON.parse(window.localStorage.getItem('userinfo'));
@@ -150,7 +155,18 @@
     },
 
     methods: {
-      createTradeNo(){
+      getAddress(type){//点击时获取地址列表
+        if (type && this.totalStores.length === 0) {
+          this.addressLoading = true;
+          let self = this;
+          self.getAddressList(function (data) {
+            self.totalStores = data;
+            self.addressLoading = false;
+          });
+        }
+      },
+
+      createTradeNo(){//创建入库单号
         let str = 'IN-';
         let nowDate = new Date();
         let year = nowDate.getFullYear();
@@ -170,21 +186,20 @@
         }
         this.form.tradeNo = str;
       },
+
       save(formName){//保存
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let self = this
-            let requestData = {token: window.localStorage.getItem('token')}
+            let self = this;
+            let requestData = {token: window.localStorage.getItem('token')};
             for (let i = 0; i < self.form.data.length; i++) {
-              self.$delete(self.form.data[i], 'combination')
+              self.$delete(self.form.data[i], 'combination');
             }
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-
             self.$http.post('/ui/addRecord', self.qs.stringify(requestData)).then(function (response) {
               let data = response.data;
-              console.log('addRecord', response)
-              if (data.code == 10000) {
-                self.$router.push('/stock/goodsin/list')
+              if (data.code === 10000) {
+                self.$router.push('/stock/goodsin/list');
               }
             }).catch(function (error) {
               console.log(error);
@@ -195,9 +210,11 @@
           }
         });
       },
+
       cancel(){//取消
-        this.$router.push('/stock/goodsin/list')
+        this.$router.push('/stock/goodsin/list');
       },
+
       querySearchAsync(queryString, cb){
         let self = this;
         let requestData = {
@@ -208,29 +225,29 @@
         };
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('addAllocationRecord', response)
-          console.log(response.data)
-          if (data.code == 10000) {
-            let list = data.data
+          if (data.code === 10000) {
+            let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName
+              list[i].combination = list[i].goodsNo + list[i].goodsName;
             }
-            self.goodsInfoList = list
+            self.goodsInfoList = list;
             // 调用 callback 返回建议列表的数据
             cb(self.goodsInfoList);
           }
         }).catch(function (error) {
           console.log(error);
         });
+      },
 
-      },
       handleSelect(item){
-        this.form.data[this.listIndex] = item
+        this.form.data[this.listIndex] = item;
       },
+
       handleClick(index){
-        this.listIndex = index
+        this.listIndex = index;
       },
-      addLine(){
+
+      addLine(){//添加行
         this.form.data.push({
           goodsNo: '',//商品编号
           goodsName: '',//商品名
@@ -239,14 +256,12 @@
           num: '',
           combination: '',//编号和名称组合
           goodsSkuId: '',//规格id
-        })
+        });
       },
-      deleteLine(index){
+
+      deleteLine(index){//删除行
         this.form.data.length === 1 ? this.$message('请至少入库一个商品') : this.form.data.splice(index, 1);
       },
     }
   }
 </script>
-
-<style>
-</style>
