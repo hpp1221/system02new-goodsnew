@@ -4,8 +4,13 @@
       <h3 class="page-title">商品收发汇总</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
-          <el-select placeholder="全部仓库" v-model="easyForm.addressId">
-            <el-option label="深圳仓" value="1"></el-option>
+          <el-select
+            v-model="easyForm.addressId"
+            filterable
+            :loading="addressLoading"
+            @visible-change="getAddress">
+            <el-option label="全部仓库" :value="-1"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -160,17 +165,28 @@
         advanceSearch: false,
         easyForm: {
           keyword: '',
-          address: '',
+          addressId: -1,
           series: '',
           brandName: '',
-          address: ''
-        }
+        },
+        totalStores:[],
+        addressLoading:false,
       }
     },
     created(){
       this.select()
     },
     methods: {
+      getAddress(type){
+        if (type && this.totalStores.length === 0) {
+          this.addressLoading = true;
+          let self = this;
+          self.getAddressList(function (data) {
+            self.totalStores = data;
+            self.addressLoading = false;
+          });
+        }
+      },
       select(){//查询
         let self = this
         let dateRange = self.form.dateRange

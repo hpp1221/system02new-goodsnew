@@ -65,7 +65,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注说明">
-          <el-input type="textarea" v-model="form.remark" class="form-input"></el-input>
+          <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
         </el-form-item>
         <el-form-item label="附件信息">
           <!--<uploadfiles-->

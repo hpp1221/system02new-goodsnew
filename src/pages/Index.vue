@@ -20,8 +20,8 @@
         </div>
         <div class="header-right-avatar-div">
           <div class="avater-div">
-            <el-dropdown trigger="click">
-              <img v-lazy="userinfo.avatar" alt="" v-if="userinfo"/>
+            <el-dropdown trigger="click" v-if="userinfo">
+              <img v-lazy="userinfo.avatar" alt=""/>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="personcenter">个人信息</el-dropdown-item>
                 <el-dropdown-item @click.native="logout">注销</el-dropdown-item>
@@ -81,7 +81,8 @@
       </el-aside>
       <transition name="custom-classes-transition"
                   enter-active-class="animated slideInLeft"
-                  leave-active-class="animated slideOutLeft">
+                  leave-active-class="animated slideOutLeft"
+                >
         <el-aside width="180px" class="right-aside" v-if="rightMenuVisible" id="right-menu-aside">
           <i class="iconfont icon-return"
              v-if="rightMenuVisible"
@@ -260,7 +261,9 @@
     color: white;
     height: 100%;
   }
-
+  #menu-animate{
+    animate-duration: .1s !important;
+  }
   .router-class {
     background-color: #606368 !important;
   }
