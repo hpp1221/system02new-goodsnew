@@ -23,6 +23,10 @@ export default [
     component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsDetail'], resolve)
   },
   {
+    path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', //要货单审核
+    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsExamine'], resolve)
+  },
+  {
     path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', //门店盘点列表
     component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsDetail'], resolve)
   },

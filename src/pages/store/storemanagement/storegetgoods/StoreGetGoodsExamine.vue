@@ -97,46 +97,6 @@
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
-      <h3 class="el-icon-arrow-down">操作日志</h3>
     </div>
   </div>
 </template>
-
-<script>
-  export default {
-    data() {
-      return {
-        form: {
-          tradeNumber: '',
-          storeId:'',
-          storeName:''
-        },
-        rules: {},
-        listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
-        editDeliveryVisible: false,
-      }
-    },
-    created(){
-      this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');
-    },
-    methods: {
-      select(id) {
-        let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          id: id,
-        }
-        self.$http.post('/ui/getGoodsRecordDetail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail', response);
-          if (data.code == 10000) {
-            self.form = self.formPass(self.form, data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-    }
-  }
-</script>
