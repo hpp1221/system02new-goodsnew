@@ -50,7 +50,8 @@
                   <el-dropdown trigger="click">
                     <i class="iconfont icon-more" style="cursor: pointer"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单</el-dropdown-item>
+                      <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单
+                      </el-dropdown-item>
                       <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
                       <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
                     </el-dropdown-menu>
@@ -96,7 +97,8 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单</el-dropdown-item>
+                <el-dropdown-item @click.native="addAuthority(scope.row.permissionId,scope.row.name)">添加子菜单
+                </el-dropdown-item>
                 <el-dropdown-item @click.native="update(scope.row.permissionId)">修改</el-dropdown-item>
                 <el-dropdown-item @click.native="deleteItem(scope.row.permissionId)">删除</el-dropdown-item>
               </el-dropdown-menu>
@@ -153,11 +155,11 @@
           </el-form-item>
           <el-form-item label="上级权限">
             <!--<el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">-->
-              <!--<el-option v-for="t in tableData"-->
-                         <!--:key="t.permissionId"-->
-                         <!--:value="t.permissionId"-->
-                         <!--:label="t.name">-->
-              <!--</el-option>-->
+            <!--<el-option v-for="t in tableData"-->
+            <!--:key="t.permissionId"-->
+            <!--:value="t.permissionId"-->
+            <!--:label="t.name">-->
+            <!--</el-option>-->
             <!--</el-select>-->
             <span>{{addForm.pname}}</span>
           </el-form-item>
@@ -246,7 +248,7 @@
           icon: '',
           orders: '',
           type: 1,//1菜单2按钮
-          pname:''
+          pname: ''
         },
         updateForm: {
           name: '',
@@ -291,7 +293,7 @@
           console.log(error);
         });
       },
-      addAuthority(id,name){//打开添加权限模态框
+      addAuthority(id, name){//打开添加权限模态框
         let self = this;
         self.addAuthorityDialog = true;
         self.addForm.pname = name;
@@ -318,6 +320,9 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
         };
+        if (self.addForm.orders === '') {
+          self.addForm.orders = 0;
+        }
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
         self.$http.post('/ui/permission/addPermission', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
@@ -326,7 +331,7 @@
             self.$message.success('操作成功');
             setTimeout(function () {
               self.$router.go(0);
-            },500);
+            }, 500);
 
           }
         }).catch(function (error) {
@@ -340,12 +345,18 @@
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId,
           permissionId: id
         };
+        if (self.updateForm.orders === '') {
+          self.updateForm.orders = 0;
+        }
         requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
         self.$http.post('/ui/permission/updatePermission', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           if (data.code == 10000) {
             self.updateAuthorityDialog = false;
-            self.$router.go(0);
+            self.$message.success('操作成功');
+            setTimeout(function () {
+              self.$router.go(0);
+            }, 500);
           }
         }).catch(function (error) {
           console.log(error);

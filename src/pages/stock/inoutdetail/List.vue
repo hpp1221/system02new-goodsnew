@@ -4,8 +4,13 @@
       <h3 class="page-title">出入库明细</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item>
-          <el-select placeholder="全部仓库" v-model="easyForm.addressName" multiple>
-            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
+          <el-select placeholder="全部仓库"
+                     v-model="easyForm.addressName"
+                     multiple
+                     filterable
+                     :loading="addressLoading"
+                     @visible-change="getAddress">
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -16,7 +21,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">
+          <el-input placeholder="输入关键字" icon="search" v-model="easyForm.keyword" class="form-input">
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -160,9 +165,10 @@
           endTime: ''
         },
         advanceSearch: false,//高级搜索
-        totalAddressList: [],
+        totalStores: [],
         goodsTags: [],
-        totalCategories: []
+        totalCategories: [],
+        addressLoading: false,//仓库列表加载图片
       }
     },
     created(){
@@ -177,6 +183,16 @@
       self.getCatList();//获取分类列表
     },
     methods: {
+      getAddress(type){
+        if (type && this.totalStores.length === 0) {
+          this.addressLoading = true;
+          let self = this;
+          self.getAddressList(function (data) {
+            self.totalStores = data;
+            self.addressLoading = false;
+          });
+        }
+      },
       select(){//查询
         let self = this
         let requestData = {token: window.localStorage.getItem('token')}
@@ -198,7 +214,7 @@
           console.log(error);
         });
       },
-      advanceSearch(){
+      advanceSelect(){
         let self = this
         let requestData = {token: window.localStorage.getItem('token')}
 

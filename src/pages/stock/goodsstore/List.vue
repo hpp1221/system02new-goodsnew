@@ -4,8 +4,14 @@
       <h3 class="page-title">商品库存</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
-          <el-select placeholder="全部仓库" v-model="easyForm.address" multiple>
-            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalStores"></el-option>
+          <el-select
+            placeholder="全部仓库"
+            v-model="easyForm.address"
+            multiple
+            filterable
+            :loading="addressLoading"
+            @visible-change="getAddress">
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -13,7 +19,7 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
+          <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="select">查询</el-button>
@@ -49,14 +55,17 @@
 
         </el-table-column>
         <el-table-column label="操作">
-          <el-button type="text">查看明细</el-button>
+          <template scope="scope">
+            <el-button type="text">查看明细</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
         <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" label-width="80px">
           <el-form-item label="关键词">
-            <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
-
+            <el-input
+              placeholder="请输入关键词"
+              v-model="form.keyword" class="form-input">
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
@@ -65,18 +74,31 @@
               v-model="form.cat"
               @active-item-change="getCatList"
               placeholder="商品分类"
-              :props="props">
+              :props="props"
+              @click.native="getCat">
             </el-cascader>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
+            <el-select
+              placeholder="请选择商品品牌"
+              v-model="form.brand"
+              value-key="name"
+              filterable
+              :loading="brandLoading"
+              @visible-change="getBrand">
               <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="所属仓库">
-            <el-checkbox-group v-model="form.addressList">
-              <el-checkbox :label="t" v-for="t in totalAddressList" :key="t.id">{{t.address}}</el-checkbox>
-            </el-checkbox-group>
+            <el-select
+              placeholder="全部仓库"
+              v-model="form.address"
+              multiple
+              filterable
+              :loading="addressLoading"
+              @visible-change="getAddress">
+              <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="商品标签">
             <el-checkbox-group v-model="form.tagList">
@@ -117,13 +139,13 @@
           upLimit: 0,
           downLimit: 0,
           zero: 0,
-          cat:[]
+          cat: []
         },
         easyForm: {//简单查询
           address: [],//所属仓库
           keyword: '',//关键词
         },
-        totalAddressList: [],//仓库列表
+        totalStores: [],//仓库列表
         totalCategories: [],//分类列表
         props: {
           value: 'res',
@@ -131,53 +153,86 @@
           label: 'name'
         },
         totalBrandList: [],//品牌列表
-        goodsTags:[],//商品标签
+        goodsTags: [],//商品标签
+        addressLoading: false,//仓库列表加载图片
+        brandLoading: false,//品牌列表加载图片
       }
     },
 
     created(){
-      let self = this;
-      self.select();
-      self.getBrandList(function (data) {
-        self.totalBrandList = data;
-      });//获取品牌列表
-      self.getTagList(function (data) {
-        self.goodsTags = data;
-      });//获取标签列表
-      self.getAddressList(function (data) {
-        self.totalAddressList = data.data;
-      });
-      self.getCatList();//获取分类列表
+      this.select();
     },
+
     methods: {
+      getBrand(type){
+        if (type && this.totalBrandList.length === 0) {
+          this.brandLoading = true;
+          let self = this;
+          self.getBrandList(function (data) {
+            self.totalBrandList = data;
+            self.brandLoading = false;
+          });//获取品牌列表
+        }
+      },
+      getAddress(type){
+        if (type && this.totalStores.length === 0) {
+          this.addressLoading = true;
+          let self = this;
+          self.getAddressList(function (data) {
+            self.totalStores = data;
+            self.addressLoading = false;
+          });
+        }
+      },
+      getCat(){
+        if (this.totalCategories.length === 0) {
+          this.getCatList();//获取分类列表
+        }
+      },
+
+      startAdvanceSearch(){
+        let self = this;
+        self.advanceSearch = true;
+        if (self.goodsTags.length === 0) {
+          self.getTagList(function (data) {
+            self.goodsTags = data;
+          });//获取标签列表
+        }
+        if (self.totalStores.length === 0) {
+          self.getAddressList(function (data) {
+            self.totalStores = data;
+          });
+        }
+      },
+
       select(){//查询
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('list', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
+
       advanceSelect(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('list', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
+
       getCatList(val){
         let self = this;
         var requestData;
@@ -188,8 +243,7 @@
         }
         self.$http.get('/ui/catList', requestData).then(function (response) {
           let data = response.data;
-          console.log('catList', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             for (let i = 0; i < data.data.length; i++) {
               data.data[i].res = JSON.parse(data.data[i].res);
               if (parseInt(data.data[i].hasChild) > 0) {
@@ -206,6 +260,7 @@
           console.log(error);
         });
       },
+
       insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
           if (arr[i].id === val[level].id) {
@@ -221,6 +276,3 @@
     }
   }
 </script>
-
-<style>
-</style>
