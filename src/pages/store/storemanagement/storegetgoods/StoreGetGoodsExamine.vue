@@ -15,7 +15,7 @@
           <el-button type="text" @click="createSupplier"
                      class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
           </el-button>
-          <el-button @click="createSupplier">通过</el-button>
+          <el-button @click="getGoodsExaminePass">通过</el-button>
         </el-form-item>
       </el-form>
       <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px">
@@ -32,71 +32,64 @@
           <el-input v-model="form.storeName">
           </el-input>
         </el-form-item>
-        <el-table :data="form.orderDetails" border>
-          <!--<el-table-column type="selection" width="55" prop="supplierId">-->
-          <!--</el-table-column>-->
-          <el-table-column
-            type="index"
-            width="70">
-          </el-table-column>
-          <el-table-column width="70">
-            <template scope="scope">
-              <i class="el-icon-plus" @click="addLine"></i>
-              <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
-            </template>
-          </el-table-column>
-          <el-table-column label="主图" width="80">
-            <template scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
-            </template>
-          </el-table-column>
-          <el-table-column label="商品编码  商品名称">
-            <template scope="scope">
-              <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
-                               :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                               :props="{value:'combination',label:'combination'}">
-              </el-autocomplete>
-            </template>
-          </el-table-column>
-
-          <el-table-column label="规格" prop="goodsSpec">
-
-          </el-table-column>
-          <el-table-column label="要货仓库" prop="goodsSpec">
-
-          </el-table-column>
-          <el-table-column label="门店库存" prop="goodsSpec">
-
-          </el-table-column>
-          <el-table-column label="仓库库存" prop="goodsSpec">
-
-          </el-table-column>
-          <el-table-column label="要货数量">
-            <template scope="scope">
-              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
-                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column label="单位" prop="goodsUnit">
-
-          </el-table-column>
-          <el-table-column label="单价" prop="price">
-
-          </el-table-column>
-          <el-table-column label="金额" prop="price">
-
-          </el-table-column>
-          <el-table-column label="备注" prop="subtotal">
-            <template scope="scope">
-              <i class="el-icon-plus" @click="addLine"></i>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-form-item class="createstoregetgoods-operation">
-          <el-button @click="sureEdit">确定</el-button>
-          <el-button @click="editDeliveryVisible = false">取消</el-button>
-        </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
+<script>
+  export default {
+    data() {
+      return {
+        titleForm: {
+        },
+        form:{
+          tradeNumber:'',
+          storeId:'',
+          storeName:''
+        }
+      }
+    },
+    created(){
+      this.$route.query.tradeId ? this.getGoodsExamine(this.$route.query.tradeId) : this.$router.push('/error');
+    },
+    methods: {
+      getGoodsExamine(tradeId) {
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type: 2,
+          tradeId:tradeId
+        }
+        self.$http.post('/ui/examine', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('examine', response);
+          if (data.code == 10000) {
+//            self.form = self.formPass(self.form, data.data);
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      getGoodsExaminePass(){
+//        let self = this;
+//        let requestData = {
+//          token: window.localStorage.getItem('token'),
+//          type: 2,
+//          tradeId:tradeId
+//        }
+//        self.$http.post('/ui/examine', self.qs.stringify(requestData)).then(function (response) {
+//          let data = response.data;
+//          console.log('examine', response);
+//          if (data.code == 10000) {
+            this.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+////            self.form = self.formPass(self.form, data.data);
+//          }
+//        }).catch(function (error) {
+//          console.log(error);
+//        });
+//
+      }
+    },
+
+  }
+</script>
