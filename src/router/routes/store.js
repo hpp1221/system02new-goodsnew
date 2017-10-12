@@ -7,6 +7,10 @@ export default [
     component: resolve => require(['@/pages/store/storemaintenance/StoreMaintenanceList'], resolve)
   },
   {
+    path: '/store/storemaintenance/intenance', //所属仓库维护
+    component: resolve => require(['@/pages/store/storemaintenance/intenance'], resolve)
+  },
+  {
     path: '/store/storemanagement/storegetgoods/storegetgoodslist', //要货单列表
     component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsList'], resolve)
   },

@@ -76,13 +76,14 @@
       },
       checkChange(obj, isChecked, other){
         let checkedKeys = this.$refs.tree.getCheckedKeys()
-        if (obj.pid.indexOf(checkedKeys) == -1 && obj.pid != 0) {
-          this.$refs.tree.setChecked(obj.pid, isChecked, false)
-        }
-        if (!isChecked) {
+        if (isChecked) {
+          if (obj.pid.indexOf(checkedKeys) == -1 && obj.pid != 0) {
+            this.$refs.tree.setChecked(obj.pid, true, false)
+          }
+        } else {
           if (obj.children) {
             for (let i = 0; i < obj.children.length; i++) {
-              this.$refs.tree.setChecked(obj.children[i].permissionId, false, true);
+              this.$refs.tree.setChecked(obj.children[i].permissionId, false, false);
             }
           }
         }

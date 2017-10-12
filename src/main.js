@@ -71,5 +71,8 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  // beforeCreate:function () {
+  //   router.push('/login')
+  // }
 })
