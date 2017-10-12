@@ -7,7 +7,7 @@
           <el-input v-model="input" placeholder="请输入供应商名称"></el-input>
         </el-form-item>
         <el-form-item label="关键字">
-          <el-input placeholder="请输入联系电话/手机/编码" class="long-input" icon="search"
+          <el-input placeholder="请输入联系电话/手机/编码" icon="search" class="fast-query"
                     :on-icon-click="select">
           </el-input>
         </el-form-item>

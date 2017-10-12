@@ -55,7 +55,6 @@
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="advanceSelect(pageSize,pageNum)">确 定</el-button>
           <el-button @click="advanceSearch = false">取 消</el-button>
-          <el-button type="text" @click="resetForm">清空</el-button>
         </div>
       </el-dialog>
       <!--要货表格-->
@@ -68,9 +67,9 @@
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="storeId" label="要货门店">
+        <el-table-column prop="storeName" label="要货门店">
         </el-table-column>
-        <el-table-column prop="storeName" label="要货人">
+        <el-table-column prop="createUserName" label="要货人">
         </el-table-column>
         <el-table-column prop="type" label="单据状态">
           <template scope="scope">
@@ -89,7 +88,7 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getGoodsNumberDetail(scope.row.id)">单据详情</el-dropdown-item>
-                <el-dropdown-item @click.native="getGoodsExamine(scope.row)">审核</el-dropdown-item>
+                <el-dropdown-item @click.native="getGoodsExamine(scope.row.id)">审核</el-dropdown-item>
                 <el-dropdown-item @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -185,11 +184,8 @@
       'pagination': require('../../../../components/pagination')
     },
     methods: {
-      getGoodsExamine(row){//审核
-        let self = this
-        self.type = parseInt(row.type)+1
-        self.tradeId = row.id
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine',query:{type:self.type,tradeId:self.tradeId}})
+      getGoodsExamine(id){//审核
+        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
       },
 //      getGoodsExamine(row){//审核
 //        let self = this
@@ -239,10 +235,6 @@
         }).catch(function (error) {
           console.log(error);
         });
-      },
-      resetForm() {
-        let self = this
-        self.form= ''
       },
       pageChanged(page) {
         this.pageSize = page.size;

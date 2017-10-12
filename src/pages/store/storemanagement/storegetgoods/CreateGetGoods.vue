@@ -1,24 +1,20 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">新增门店要货</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px">
-        <el-form-item label="单据编码" class="createstoregetgoods-number-tradenumber">
-          <el-input v-model="form.tradeNumber">
-          </el-input>
+      <h3 class="page-title">新增门店要货</h3>
+      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px" inline>
+        <el-form-item label="单据编码">
+          {{form.tradeNumber}}
         </el-form-item>
-        <el-form-item label="要货门店" class="createstoregetgoods-number">
-          <el-select placeholder="全部门店" v-model="form.storeId">
-            <!--<el-option label="滨江店" value="-1"></el-option>-->
-            <!--<el-option label="江干店" value="1"></el-option>-->
-            <!--<el-option label="全部门店" value="0"></el-option>-->
+        <el-form-item label="要货门店">
+          <el-select placeholder="请选择门店" v-model="form.storeId">
+            <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="要货人" class="createstoregetgoods-number">
-          <el-input v-model="form.storeName">
-          </el-input>
+        <el-form-item label="要货人" v-if="userinfo">
+          {{userinfo.name}}
         </el-form-item>
-        <el-table :data="form.getGoodsDetails" border>
+        <el-table :data="form.getGoodsRecordDetails" border v-if="form.storeId">
           <el-table-column
             type="index"
             width="70">
@@ -29,12 +25,12 @@
               <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
             </template>
           </el-table-column>
-          <el-table-column label="主图" width="80">
+          <el-table-column label="主图" width="80" prop="img">
             <template scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称">
+          <el-table-column label="商品编码  商品名称" width="180">
             <template scope="scope">
               <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
                                :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
@@ -43,22 +39,32 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="规格" prop="goodsSpec">
+          <el-table-column label="规格" prop="sku" width="120">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="goodsSpec">
+          <el-table-column label="要货仓库" prop="storeHouseName">
+            <!--<template scope="scope">-->
+            <!--<el-select v-model="form.">-->
+            <!--<el-option v-for="item in storeHouseIds" :key="item.name" :label="item.name" :value="item.id"></el-option>-->
+            <!--</el-select>-->
+            <!--</template>-->
+          </el-table-column>
+          <el-table-column label="门店库存" prop="storeInStoreHouse">
 
           </el-table-column>
-          <el-table-column label="门店库存" prop="goodsSpec">
+          <el-table-column label="门店在途量" prop="storeOnTheWay">
 
           </el-table-column>
-          <el-table-column label="仓库库存" prop="goodsSpec">
+          <el-table-column label="仓库库存" prop="inStoreHouse">
 
           </el-table-column>
-          <el-table-column label="要货数量">
+          <el-table-column label="仓库在途量" prop="onTheWay">
+
+          </el-table-column>
+          <el-table-column label="要货数量" prop="count">
             <template scope="scope">
-              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
-                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
+              <el-input v-model="scope.row.count" @keyup.native="judgeNum(scope.row.count,scope.$index)"
+                        @afterpaste.native="judgeNum(scope.row.count,scope.$index)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="单位" prop="unit">
@@ -67,17 +73,19 @@
           <el-table-column label="单价" prop="price">
 
           </el-table-column>
-          <el-table-column label="金额" prop="priceFen">
-
+          <el-table-column label="金额" prop="sum" >
+            <template scope="scope">
+              <el-input v-model="scope.row.sum">{{}}</el-input>
+            </template>
           </el-table-column>
           <el-table-column label="备注" prop="remark">
             <template scope="scope">
-              <i class="el-icon-plus" @click="addLine"></i>
+              <el-input v-model="scope.row.remark"></el-input>
             </template>
           </el-table-column>
         </el-table>
         <el-form-item class="createstoregetgoods-operation">
-          <el-button @click="sureEdit">确定</el-button>
+          <el-button @click="getGoodsSubmit">确定</el-button>
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </el-form-item>
       </el-form>
@@ -89,128 +97,121 @@
   export default {
     data() {
       return {
+        storeIds: [],
+        storeHouseIds: [],
         form: {
           tradeNumber: '',
           storeId: '',
           storeName: '',
-          getGoodsDetails: [{
-            goodsNo: '123',//商品编号
+          getGoodsRecordDetails: [{
+            goodsNumber: '',//商品编号
             goodsName: '',//商品名
-            goodsSpec: '',//规格
-            goodsUnit: '',
-            num: '',
-            subtotal: '',//小计
+            sku: '',//规格
+            storeHouseName: '',//要货仓库
+            storeHouseId: '',//要货仓库id
+            storeInStoreHouse: '',//门店库存
+            storeOnTheWay: '',//门店在途量
+            inStoreHouse: '',//仓库库存
+            onTheWay: '',//仓库在途量
+            count: '',//数量
+            img: '',
+            unit: '',//单位
             price: '',//价格
+            priceFen:'',
+            sum: 0,//金额
             combination: '',//编号和名称组合
-            goodsSkuId: '',//规格id
+            remark: '',//备注
           }],
-          orderShipment: {
-            customer: '',//客户名称
-            userName: '',//收货人
-            userPhone: '',//联系方式
-            userAddress: '',//收货地址
-          },
-          deliveryTime: '',//交货日期
-          invoiceType: '',//发票信息
-          remark: '',//备注
-          att: '',//附近
-//          deliveryInfo:''
-        },
-        editDeliveryForm: {
-          customer: '',
-          userName: '',
-          userPhone: '',
-          userAddress: ''
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
-        editDeliveryVisible: false,
-        invoiceTypes: [
-          {
-            id: 0,
-            name: '不开发票'
-          },
-          {
-            id: 1,
-            name: '电子发票'
-          },
-          {
-            id: 2,
-            name: '普通发票'
-          }
-        ]
-      }
-    },
-    watch: {
-      'form.getGoodsDetails': {
-        handler: function (val, oldVal) {
-          for (let i = 0; i < val.length; i++) {
-            this.form.getGoodsDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
-          }
-        },
-        // 深度观察
-        deep: true
-      }
 
+      }
     },
     created() {
-      this.getTradeNumber()
-      if (window.localStorage.getItem('userinfo')) {
-        console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
-        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
-      }
+      this.getStoreList()//要货门店
+      this.getTradeNumber()//单据编码
+    },
+    computed: {
+      userinfo: function () {
+        return JSON.parse(window.localStorage.getItem('userinfo'));
+      },
+//      ComputedSum:function () {
+//        for(let i = 0; i < this.goodsInfoList.length;i++){
+//          this.goodsInfoList[i].sum+=this.goodsInfoList[i].priceFen*this.goodsInfoList[i].count;
+//        }
+//      }
     },
     methods: {
-      getTradeNumber() {
+      getGoodsSubmit() {//提交门店要货单
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.$http.post('/ui/addGetGoodsRecord', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('getgoodssubmit', response)
+          if (data.code == 10000) {
+//            self.$router.push('/order/orderlist');
+            //self.tableData = data.data
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      getStoreList() {//要货门店
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          storeNumber: self.form.storeNumber,
+          storeName: ''
+        }
+        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          if (data.code == 10000) {
+            self.storeIds = data.data
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      getTradeNumber() {//单据编码
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token')
         }
         self.$http.post('/ui/createGetGoodsNumber', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('number',response);
+          console.log('number', response);
           if (data.code == 10000) {
             let list = data.data;
             self.form.tradeNumber = list;
-            // 调用 callback 返回建议列表的数据
-//            cb(self.goodsInfoList);
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
       judgeNum(value, index) {//判断数量是否为整数
-        this.form.getGoodsDetails[index].num = value.replace(/\D/g, '');
-      },
-      editDelivery() {//显示修改模态框
-        this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
-      },
-      sureEdit() {//确认修改
-        this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
+        this.form.getGoodsRecordDetails[index].count = value.replace(/\D/g, '');
       },
       querySearchAsync(queryString, cb) {//商品关键字查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          companyId: 1
+          storeId: self.form.storeId
         }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/storeGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
           if (data.code == 10000) {
             let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
+              list[i].combination = list[i].goodsNumber + '  ' + list[i].goodsName;
               list[i].subtotal = '';
-              list[i].num = '';
+              list[i].sum = list[i].price * list[i].count;
             }
             self.goodsInfoList = list;
             // 调用 callback 返回建议列表的数据
@@ -222,49 +223,41 @@
 
       },
       handleSelect(item) {//判断是否已选该商品
-        let list = this.form.getGoodsDetails;
+        let list = this.form.getGoodsRecordDetails;
         for (let i = 0; i < list.length; i++) {
-          if (item.goodsNo === list[i].goodsNo) {
+          if (item.goodsNumber === list[i].goodsNumber) {
             this.$message.error('已有此类商品');
-            this.form.getGoodsDetails[this.listIndex].combination = ''
+            this.form.getGoodsRecordDetails[this.listIndex].combination = ''
             return
           }
         }
-        this.form.getGoodsDetails[this.listIndex] = item
+        this.form.getGoodsRecordDetails[this.listIndex] = item
       },
       handleClick(index) {//存商品index
         this.listIndex = index
       },
-      submit() {//提交订单
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('order/create', response)
-          if (data.code == 10000) {
-            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
       addLine() {//添加一行
-        this.form.getGoodsDetails.push({
-          goodsNo: '',//商品编号
+        this.form.getGoodsRecordDetails.push({
+          goodsNumber: '',//商品编号
           goodsName: '',//商品名
-          goodsSpec: '',//规格
-          goodsUnit: '',
+          sku: '',//规格
+          storeHouseName: '',//要货仓库
+          storeHouseId: '',//要货仓库id
+          storeInStoreHouse: '',//门店库存
+          storeOnTheWay: '',//门店在途量
+          inStoreHouse: '',//仓库库存
+          onTheWay: '',//仓库在途量
+          count: '',//数量
+          img: '',
+          unit: '',//单位
           price: '',//价格
-          num: '',
-          subtotal: '',//小计
+          sum: '',//金额
           combination: '',//编号和名称组合
-          goodsSkuId: '',//规格id
+          remark: '',//备注
         })
       },
       deleteLine(index) {
-        this.form.getGoodsDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.getGoodsDetails.splice(index, 1);
+        this.form.getGoodsRecordDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.getGoodsRecordDetails.splice(index, 1);
       },
     }
   }

@@ -28,18 +28,19 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/ui': {
-        target: 'http://47.94.241.192:8081',
-        // target: 'http://192.168.41.78:8083',
-        //   target: 'http://192.168.41.191:8081',
-        //target: 'http://192.168.41.216:8081',
-        //  target: 'http://192.168.41.93:8081',
-        //target: 'http://192.168.41.216:8081',
-        //target: 'http://192.168.41.216:8081',
-        //target: 'http://192.168.41.97:8081',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/ui': '/ui'
+        '/ui': {
+        //  target: 'http://47.94.241.192:8081',
+        //   target: 'http://192.168.41.78:8083',
+          //   target: 'http://192.168.41.191:8081',
+            target: 'http://192.168.41.216:8081',
+          //  target: 'http://192.168.41.93:8081',
+            //target: 'http://192.168.41.216:8081',
+            //target: 'http://192.168.41.216:8081',
+            //target: 'http://192.168.41.97:8081',
+            changeOrigin: true,
+            pathRewrite: {
+              '^/ui': '/ui'
+            }
         }
       }
     },
