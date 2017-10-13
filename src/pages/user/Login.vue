@@ -58,7 +58,7 @@
       return {
           bg:require('../../assets/images/login.jpg'),
         form: {
-          username: 'czkj-12345',
+          username: 'admin',
           password: 'a123456',
           twoWeek: false,
         },
