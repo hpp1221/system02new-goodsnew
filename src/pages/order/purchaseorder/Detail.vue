@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
+      <h3 class="page-title">采购订单详情</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
@@ -74,10 +75,6 @@
           <!--:token="imgToken"-->
           <!--v-if="imgToken">-->
           <!--</uploadfiles>-->
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">确定</el-button>
-          <el-button>取消</el-button>
         </el-form-item>
       </el-form>
       <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">

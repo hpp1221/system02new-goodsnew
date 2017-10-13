@@ -209,7 +209,6 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          companyId: 1,
           fromAddress:JSON.stringify(self.form.fromAddress)
         }
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
