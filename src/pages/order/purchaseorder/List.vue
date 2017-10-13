@@ -257,7 +257,8 @@
         });
       },
       seeDetail(id){
-        this.$router.push({path: '/order/detail', query: {id: id}})
+        let url = '/order/purchaseorder/detail/' + id;
+        this.$router.push(url);
       }
     }
   }
