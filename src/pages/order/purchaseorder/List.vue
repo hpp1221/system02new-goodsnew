@@ -257,7 +257,7 @@
         });
       },
       seeDetail(id){
-        this.$router.push({path: '/order/orderdetail', query: {id: id}})
+        this.$router.push({path: '/order/detail', query: {id: id}})
       }
     }
   }
