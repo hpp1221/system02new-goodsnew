@@ -10,7 +10,8 @@
             multiple
             filterable
             :loading="addressLoading"
-            @visible-change="getAddress">
+            @visible-change="getAddress"
+            value-key="id">
             <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
@@ -27,7 +28,7 @@
       </el-form>
 
       <el-table :data="tableData">
-        <el-table-column prop="goodsName" label="商品名称" sortable>
+        <el-table-column prop="goodsName" label="商品名称">
 
         </el-table-column>
         <el-table-column prop="goodsSpec" label="规格">
@@ -56,7 +57,13 @@
         </el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
-            <el-button type="text">查看明细</el-button>
+            <el-dropdown trigger="click">
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -81,7 +88,7 @@
           <el-form-item label="商品品牌">
             <el-select
               placeholder="请选择商品品牌"
-              v-model="form.brand"
+              v-model="form.brandName"
               value-key="name"
               filterable
               :loading="brandLoading"
@@ -115,9 +122,11 @@
             <el-radio class="radio" v-model="form.goodsStatus" label="1">上架</el-radio>
             <el-radio class="radio" v-model="form.goodsStatus" label="-1">下架</el-radio>
           </el-form-item>
+          <el-form-item>
+            <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+            <el-button @click="advanceSearch = false">取消</el-button>
+          </el-form-item>
         </el-form>
-        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
-        <el-button @click="advanceSearch = false">取消</el-button>
       </el-dialog>
     </div>
   </div>
@@ -184,6 +193,12 @@
           });
         }
       },
+      update(id){
+
+      },
+      seeDetail(id){
+
+      },
       getCat(){
         if (this.totalCategories.length === 0) {
           this.getCatList();//获取分类列表
@@ -226,6 +241,7 @@
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           if (data.code === 10000) {
+            self.advanceSearch = false;
             self.tableData = data.data;
           }
         }).catch(function (error) {

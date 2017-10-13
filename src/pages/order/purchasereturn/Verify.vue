@@ -1,42 +1,28 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">创建订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
             width="70">
           </el-table-column>
-          <el-table-column width="70">
-            <template scope="scope">
-              <i class="el-icon-plus" @click="addLine"></i>
-              <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
-            </template>
-          </el-table-column>
           <el-table-column label="主图" width="80">
             <template scope="scope">
-              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
-                   v-if="scope.row.url"/>
+              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称">
-            <template scope="scope">
-              <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
-                               :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                               :props="{value:'combination',label:'combination'}">
-              </el-autocomplete>
-            </template>
-          </el-table-column>
+          <el-table-column label="商品编码" prop="goodsNo">
 
+          </el-table-column>
+          <el-table-column label="商品名称" prop="goodsName">
+
+          </el-table-column>
           <el-table-column label="规格" prop="goodsSpec">
 
           </el-table-column>
-          <el-table-column label="数量">
-            <template scope="scope">
-              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
-                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
-            </template>
+          <el-table-column label="数量" prop="num">
+
           </el-table-column>
           <el-table-column label="单位" prop="goodsUnit">
 
@@ -63,8 +49,7 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery"
-                style="cursor: pointer"></i>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
+          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
@@ -83,12 +68,12 @@
           <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
         </el-form-item>
         <el-form-item label="附件信息">
-          <uploadfiles
-            :fileList="form.att"
-            @getFileList="getAtt"
-            :token="imgToken"
-            v-if="imgToken">
-          </uploadfiles>
+          <!--<uploadfiles-->
+          <!--:fileList="form.annex"-->
+          <!--:disabled="true"-->
+          <!--:token="imgToken"-->
+          <!--v-if="imgToken">-->
+          <!--</uploadfiles>-->
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit">确定</el-button>
@@ -101,13 +86,13 @@
             <el-input v-model="editDeliveryForm.customer"></el-input>
           </el-form-item>
           <el-form-item label="收货人">
-            <el-input v-model="editDeliveryForm.contacts"></el-input>
+            <el-input v-model="editDeliveryForm.userName"></el-input>
           </el-form-item>
           <el-form-item label="联系方式">
-            <el-input v-model="editDeliveryForm.cel"></el-input>
+            <el-input v-model="editDeliveryForm.userPhone"></el-input>
           </el-form-item>
           <el-form-item label="仓库地址">
-            <el-input v-model="editDeliveryForm.address"></el-input>
+            <el-input v-model="editDeliveryForm.userAddress"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer">
@@ -124,7 +109,6 @@
     data(){
       return {
         form: {
-          orderType: 1,//1是采购订单，2是销售订单
           orderDetails: [{
             goodsNo: '123',//商品编号
             goodsName: '',//商品名
@@ -136,27 +120,27 @@
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
           }],
-          customer: '',//客户名称
-          contacts: '',//收货人
-          cel: '',//联系方式
-          address: '',//收货地址
+          orderShipment: {
+            customer: '',//客户名称
+            userName: '',//收货人
+            userPhone: '',//联系方式
+            userAddress: '',//收货地址
+          },
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          att: [],//附件
 //          deliveryInfo:''
         },
         editDeliveryForm: {
           customer: '',
-          contacts: '',
-          cel: '',
-          address: ''
+          userName: '',
+          userPhone: '',
+          userAddress: ''
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
-        imgToken: '',
         invoiceTypes: [
           {
             id: 0,
@@ -173,48 +157,33 @@
         ]
       }
     },
-    watch: {
-      'form.orderDetails': {
-        handler: function (val, oldVal) {
-          for (let i = 0; i < val.length; i++) {
-            this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
-          }
-        },
-        // 深度观察
-        deep: true
-      }
-
-    },
-    components: {
-      'uploadfiles': require('../../../components/uploadfiles'),
-    },
     created(){
-      if (window.localStorage.getItem('userinfo')) {
-        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
-      }
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
+      this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
     },
     methods: {
-      judgeNum(value, index){//判断数量是否为整数
-        this.form.orderDetails[index].num = value.replace(/\D/g, '');
-      },
-      getAtt(file){//附件
-        this.form.att.push(file);
+      select(id){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: id,
+        };
+        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('detail',response);
+          if (data.code === 10000) {
+            self.form = self.formPass(self.form,data.data);
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
       },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
@@ -222,11 +191,11 @@
           token: window.localStorage.getItem('token'),
           keyword: queryString,
           companyId: 1
-        }
+        };
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
               list[i].combination = list[i].goodsNo + list[i].goodsName;
@@ -247,45 +216,28 @@
         for (let i = 0; i < list.length; i++) {
           if (item.goodsNo === list[i].goodsNo) {
             this.$message.error('已有此类商品');
-            this.form.orderDetails[this.listIndex].combination = ''
-            return
+            this.form.orderDetails[this.listIndex].combination = '';
+            return;
           }
         }
-        this.form.orderDetails[this.listIndex] = item
+        this.form.orderDetails[this.listIndex] = item;
       },
       handleClick(index){//存商品index
-        this.listIndex = index
+        this.listIndex = index;
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('order/create', response)
-          if (data.code == 10000) {
+          console.log('order/create', response);
+          if (data.code === 10000) {
             self.$router.push('/order/orderlist');
             //self.tableData = data.data
           }
         }).catch(function (error) {
           console.log(error);
         });
-      },
-      addLine(){//添加一行
-        this.form.orderDetails.push({
-          goodsNo: '',//商品编号
-          goodsName: '',//商品名
-          goodsSpec: '',//规格
-          goodsUnit: '',
-          price: '',//价格
-          num: '',
-          subtotal: '',//小计
-          combination: '',//编号和名称组合
-          goodsSkuId: '',//规格id
-        })
-      },
-      deleteLine(index){
-        this.form.orderDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.orderDetails.splice(index, 1);
       },
     }
   }
