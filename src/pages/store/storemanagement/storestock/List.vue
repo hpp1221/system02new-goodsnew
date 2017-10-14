@@ -4,54 +4,66 @@
       <h3 class="page-title">门店库存</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
-          <el-select
-            placeholder="全部仓库"
-            v-model="easyForm.address"
-            multiple
-            filterable
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
+          <el-radio class="radio" v-model="easyForm.goodsStatus" label="0">按商品合并</el-radio>
+        </el-form-item>
+        <el-form-item label="商品分类">
+          <el-cascader
+            :options="totalCategories"
+            v-model="easyForm.cat"
+            @active-item-change="getCatList"
+            placeholder="商品分类"
+            :props="props"
+            @click.native="getCat">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="门店">
+          <el-select placeholder="全部门店" v-model="easyForm.storeId">
+            <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="select">查询</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
+        </el-form-item>
+
       </el-form>
 
       <el-table :data="tableData">
-        <el-table-column prop="goodsName" label="商品名称" sortable>
+        <el-table-column prop="goodsName" label="商品图片">
 
         </el-table-column>
+        <el-table-column prop="goodsSpec" label="商品编码">
+
+        </el-table-column>
+        <el-table-column prop="goodsSpec" label="商品名称">
+
+      </el-table-column>
         <el-table-column prop="goodsSpec" label="规格">
 
         </el-table-column>
         <el-table-column prop="unit" label="单位">
 
         </el-table-column>
-        <el-table-column prop="storeHouseAddress" label="所属仓库">
 
-        </el-table-column>
         <el-table-column prop="upLimit" label="库存上限">
 
         </el-table-column>
         <el-table-column prop="downLimit" label="库存下限">
 
         </el-table-column>
-        <el-table-column prop="preOrder" label="预购量" sortable>
+        <el-table-column prop="preOrder" label="预购量">
+
+        </el-table-column>
+
+        <el-table-column prop="inStoreHouse" label="库存量">
+
+        </el-table-column>
+        <el-table-column prop="inStoreHouse" label="所属门店">
 
         </el-table-column>
         <el-table-column prop="onTheWay" label="在途量">
-
-        </el-table-column>
-        <el-table-column prop="inStoreHouse" label="库存量" sortable>
 
         </el-table-column>
         <el-table-column label="操作">
@@ -64,8 +76,8 @@
         <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" label-width="80px">
           <el-form-item label="关键词">
             <el-input
-              placeholder="请输入关键词"
-              v-model="form.keyword" class="form-input">
+              placeholder="请输入商品名称/编码/条形码"
+              v-model="form.keyword" class="long-input">
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
@@ -81,7 +93,7 @@
           <el-form-item label="商品品牌">
             <el-select
               placeholder="请选择商品品牌"
-              v-model="form.brand"
+              v-model="form.brandName"
               value-key="name"
               filterable
               :loading="brandLoading"
@@ -89,26 +101,29 @@
               <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="所属仓库">
-            <el-select
-              placeholder="全部仓库"
-              v-model="form.address"
-              multiple
-              filterable
-              :loading="addressLoading"
-              @visible-change="getAddress">
-              <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
+          <el-form-item label="门店">
+            <el-select placeholder="全部门店" v-model="easyForm.storeId">
+              <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
             </el-select>
+            <!--<el-select-->
+              <!--placeholder="全部仓库"-->
+              <!--v-model="form.address"-->
+              <!--multiple-->
+              <!--filterable-->
+              <!--:loading="addressLoading"-->
+              <!--@visible-change="getAddress">-->3v
+              <!--<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>-->
+            <!--</el-select>-->
           </el-form-item>
           <el-form-item label="商品标签">
-            <el-checkbox-group v-model="form.tagList">
-              <el-checkbox :label="t.id" v-for="t in goodsTags" :key="t.id">{{t.name}}</el-checkbox>
+            <el-checkbox-group v-model="form.tagId">
+              <el-checkbox :label="t.id" v-for="t in tagIds" :key="t.id">{{t.name}}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="库存状态">
-            <el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>
-            <el-checkbox v-model="form.downLimit" label="低于库存下限值" :true-label="1" :false-label="0"></el-checkbox>
-            <el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="高于库存上限值" :true-label="1" :false-label="0">高于库存上限值</el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="低于库存下限值" :true-label="1" :false-label="0">低于库存下限值</el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="库存<=0商品" :true-label="1" :false-label="0">库存<=0商品</el-checkbox>
           </el-form-item>
           <el-form-item label="商品状态">
             <el-radio class="radio" v-model="form.goodsStatus" label="0">全部</el-radio>
@@ -128,24 +143,23 @@
     data(){
       return {
         tableData: [],
+        storeIds:[],
         advanceSearch: false,
         form: {
           brandName: '',//商品品牌
-          address: [],//所属仓库
-          tagList: [],//商品标签
+          address: '',//所属门店
+          tagId: [],//商品标签
           goodsStatus: '',//商品状态
           keyword: '',//关键词
+          storeStatus:'',//库存上下限
           series: '',//商品分类
-          upLimit: 0,
-          downLimit: 0,
-          zero: 0,
           cat: []
         },
         easyForm: {//简单查询
-          address: [],//所属仓库
-          keyword: '',//关键词
+          cat:[],//商品分类
+          storeId:[]//所属门店
         },
-        totalStores: [],//仓库列表
+        storeIds: [],//门店列表
         totalCategories: [],//分类列表
         props: {
           value: 'res',
@@ -153,7 +167,7 @@
           label: 'name'
         },
         totalBrandList: [],//品牌列表
-        goodsTags: [],//商品标签
+        tagIds: [],//商品标签列表
         addressLoading: false,//仓库列表加载图片
         brandLoading: false,//品牌列表加载图片
       }
@@ -174,7 +188,7 @@
           });//获取品牌列表
         }
       },
-      getAddress(type){
+      getAddress(type){//所属门店
         if (type && this.totalStores.length === 0) {
           this.addressLoading = true;
           let self = this;
@@ -190,26 +204,30 @@
         }
       },
 
-      startAdvanceSearch(){
-        let self = this;
-        self.advanceSearch = true;
-        if (self.goodsTags.length === 0) {
-          self.getTagList(function (data) {
-            self.goodsTags = data;
-          });//获取标签列表
-        }
-        if (self.totalStores.length === 0) {
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-          });
-        }
-      },
+//      startAdvanceSearch(){
+//        let self = this;
+//        self.advanceSearch = true;
+//        if (self.goodsTags.length === 0) {
+//          self.getTagList(function (data) {
+//            self.goodsTags = data;
+//          });//获取标签列表
+//        }
+//        if (self.totalStores.length === 0) {
+//          self.getAddressList(function (data) {
+//            self.totalStores = data;
+//          });
+//        }
+//      },
 
       select(){//查询
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type:2
+        };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
+          console.log('list',response)
           let data = response.data;
           if (data.code === 10000) {
             self.tableData = data.data;
@@ -217,22 +235,35 @@
         }).catch(function (error) {
           console.log(error);
         });
+        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          if (data.code == 10000) {
+            self.storeIds = data.data
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
       },
-
-      advanceSelect(){
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+      advanceSelect() {//高级查询
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type:2
+        };
+        if (self.advanceSearch) {//高级搜索
+          requestData = Object.assign(requestData, self.shallowCopy(self.form))
+        }
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          if (data.code === 10000) {
-            self.tableData = data.data;
+          if (data.code == 10000) {
+            self.advanceSearch = false
+            self.tableData = data.data.list
+            self.totalPage = data.data.total
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-
       getCatList(val){
         let self = this;
         var requestData;

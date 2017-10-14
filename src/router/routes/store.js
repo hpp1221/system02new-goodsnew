@@ -34,4 +34,16 @@ export default [
     path: '/store/storemanagement/storestock/list', //门店库存
     component: resolve => require(['@/pages/store/storemanagement/storestock/List'], resolve)
   },
+  {
+    path: '/store/storemanagement/storeallocation/list', //门店调拨
+    component: resolve => require(['@/pages/store/storemanagement/storeallocation/List'], resolve)
+  },
+  {
+    path: '/store/storemanagement/storeallocation/allocationadd', //门店调拨新增
+    component: resolve => require(['@/pages/store/storemanagement/storeallocation/AllocationAdd'], resolve)
+  },
+  {
+    path: '/store/storemanagement/storeallocation/detail', //门店调拨单详情
+    component: resolve => require(['@/pages/store/storemanagement/storeallocation/Detail'], resolve)
+  },
 ]
