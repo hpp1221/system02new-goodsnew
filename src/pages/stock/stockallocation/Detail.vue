@@ -8,7 +8,6 @@
 				</div>
 				<div class="right">
 					<el-button type="text">入库</el-button>
-					<el-button type="text">打印</el-button>
 					<el-button type="text">导出</el-button>
 					<el-button type="text">作废</el-button>
 				</div>
@@ -23,19 +22,19 @@
 			</div>
 			<el-table :data="detailData.goods" show-summary>
 				<el-table-column label="商品编码" prop="number">
-					
+
 				</el-table-column>
 				<el-table-column label="商品名称" prop="name">
-					
+
 				</el-table-column>
 				<el-table-column label="规格" prop="sku">
-					
+
 				</el-table-column>
 				<el-table-column label="单位" prop="unit">
-					
+
 				</el-table-column>
 				<el-table-column label="调拨数量" prop="num">
-					
+
 				</el-table-column>
 			</el-table>
 			<div class="goodsinout-detail-bottom">
@@ -52,16 +51,16 @@
 			</div>
 			<el-table v-if="operationLogVisible">
 				<el-table-column label="操作人">
-					
+
 				</el-table-column>
 				<el-table-column label="时间">
-					
+
 				</el-table-column>
 				<el-table-column label="操作类别">
-					
+
 				</el-table-column>
 				<el-table-column label="操作日志">
-					
+
 				</el-table-column>
 			</el-table>
 		</div>
@@ -73,7 +72,7 @@
 		data(){
 			return {
 				tableData:[
-					
+
 				],
 				detailData:{},
 				operationLogVisible:false
@@ -87,7 +86,7 @@
 				let self = this
 				let requestData = {
 					token: window.localStorage.getItem('token'),
-					id:id	
+					id:id
 				}
 				self.$http.post('/ui/getAllocationRecordDetail',self.qs.stringify(requestData)).then(function (response) {
 				    let data = response.data;
@@ -100,7 +99,7 @@
 			    });
 			},
 			save(){//保存
-				
+
 			},
 			cancel(){//取消
 				this.$router.push('/stock/stockallocation/list')

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">采购退货单列表</h3>
-      <el-form ref="easyForm" :model="easyForm" inline v-if="!advanceSearch" class="request-form">
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
           <el-select placeholder="商品状态" v-model="easyForm.type">
             <el-option label="全部" value="-1"></el-option>
@@ -25,30 +25,36 @@
           <el-button @click="createPurchaseReturn">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="退货单号">
-          <el-input placeholder="请输入退货单号" v-model="form.keyword" class="long-input">
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <el-form ref="form" :model="form" class="request-form" label-width="100px">
+          <el-form-item label="退货单号">
+            <el-input placeholder="请输入退货单号" v-model="form.keyword" class="long-input">
 
-          </el-input>
-        </el-form-item>
-        <el-form-item label="下单时间">
-          <el-date-picker
-            v-model="form.orderTime"
-            type="datetime"
-            placeholder="选择日期时间"
-            align="right"
-            :picker-options="pickerOptions1">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="供应商名称">
-          <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-            <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="退单状态">
-          <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
-        </el-form-item>
-      </el-form>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="下单时间">
+            <el-date-picker
+              v-model="form.orderTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="供应商名称">
+            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
+              <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="退单状态">
+            <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+            <el-button @click="advanceSearch = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
       <el-table :data="tableData">
         <el-table-column label="退单号">
           <template scope="scope">
@@ -73,34 +79,14 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">退单详情</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">审核</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">退单详情</el-dropdown-item>
+                <el-dropdown-item @click.native="verify(scope.row.id,scope.row.goodsId)">审核</el-dropdown-item>
                 <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
-        <el-table :data="multipleSelection">
-          <el-table-column label="商品编码" prop="barCode">
-
-          </el-table-column>
-          <el-table-column label="商品名称" prop="name">
-
-          </el-table-column>
-          <el-table-column label="规格" prop="sku">
-
-          </el-table-column>
-          <el-table-column label="商品上架">
-            <template scope="scope">
-              <el-checkbox>新品上架</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button @click="sureSetTags">确定</el-button>
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-      </el-dialog>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
@@ -143,11 +129,6 @@
         totalPage: 10,
       }
     },
-    watch: {
-      advanceSearch: function () {//点击高级搜索和取消时重新查询
-        this.select();
-      },
-    },
     created(){
       let self = this;
     },
@@ -163,6 +144,14 @@
       createPurchaseReturn(){//新增
         this.$router.push('/order/purchasereturn/add');
       },
+      seeDetail(id){
+        let url = '/order/purchasereturn/detail/' + id;
+        this.$router.push(url);
+      },
+      verify(id){
+        let url = '/order/purchasereturn/verify/' + id;
+        this.$router.push(url);
+      },
       select(size, num){//查询
         let self = this;
         let requestData = {
@@ -170,16 +159,9 @@
           pageSize: size,
           pageNo: num
         };
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
-        if (self.advanceSearch) {//高级搜索
-
-          requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        } else {//简单搜索
-
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        }
-
-        self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('skuList', response)
           if (data.code == 10000) {
@@ -190,47 +172,26 @@
           console.log(error);
         });
       },
-      getCatList(val){
+      advanceSelect(size, num){
         let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
-        } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
-        }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('catList', response)
+          console.log('skuList', response)
           if (data.code == 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-            }
-
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
+
       sureSetTags(){//确定设置标签
 
       },
@@ -258,83 +219,6 @@
       },
       multipleInputImgs(){
         this.$router.push('/goods/multipleInputImgs');
-      },
-      putOnSale(){//上架
-        let self = this;
-        self.$confirm('请确认是否批量上架？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          console.log('123')
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            skuList: JSON.stringify(self.multipleSelection),
-            type: 1
-          };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
-              self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        }).catch(() => {
-          self.$message({
-            type: 'info',
-            message: '您已取消上架'
-          });
-        });
-      },
-      downSale(){//下架
-        let self = this;
-        self.$confirm('请确认是否批量下架？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            skuList: JSON.stringify(self.multipleSelection),
-            type: 0
-          };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
-              self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '您已取消下架'
-          });
-        });
-      },
-      deleteGoods(){//删除商品
-        this.$confirm('请确认是否批量删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '您已成功删除!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '您已取消删除'
-          });
-        });
-      },
-      setTags(){//设置标签
-        this.dialogTableVisible = true;
       },
       cancelSelect(){//取消选中
         this.$refs.multipleTable.clearSelection();

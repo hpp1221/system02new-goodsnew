@@ -43,7 +43,7 @@
             <el-table-column prop="num" label="数量">
 
             </el-table-column>
-            <el-table-column prop="goodUnit" label="单位">
+            <el-table-column prop="goodsUnit" label="单位">
 
             </el-table-column>
 
