@@ -12,7 +12,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="要货人" v-if="userinfo">
-          {{userinfo.name}}
+          <el-input v-model="userinfo.name" :disabled="true"></el-input>
         </el-form-item>
         <el-table :data="form.getGoodsRecordDetails" border v-if="form.storeId">
           <el-table-column
@@ -30,7 +30,7 @@
               <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称" width="180">
+          <el-table-column label="商品编码  商品名称" width="150">
             <template scope="scope">
               <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
                                :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
@@ -42,23 +42,34 @@
           <el-table-column label="规格" prop="sku" width="120">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="storeHouseName">
+          <el-table-column label="要货仓库" prop="storeHouseName" width="100">
             <!--<template scope="scope">-->
-            <!--<el-select v-model="form.">-->
+            <!--<span v-if="goodsInfoList[0].storeHouseName? true:false">{{goodsInfoList[0].storeHouseName}}</span>-->
+            <!--<el-select v-if="goodsInfoList[0].storeHouseName? false:true">-->
             <!--<el-option v-for="item in storeHouseIds" :key="item.name" :label="item.name" :value="item.id"></el-option>-->
             <!--</el-select>-->
             <!--</template>-->
+            <template scope="scope">
+
+              <el-select :disabled="goodsInfoList[0].count <= goodsInfoList[0].inStoreHouse"
+                v-if="goodsInfoList[0].count > goodsInfoList[0].inStoreHouse" v-model="scope.row.storeHouseId">
+                <el-option v-for="item in storeHouseIds" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+              <span
+                v-else>{{goodsInfoList[0].storeHouseName}}</span>
+            </template>
+
           </el-table-column>
           <el-table-column label="门店库存" prop="storeInStoreHouse">
 
           </el-table-column>
-          <el-table-column label="门店在途量" prop="storeOnTheWay">
+          <el-table-column label="门店在途量" prop="storeOnTheWay" width="100">
 
           </el-table-column>
           <el-table-column label="仓库库存" prop="inStoreHouse">
 
           </el-table-column>
-          <el-table-column label="仓库在途量" prop="onTheWay">
+          <el-table-column label="仓库在途量" prop="onTheWay" width="120">
 
           </el-table-column>
           <el-table-column label="要货数量" prop="count">
@@ -73,10 +84,7 @@
           <el-table-column label="单价" prop="price">
 
           </el-table-column>
-          <el-table-column label="金额" prop="sum" >
-            <template scope="scope">
-              <el-input v-model="scope.row.sum">{{}}</el-input>
-            </template>
+          <el-table-column label="金额" prop="sum" width="120px">
           </el-table-column>
           <el-table-column label="备注" prop="remark">
             <template scope="scope">
@@ -117,7 +125,7 @@
             img: '',
             unit: '',//单位
             price: '',//价格
-            priceFen:'',
+            priceFen: '',
             sum: 0,//金额
             combination: '',//编号和名称组合
             remark: '',//备注
@@ -125,23 +133,25 @@
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
+        goodsInfoList: [
+          {
+            storeHouseName: '',
+            count:'',
+            inStoreHouse:''
+          }
+        ],
 
       }
     },
     created() {
       this.getStoreList()//要货门店
       this.getTradeNumber()//单据编码
+      this.getStoreHouse()//仓库
     },
     computed: {
       userinfo: function () {
         return JSON.parse(window.localStorage.getItem('userinfo'));
       },
-//      ComputedSum:function () {
-//        for(let i = 0; i < this.goodsInfoList.length;i++){
-//          this.goodsInfoList[i].sum+=this.goodsInfoList[i].priceFen*this.goodsInfoList[i].count;
-//        }
-//      }
     },
     methods: {
       getGoodsSubmit() {//提交门店要货单
@@ -154,8 +164,7 @@
           let data = response.data;
           console.log('getgoodssubmit', response)
           if (data.code == 10000) {
-//            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
+            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
           }
         }).catch(function (error) {
           console.log(error);
@@ -193,8 +202,33 @@
           console.log(error);
         });
       },
+      getStoreHouse() {//仓库接口
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type: 1
+        }
+        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('storehouse', response);
+          if (data.code == 10000) {
+            self.storeHouseIds = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
       judgeNum(value, index) {//判断数量是否为整数
+        if (value === '') {
+          this.form.getGoodsRecordDetails[index].sum = 0.00;
+          return;
+        }
         this.form.getGoodsRecordDetails[index].count = value.replace(/\D/g, '');
+        this.form.getGoodsRecordDetails[index].sum = "";
+        let price = JSON.stringify(this.form.getGoodsRecordDetails[index].count * this.form.getGoodsRecordDetails[index].priceFen);
+        let size = price.length;
+        price = price.substring(0, size - 2) + "." + price.substring(size - 2, size);
+        this.form.getGoodsRecordDetails[index].sum = price;
       },
       querySearchAsync(queryString, cb) {//商品关键字查询
         let self = this;
@@ -210,12 +244,12 @@
             let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
               list[i].combination = list[i].goodsNumber + '  ' + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].sum = list[i].price * list[i].count;
+              list[i].sum = '';
             }
             self.goodsInfoList = list;
             // 调用 callback 返回建议列表的数据
             cb(self.goodsInfoList);
+            console.log('goods', self.goodsInfoList);
           }
         }).catch(function (error) {
           console.log(error);
@@ -232,6 +266,7 @@
           }
         }
         this.form.getGoodsRecordDetails[this.listIndex] = item
+        this.form.getGoodsRecordDetails[this.listIndex].storeHouseId = ''
       },
       handleClick(index) {//存商品index
         this.listIndex = index

@@ -80,8 +80,6 @@
             <span v-if="scope.row.type == '4'">作废</span>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注">
-        </el-table-column>
         <el-table-column>
           <template scope="scope">
             <el-dropdown trigger="click">
@@ -185,14 +183,11 @@
     },
     methods: {
       getGoodsExamine(id){//审核
+        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', query: {id: id}});
+      },
+      getGoodsNumberDetail(id) {//要货单详情
         this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
       },
-//      getGoodsExamine(row){//审核
-//        let self = this
-//        self.type = parseInt(row.type)+1
-//        self.tradeId = row.id
-//        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine',query:{type:self.type,tradeId:self.tradeId}})
-//      },
       select(size, num) {//简单查询
         let self = this
         let requestData = {
@@ -270,15 +265,13 @@
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
-      getGoodsNumberDetail(id) {//要货单详情
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
-      },
       createGoods() {//新增
         this.$router.push('/store/storemanagement/storegetgoods/creategetgoods');
       },
       cancelGetGoods(row) { //作废
         let self = this;
         let params = {
+          token:window.localStorage.getItem('token'),
           id: row.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
@@ -287,12 +280,13 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
+            console.log('set',res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
                 message: '已成功作废!'
               });
-              this.getSupplierList()
+              this.getGoodsList()
             } else {
               self.$message({
                 type: 'info',

@@ -162,7 +162,8 @@
           id:self.updateForm.id,
           name: self.updateForm.name,
           number: self.updateForm.number,
-          address: self.updateForm.address
+          address: self.updateForm.address,
+          token: window.localStorage.getItem('token')
         };
         self.$http.post('/ui/editStoreHouse', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

@@ -27,7 +27,11 @@ export default [
     component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsExamine'], resolve)
   },
   {
-    path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', //门店盘点列表
-    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsDetail'], resolve)
+    path: '/store/storemanagement/storeinventory/storeinventorylist', //门店盘点
+    component: resolve => require(['@/pages/store/storemanagement/storeinventory/StoreInventoryList'], resolve)
+  },
+  {
+    path: '/store/storemanagement/storestock/list', //门店库存
+    component: resolve => require(['@/pages/store/storemanagement/storestock/List'], resolve)
   },
 ]
