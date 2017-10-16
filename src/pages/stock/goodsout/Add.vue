@@ -17,7 +17,8 @@
           <el-date-picker
             type="datetime"
             placeholder="选择日期时间"
-            v-model="form.createTime">
+            v-model="form.createTime"
+            :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-if="form.selfAddress">
@@ -114,6 +115,11 @@
           tradeNo: [
             {required: true, message: '请输入出库单号', trigger: 'change'}
           ],
+        },
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
         },
         totalStores: [],
         totalTypes: [
@@ -214,7 +220,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          addressName: JSON.stringify(self.form.selfAddress),
+          fromAddress: JSON.stringify(self.form.selfAddress),
         };
         self.$http.post('/ui/outPutGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

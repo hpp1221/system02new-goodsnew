@@ -18,7 +18,8 @@
           <el-date-picker
             type="datetime"
             placeholder="选择日期时间"
-            v-model="form.createTime">
+            v-model="form.createTime"
+            :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
         <el-form-item v-if="form.selfAddress">
@@ -141,6 +142,11 @@
         goodsInfoList: [],
         listIndex: '',//现在正在添加的某个list的下标
         addressLoading: false,//仓库列表加载图片
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
+        },
       }
     },
 
@@ -220,8 +226,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          addressName: self.form.selfAddress,
-          companyId: 1
+          fromAddress: JSON.stringify(self.form.selfAddress),
         };
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

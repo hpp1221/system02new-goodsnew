@@ -1,34 +1,51 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">公司列表</h3>
+      <h3 class="page-title">客户列表</h3>
       <!--<el-form ref="form" :model="form" inline class="request-form">-->
-        <!--<el-form-item>-->
-          <!--<el-button @click="addUser">新增用户</el-button>-->
-        <!--</el-form-item>-->
+      <!--<el-form-item>-->
+      <!--<el-button @click="addUser">新增用户</el-button>-->
+      <!--</el-form-item>-->
       <!--</el-form>-->
       <el-form ref="form" :model="form" inline class="request-form">
-        <el-form-item label="公司名">
-          <el-input v-model="form.name" placeholder="请输入公司名"></el-input>
+        <el-form-item label="全部角色">
+          <el-select v-model="form.role">
+            <el-option :label="全部角色" :value="0"></el-option>
+            <el-option v-for="r in roles" :label="r.name" :key="r.id">
+
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="全部角色">
+          <el-input placeholder="请输入客户名称/联系电话/手机/编码"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="select">查询</el-button>
+          <el-button @click="select">导入</el-button>
+          <el-button @click="select">导出</el-button>
+          <el-button @click="addClient">新增</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData">
-        <el-table-column prop="name" label="公司名">
+        <el-table-column prop="name" label="客户名称">
 
         </el-table-column>
-        <el-table-column prop="industryType" label="行业类型">
+        <el-table-column prop="customerId" label="客户编码">
 
         </el-table-column>
-        <el-table-column prop="address" label="公司地址">
+        <el-table-column prop="tel" label="联系电话">
 
         </el-table-column>
-        <el-table-column prop="postcode" label="邮编">
+        <el-table-column prop="address" label="地址">
 
         </el-table-column>
-        <el-table-column prop="contacts" label="联系人">
+        <el-table-column prop="cel" label="手机">
+
+        </el-table-column>
+        <el-table-column prop="contacts" label="客户角色">
+
+        </el-table-column>
+        <el-table-column prop="contacts" label="创建时间">
 
         </el-table-column>
         <el-table-column>
@@ -57,7 +74,7 @@
         totalPage: 10,
         tableData: [],
         form: {
-            name:''
+          name: ''
         },
       }
     },
@@ -66,8 +83,8 @@
     },
 
     methods: {
-      addUser(){
-        this.$router.push('/personal/user/add');
+      addClient(){//添加客户
+        this.$router.push('/client/platform/add');
       },
       pageChanged(page){
         this.pageSize = page.size;
@@ -82,9 +99,9 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/company/selectCompanyListPage', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.get('/ui/customer/selectCustomerListPage', {params: requestData}).then(function (response) {
           let data = response.data;
-          console.log('selectCompanyListPage', response)
+          console.log('selectCustomerListPage', response)
           if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
