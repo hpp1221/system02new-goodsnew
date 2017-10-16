@@ -3,10 +3,24 @@
     <div class="wrapper">
       <h3 class="page-title">租户列表</h3>
       <!--<el-form ref="form" :model="form" inline class="request-form">-->
-        <!--<el-form-item>-->
-          <!--<el-button @click="addUser">新增用户</el-button>-->
-        <!--</el-form-item>-->
+      <!--<el-form-item>-->
+      <!--<el-button @click="addUser">新增用户</el-button>-->
+      <!--</el-form-item>-->
       <!--</el-form>-->
+      <el-form ref="form" :model="form" inline class="request-form">
+        <el-form-item label="用户名">
+          <el-input v-model="form.loginId" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="公司">
+          <el-input v-model="form.companyName" placeholder="请输入公司"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select">查询</el-button>
+        </el-form-item>
+      </el-form>
       <el-table :data="tableData">
         <el-table-column prop="loginId" label="用户名">
 
@@ -17,7 +31,7 @@
         <el-table-column prop="position" label="职位">
 
         </el-table-column>
-        <el-table-column prop="department" label="部门">
+        <el-table-column prop="companyName" label="公司">
 
         </el-table-column>
         <el-table-column prop="cel" label="手机">
@@ -60,7 +74,11 @@
         pageNum: 1,
         totalPage: 10,
         tableData: [],
-        form: {},
+        form: {
+          loginId: '',
+          name: '',
+          companyName: ''
+        },
       }
     },
     components: {
@@ -83,10 +101,11 @@
           pageSize: size,
           pageNo: num
         };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/user/selectCompanyUserListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectUserListPage', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }
@@ -115,7 +134,7 @@
           self.$http.post('/ui/user/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log(response)
-            if (data.code == 10000) {
+            if (data.code === 10000) {
               self.$message.success('操作成功');
               self.$router.go(0);
             }
