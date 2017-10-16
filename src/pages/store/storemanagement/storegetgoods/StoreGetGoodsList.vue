@@ -41,20 +41,30 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="要货门店">
-            <el-input placeholder="请输入要货门店名称" class="form-input" v-model="form.storeId"
-                      style="width: 80%"></el-input>
+            <!--<el-input placeholder="请输入要货门店名称" class="form-input" v-model="form.storeId"-->
+            <!--style="width: 80%"></el-input>-->
+            <el-select placeholder="全部门店" v-model="form.storeId">
+              <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="单据状态">
-            <el-checkbox-group v-model="form.typeList">
-              <el-checkbox v-for="item in typeLists" :label="item.value" :value="item.value" :key="item.value">
-                {{item.label}}
-              </el-checkbox>
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
+            </el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="form.typeList" @change="handleCheckedCitiesChange">
+              <el-checkbox v-for="item in typeLists" :label="item.value" :key="item.value">{{item.label}}</el-checkbox>
             </el-checkbox-group>
+            <!--<el-checkbox-group v-model="form.typeList">-->
+            <!--<el-checkbox v-for="item in typeLists" :label="item.value" :value="item.value" :key="item.value">-->
+            <!--{{item.label}}-->
+            <!--</el-checkbox>-->
+            <!--</el-checkbox-group>-->
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="advanceSelect(pageSize,pageNum)">确 定</el-button>
           <el-button @click="advanceSearch = false">取 消</el-button>
+          <el-button @click="resetGetGoodsForm">清空</el-button>
         </div>
       </el-dialog>
       <!--要货表格-->
@@ -99,11 +109,15 @@
 </template>
 
 <script>
+  const cityOptions = ['0', '1', '2', '3', '4'];
   export default {
     data() {
       return {
         tableData: [],
-        advanceSearch: false,
+        advanceSearch: false,//高级搜索
+        checkAll: false,//全选
+        typeLists: cityOptions,//状态列表
+        isIndeterminate: false,
         form: {//高级搜索
           dateRange: '',
           tradeNumber: '',
@@ -148,10 +162,6 @@
         ],
         typeLists: [//高级查询的单据状态
           {
-            value: '',
-            label: "全选"
-          },
-          {
             value: '4',
             label: "作废"
           },
@@ -176,13 +186,22 @@
       }
     },
     created() {
-      this.getGoodsList();//获取分类列表
+      this.select(size, num);//获取分类列表
     },
     components: {
       'pagination': require('../../../../components/pagination')
     },
     methods: {
-      getGoodsExamine(id){//审核
+      handleCheckAllChange(event) {//全选
+        this.form.typeList = event ? cityOptions : [];
+        this.isIappndeterminate = false;
+      },
+      handleCheckedCitiesChange(value) {//状态列表
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.typeLists.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.typeLists.length;
+      },
+      getGoodsExamine(id) {//审核
         this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', query: {id: id}});
       },
       getGoodsNumberDetail(id) {//要货单详情
@@ -205,6 +224,24 @@
         }).catch(function (error) {
           console.log(error);
         });
+        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          if (data.code == 10000) {
+            self.storeIds = data.data
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      resetGetGoodsForm() {//高级搜索的清空
+        let self = this
+        self.form.storeId = ''
+        self.form.dateRange = '',
+        self.form.tradeNumber = '',
+        self.form.typeList = [],
+        self.form.startTime = '',
+        self.form.endTime = '',
+        self.checkAll = false
       },
       advanceSelect(size, num) {//高级查询
         let self = this
@@ -234,33 +271,8 @@
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-//        this.select(page.size, page.num);
+        this.select(page.size, page.num);
 //        this.advanceSelect(page.size, page.num)
-      },
-      getGoodsList(size, num) {//要货单列表
-        let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          pageSize: size,
-          pageNo: num
-        };
-        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.storeIds = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -271,7 +283,7 @@
       cancelGetGoods(row) { //作废
         let self = this;
         let params = {
-          token:window.localStorage.getItem('token'),
+          token: window.localStorage.getItem('token'),
           id: row.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
@@ -280,7 +292,7 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set',res)
+            console.log('set', res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',

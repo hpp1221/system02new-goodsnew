@@ -52,9 +52,14 @@
         <!--</el-table-column>-->
         <el-table-column label="操作">
           <template scope="scope">
-            <el-button type="text" @click="seeDetail(scope.row.orderId)">查看明细</el-button>
+            <el-dropdown trigger="click">
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">退单详情</el-dropdown-item>
+                <el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
-
         </el-table-column>
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
@@ -126,20 +131,7 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        totalStores: [
-          {
-            name: '仓库1',
-            id: 1
-          },
-          {
-            name: '仓库2',
-            id: 2
-          },
-          {
-            name: '仓库3',
-            id: 3
-          }
-        ],
+        totalStores: [],
         totalOrderStatus: [
           {
             name: '待订单审核'
@@ -211,26 +203,52 @@
       addOrder(){
         this.$router.push('/order/purchaseorder/add');
       },
-      select(size,num){//查询
+      verify(id){
+        let url = '/order/purchaseorder/verify/' + id;
+        this.$router.push(url);
+      },
+      select(size, num){//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          orderType:2
         };
-        if (self.advanceSearch) {//高级搜索
-          if (self.form.dateRange instanceof Array) {
-            self.form.startTime = self.form.dateRange[0]
-            self.form.endTime = self.form.dateRange[1]
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        } else {//简单搜索
-          if (self.easyForm.dateRange instanceof Array) {
-            self.easyForm.startTime = self.easyForm.dateRange[0]
-            self.easyForm.endTime = self.easyForm.dateRange[1]
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
+
+        if (self.easyForm.dateRange instanceof Array) {
+          self.easyForm.startTime = self.easyForm.dateRange[0];
+          self.easyForm.endTime = self.easyForm.dateRange[1];
         }
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
+
+        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+
+          if (data.code == 10000) {
+            self.tableData = data.data.list;
+            console.log('list', self.tableData)
+            self.totalPage = data.data.total;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      advanceSelect(size, num){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num,
+          orderType:2
+        };
+
+        if (self.form.dateRange instanceof Array) {
+          self.form.startTime = self.form.dateRange[0]
+          self.form.endTime = self.form.dateRange[1]
+        }
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
 
@@ -257,7 +275,8 @@
         });
       },
       seeDetail(id){
-        this.$router.push({path: '/order/detail', query: {id: id}})
+        let url = '/order/purchaseorder/detail/' + id;
+        this.$router.push(url);
       }
     }
   }

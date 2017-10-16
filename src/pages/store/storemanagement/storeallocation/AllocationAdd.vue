@@ -1,19 +1,12 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">添加库存调拨</h3>
+      <h3 class="page-title">新增门店调拨单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
-        <el-form-item label="调出仓" prop="fromAddress">
-          <el-select
-            v-model="form.fromAddress"
-            value-key="id"
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+        <el-form-item label="调拨单号" prop="tradeNo">
+          {{form.tradeNo}}
         </el-form-item>
-
-        <el-form-item label="调入仓" prop="selfAddress">
+        <el-form-item label="调入门店" prop="selfAddress">
           <el-select
             v-model="form.selfAddress"
             value-key="id"
@@ -22,17 +15,18 @@
             <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item label="调拨时间">
-          <el-date-picker
-            type="datetime"
-            placeholder="选择日期时间"
-            v-model="form.createTime"
-            :picker-options="pickerOptions"
-          >
-          </el-date-picker>
+        <el-form-item label="调出门店" prop="fromAddress">
+          <el-select
+            v-model="form.fromAddress"
+            value-key="id"
+            :loading="addressLoading"
+            @visible-change="getAddress">
+            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
+          </el-select>
         </el-form-item>
-
+        <el-form-item label="要货人">
+          <el-input class="form-input" v-model="form.tradeNoHandler"></el-input>
+        </el-form-item>
         <el-form-item v-if="form.selfAddress && form.fromAddress">
           <el-table :data="form.data" border>
             <el-table-column
@@ -44,6 +38,11 @@
               <template scope="scope">
                 <i class="el-icon-plus" @click="addLine"></i>
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
+              </template>
+            </el-table-column>
+            <el-table-column label="主图" width="80" prop="img">
+              <template scope="scope">
+                <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
               </template>
             </el-table-column>
             <el-table-column label="商品编码  商品名称">
@@ -58,30 +57,35 @@
             <el-table-column label="规格" prop="goodsSpec">
 
             </el-table-column>
-            <el-table-column label="单位" prop="goodsUnit">
+            <el-table-column label="调入门店库存" prop="goodsUnit">
 
             </el-table-column>
-            <el-table-column label="调拨数量">
+            <el-table-column label="调出门店库存" prop="goodsUnit">
+
+            </el-table-column>
+            <el-table-column label="要货数量">
               <template scope="scope">
                 <el-input v-model="scope.row.num" type="number"></el-input>
               </template>
             </el-table-column>
+            <el-table-column label="单位" prop="goodsUnit">
+
+            </el-table-column>
+            <el-table-column label="单价" prop="goodsUnit">
+
+            </el-table-column>
+            <el-table-column label="金额" prop="goodsUnit">
+
+            </el-table-column>
+            <el-table-column label="备注" prop="remark">
+              <template scope="scope">
+                <el-input v-model="scope.row.remark"></el-input>
+              </template>
+            </el-table-column>
           </el-table>
         </el-form-item>
-        <el-form-item label="调拨单号" prop="tradeNo">
-          {{form.tradeNo}}
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
-        </el-form-item>
-        <el-form-item label="经办人">
-          <el-input class="form-input" v-model="form.tradeNoHandler"></el-input>
-        </el-form-item>
-        <el-form-item label="制单人">
-          {{userinfo.name}}
-        </el-form-item>
         <el-form-item>
-          <el-button @click="save('form')">保存</el-button>
+          <el-button @click="save('form')">确认</el-button>
           <el-button @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
@@ -110,7 +114,6 @@
           remark: '',//备注
           createUserName: '',//制单人
           tradeNoHandler: '',//经办人
-          status: 1
         },
         rules: {
           fromAddress: [
@@ -123,7 +126,7 @@
             {required: true, message: '请输入调拨单号', trigger: 'change'}
           ],
         },
-        pickerOptions: {
+        pickerOptions:{
           disabledDate(time) {
             return time.getTime() < Date.now() - 8.64e7;
           }
@@ -210,7 +213,8 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          fromAddress: JSON.stringify(self.form.fromAddress)
+          companyId: 1,
+          fromAddress:JSON.stringify(self.form.fromAddress)
         }
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

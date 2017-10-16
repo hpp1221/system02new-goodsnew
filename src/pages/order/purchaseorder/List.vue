@@ -199,11 +199,6 @@
     created(){
       this.getAddressList()
     },
-    watch: {
-      advanceSearch: function () {//点击高级搜索和取消时重新查询
-        this.select();
-      },
-    },
     components: {
       'pagination': require('../../../components/pagination')
     },
