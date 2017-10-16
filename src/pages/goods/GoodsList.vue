@@ -9,6 +9,7 @@
             v-model="easyForm.cat"
             @active-item-change="getCatList"
             placeholder="商品分类"
+            @click.native="getCat"
             :props="props">
           </el-cascader>
         </el-form-item>
@@ -248,6 +249,11 @@
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
+      },
+      getCat(){
+        if (this.totalCategories.length === 0) {
+          this.getCatList();//获取分类列表
+        }
       },
 
       select(size, num){//查询

@@ -110,6 +110,7 @@
           remark: '',//备注
           createUserName: '',//制单人
           tradeNoHandler: '',//经办人
+          status: 1
         },
         rules: {
           fromAddress: [
@@ -122,7 +123,7 @@
             {required: true, message: '请输入调拨单号', trigger: 'change'}
           ],
         },
-        pickerOptions:{
+        pickerOptions: {
           disabledDate(time) {
             return time.getTime() < Date.now() - 8.64e7;
           }
@@ -209,7 +210,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          fromAddress:JSON.stringify(self.form.fromAddress)
+          fromAddress: JSON.stringify(self.form.fromAddress)
         }
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;

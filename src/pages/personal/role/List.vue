@@ -3,6 +3,19 @@
     <div class="wrapper">
       <h3 class="page-title">角色管理</h3>
       <el-form :model="form" inline class="request-form">
+        <el-form-item label="角色名称">
+          <el-input v-model="form.name" placeholder="请输入角色名称"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="form.status">
+            <el-option :value="''" label="全部"></el-option>
+            <el-option :value="1" label="启用"></el-option>
+            <el-option :value="-1" label="禁用"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select">查询</el-button>
+        </el-form-item>
         <el-form-item>
           <el-button @click="addRole">新增角色</el-button>
         </el-form-item>
@@ -16,8 +29,8 @@
         </el-table-column>
         <el-table-column prop="status" label="状态">
           <template scope="scope">
-            <span v-if="scope.row.status == 1">正常</span>
-            <span v-if="scope.row.status == -1">禁用</span>
+            <span v-if="scope.row.status == 1">已启用</span>
+            <span v-if="scope.row.status == -1">已禁用</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间">
@@ -62,7 +75,10 @@
         pageNum: 1,
         totalPage: 10,
         tableData: [],
-        form: {},
+        form: {
+          name: '',
+          status:''
+        },
       }
     },
     components: {
@@ -84,6 +100,7 @@
           pageSize: size,
           pageNo: num
         };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/role/selectRoleListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectRoleListPage', response)

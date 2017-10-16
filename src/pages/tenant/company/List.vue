@@ -7,6 +7,14 @@
           <!--<el-button @click="addUser">新增用户</el-button>-->
         <!--</el-form-item>-->
       <!--</el-form>-->
+      <el-form ref="form" :model="form" inline class="request-form">
+        <el-form-item label="公司名">
+          <el-input v-model="form.name" placeholder="请输入公司名"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select">查询</el-button>
+        </el-form-item>
+      </el-form>
       <el-table :data="tableData">
         <el-table-column prop="name" label="公司名">
 
@@ -48,7 +56,9 @@
         pageNum: 1,
         totalPage: 10,
         tableData: [],
-        form: {},
+        form: {
+            name:''
+        },
       }
     },
     components: {
@@ -71,10 +81,11 @@
           pageSize: size,
           pageNo: num
         };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/company/selectCompanyListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectUserListPage', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }
@@ -103,7 +114,7 @@
           self.$http.post('/ui/user/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log(response)
-            if (data.code == 10000) {
+            if (data.code === 10000) {
               self.$message.success('操作成功');
               self.$router.go(0);
             }
