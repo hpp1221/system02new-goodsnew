@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">采购订单列表</h3>
+      <h3 class="page-title">销售订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
           <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
@@ -47,9 +47,9 @@
         <el-table-column prop="createUserName" label="状态">
 
         </el-table-column>
-        <el-table-column prop="createUserName" label="付款状态">
+        <!--<el-table-column prop="createUserName" label="付款状态">-->
 
-        </el-table-column>
+        <!--</el-table-column>-->
         <el-table-column label="操作">
           <template scope="scope">
             <el-button type="text" @click="seeDetail(scope.row.orderId)">查看明细</el-button>
@@ -87,16 +87,16 @@
               <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="付款状态">
-            <el-checkbox-group v-model="form.payType">
-              <el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="订单标签">
-            <el-checkbox-group v-model="form.storeStatus">
-              <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+          <!--<el-form-item label="付款状态">-->
+            <!--<el-checkbox-group v-model="form.payType">-->
+              <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="订单标签">-->
+            <!--<el-checkbox-group v-model="form.storeStatus">-->
+              <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
         </el-form>
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
@@ -257,7 +257,7 @@
         });
       },
       seeDetail(id){
-        this.$router.push({path: '/order/orderdetail', query: {id: id}})
+        this.$router.push({path: '/order/detail', query: {id: id}})
       }
     }
   }

@@ -47,15 +47,15 @@
         <el-table-column prop="createUserName" label="状态">
 
         </el-table-column>
-        <el-table-column prop="createUserName" label="付款状态">
+        <!--<el-table-column prop="createUserName" label="付款状态">-->
 
-        </el-table-column>
+        <!--</el-table-column>-->
         <el-table-column label="操作">
           <template scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">退单详情</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">订单详情</el-dropdown-item>
                 <el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -92,11 +92,11 @@
               <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="付款状态">
-            <el-checkbox-group v-model="form.payType">
-              <el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+          <!--<el-form-item label="付款状态">-->
+            <!--<el-checkbox-group v-model="form.payType">-->
+              <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
           <el-form-item label="订单标签">
             <el-checkbox-group v-model="form.storeStatus">
               <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
