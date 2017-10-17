@@ -3,6 +3,14 @@
  */
 export default [
   {
+    path: '/client/platform/list', //后台管理客户
+    component: resolve => require(['@/pages/client/platform/list'], resolve)
+  },
+  {
+    path: '/client/platform/add', //后台添加管理客户
+    component: resolve => require(['@/pages/client/platform/add'], resolve)
+  },
+  {
     path: '/client/clientmanagement', //客户管理
     component: resolve => require(['@/pages/client/ClientManagement'], resolve)
   },

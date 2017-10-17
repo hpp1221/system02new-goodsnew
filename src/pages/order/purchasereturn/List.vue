@@ -4,16 +4,13 @@
       <h3 class="page-title">采购退货单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
-          <el-select placeholder="商品状态" v-model="easyForm.type">
-            <el-option label="全部" value="-1"></el-option>
-            <el-option label="已完成" value="1"></el-option>
-            <el-option label="待审核通过" value="2"></el-option>
-            <el-option label="待退款确认" value="3"></el-option>
-            <el-option label="已作废" value="4"></el-option>
+          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
+            <el-option label="全部" :value="0"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="供应商">
-          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.supplier"></el-input>
+          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.supplier" class="long-input"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -47,7 +44,15 @@
             </el-select>
           </el-form-item>
           <el-form-item label="退单状态">
-            <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+              <el-checkbox
+                v-for="t in totalOrderStatus"
+                :key="t.id"
+                :label="t.id">
+                {{t.name}}
+              </el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -97,11 +102,30 @@
     data(){
       return {
         tableData: [],
+        checkAllOrderStatus: false,
         advanceSearch: false,
         form: {},
         easyForm: {//简单查询
 
         },
+        totalOrderStatus: [
+          {
+            name: '已作废',
+            id: 1
+          },
+          {
+            name: '待退单审核',
+            id: 2
+          },
+          {
+            name: '待退款确认',
+            id: 3
+          },
+          {
+            name: '已完成',
+            id: 4
+          },
+        ],//订单状态
         pickerOptions1: {
           shortcuts: [{
             text: '今天',

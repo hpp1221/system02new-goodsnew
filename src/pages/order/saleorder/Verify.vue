@@ -41,7 +41,7 @@
               </el-table-column>
             </el-table>
             <el-form-item label="收货信息" style="margin-top: 20px;">
-              <p v-if="form">客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
+              <p v-if="form.orderShipment">客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
               </p>
             </el-form-item>
             <el-form-item label="交货日期">
@@ -80,10 +80,12 @@
         activeName: 'first',
         form: {
           orderDetails: [],
-          customer: '',//客户名称
-          contacts: '',//收货人
-          cel: '',//联系方式
-          address: '',//收货地址
+          orderShipment: {
+            customer: '',//客户名称
+            userName: '',//收货人
+            userPhone: '',//联系方式
+            userAddress: '',//收货地址
+          },
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注

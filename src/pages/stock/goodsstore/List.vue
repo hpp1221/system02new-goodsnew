@@ -148,11 +148,13 @@
           upLimit: 0,
           downLimit: 0,
           zero: 0,
-          cat: []
+          cat: [],
+          type:1//1是库存，2是门店
         },
         easyForm: {//简单查询
           address: [],//所属仓库
-          keyword: '',//关键词
+          keyword: '',//关键词,
+          type:1//1是库存，2是门店
         },
         totalStores: [],//仓库列表
         totalCategories: [],//分类列表
