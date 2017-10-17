@@ -51,16 +51,16 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.userId)">修改</el-dropdown-item>
-                <el-dropdown-item v-if="scope.row.status == -1" @click.native="deleteItem(scope.row.userId,1)">启用
+                <el-dropdown-item @click.native="seeDetail(scope.row.userId)">查看详情</el-dropdown-item>
+                <el-dropdown-item @click.native="initializationPwd(scope.row.userId)">初始化密码</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.status == -1" @click.native="forbidden(scope.row.userId,1)">启用
                 </el-dropdown-item>
-                <el-dropdown-item v-else @click.native="deleteItem(scope.row.userId,-1)">禁用</el-dropdown-item>
+                <el-dropdown-item v-else @click.native="forbidden(scope.row.userId,-1)">禁用</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
@@ -86,6 +86,33 @@
     },
 
     methods: {
+      initializationPwd(id){
+        let self = this;
+        this.$confirm('确认初始化该用户的密码?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let requestData = {
+            token: window.localStorage.getItem('token'),
+            userId: id
+          };
+          self.$http.post('/ui/user/initUserPwd', self.qs.stringify(requestData)).then(function (response) {
+            let data = response.data;
+            console.log('selectUserListPage', response)
+            if (data.code === 10000) {
+              self.$message.success('操作成功');
+            }
+          }).catch(function (error) {
+            console.log(error);
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });
+        });
+      },
       addUser(){
         this.$router.push('/personal/user/add');
       },
@@ -113,11 +140,11 @@
           console.log(error);
         });
       },
-      update(id){
-        let url = '/personal/user/update/' + id;
+      seeDetail(id){
+        let url = '/tenant/tenant/detail/' + id;
         this.$router.push(url);
       },
-      deleteItem(id, status){
+      forbidden(id, status){//启用，禁用
         let self = this;
         let str = '';
         status === 1 ? str = '确认启用?' : str = '确认禁用?';

@@ -1,8 +1,13 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">创建订单</h3>
+      <h3 class="page-title">创建销售订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+        <el-form-item label="客户">
+          <el-select placeholder="请选择客户" v-model="form.client">
+            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in clients"></el-option>
+          </el-select>
+        </el-form-item>
         <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
@@ -197,10 +202,6 @@
         this.form.orderShipment.userPhone = userinfo.cel;
         this.form.orderShipment.userAddress = userinfo.companyName;
       }
-      let self = this;
-      self.getImgAccess(function(data){
-        self.imgToken = data;
-      });//获取图片token
     },
     methods: {
       judgeNum(value, index){//判断数量是否为整数

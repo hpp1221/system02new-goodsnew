@@ -13,7 +13,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户">
-          <el-input placeholder="请输入客户名称/销售订单号" v-model="easyForm.client"></el-input>
+          <el-input placeholder="请输入客户名称/销售订单号" v-model="easyForm.client" class="long-input"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -22,34 +22,46 @@
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="createPurchaseReturn">导入</el-button>
-        </el-form-item>
-        <el-form-item>
           <el-button @click="createPurchaseReturn">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
-        <el-form-item label="销售单号">
-          <el-input placeholder="请输入销售单号" v-model="form.keyword" class="long-input">
+      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+          <el-form-item label="销售单号">
+            <el-input placeholder="请输入销售单号" v-model="form.keyword" class="long-input">
 
-          </el-input>
-        </el-form-item>
-        <el-form-item label="下单时间">
-          <el-date-picker
-            v-model="form.orderTime"
-            type="datetime"
-            placeholder="选择日期时间"
-            align="right"
-            :picker-options="pickerOptions1">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="客户名称">
-          <el-input v-model="form.clientName"></el-input>
-        </el-form-item>
-        <el-form-item label="退单状态">
-          <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
-        </el-form-item>
-      </el-form>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="下单时间">
+            <el-date-picker
+              v-model="form.orderTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="客户名称">
+            <el-input v-model="form.clientName" class="form-input"></el-input>
+          </el-form-item>
+          <el-form-item label="退单状态">
+            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+              <el-checkbox
+                v-for="t in totalOrderStatus"
+                :key="t.id"
+                :label="t.id">
+                {{t.name}}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+            <el-button @click="advanceSearch = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
+
       <el-table :data="tableData">
         <el-table-column label="退单号">
           <template scope="scope">
@@ -82,26 +94,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
-        <el-table :data="multipleSelection">
-          <el-table-column label="商品编码" prop="barCode">
-
-          </el-table-column>
-          <el-table-column label="商品名称" prop="name">
-
-          </el-table-column>
-          <el-table-column label="规格" prop="sku">
-
-          </el-table-column>
-          <el-table-column label="商品上架">
-            <template scope="scope">
-              <el-checkbox>新品上架</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button @click="sureSetTags">确定</el-button>
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-      </el-dialog>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
@@ -112,11 +104,32 @@
     data(){
       return {
         tableData: [],
+        checkAllOrderStatus: false,
         advanceSearch: false,
-        form: {},
+        form: {
+            orderStatus:[]
+        },
         easyForm: {//简单查询
 
         },
+        totalOrderStatus: [
+          {
+            name: '已作废',
+            id: 1
+          },
+          {
+            name: '待退单审核',
+            id: 2
+          },
+          {
+            name: '待退款确认',
+            id: 3
+          },
+          {
+            name: '已完成',
+            id: 4
+          },
+        ],//订单状态
         pickerOptions1: {
           shortcuts: [{
             text: '今天',
@@ -339,7 +352,19 @@
       },
       cancelSelect(){//取消选中
         this.$refs.multipleTable.clearSelection();
-      }
+      },
+      orderStatusAllChange(event){//订单checkbox全选按钮
+        this.form.orderStatus = [];
+        if (event) {
+          for (let i = 0; i < this.totalOrderStatus.length; i++) {
+            this.form.orderStatus.push(this.totalOrderStatus[i].id);
+          }
+        }
+      },
+      orderStatusChange(value){//订单checkbox单个按钮
+        let checkedCount = value.length;
+        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
+      },
 
     }
   }

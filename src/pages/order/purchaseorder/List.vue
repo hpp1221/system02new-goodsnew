@@ -3,9 +3,10 @@
     <div class="wrapper">
       <h3 class="page-title">采购订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item>
+        <el-form-item label="订单状态">
           <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
-            <el-option :label="t.address" :key="t.id" :value="t.address" v-for="t in totalOrderStatus"></el-option>
+            <el-option label="全部" :value="0"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -24,7 +25,7 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column prop="orderNumber" label="订单号">
+        <el-table-column prop="orderNumber" label="采购订单号">
 
         </el-table-column>
         <el-table-column label="下单时间" sortable>
@@ -88,8 +89,14 @@
             </el-input>
           </el-form-item>
           <el-form-item label="订单状态">
-            <el-checkbox-group v-model="form.orderStatus">
-              <el-checkbox v-for="t in totalOrderStatus" :key="t.name" :label="t.name"></el-checkbox>
+            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+              <el-checkbox
+                v-for="t in totalOrderStatus"
+                :key="t.id"
+                :label="t.id">
+                {{t.name}}
+              </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <!--<el-form-item label="付款状态">-->
@@ -102,9 +109,11 @@
               <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
+          <el-form-item>
+            <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
+            <el-button @click="advanceSearch = false">取消</el-button>
+          </el-form-item>
         </el-form>
-        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
-        <el-button @click="advanceSearch = false">取消</el-button>
       </el-dialog>
     </div>
   </div>
@@ -115,10 +124,12 @@
     data(){
       return {
         tableData: [],
+        checkAllOrderStatus: false,
+        checkAllPayStatus: false,
         form: {
-//          payType: '',//付款状态
+          payStatus: [],//付款状态
           orderNumber: '',//订单编号
-//          orderStatus: '',//订单状态
+          orderStatus: [],//订单状态
           dateRange: '',
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
@@ -126,7 +137,7 @@
           endTime: ''
         },
         easyForm: {//简单查询
-
+          orderStatus: 0
         },
         pageSize: 5,
         pageNum: 1,
@@ -147,39 +158,50 @@
         ],
         totalOrderStatus: [
           {
-            name: '待订单审核'
+            name: '待订单审核',
+            id: 1
           },
           {
-            name: '待财务审核'
+            name: '待财务审核',
+            id: 2
           },
           {
-            name: '待出库审核'
+            name: '待出库审核',
+            id: 3
           },
           {
-            name: '待发货确认'
+            name: '待发货确认',
+            id: 4
           },
           {
-            name: '待收货确认'
+            name: '待收货确认',
+            id: 5
           },
           {
-            name: '已完成'
+            name: '已完成',
+            id: 6
           },
           {
-            name: '已作废'
+            name: '已作废',
+            id: 7
           },
         ],//订单状态
-        totalPaymentStatus: [
+        totalPayStatus: [
           {
-            name: '未付款'
+            name: '未付款',
+            id:1
           },
           {
-            name: '付款待审核'
+            name: '付款待审核',
+            id:2
           },
           {
-            name: '部分付款'
+            name: '部分付款',
+            id:3
           },
           {
-            name: '已付款'
+            name: '已付款',
+            id:4
           },
         ],//付款状态
         totalOrderTags: [
@@ -221,19 +243,46 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          orderType:1
+          orderType: 1
         };
 
         if (self.easyForm.dateRange instanceof Array) {
-          self.easyForm.startTime = self.easyForm.dateRange[0]
-          self.easyForm.endTime = self.easyForm.dateRange[1]
+          self.easyForm.startTime = self.easyForm.dateRange[0];
+          self.easyForm.endTime = self.easyForm.dateRange[1];
         }
-        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
 
-          if (data.code == 10000) {
+          if (data.code === 10000) {
+            self.tableData = data.data.list;
+            console.log('list', self.tableData)
+            self.totalPage = data.data.total;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      advanceSelect(size, num){//高级搜索
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num,
+          orderType: 1
+        };
+
+        if (self.form.dateRange instanceof Array) {
+          self.form.startTime = self.form.dateRange[0];
+          self.form.endTime = self.form.dateRange[1];
+        }
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+
+        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             console.log('list', self.tableData)
             self.totalPage = data.data.total;
@@ -258,6 +307,30 @@
       seeDetail(id){
         let url = '/order/purchaseorder/detail/' + id;
         this.$router.push(url);
+      },
+      orderStatusAllChange(event){//订单checkbox全选按钮
+        this.form.orderStatus = [];
+        if (event) {
+          for (let i = 0; i < this.totalOrderStatus.length; i++) {
+            this.form.orderStatus.push(this.totalOrderStatus[i].id);
+          }
+        }
+      },
+      orderStatusChange(value){//订单checkbox单个按钮
+        let checkedCount = value.length;
+        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
+      },
+      payStatusAllChange(event){//支付checkbox全选按钮
+        this.form.payStatus = [];
+        if (event) {
+          for (let i = 0; i < this.totalPayStatus.length; i++) {
+            this.form.payStatus.push(this.totalPayStatus[i].id);
+          }
+        }
+      },
+      payStatusChange(value){//支付checkbox单个按钮
+        let checkedCount = value.length;
+        this.checkAllPayStatus = checkedCount === this.totalPayStatus.length;
       }
     }
   }
