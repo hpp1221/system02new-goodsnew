@@ -26,12 +26,14 @@
         <el-form-item>
           <el-date-picker
             type="daterange"
-            placeholder="选择日期范围"
-            v-model="form.dateRange">
+            start-placeholder="请选择"
+            end-placeholder="请选择"
+            v-model="form.dateRange"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
           <el-button @click="jumpToAdd">新增</el-button>
         </el-form-item>
       </el-form>
@@ -64,6 +66,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
@@ -77,20 +80,21 @@
           type: -1,
           addressId: -1,
           status: 1,//1代表入库
-          dateRange: '',
+          dateRange: [null,null],
           startDate: '',
           endDate: ''
         },
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
         totalStores: [],
         loading: false,//table加载图片
         addressLoading: false,//仓库列表加载图片
       }
     },
-
-    created(){
-      this.select();
+    components: {
+      'pagination': require('../../../components/pagination')
     },
-
     methods: {
       getAddress(type){
         if (type && this.totalStores.length === 0) {
@@ -102,20 +106,27 @@
           });
         }
       },
-
-      select(){//查询
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num);
+      },
+      select(size, num){//查询
         let self = this;
         self.loading = true;
-        let requestData = {token: window.localStorage.getItem('token')};
-        if (self.form.dateRange instanceof Array) {
-          self.form.startDate = self.form.dateRange[0];
-          self.form.endDate = self.form.dateRange[1];
-        }
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num
+        };
+        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/recordList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           if (data.code === 10000) {
-            self.tableData = data.data;
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
             self.loading = false;
           }
         }).catch(function (error) {

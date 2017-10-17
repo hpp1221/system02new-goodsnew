@@ -61,22 +61,19 @@
         </el-form>
       </el-dialog>
       <el-table :data="tableData">
-        <el-table-column label="退单号">
-          <template scope="scope">
-            <img v-lazy="scope.row.img" alt=""
-                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
-          </template>
+        <el-table-column prop="returnOrderId" label="退单号">
+
         </el-table-column>
         <el-table-column prop="number" label="下单时间">
 
         </el-table-column>
-        <el-table-column prop="name" label="供应商名称">
+        <el-table-column prop="partnerName" label="供应商名称">
 
         </el-table-column>
-        <el-table-column prop="sku" label="金额">
+        <el-table-column prop="orderAmount" label="金额">
 
         </el-table-column>
-        <el-table-column prop="unit" label="状态">
+        <el-table-column prop="orderStatus" label="状态">
 
         </el-table-column>
         <el-table-column label="操作">
@@ -181,7 +178,8 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          type:1//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
@@ -201,12 +199,13 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          type:1//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('skuList', response)
+          console.log('selectReturnOrderListPage', response)
           if (data.code == 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;

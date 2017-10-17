@@ -3,32 +3,32 @@
     <div class="wrapper">
       <h3 class="page-title">添加客户</h3>
       <el-form ref="form" :model="addForm" label-width="90px" class="request-form">
-        <el-form-item label="客户名称" required>
-          <el-input v-model="addForm.name" class="form-input"></el-input>
+        <el-form-item label="客户名称">
+          {{addForm.name}}
         </el-form-item>
-        <el-form-item label="客户电话" required>
-          <el-input v-model="addForm.tel" class="form-input"></el-input>
+        <el-form-item label="客户编码">
+          {{addForm.customerNo}}
         </el-form-item>
-        <el-form-item label="客户手机" required>
-          <el-input v-model="addForm.cel" class="form-input"></el-input>
+        <el-form-item label="客户电话">
+          {{addForm.tel}}
+        </el-form-item>
+        <el-form-item label="客户手机">
+          {{addForm.cel}}
         </el-form-item>
         <el-form-item label="客户地址">
-          <el-input v-model="addForm.address" class="form-input"></el-input>
+          {{addForm.address}}
         </el-form-item>
         <el-form-item label="客户QQ">
-          <el-input v-model="addForm.qq" class="form-input"></el-input>
+          {{addForm.qq}}
         </el-form-item>
         <el-form-item label="客户邮箱">
-          <el-input v-model="addForm.email" class="form-input"></el-input>
+          {{addForm.email}}
         </el-form-item>
-        <el-form-item label="客户角色" required>
-          <el-select v-model="addForm.customerRole" @click.native="getRoleList">
-            <el-option v-for="t in totalRoleList" :key="t.name" :value="t.value" :label="t.name"></el-option>
-          </el-select>
+        <el-form-item label="客户角色">
+          {{addForm.customerRole}}
         </el-form-item>
         <el-form-item>
-          <el-button @click="sureAddClient">确定</el-button>
-          <el-button @click="cancel">取消</el-button>
+          <el-button @click="cancel">返回</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -39,6 +39,8 @@
     data(){
       return {
         addForm: {
+          customerId: '',
+          customerNo: '',
           name: '',
           cel: '',
           tel: '',
@@ -50,8 +52,11 @@
         totalRoleList: []
       }
     },
+    created(){
+      this.$route.params.id ? this.getRoleList(this.$route.params.id) : this.$router.push('/error');
+    },
     methods: {
-      getRoleList(){
+      getRoleList(id){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -62,21 +67,42 @@
           console.log('selectDictByType', response)
           if (data.code === 10000) {
             self.totalRoleList = data.data;
+            self.select(id);
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-
-      sureAddClient(){
+      select(id){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          customerId: id
+        };
+        self.$http.get('/ui/customer/selectCustomerById', {params: requestData}).then(function (response) {
+          let data = response.data;
+          console.log('selectCustomerById', response)
+          if (data.code === 10000) {
+            self.addForm = self.formPass(self.addForm, data.data);
+            for (let i = 0; i < self.totalRoleList.length; i++) {
+              if (self.addForm.customerRole === self.totalRoleList[i].value) {
+                self.addForm.customerRole = self.totalRoleList[i].name;
+              }
+            }
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      sureUpdateClient(){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/customer/insertCustomer', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/customer/updateCustomerById', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('insertCustomer', response)
+          console.log('updateCustomerById', response)
           if (data.code === 10000) {
             self.$router.push('/client/platform/list');
           }

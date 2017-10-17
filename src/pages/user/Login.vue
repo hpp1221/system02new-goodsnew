@@ -56,7 +56,7 @@
   export default{
     data(){
       return {
-          bg:require('../../assets/images/login.jpg'),
+        bg: require('../../assets/images/login.jpg'),
         form: {
           username: 'czkj-12345',
           password: 'a123456',
@@ -115,11 +115,21 @@
             self.$http.post('/ui/user/login.do', self.qs.stringify(requestData)).then(function (response) {
               let data = response.data;
               console.log(response);
-              if (data.code == 10000) {
+              if (data.code === 10000) {
                 window.localStorage.setItem('token', data.data.token);
-                self.$router.push('/');
+                self.$http.get('/ui/user/getMyInfo', {params: {token: data.data.token}}).then(function (response) {
+                  let data = response.data;
+                  if (data.code === 10000) {
+                    window.localStorage.setItem('userinfo', JSON.stringify(data.data));
+                    self.$router.push('/');
+                  } else {
+                    self.$message.error(data.message);
+                  }
+                }).catch(function (error) {
+                  console.log(error);
+                });
               } else {
-
+                self.$message.error(data.message);
               }
             }).catch(function (error) {
               console.log(error);

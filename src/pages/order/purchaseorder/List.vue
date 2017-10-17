@@ -4,8 +4,9 @@
       <h3 class="page-title">采购订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
-          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
-            <el-option label="全部" :value="0"></el-option>
+          <el-select
+            placeholder="全部订单"
+            v-model="easyForm.orderStatus">
             <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
@@ -13,7 +14,7 @@
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="addOrder">新增</el-button>
@@ -90,7 +91,8 @@
           </el-form-item>
           <el-form-item label="订单状态">
             <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
+                               style="display: inline;margin-left: 30px">
               <el-checkbox
                 v-for="t in totalOrderStatus"
                 :key="t.id"
@@ -100,9 +102,9 @@
             </el-checkbox-group>
           </el-form-item>
           <!--<el-form-item label="付款状态">-->
-            <!--<el-checkbox-group v-model="form.payType">-->
-              <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
-            <!--</el-checkbox-group>-->
+          <!--<el-checkbox-group v-model="form.payType">-->
+          <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
+          <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
           <el-form-item label="订单标签">
             <el-checkbox-group v-model="form.storeStatus">
@@ -130,14 +132,14 @@
           payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
-          dateRange: '',
+          dateRange: [null,null],
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
           startTime: '',
           endTime: ''
         },
         easyForm: {//简单查询
-          orderStatus: 0
+          orderStatus: ''
         },
         pageSize: 5,
         pageNum: 1,
@@ -189,19 +191,19 @@
         totalPayStatus: [
           {
             name: '未付款',
-            id:1
+            id: 1
           },
           {
             name: '付款待审核',
-            id:2
+            id: 2
           },
           {
             name: '部分付款',
-            id:3
+            id: 3
           },
           {
             name: '已付款',
-            id:4
+            id: 4
           },
         ],//付款状态
         totalOrderTags: [
@@ -245,13 +247,7 @@
           pageNo: num,
           orderType: 1
         };
-
-        if (self.easyForm.dateRange instanceof Array) {
-          self.easyForm.startTime = self.easyForm.dateRange[0];
-          self.easyForm.endTime = self.easyForm.dateRange[1];
-        }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
 
@@ -272,11 +268,8 @@
           pageNo: num,
           orderType: 1
         };
-
-        if (self.form.dateRange instanceof Array) {
-          self.form.startTime = self.form.dateRange[0];
-          self.form.endTime = self.form.dateRange[1];
-        }
+        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
 
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
@@ -335,6 +328,3 @@
     }
   }
 </script>
-
-<style>
-</style>
