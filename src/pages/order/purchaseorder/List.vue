@@ -48,9 +48,9 @@
         <el-table-column prop="createUserName" label="状态">
 
         </el-table-column>
-        <el-table-column prop="createUserName" label="付款状态">
+        <!--<el-table-column prop="createUserName" label="付款状态">-->
 
-        </el-table-column>
+        <!--</el-table-column>-->
         <el-table-column label="操作">
           <template scope="scope">
             <el-dropdown trigger="click">
@@ -99,12 +99,11 @@
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="付款状态">
-            <el-checkbox v-model="checkAllPayStatus" @change="payStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.payStatus" @change="payStatusChange" style="display: inline;margin-left: 30px">
-              <el-checkbox v-for="t in totalPayStatus" :key="t.id" :label="t.id">{{t.name}}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+          <!--<el-form-item label="付款状态">-->
+            <!--<el-checkbox-group v-model="form.payType">-->
+              <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
           <el-form-item label="订单标签">
             <el-checkbox-group v-model="form.storeStatus">
               <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
