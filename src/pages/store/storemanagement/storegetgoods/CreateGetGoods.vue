@@ -42,22 +42,16 @@
           <el-table-column label="规格" prop="sku" width="120">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="storeHouseName" width="100">
-            <!--<template scope="scope">-->
-            <!--<span v-if="goodsInfoList[0].storeHouseName? true:false">{{goodsInfoList[0].storeHouseName}}</span>-->
-            <!--<el-select v-if="goodsInfoList[0].storeHouseName? false:true">-->
-            <!--<el-option v-for="item in storeHouseIds" :key="item.name" :label="item.name" :value="item.id"></el-option>-->
-            <!--</el-select>-->
-            <!--</template>-->
-            <template scope="scope">
+          <el-table-column label="要货仓库" prop="storeHouseName">
 
-              <el-select :disabled="goodsInfoList[0].count <= goodsInfoList[0].inStoreHouse"
-                v-if="goodsInfoList[0].count > goodsInfoList[0].inStoreHouse" v-model="scope.row.storeHouseId">
-                <el-option v-for="item in storeHouseIds" :key="item.id" :label="item.name" :value="item.id"></el-option>
-              </el-select>
-              <span
-                v-else>{{goodsInfoList[0].storeHouseName}}</span>
-            </template>
+            <!--<template scope="scope">-->
+            <!--<el-select :disabled="goodsInfoList[0].count <= goodsInfoList[0].inStoreHouse"-->
+            <!--v-if="goodsInfoList[0].count > goodsInfoList[0].inStoreHouse" v-model="scope.row.storeHouseId">-->
+            <!--<el-option v-for="item in storeHouseIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
+            <!--</el-select>-->
+            <!--<span-->
+            <!--v-else>{{goodsInfoList[0].storeHouseName}}</span>-->
+            <!--</template>-->
 
           </el-table-column>
           <el-table-column label="门店库存" prop="storeInStoreHouse">
@@ -136,8 +130,8 @@
         goodsInfoList: [
           {
             storeHouseName: '',
-            count:'',
-            inStoreHouse:''
+            count: '',
+            inStoreHouse: ''
           }
         ],
 
