@@ -23,16 +23,16 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8098,
+    port: 8099,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/ui': {
         // target: 'http://47.94.241.192:8081',
-         target: 'http://192.168.41.78:8083',
+        //  target: 'http://192.168.41.78:8083',
         //   target: 'http://192.168.41.191:8081',
-        //target: 'http://192.168.41.216:8081',
+        // target: 'http://192.168.41.216:8081',
          target: 'http://192.168.41.93:8081',
         //target: 'http://192.168.41.216:8081',
         //target: 'http://192.168.41.216:8081',
@@ -49,5 +49,5 @@ module.exports = {
     // In our experience, they generally work as expected,
     // just be aware of this issue when enabling this option.
     cssSourceMap: false
-  }
+  },
 }
