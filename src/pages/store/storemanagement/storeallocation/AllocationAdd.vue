@@ -2,24 +2,24 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">新增门店调拨单</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px" inline>
+      <el-form ref="form" :model="form" class="request-form" label-width="80px" inline>
         <el-form-item label="调拨单号">
           {{form.tradeNo}}
         </el-form-item>
         <el-form-item label="调入门店" v-model="form.outPutAddress">
-          <el-select placeholder="请选择门店" v-model="form.inPutAddressId">
+          <el-select placeholder="请选择门店" v-model="form.inPutAddressId" style="width: 130px">
             <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="调出门店" v-model="form.outPutAddress">
-          <el-select placeholder="请选择门店" v-model="form.outPutAddressId">
+          <el-select placeholder="请选择门店" v-model="form.outPutAddressId" style="width: 130px">
             <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="要货人" v-if="userinfo">
-          <el-input v-model="userinfo.name" :disabled="true"></el-input>
+        <el-form-item label="要货人">
+          <el-input v-model="form.name" :disabled="true"></el-input>
         </el-form-item>
-        <el-table :data="form.getGoodsRecordDetails">
+        <el-table :data="form.getGoodsRecordDetails" v-if="form.outPutAddressId">
           <el-table-column
             type="index"
             width="70">
@@ -48,15 +48,6 @@
 
           </el-table-column>
           <el-table-column label="调入门店库存" prop="storeHouseName" width="120">
-
-            <!--<template scope="scope">-->
-            <!--<el-select :disabled="goodsInfoList[0].count <= goodsInfoList[0].inStoreHouse"-->
-            <!--v-if="goodsInfoList[0].count > goodsInfoList[0].inStoreHouse" v-model="scope.row.storeHouseId">-->
-            <!--<el-option v-for="item in storeHouseIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
-            <!--</el-select>-->
-            <!--<span-->
-            <!--v-else>{{goodsInfoList[0].storeHouseName}}</span>-->
-            <!--</template>-->
 
           </el-table-column>
           <el-table-column label="调出门店库存" prop="storeInStoreHouse" width="120">
@@ -99,10 +90,12 @@
         storeHouseIds: [],
         form: {
           tradeNo: '',
+          name:'',
           inPutAddressId: '',
           outPutAddressId:'',
           inPutAddress: '',
           outPutAddress:'',
+          goodsSkuId:'',
           getGoodsRecordDetails: [{
             goodsNumber: '',//商品编号
             goodsName: '',//商品名
@@ -124,21 +117,17 @@
             remark: '',//备注
           }],
         },
-        rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [
-//          {
-//            storeHouseName: '',
-//            count: '',
-//            inStoreHouse: ''
-//          }
+          {
+            goodsSkuId:''
+          }
         ],
-
       }
     },
     created() {
       this.getStoreList()//要货门店
-      this.getTradeNumber()//单据编码
+      this.getTradeNumber()//调拨单号
     },
     computed: {
       userinfo: function () {
@@ -146,27 +135,45 @@
       },
     },
     methods: {
-      getGoodsSubmit() {//提交门店要货单
-        let self = this;
+      getTradeNumber() {//调拨单号
+        let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
-          outPutAddressId:self.form.outPutAddressId,
-          outPutAddress:self.form.outPutAddress,
-          inPutAddressId:self.form.inPutAddressId,
-          inPutAddress:self.form.inPutAddress,
-          goodsData:self.form.getGoodsRecordDetails,
-          goodsSkuId:self.form.goodsSkuId
-        };
-//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/addGetGoodsRecord', self.qs.stringify(requestData)).then(function (response) {
+          token: window.localStorage.getItem('token')
+        }
+        self.$http.post('/ui/createAllocationRecordNumber', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('getgoodssubmit', response)
+          console.log('number000', response);
           if (data.code == 10000) {
-            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+            let list = data.data;
+            self.form.tradeNo = list.tradeNo;
+            self.form.name = list.name;
           }
         }).catch(function (error) {
           console.log(error);
         });
+      },
+      getGoodsSubmit() {//提交门店要货单
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+//          outPutAddressId:self.form.outPutAddressId,
+//          outPutAddress:self.form.outPutAddress,
+//          inPutAddressId:self.form.inPutAddressId,
+//          inPutAddress:self.form.inPutAddress,
+//          goodsData:self.form.getGoodsRecordDetails,
+//          goodsSkuId:self.form.goodsSkuId
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.$http.post('/ui/createStoreAllocation', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('createStoreAllocation', response)
+          if (data.code == 10000) {
+            self.$router.push('/store/storemanagement/storeallocation/list');
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+
       },
       getStoreList() {//要货门店
         let self = this
@@ -179,22 +186,6 @@
           let data = response.data;
           if (data.code == 10000) {
             self.storeIds = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      getTradeNumber() {//单据编码
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        }
-        self.$http.post('/ui/createGetGoodsNumber', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('number', response);
-          if (data.code == 10000) {
-            let list = data.data;
-            self.form.tradeNumber = list;
           }
         }).catch(function (error) {
           console.log(error);
@@ -233,12 +224,26 @@
             self.goodsInfoList = list;
             // 调用 callback 返回建议列表的数据
             cb(self.goodsInfoList);
+            let params = {
+              token: window.localStorage.getItem('token'),
+              goodsSkuId:self.goodsInfoList[0].goodsSkuId,
+              outPutAddressId:self.form.outPutAddressId,
+              inPutAddressId:self.form.inPutAddressId,
+            }
+            self.$http.post('/ui/selectOutPutAndInputGoodsStoreHouse', self.qs.stringify(params)).then(function (response) {
+              let data = response.data;
+              console.log('selectOutPutAndInputGoodsStoreHouse', response)
+              if (data.code == 10000) {
+
+              }
+            }).catch(function (error) {
+              console.log(error);
+            });
             console.log('goods', self.goodsInfoList[0].goodsSkuId);
           }
         }).catch(function (error) {
           console.log(error);
         });
-
       },
       handleSelect(item) {//判断是否已选该商品
         let list = this.form.getGoodsRecordDetails;

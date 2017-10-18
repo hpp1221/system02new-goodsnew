@@ -1,40 +1,49 @@
 <template>
   <div class="container">
-    <div class="wrapper">
-      <el-form ref="titleForm" :model="titleForm" class="storegetgoods-nav storegetgoodsdetail-title">
-        <el-form-item class="storegetgoodsdetail-title-left">
-          <h3>门店调拨单详情</h3>
-        </el-form-item>
-        <el-form-item class="storegetgoodsdetail-title-right">
-          <el-button type="text" @click="leadInSupplier"
-                     class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
-          </el-button>
-          <el-button type="text" @click="outputGetGoods"
-                     class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-          </el-button>
-          <el-button type="text" @click="cancelGetGoods"
-                     class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
-          </el-button>
-          <el-button @click="getGoodsExaminePass">通过</el-button>
-        </el-form-item>
-      </el-form>
+    <div class="wrapper allocationwrapper">
+      <h3 class="page-title">门店调拨单详情</h3>
+      <div class="storegetgoodsdetail-title-right">
+        <el-button type="text"
+                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        </el-button>
+        <el-button type="text"
+                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        </el-button>
+        <el-button type="text" @click="cancelGetGoods"
+                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        </el-button>
+
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+          {{item.label}}
+        </el-button>
+      </div>
+
+        <!--<el-button  @click="getGoodsExaminePass" v-model="type">-->
+          <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.type == '0'">已完成</span>-->
+            <!--<span v-if="scope.row.type == '1'">待审核通过</span>-->
+            <!--<span v-if="scope.row.type == '2'">待发货确认</span>-->
+            <!--<span v-if="scope.row.type == '3'">待收货确认</span>-->
+            <!--<span v-if="scope.row.type == '4'">作废</span>-->
+          <!--</template>-->
+        <!--</el-button>-->
       <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px"
                inline>
         <el-form-item label="调拨单号">
-          {{form.tradeNumber}}
+          {{form.tradeNo}}
         </el-form-item>
-        <el-form-item label="调入门店">
-          <el-input v-model="form.storeName" :disabled="true"></el-input>
+        <el-form-item label="调入门店" v-model="form.inPutAddressId">
+          <el-input v-model="form.inPutAddress" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="调出门店">
-          <el-input v-model="form.storeName" :disabled="true"></el-input>
+        <el-form-item label="调出门店" v-model="form.outPutAddressId">
+          <el-input v-model="form.outPutAddress" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="要货人">
           <el-input v-model="form.createUserName" :disabled="true"></el-input>
         </el-form-item>
         <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%"
                   @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" prop="supplierId">
+          <el-table-column type="selection" width="55" prop="goodsSkuId">
           </el-table-column>
           <el-table-column
             type="index"
@@ -45,33 +54,24 @@
               <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码" prop="goodsNumber">
+          <el-table-column label="商品编码" prop="number">
 
           </el-table-column>
           <el-table-column label="商品名称" prop="goodsName">
 
           </el-table-column>
-          <el-table-column label="规格" prop="goodsSpec">
+          <el-table-column label="规格" prop="goodsSpec" width="200">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="storeHouseName">
+          <el-table-column label="调入门店库存" prop="inStoreHouseNum" width="120">
 
           </el-table-column>
-          <el-table-column label="门店库存" prop="storeInStoreHouse">
+          <el-table-column label="调出门店库存" prop="outStoreHouseNum" width="120">
 
           </el-table-column>
-          <el-table-column label="门店在途量" prop="storeOnTheWay">
-
+          <el-table-column label="要货数量" prop="num">
           </el-table-column>
-          <el-table-column label="仓库库存" prop="inStoreHouse">
-
-          </el-table-column>
-          <el-table-column label="仓库在途量" prop="onTheWay">
-
-          </el-table-column>
-          <el-table-column label="要货数量" prop="count">
-          </el-table-column>
-          <el-table-column label="单位" prop="unit">
+          <el-table-column label="单位" prop="goodsUnit">
 
           </el-table-column>
           <el-table-column label="单价" prop="price">
@@ -81,19 +81,6 @@
 
           </el-table-column>
           <el-table-column label="备注" prop="remark">
-          </el-table-column>
-        </el-table>
-        <el-form-item>
-          <h4 class="el-icon-arrow-down" style="margin-top: 30px">操作日志</h4>
-        </el-form-item>
-        <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column prop="time" label="操作时间">
-          </el-table-column>
-
-          <el-table-column prop="name" label="操作人">
-          </el-table-column>
-          <el-table-column prop="type" label="状态">
-
           </el-table-column>
         </el-table>
       </el-form>
@@ -106,36 +93,60 @@
     data() {
       return {
         form: {
-          id:'',
-          tradeNumber: '',
-          storeId: '',
-          storeName: '',
-          createUseraName: ''
+          id: '',
+          tradeNo: '',
+          inPutAddressId: '',
+          inPutAddress: '',
+          outPutAddressId: '',
+          outPutAddress: '',
+          createUseraName: '',
+
         },
-        tableData: [],
+        type: '',
         getGoodsRecordDetails: [],
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
+        typeLists: [//高级查询的单据状态
+          {
+            value: '4',
+            label: "作废"
+          },
+          {
+            value: '1',
+            label: "待审核确认"
+          },
+          {
+            value: '2',
+            label: "待发货审核"
+          },
+          {
+            value: '0',
+            label: "已完成"
+          },
+          {
+            value: '3',
+            label: "待收货确认"
+          },
+        ],
       }
     },
     created() {
-      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.query.allocationId ? this.select(this.$route.query.allocationId) : this.$router.push('/error');
     },
     methods: {
       select(id) {//详情列表
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          id: id,
+          allocationId: id,
         }
-        self.$http.post('/ui/getGoodsRecordDetail', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/storeAllocationInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('detail', response);
+          console.log('detailtype', response.data.data.type);
           if (data.code == 10000) {
             self.form = data.data
-            self.getGoodsRecordDetails = data.data.list
-            self.tableData = data.data.flowList
-
+            self.type = data.data.type
+            self.getGoodsRecordDetails = data.data.allocationRecordGoodslist
           }
         }).catch(function (error) {
           console.log(error);
@@ -173,8 +184,8 @@
       cancelGetGoods() { //作废
         let self = this;
         let params = {
-          token:window.localStorage.getItem('token'),
-          id:self.form.id
+          token: window.localStorage.getItem('token'),
+          id: self.form.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
@@ -182,7 +193,7 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set',res)
+            console.log('set', res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
@@ -199,7 +210,7 @@
 
         })
       },
-      outputGetGoods(){
+      outputGetGoods() {
         let self = this
         let supplierString = ''
         for (let i = 0; i < self.multipleSelection.length; i++) {

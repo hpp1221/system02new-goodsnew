@@ -3,13 +3,13 @@
     <div class="wrapper">
       <el-form ref="titleForm" :model="titleForm" class="storegetgoods-nav storegetgoodsdetail-title">
         <el-form-item class="storegetgoodsdetail-title-left">
-          <h3>门店要货详情</h3>
+          <h3>门店调拨单详情</h3>
         </el-form-item>
         <el-form-item class="storegetgoodsdetail-title-right">
           <el-button type="text" @click="leadInSupplier"
                      class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
           </el-button>
-          <el-button type="text" @click="outputSupplier"
+          <el-button type="text" @click="outputGetGoods"
                      class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
           </el-button>
           <el-button type="text" @click="cancelGetGoods"
@@ -20,16 +20,22 @@
       </el-form>
       <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px"
                inline>
-        <el-form-item label="单据编码">
-          {{form.tradeNumber}}
+        <el-form-item label="调拨单号">
+          {{form.tradeNo}}
         </el-form-item>
-        <el-form-item label="要货门店">
-          <el-input v-model="form.storeName" :disabled="true"></el-input>
+        <el-form-item label="调入门店" v-model="form.inPutAddressId">
+          <el-input v-model="form.inPutAddress" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="调出门店" v-model="form.outPutAddressId">
+          <el-input v-model="form.outPutAddress" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="要货人">
           <el-input v-model="form.createUserName" :disabled="true"></el-input>
         </el-form-item>
-        <el-table :data="getGoodsRecordDetails">
+        <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%"
+                  @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" prop="goodsSkuId">
+          </el-table-column>
           <el-table-column
             type="index"
             width="70">
@@ -39,7 +45,7 @@
               <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码" prop="goodsNumber">
+          <el-table-column label="商品编码" prop="number">
 
           </el-table-column>
           <el-table-column label="商品名称" prop="goodsName">
@@ -48,24 +54,15 @@
           <el-table-column label="规格" prop="goodsSpec">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="storeHouseName">
+          <el-table-column label="调入门店库存" prop="inStoreHouseNum">
 
           </el-table-column>
-          <el-table-column label="门店库存" prop="storeInStoreHouse">
+          <el-table-column label="调出门店库存" prop="outStoreHouseNum">
 
           </el-table-column>
-          <el-table-column label="门店在途量" prop="storeOnTheWay">
-
+          <el-table-column label="要货数量" prop="num">
           </el-table-column>
-          <el-table-column label="仓库库存" prop="inStoreHouse">
-
-          </el-table-column>
-          <el-table-column label="仓库在途量" prop="onTheWay">
-
-          </el-table-column>
-          <el-table-column label="要货数量" prop="count">
-          </el-table-column>
-          <el-table-column label="单位" prop="unit">
+          <el-table-column label="单位" prop="goodsUnit">
 
           </el-table-column>
           <el-table-column label="单价" prop="price">
@@ -75,19 +72,6 @@
 
           </el-table-column>
           <el-table-column label="备注" prop="remark">
-          </el-table-column>
-        </el-table>
-        <el-form-item>
-          <h4 class="el-icon-arrow-down" style="margin-top: 30px">操作日志</h4>
-        </el-form-item>
-        <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column prop="time" label="操作时间">
-          </el-table-column>
-
-          <el-table-column prop="name" label="操作人">
-          </el-table-column>
-          <el-table-column prop="type" label="状态">
-
           </el-table-column>
         </el-table>
       </el-form>
@@ -101,35 +85,34 @@
       return {
         form: {
           id:'',
-          tradeNumber: '',
-          storeId: '',
-          storeName: '',
+          tradeNo: '',
+          inPutAddressId: '',
+          inPutAddress: '',
+          outPutAddressId:'',
+          outPutAddress:'',
           createUseraName: ''
         },
-        tableData: [],
         getGoodsRecordDetails: [],
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
       }
     },
     created() {
-      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.query.allocationId ? this.select(this.$route.query.allocationId) : this.$router.push('/error');
     },
     methods: {
       select(id) {//详情列表
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          id: id,
+          allocationId: id,
         }
-        self.$http.post('/ui/getGoodsRecordDetail', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/storeAllocationInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('detail', response);
           if (data.code == 10000) {
             self.form = data.data
-            self.getGoodsRecordDetails = data.data.list
-            self.tableData = data.data.flowList
-
+            self.getGoodsRecordDetails = data.data.allocationRecordGoodslist
           }
         }).catch(function (error) {
           console.log(error);
@@ -139,21 +122,22 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          type: 2,
-          tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
+          status: 2,
+          allocationRecordId: self.form.id
         }
         self.$confirm('确认要通过该审核？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/examine', self.qs.stringify(requestData)).then((res) => {
+          self.$http.post('/ui/storeAllocationRecordAdopt', self.qs.stringify(requestData)).then((res) => {
+            console.log('deta',res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
                 message: '已通过该审核!'
               });
-              this.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+              this.$router.push('/store/storemanagement/storeallocation/list');
             } else {
               self.$message({
                 type: 'info',
@@ -161,7 +145,48 @@
               });
             }
           })
-
+        })
+        self.$confirm('确认要通过该审核？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          self.$http.post('/ui/storeAllocationRecordSendAdopt', self.qs.stringify(requestData)).then((res) => {
+            console.log('deta',res)
+            if (res.data.code == 10000) {
+              self.$message({
+                type: 'success',
+                message: '已通过该审核!'
+              });
+              this.$router.push('/store/storemanagement/storeallocation/list');
+            } else {
+              self.$message({
+                type: 'info',
+                message: '已取消'
+              });
+            }
+          })
+        })
+        self.$confirm('确认要通过该审核？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          self.$http.post('/ui/storeAllocationRecordReceiveAdopt', self.qs.stringify(requestData)).then((res) => {
+            console.log('deta',res)
+            if (res.data.code == 10000) {
+              self.$message({
+                type: 'success',
+                message: '已通过该审核!'
+              });
+              this.$router.push('/store/storemanagement/storeallocation/list');
+            } else {
+              self.$message({
+                type: 'info',
+                message: '已取消'
+              });
+            }
+          })
         })
       },
       cancelGetGoods() { //作废
