@@ -45,7 +45,8 @@
           </el-form-item>
           <el-form-item label="退单状态">
             <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
+                               style="display: inline;margin-left: 30px">
               <el-checkbox
                 v-for="t in totalOrderStatus"
                 :key="t.id"
@@ -61,11 +62,13 @@
         </el-form>
       </el-dialog>
       <el-table :data="tableData">
-        <el-table-column prop="returnOrderId" label="退单号">
+        <el-table-column prop="orderNumber" label="退单号">
 
         </el-table-column>
-        <el-table-column prop="number" label="下单时间">
-
+        <el-table-column label="下单时间">
+          <template scope="scope">
+            {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
+          </template>
         </el-table-column>
         <el-table-column prop="partnerName" label="供应商名称">
 
@@ -73,17 +76,18 @@
         <el-table-column prop="orderAmount" label="金额">
 
         </el-table-column>
-        <el-table-column prop="orderStatus" label="状态">
-
+        <el-table-column label="状态">
+          <template scope="scope">
+            <span v-if="scope.row.orderStatus == o.id" v-for="o in totalOrderStatus">{{o.name}}</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">退单详情</el-dropdown-item>
-                <el-dropdown-item @click.native="verify(scope.row.id,scope.row.goodsId)">审核</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">作废</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.returnOrderId)">退单详情</el-dropdown-item>
+                <el-dropdown-item @click.native="verify(scope.row.returnOrderId)">审核</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -179,14 +183,14 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          type:1//1是采购退货，2是销售退货
+          type: 1//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
         self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('skuList', response)
-          if (data.code == 10000) {
+          console.log('selectReturnOrderListPage', response)
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }
@@ -200,13 +204,13 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          type:1//1是采购退货，2是销售退货
+          type: 1//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectReturnOrderListPage', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }

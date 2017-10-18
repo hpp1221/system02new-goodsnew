@@ -76,6 +76,27 @@
           <!--v-if="imgToken">-->
           <!--</uploadfiles>-->
         </el-form-item>
+        <el-form-item label="操作日志">
+          <el-switch
+            v-model="operationLogVisible"
+            on-text=""
+            off-text="">
+          </el-switch>
+        </el-form-item>
+        <el-table v-if="operationLogVisible">
+          <el-table-column label="操作人">
+
+          </el-table-column>
+          <el-table-column label="时间">
+
+          </el-table-column>
+          <el-table-column label="操作类别">
+
+          </el-table-column>
+          <el-table-column label="操作日志">
+
+          </el-table-column>
+        </el-table>
       </el-form>
       <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
         <el-form :model="editDeliveryForm" label-width="70px">
@@ -136,6 +157,7 @@
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
+        operationLogVisible:false,
         invoiceTypes: [
           {
             id: 0,

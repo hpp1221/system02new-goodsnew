@@ -15,13 +15,13 @@
 
         </el-table-column>
         <!--<el-table-column prop="orderStatus" label="出库/发货">-->
-          <!--<template scope="scope">-->
-            <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
-            <!--<span v-if="scope.row.orderStatus == 4">调拨入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 5">盘盈</span>-->
-          <!--</template>-->
+        <!--<template scope="scope">-->
+        <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
+        <!--<span v-if="scope.row.orderStatus == 4">调拨入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 5">盘盈</span>-->
+        <!--</template>-->
         <!--</el-table-column>-->
         <el-table-column label="状态">
           <template scope="scope">
@@ -187,6 +187,10 @@
       },
       seeDetail(id){
         this.$router.push({path: '/order/orderdetail', query: {id: id}})
+      },
+      verify(id){
+        let url = '/order/verifypersonalorder/' + id;
+        this.$router.push(url);
       }
     }
   }

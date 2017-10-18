@@ -60,15 +60,32 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.id,scope.row.upLimit,scope.row.downLimit)">修改
+                </el-dropdown-item>
                 <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="修改库存信息" :visible.sync="updateVisible">
+        <el-form :model="updateForm" class="request-form" label-width="80px">
+          <el-form-item label="库存上限">
+            <el-input type="number" v-model="updateForm.upLimit" class="form-input">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="库存下限">
+            <el-input type="number" v-model="updateForm.downLimit" class="form-input">
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="sureUpdate()">确定</el-button>
+            <el-button @click="updateVisible = false">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" label-width="80px">
+        <el-form ref="form" :model="form" class="request-form" label-width="80px">
           <el-form-item label="关键词">
             <el-input
               placeholder="请输入关键词"
@@ -139,6 +156,7 @@
       return {
         tableData: [],
         advanceSearch: false,
+        updateVisible: false,//修改库存上下限
         form: {
           brandName: '',//商品品牌
           address: [],//所属仓库
@@ -151,6 +169,11 @@
           zero: 0,
           cat: [],
           type: 1//1是库存，2是门店
+        },
+        updateForm: {
+          id: '',
+          upLimit: '',
+          downLimit: ''
         },
         easyForm: {//简单查询
           address: [],//所属仓库
@@ -202,9 +225,6 @@
           });
         }
       },
-      update(id){
-
-      },
       seeDetail(id){
 
       },
@@ -239,6 +259,7 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
+          console.log('list', response)
           if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
@@ -257,6 +278,32 @@
           if (data.code === 10000) {
             self.advanceSearch = false;
             self.tableData = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      update(id, upLimit, downLimit){
+        this.updateVisible = true;
+        this.updateForm.id = id;
+        this.updateForm.upLimit = upLimit ? upLimit : '';
+        this.updateForm.downLimit = downLimit ? downLimit : '';
+      },
+      sureUpdate(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
+        self.$http.post('/ui/editStoreHouseLimit', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('editStoreHouseLimit', response)
+          if (data.code === 10000) {
+            self.updateVisible = false;
+            self.$message.success('修改成功');
+            setTimeout(function () {
+              self.$router.go(0);
+            }, 500);
           }
         }).catch(function (error) {
           console.log(error);

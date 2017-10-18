@@ -67,6 +67,10 @@ export default [
     component: resolve => require(['@/pages/order/PersonalOrder'], resolve)
   },
   {
+    path: '/order/verifypersonalorder/:id', //审核个人订单
+    component: resolve => require(['@/pages/order/verifypersonalorder'], resolve)
+  },
+  {
     path: '/order/ordersummary', //订单
     component: resolve => require(['@/pages/order/OrderSummary'], resolve)
   },

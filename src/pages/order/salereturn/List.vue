@@ -46,7 +46,8 @@
           </el-form-item>
           <el-form-item label="退单状态">
             <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
+                               style="display: inline;margin-left: 30px">
               <el-checkbox
                 v-for="t in totalOrderStatus"
                 :key="t.id"
@@ -107,7 +108,7 @@
         checkAllOrderStatus: false,
         advanceSearch: false,
         form: {
-            orderStatus:[]
+          orderStatus: []
         },
         easyForm: {//简单查询
 
@@ -182,21 +183,36 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          type: 2//1是采购退货，2是销售退货
         };
 
-        if (self.advanceSearch) {//高级搜索
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
-          requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        } else {//简单搜索
-
-          requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        }
-
-        self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('skuList', response)
-          if (data.code == 10000) {
+          console.log('selectReturnOrderListPage', response)
+          if (data.code === 10000) {
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      advanceSelect(size, num){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNo: num,
+          type: 2//1是采购退货，2是销售退货
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('selectReturnOrderListPage', response)
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }
