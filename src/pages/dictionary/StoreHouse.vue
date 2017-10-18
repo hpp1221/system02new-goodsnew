@@ -37,7 +37,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="updateStoreHouseSure">确 定</el-button>
-          <el-button @click="updateStore = false">取 消</el-button>
+          <el-button @click="cancelUpdateStore">取 消</el-button>
         </div>
       </el-dialog>
       <!--仓库表格-->
@@ -55,10 +55,10 @@
               size="small"
               @click="updateStoreHouse(scope.$index, scope.row)" class="el-icon-edit updatecategories">修改
             </el-button>
-            <el-button
-              size="small"
-              @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除
-            </el-button>
+            <!--<el-button-->
+              <!--size="small"-->
+              <!--@click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除-->
+            <!--</el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -149,8 +149,6 @@
         });
       },
       updateStoreHouse(index, row){
-        console.log('index',index)
-        console.log('row',row)
         this.updateStore = true
         this.updateForm = row
       },
@@ -160,7 +158,8 @@
           id:self.updateForm.id,
           name: self.updateForm.name,
           number: self.updateForm.number,
-          address: self.updateForm.address
+          address: self.updateForm.address,
+          token: window.localStorage.getItem('token')
         };
         self.$http.post('/ui/editStoreHouse', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
@@ -173,6 +172,12 @@
         }).catch(function (error) {
           console.log(error);
         });
+      },
+      cancelUpdateStore(){
+        let self = this
+        self.updateStore = false
+        self.$message.success('已取消修改')
+        self.getStoreHouseList(self.pageSize,self.pageNum)
       },
       handleDelete(index, row) {
         console.log(index, row);

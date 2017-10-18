@@ -55,10 +55,10 @@
               size="small"
               @click="updateStoreHouse(scope.$index, scope.row)" class="el-icon-edit updatecategories">修改
             </el-button>
-            <el-button
-              size="small"
-              @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除
-            </el-button>
+            <!--<el-button-->
+              <!--size="small"-->
+              <!--@click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除-->
+            <!--</el-button>-->
           </template>
         </el-table-column>
       </el-table>
