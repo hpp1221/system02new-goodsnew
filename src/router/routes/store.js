@@ -46,4 +46,8 @@ export default [
     path: '/store/storemanagement/storeallocation/detail', //门店调拨单详情
     component: resolve => require(['@/pages/store/storemanagement/storeallocation/Detail'], resolve)
   },
+  {
+    path: '/store/storemanagement/storeallocation/examine', //门店调拨单审核
+    component: resolve => require(['@/pages/store/storemanagement/storeallocation/Examine'], resolve)
+  },
 ]

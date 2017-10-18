@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">计量单位</h3>
-      <el-button @click="createUnit">新增</el-button>
+      <el-button @click="createUnit" style="float: right">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增计量单位" :visible.sync="dictionaryUnitCreate">
         <el-form :model="form">

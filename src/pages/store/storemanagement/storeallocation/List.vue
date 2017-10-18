@@ -263,23 +263,24 @@
         this.$router.push('/store/storemanagement/storeallocation/allocationadd')
       },
       getGoodsExamine(id) {//审核
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', query: {id: id}});
+        this.$router.push({path: '/store/storemanagement/storeallocation/examine', query: {allocationId: id}});
       },
-      getGoodsNumberDetail(id) {//要货单详情
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
+      getGoodsNumberDetail(id) {//详情
+        this.$router.push({path: '/store/storemanagement/storeallocation/detail', query: {allocationId: id}});
       },
       cancelGetGoods(row) { //作废
+        console.log('row',row)
         let self = this;
         let params = {
           token: window.localStorage.getItem('token'),
-          id: row.id
+          allocationRecordId: row.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
+          self.$http.post('/ui/storeAllocationRecordCancel', self.qs.stringify(params)).then((res) => {
             console.log('set', res)
             if (res.data.code == 10000) {
               self.$message({
