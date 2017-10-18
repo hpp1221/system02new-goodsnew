@@ -63,6 +63,27 @@
               <!--v-if="imgToken">-->
               <!--</uploadfiles>-->
             </el-form-item>
+            <el-form-item label="操作日志">
+              <el-switch
+                v-model="operationLogVisible"
+                on-text=""
+                off-text="">
+              </el-switch>
+            </el-form-item>
+            <el-table v-if="operationLogVisible">
+              <el-table-column label="操作人">
+
+              </el-table-column>
+              <el-table-column label="时间">
+
+              </el-table-column>
+              <el-table-column label="操作类别">
+
+              </el-table-column>
+              <el-table-column label="操作日志">
+
+              </el-table-column>
+            </el-table>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="出库发货记录" name="second">配置管理</el-tab-pane>
@@ -102,7 +123,8 @@
             id: 2,
             name: '普通发票'
           }
-        ]
+        ],
+        operationLogVisible:false
       }
     },
     created(){

@@ -3,7 +3,7 @@
     <div class="wrapper">
       <h3 class="page-title">创建采购订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
-        <el-table :data="form.orderDetails" border show-summary>
+        <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
             width="70">
@@ -70,6 +70,7 @@
         <el-form-item label="交货日期">
           <el-date-picker
             v-model="form.deliveryTime"
+            :picker-options="pickerOptions"
             type="date"
             placeholder="选择日期">
           </el-date-picker>
@@ -136,10 +137,12 @@
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
           }],
-          customer: '',//客户名称
-          contacts: '',//收货人
-          cel: '',//联系方式
-          address: '',//收货地址
+          orderShipment: {
+            customer: '',//客户名称
+            userName: '',//收货人
+            userPhone: '',//联系方式
+            userAddress: '',//收货地址
+          },
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
@@ -151,6 +154,11 @@
           contacts: '',
           cel: '',
           address: ''
+        },
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
@@ -218,7 +226,7 @@
           token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
-        self.$http.post('/ui/orderGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
           if (data.code === 10000) {
@@ -253,8 +261,8 @@
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'),order:JSON.stringify(self.form)};
-        //requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        let requestData = {token: window.localStorage.getItem('token')};
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)

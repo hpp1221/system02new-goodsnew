@@ -1,6 +1,13 @@
 <template>
   <div class="container">
     <div class="wrapper">
+      <div class="goodsinout-detail-top">
+        <div class="left">
+          <p><span v-for="o in totalOrderStatus" v-if="form.orderStatus == o.id">{{o.name}}</span></p>
+          <p>退货单号: <span>{{form.orderNumber}}</span></p>
+          <p>供应商名称: <span>{{form .partnerName}}</span></p>
+        </div>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
@@ -36,6 +43,12 @@
               <span v-else></span>
             </template>
           </el-table-column>
+          <el-table-column label="审批价" prop="approvePrice">
+
+          </el-table-column>
+          <el-table-column label="备注" prop="remark">
+
+          </el-table-column>
         </el-table>
         <!--<div class="order-table-total">
                     <div class="top">
@@ -49,23 +62,18 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
+          <p>
+            <span v-if="form.contacts">联系人：{{form.contacts}}</span>
+            <span v-if="form.cel">联系电话：{{form.cel}}</span>
+            <span v-if="form.address">退货地址：{{form.address}}</span>
+            <!--<span v-if="form.depositBank">开户行：{{form.depositBank}}</span>-->
+            <!--<span v-if="form.depositBankName">开户名称：{{form.depositBankName}}</span>-->
+            <!--<span v-if="form.depositBankAccount">开户账号 {{form.depositBankAccount}}</span>-->
+            <!--<span v-if="form.postcode">邮编：{{form.postcode}}</span>-->
           </p>
         </el-form-item>
-        <el-form-item label="交货日期">
-          <el-date-picker
-            v-model="form.deliveryTime"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="发票信息">
-          <el-select v-model="form.invoiceType">
-            <el-option v-for="i in invoiceTypes" :key="i.id" :value="i.id" :label="i.name"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="备注说明">
-          <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
+          {{form.remark}}
         </el-form-item>
         <el-form-item label="附件信息">
           <!--<uploadfiles-->
@@ -75,31 +83,7 @@
           <!--v-if="imgToken">-->
           <!--</uploadfiles>-->
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submit">确定</el-button>
-          <el-button>取消</el-button>
-        </el-form-item>
       </el-form>
-      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
-        <el-form :model="editDeliveryForm" label-width="70px">
-          <el-form-item label="客户名称">
-            <el-input v-model="editDeliveryForm.customer"></el-input>
-          </el-form-item>
-          <el-form-item label="收货人">
-            <el-input v-model="editDeliveryForm.userName"></el-input>
-          </el-form-item>
-          <el-form-item label="联系方式">
-            <el-input v-model="editDeliveryForm.userPhone"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库地址">
-            <el-input v-model="editDeliveryForm.userAddress"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer">
-          <el-button @click="sureEdit" type="primary">确定</el-button>
-          <el-button @click="editDeliveryVisible = false">取消</el-button>
-        </div>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -108,9 +92,30 @@
   export default{
     data(){
       return {
+        totalOrderStatus: [
+          {
+            name: '已作废',
+            id: 1
+          },
+          {
+            name: '待退单审核',
+            id: 2
+          },
+          {
+            name: '待退款确认',
+            id: 3
+          },
+          {
+            name: '已完成',
+            id: 4
+          },
+        ],//订单状态
         form: {
+          partnerId: '',
+          partnerName: '',
+          type: 1,//1是采购退货，2是销售退货
           orderDetails: [{
-            goodsNo: '123',//商品编号
+            goodsNo: '',//商品编号
             goodsName: '',//商品名
             goodsSpec: '',//规格
             goodsUnit: '',
@@ -119,16 +124,18 @@
             price: '',//价格
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
+            approvePrice: '',//审批价格
+            remark: '',//备注
           }],
-          orderShipment: {
-            customer: '',//客户名称
-            userName: '',//收货人
-            userPhone: '',//联系方式
-            userAddress: '',//收货地址
-          },
-          deliveryTime: '',//交货日期
-          invoiceType: '',//发票信息
+          contacts: '',//联系人
+          cel: '',//手机号
+          address: '',//退货地址
+          depositBank: '',//开户行
+          depositBankName: '',//开户名称
+          depositBankAccount: '',//开户账号
+          postcode: '',//邮编
           remark: '',//备注
+          att: '',//附近
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -158,19 +165,19 @@
       }
     },
     created(){
-      this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
     methods: {
       select(id){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          orderId: id,
-        }
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
+          returnOrderId: id,
+        };
+        self.$http.post('/ui/returnOrder/selectReturnOrderById', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('detail',response);
-          if (data.code == 10000) {
+          console.log('详情', response);
+          if (data.code === 10000) {
             self.form = self.formPass(self.form,data.data);
           }
         }).catch(function (error) {
@@ -179,11 +186,11 @@
       },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
