@@ -3,6 +3,22 @@
     <div class="wrapper">
       <h3 class="page-title">用户管理</h3>
       <el-form ref="form" :model="form" inline class="request-form">
+        <el-form-item label="用户名">
+          <el-input v-model="form.loginId" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名">
+          <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="form.status">
+            <el-option :value="''" label="全部"></el-option>
+            <el-option :value="1" label="启用"></el-option>
+            <el-option :value="-1" label="禁用"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select">查询</el-button>
+        </el-form-item>
         <el-form-item>
           <el-button @click="addUser">新增用户</el-button>
         </el-form-item>
@@ -60,12 +76,12 @@
         pageNum: 1,
         totalPage: 10,
         tableData: [],
-        form: {},
+        form: {
+          name: '',
+          loginId: '',
+          status: ''
+        },
       }
-    },
-    created(){
-      this.select();
-
     },
     components: {
       'pagination': require('../../../components/pagination')
@@ -87,10 +103,11 @@
           pageSize: size,
           pageNo: num
         };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/user/selectUserListPage', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectUserListPage', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.tableData = data.data.list;
             self.totalPage = data.data.total;
           }
@@ -99,8 +116,8 @@
         });
       },
       update(id){
-        let path = '/personal/user/update/' + id;
-        this.$router.push({path: path});
+        let url = '/personal/user/update/' + id;
+        this.$router.push(url);
       },
       deleteItem(id, status){
         let self = this;
@@ -119,9 +136,11 @@
           self.$http.post('/ui/user/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log(response)
-            if (data.code == 10000) {
+            if (data.code === 10000) {
               self.$message.success('操作成功');
-              self.$router.go(0);
+              setTimeout(function () {
+                self.$router.go(0);
+              },500);
             }
           }).catch(function (error) {
             console.log(error);

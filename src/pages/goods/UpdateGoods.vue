@@ -472,7 +472,7 @@
         self.$http.post('/ui/goodsDetail',self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('form',response)
-          if(data.code == 10000){
+          if(data.code === 10000){
             self.form = self.formPass(self.form,data.data);
             self.form.spec = JSON.parse(self.form.spec);
             self.form.brand = JSON.parse(self.form.brand);
@@ -501,7 +501,7 @@
         self.$http.post('/ui/showGoodsDetail',self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('showGoodsDetail1',response)
-          if(data.code == 10000){
+          if(data.code === 10000){
             self.goodsForm = self.formPass(self.goodsForm,data.data);
             self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
             self.goodsForm.brand = JSON.parse(self.goodsForm.brand);

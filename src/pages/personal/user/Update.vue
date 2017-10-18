@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">员工账户详细信息</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="120px" style="width:700px">
+      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="120px">
         <h4 class="item-title">基础信息</h4>
         <el-form-item label="登录账号" prop="loginId">
           <span>{{companySuffix}}</span>
@@ -17,7 +17,12 @@
           <el-radio v-model="form.sex" :label="false">女</el-radio>
         </el-form-item>
         <el-form-item label="头像">
-          <uploadoneimg :fileList="form.avatar" @getFileList="getLogo"></uploadoneimg>
+          <uploadoneimg
+            :fileList="form.avatar"
+            @getFileList="getLogo"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadoneimg>
         </el-form-item>
         <el-form-item label="昵称">
           <el-input placeholder="请输入昵称" v-model="form.nickname" class="form-input">
@@ -131,6 +136,7 @@
 //		    };
       return {
         form: {
+          userId: '',
           loginId: '',
           name: '',
           sex: true,
@@ -179,7 +185,8 @@
 //			        ],
 //				},
         rules: {},
-        companySuffix:'',//公司loginId前缀
+        companySuffix: '',//公司loginId前缀
+        imgToken: '',
         totalRoleList: [],
         totalDepartmentList: [],
         type: false,//false是添加true是修改
@@ -190,6 +197,10 @@
       this.getPrimaryUserLoginId();
       this.getRoleList();
       this.getDepartmentList();
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      });//获取图片token
     },
     components: {
       'uploadoneimg': require('../../../components/uploadoneimg')
@@ -198,10 +209,10 @@
       getPrimaryUserLoginId(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/user/selectPrimaryUserLoginId',self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/user/selectPrimaryUserLoginId', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('selectPrimaryUserLoginId',response)
-          if(data.code == 10000){
+          console.log('selectPrimaryUserLoginId', response)
+          if (data.code == 10000) {
             self.companySuffix = data.data;
           }
         }).catch(function (error) {
@@ -222,16 +233,14 @@
           if (data.code == 10000) {
             self.formPass(self.form, data.data);
             self.form.pwd = '';
-//            if (self.form.loginId.indexOf(self.userinfo.loginId) === 0) {
-//              self.form.loginId = self.form.loginId.substring(self.userinfo.loginId.length + 1, self.form.loginId.length);
-//            }
+            console.log(self.form)
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
       getLogo(file){//获取logo
-        this.form.avatar = file;
+        this.form.avatar = file.url;
       },
       submit(formName){//保存
         this.$refs[formName].validate((valid) => {

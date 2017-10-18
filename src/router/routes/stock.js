@@ -12,7 +12,7 @@ export default [
     component: resolve => require(['@/pages/stock/goodsin/add'], resolve)
   },
   {
-    path: '/stock/goodsin/detail', //入库明细
+    path: '/stock/goodsin/detail/:id', //入库明细
     component: resolve => require(['@/pages/stock/goodsin/Detail'], resolve)
   },
   {
@@ -24,7 +24,7 @@ export default [
     component: resolve => require(['@/pages/stock/goodsout/Add'], resolve)
   },
   {
-    path: '/stock/goodsout/detail', //入库明细
+    path: '/stock/goodsout/detail/:id', //入库明细
     component: resolve => require(['@/pages/stock/goodsout/Detail'], resolve)
   },
   {
@@ -40,7 +40,7 @@ export default [
     component: resolve => require(['@/pages/stock/stockallocation/Add'], resolve)
   },
   {
-    path: '/stock/stockallocation/detail', //添加库存调拨
+    path: '/stock/stockallocation/detail/:id', //调拨详情
     component: resolve => require(['@/pages/stock/stockallocation/Detail'], resolve)
   },
   {

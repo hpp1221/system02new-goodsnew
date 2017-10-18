@@ -7,13 +7,12 @@ import ElementUI from 'element-ui'
 import VueEditor from 'vue-ueditor'
 import VueLazyLoad from 'vue-lazyload'
 import 'element-ui/lib/theme-chalk/index.css?12'
-//import 'element-ui/lib/theme-chalk/table.css?12'
 import './assets/css/total.css'
 import './assets/font/iconfont.css'
 import './assets/icon/iconfont.css'
 import './assets/css/animate.min.css'
 import Vuex from 'vuex'
-import {Loading,Message} from 'element-ui';
+import {Loading,Message,MessageBox} from 'element-ui';
 import './assets/js/commonFunctions'
 import './assets/js/getDatas'
 import './assets/js/PublicVariables'
@@ -57,8 +56,17 @@ axios.interceptors.request.use(function (config) {
 axios.interceptors.response.use(function (response) {
   // 对响应数据做点什么
   //loadingInstance.close();
-  if(response.data.code && response.data.code != 10000){
+  if(response.data.code && response.data.code !== 10000){
     Message.error(response.data.message);
+  }
+  if(response.data.code === 30000){
+    MessageBox.alert('登录超时,请重新登录', '提示', {
+      confirmButtonText: '确定',
+      callback: action => {
+        router.push('/login')
+      }
+    });
+
   }
   return response;
 }, function (error) {
@@ -72,5 +80,8 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  // beforeCreate:function () {
+  //   router.push('/login')
+  // }
 })

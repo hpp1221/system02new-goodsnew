@@ -43,7 +43,7 @@
             <el-table-column prop="num" label="数量">
 
             </el-table-column>
-            <el-table-column prop="goodUnit" label="单位">
+            <el-table-column prop="goodsUnit" label="单位">
 
             </el-table-column>
 
@@ -208,12 +208,12 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           startTime: self.startTime,
-          endTime: self.endTime
+          endTime: self.endTime,
         };
         self.$http.post('/ui/order/statistics', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('statistics', data)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.countAmount = data.data.countAmount;
             self.countOrder = data.data.countOrder;
             self.countGoods = data.data.countGoods;

@@ -1,19 +1,19 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">客户级别</h3>
-      <el-button class="dictionarycreate" @click="CreateclientLevel = true">新增</el-button>
+      <h3 class="page-title">客户级别</h3>
+      <el-button @click="CreateclientLevel = true">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增客户级别" :visible.sync="CreateclientLevel">
         <el-form :model="createForm">
           <el-form-item label="客户级别" :label-width="formLabelWidth">
-            <el-input v-model="createForm.name" auto-complete="off"></el-input>
+            <el-input v-model="createForm.name"></el-input>
           </el-form-item>
           <el-form-item label="订单折扣" :label-width="formLabelWidth">
-            <el-input v-model="createForm.discount" auto-complete="off"></el-input>
+            <el-input v-model="createForm.discount"></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer">
           <el-button @click="CreateclientLevel = false">取 消</el-button>
           <el-button type="primary" @click="CreateclientLevel = false">确 定</el-button>
         </div>
@@ -34,7 +34,7 @@
         </div>
       </el-dialog>
       <!--客户级别表格-->
-      <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%">
+      <el-table :data="tableData" ref="multipleTable" style="width: 100%">
         <el-table-column prop="level" label="客户级别">
 
         </el-table-column>
@@ -42,16 +42,15 @@
         <el-table-column prop="discount" label="订单折扣">
 
         </el-table-column>
-        <el-table-column>
+        <el-table-column label="操作">
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="updateClientLevel = true">修改</el-dropdown-item>
                 <el-dropdown-item>置顶</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-
           </template>
         </el-table-column>
       </el-table>
@@ -82,7 +81,7 @@
           name: '',
           region: ''
         },
-        formLabelWidth: '120px'
+        formLabelWidth: '80px'
       };
     },
     methods: {}

@@ -1,16 +1,17 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h4 class="client-management-title">供应商管理</h4>
-      <h5 class="client-management-clientlist">供应商商品列表</h5>
+      <h3 class="page-title">供应商商品列表</h3>
       <el-form ref="form" :model="form" inline class="request-form">
-        <el-form-item label="供应商名称" style="margin-left: 50px;">
-          <el-input v-model="input" placeholder="请输入供应商名称" style="margin-right: 15px;width:160px"></el-input>
-          <el-input placeholder="请输入联系电话/手机/编码" class="fast-query" icon="search"
-                    :on-icon-click="select" style="width:230px">
+        <el-form-item label="供应商名称">
+          <el-input v-model="input" placeholder="请输入供应商名称"></el-input>
+        </el-form-item>
+        <el-form-item label="关键字">
+          <el-input placeholder="请输入联系电话/手机/编码" icon="search" class="fast-query"
+                    :on-icon-click="select">
           </el-input>
         </el-form-item>
-        <el-form-item style="float: right;">
+        <el-form-item>
           <el-dropdown trigger="click">
             <el-button>导入</el-button>
             <el-dropdown-menu slot="dropdown">
@@ -18,11 +19,13 @@
               <el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+        </el-form-item>
+        <el-form-item>
           <el-button @click="outputSupplier">导出</el-button>
           <el-button @click="createSupplier">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%"
+      <el-table :data="tableData" ref="multipleTable" style="width: 100%"
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" prop="supplierId">
         </el-table-column>
@@ -47,12 +50,11 @@
         <el-table-column label="编辑">
           <template scope="scope">
             <el-dropdown trigger="click">
-              <el-button type="text" icon="more"></el-button>
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="updateSupplier(scope.row.id)">修改</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-
           </template>
         </el-table-column>
       </el-table>
@@ -63,7 +65,6 @@
 </template>
 
 <script>
-  let self = this;
   export default {
     data() {
       return {
@@ -123,12 +124,8 @@
 //        });
 //      },
       updateSupplier(supplierId) { //修改供应商商品详情
-        this.$router.push({
-          path: '/goods/updategoods',
-          query: {
-            id: supplierId
-          }
-        });
+        let url = '/goods/updategoods/' + supplierId
+        this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
 //				this.$router.push('/')
