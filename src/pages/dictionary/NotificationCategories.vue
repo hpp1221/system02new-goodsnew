@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">通知分类</h3>
-      <el-button class="dictionarycreate" @click="CreateCategories = true">新增</el-button>
+      <h3 class="page-title">通知分类</h3>
+      <el-button @click="CreateCategories = true">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增通知类型" :visible.sync="CreateCategories">
         <el-form :model="createForm">
           <el-form-item label="通知类型" :label-width="formLabelWidth">
-            <el-input v-model="createForm.name" auto-complete="off"></el-input>
+            <el-input v-model="createForm.name"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -28,7 +28,7 @@
         </div>
       </el-dialog>
       <!--通知分类表格-->
-      <el-table :data="tableData" ref="multipleTable" border tooltip-effect="dark" style="width: 100%" class="categories">
+      <el-table :data="tableData" ref="multipleTable" style="width: 100%">
         <el-table-column prop="level" label="通知类型">
         </el-table-column>
         <el-table-column>

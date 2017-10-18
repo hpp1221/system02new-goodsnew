@@ -11,6 +11,14 @@ export default [
     component: resolve => require(['@/pages/client/platform/add'], resolve)
   },
   {
+    path: '/client/platform/detail/:id', //后台查看客户详情
+    component: resolve => require(['@/pages/client/platform/detail'], resolve)
+  },
+  {
+    path: '/client/platform/update/:id', //后台修改客户
+    component: resolve => require(['@/pages/client/platform/update'], resolve)
+  },
+  {
     path: '/client/clientmanagement', //客户管理
     component: resolve => require(['@/pages/client/ClientManagement'], resolve)
   },

@@ -1,15 +1,13 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">商品品牌</h3>
-      <div class="dictionaryclassify-create">
-        <el-button class="dictionarycreate" @click="dictionaryClassifyCreate = true">新增</el-button>
-      </div>
+      <h3 class="page-title">商品品牌</h3>
+        <el-button @click="dictionaryClassifyCreate = true">新增</el-button>
       <!--修改弹框-->
       <el-dialog title="修改商品品牌" :visible.sync="updateDictionaryBrand">
         <el-form :model="form">
           <el-form-item label="品牌名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-input v-model="form.name"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

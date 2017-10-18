@@ -1,15 +1,13 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">计量单位</h3>
-      <div class="dictionaryclassify-create">
-        <el-button class="dictionarycreate" @click="createUnit">新增</el-button>
-      </div>
+      <h3 class="page-title">计量单位</h3>
+      <el-button @click="createUnit">新增</el-button>
       <!--新增弹框-->
       <el-dialog title="新增计量单位" :visible.sync="dictionaryUnitCreate">
         <el-form :model="form">
           <el-form-item label="单位名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-input v-model="form.name"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -43,7 +41,7 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: '',
-        formLabelWidth: '120px'
+        formLabelWidth: '80px'
       };
     },
     components: {

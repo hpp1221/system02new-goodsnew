@@ -3,7 +3,7 @@
     <div class="wrapper">
       <h3 class="page-title">创建采购订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
-        <el-table :data="form.orderDetails" border>
+        <el-table :data="form.orderDetails" border show-summary>
           <el-table-column
             type="index"
             width="70">
@@ -217,12 +217,11 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          companyId: 1
-        }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
+        };
+        self.$http.post('/ui/orderGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
               list[i].combination = list[i].goodsNo + list[i].goodsName;
@@ -259,7 +258,7 @@
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.$router.push('/order/orderlist');
             //self.tableData = data.data
           }

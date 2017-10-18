@@ -257,7 +257,7 @@
           keyword: queryString,
           companyId: 1
         }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/orderGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
           if (data.code == 10000) {

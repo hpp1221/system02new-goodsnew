@@ -125,7 +125,7 @@
           payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
-          dateRange: '',
+          dateRange: [null,null],
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
           startTime: '',
@@ -220,10 +220,6 @@
           orderType:2
         };
 
-        if (self.easyForm.dateRange instanceof Array) {
-          self.easyForm.startTime = self.easyForm.dateRange[0];
-          self.easyForm.endTime = self.easyForm.dateRange[1];
-        }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
 
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
@@ -246,11 +242,8 @@
           pageNo: num,
           orderType:2
         };
-
-        if (self.form.dateRange instanceof Array) {
-          self.form.startTime = self.form.dateRange[0];
-          self.form.endTime = self.form.dateRange[1];
-        }
+        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
 
         self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
@@ -271,7 +264,7 @@
         self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('addressList', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             //self.totalStores = data.data
           }
         }).catch(function (error) {

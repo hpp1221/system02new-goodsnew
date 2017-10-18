@@ -138,7 +138,9 @@
             console.log(response)
             if (data.code === 10000) {
               self.$message.success('操作成功');
-              self.$router.go(0);
+              setTimeout(function () {
+                self.$router.go(0);
+              },500);
             }
           }).catch(function (error) {
             console.log(error);

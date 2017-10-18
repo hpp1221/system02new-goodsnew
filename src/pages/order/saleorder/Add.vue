@@ -228,7 +228,7 @@
         self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log(response.data);
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             let list = data.data;
             for (let i = 0, listLength = list.length; i < listLength; i++) {
               list[i].combination = list[i].goodsNo + list[i].goodsName;
@@ -265,7 +265,7 @@
         self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
-          if (data.code == 10000) {
+          if (data.code === 10000) {
             self.$router.push('/order/orderlist');
             //self.tableData = data.data
           }
@@ -284,7 +284,7 @@
           subtotal: '',//小计
           combination: '',//编号和名称组合
           goodsSkuId: '',//规格id
-        })
+        });
       },
       deleteLine(index){
         this.form.orderDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.orderDetails.splice(index, 1);

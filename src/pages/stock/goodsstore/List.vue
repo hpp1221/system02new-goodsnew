@@ -128,6 +128,7 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
@@ -149,12 +150,12 @@
           downLimit: 0,
           zero: 0,
           cat: [],
-          type:1//1是库存，2是门店
+          type: 1//1是库存，2是门店
         },
         easyForm: {//简单查询
           address: [],//所属仓库
           keyword: '',//关键词,
-          type:1//1是库存，2是门店
+          type: 1//1是库存，2是门店
         },
         totalStores: [],//仓库列表
         totalCategories: [],//分类列表
@@ -167,13 +168,14 @@
         goodsTags: [],//商品标签
         addressLoading: false,//仓库列表加载图片
         brandLoading: false,//品牌列表加载图片
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
       }
     },
-
-    created(){
-      this.select();
+    components: {
+      'pagination': require('../../../components/pagination')
     },
-
     methods: {
       getBrand(type){
         if (type && this.totalBrandList.length === 0) {
@@ -184,6 +186,11 @@
             self.brandLoading = false;
           });//获取品牌列表
         }
+      },
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num);
       },
       getAddress(type){
         if (type && this.totalStores.length === 0) {
@@ -222,14 +229,19 @@
         }
       },
 
-      select(){//查询
+      select(size, num){//查询
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNum: num
+        };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           if (data.code === 10000) {
-            self.tableData = data.data;
+            self.tableData = data.data.list;
+            self.totalPage = data.data.total;
           }
         }).catch(function (error) {
           console.log(error);

@@ -1,46 +1,22 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle" style="padding-top: 30px">商品标签</h3>
-      <div class="storeLabel">
-        <el-tag
-          v-for="tag in dynamicTags"
-          size="medium"
-        >
-          <i class="el-icon-edit" @click="storeEditLabel(tag)"></i>
-          {{tag.name}}
-        </el-tag>
-        <el-button icon="el-icon-plus" size="large" @click="showDialog"
-                   style="vertical-align: middle;margin: 10px;"></el-button>
-        <!--<transition name="fade">-->
-        <!--<div class="el-form-item__error" v-show="tagsValid">{{ tagsError }}</div>-->
-        <!--</transition>-->
-      </div>
-      <!--修改弹框-->
-      <el-dialog title="修改商品标签" :visible.sync="updateStoreLabel">
-        <el-form :model="updateForm">
-          <el-form-item label="商品标签" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="updateLabelSure">确 定</el-button>
-          <el-button @click="cancelUpdateLabel">取 消</el-button>
-        </div>
-      </el-dialog>
-      <!-- 弹框 -->
-      <el-dialog title="添加商品标签" :visible.sync="dialogFormVisible">
-        <el-form :model="dialogForm">
-          <el-form-item>
-            <el-input v-model="dialogForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-     <el-button @click.native="dialogFormVisible = false">取 消</el-button>
-     <el-button type="primary" @click.native="handleAdd">添加</el-button>
-    </span>
-      </el-dialog>
-    </div>
+      <h3 class="page-title">商品标签管理</h3>
+      <p>管理您的商品标签，最多支持5个标签。</p>
+      <el-form ref="form" :model="form" label-width="80px" class="label-content">
+        <el-form-item>
+          <el-input v-model="form.name" placeholder="新品上架" class="label"></el-input>
+          <el-input v-model="form.name" placeholder="热卖推荐" class="label"></el-input>
+          <el-input v-model="form.name" placeholder="清仓优惠" class="label"></el-input>
+          <el-input v-model="form.name" placeholder="添加新标签" class="label"></el-input>
+          <el-input v-model="form.name" placeholder="添加新标签" class="label"></el-input>
+        </el-form-item>
+        <el-form-item class="label-operation">
+          <el-button type="primary">保存</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+      </el-form>
+  </div>
   </div>
 </template>
 

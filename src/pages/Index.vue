@@ -131,7 +131,7 @@
     },
     created(){
       this.getMenu();
-      this.getUserInfo();
+      //this.getUserInfo();
     },
     computed: {
       'userinfo': function () {

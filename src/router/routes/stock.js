@@ -40,7 +40,7 @@ export default [
     component: resolve => require(['@/pages/stock/stockallocation/Add'], resolve)
   },
   {
-    path: '/stock/stockallocation/detail', //添加库存调拨
+    path: '/stock/stockallocation/detail/:id', //调拨详情
     component: resolve => require(['@/pages/stock/stockallocation/Detail'], resolve)
   },
   {

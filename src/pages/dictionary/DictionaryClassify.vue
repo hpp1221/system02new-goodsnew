@@ -1,10 +1,8 @@
 <template>
   <div class="container">
-    <div class="wrapper dictionary-wrapper">
-      <h3 class="dictionaryclassifytitle">商品分类</h3>
-      <div class="dictionaryclassify-create">
-        <el-button class="dictionarycreate" @click="openFirstModal">新增一级类目</el-button>
-      </div>
+    <div class="wrapper">
+      <h3 class="page-title">商品分类</h3>
+      <el-button @click="openFirstModal">新增一级类目</el-button>
       <div class="dictionaryclassify-main">
         <el-tree
           :data="totalCategories"
@@ -22,7 +20,7 @@
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
         <el-form :model="childForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
-            <el-input v-model="childForm.name" auto-complete="off"></el-input>
+            <el-input v-model="childForm.name"></el-input>
           </el-form-item>
           <el-form-item label="上级分类" :label-width="formLabelWidth" v-if="childForm.parent.name">
             <el-input :disabled="true" v-model="childForm.parent.name"></el-input>
@@ -37,7 +35,7 @@
       <el-dialog title="修改商品分类信息" :visible.sync="updateDictionaryClassify">
         <el-form :model="updateForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.parent.name" auto-complete="off"></el-input>
+            <el-input v-model="updateForm.parent.name"></el-input>
           </el-form-item>
           <el-form-item label="上级分类" :label-width="formLabelWidth">
             <el-input :disabled="true" v-model="updateForm.oldName"></el-input>
@@ -74,7 +72,7 @@
           name: '',
           parent: {}
         },
-        formLabelWidth: '120px',
+        formLabelWidth: '80px',
         defaultExpandedKeys: []
       };
     },

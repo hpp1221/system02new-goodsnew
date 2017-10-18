@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">添加客户</h3>
+      <h3 class="page-title">修改客户</h3>
       <el-form ref="form" :model="addForm" label-width="90px" class="request-form">
         <el-form-item label="客户名称" required>
           <el-input v-model="addForm.name" class="form-input"></el-input>
@@ -22,12 +22,12 @@
           <el-input v-model="addForm.email" class="form-input"></el-input>
         </el-form-item>
         <el-form-item label="客户角色" required>
-          <el-select v-model="addForm.customerRole" @click.native="getRoleList">
+          <el-select v-model="addForm.customerRole">
             <el-option v-for="t in totalRoleList" :key="t.name" :value="t.value" :label="t.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="sureAddClient">确定</el-button>
+          <el-button @click="sureUpdateClient">确定</el-button>
           <el-button @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
@@ -39,6 +39,7 @@
     data(){
       return {
         addForm: {
+          customerId: '',
           name: '',
           cel: '',
           tel: '',
@@ -49,6 +50,10 @@
         },
         totalRoleList: []
       }
+    },
+    created(){
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      this.getRoleList();
     },
     methods: {
       getRoleList(){
@@ -67,16 +72,31 @@
           console.log(error);
         });
       },
-
-      sureAddClient(){
+      select(id){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          customerId: id
+        };
+        self.$http.get('/ui/customer/selectCustomerById', {params: requestData}).then(function (response) {
+          let data = response.data;
+          console.log('selectCustomerById', response)
+          if (data.code === 10000) {
+            self.addForm = self.formPass(self.addForm, data.data);
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      sureUpdateClient(){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/customer/insertCustomer', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/customer/updateCustomerById', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('insertCustomer', response)
+          console.log('updateCustomerById', response)
           if (data.code === 10000) {
             self.$router.push('/client/platform/list');
           }
