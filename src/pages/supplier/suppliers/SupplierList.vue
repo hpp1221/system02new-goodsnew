@@ -5,7 +5,7 @@
       <el-form ref="form" :model="form" inline class="request-form">
         <el-form-item label="快速查询">
           <el-input placeholder="请输入供应商名称/联系电话/手机/编码" class="fast-query" prefix-icon="el-icon-search"
-                    v-model="form.query" :on-icon-click="handleIconClick">
+                    v-model="form.query">
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -77,9 +77,6 @@
         }
       }
     },
-    created() {
-      this.getSupplierList()
-    },
     components: {
       'pagination': require('../../../components/pagination')
     },
@@ -97,16 +94,12 @@
           pageNo: self.pageNum
         };
         self.$http.post('/ui/supplier/listByPage', self.qs.stringify(params)).then(function (response) {
-          console.log(response)
-          console.log('code', response.data.data)
-
           if (response.data.code === 10000) {
             self.tableData = response.data.data
           }
         }).catch(function (error) {
           console.log(error);
         })
-
         self.$http.post('/ui/supplier/getSupplierCountByQuery').then(res => {
           self.totalPage = res.data.data
         })
@@ -121,7 +114,6 @@
         }
         self.$http.post('/ui/supplier/listByPageAndQuery', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('list', response)
           if (data.code == 10000) {
             self.tableData = data.data
           }
@@ -129,19 +121,14 @@
           console.log(error);
         });
         self.$http.post('/ui/supplier/getSupplierCountByQuery', self.qs.stringify(requestData)).then(res => {
-          console.log('926', res)
           if (res.data.code == 10000) {
             self.totalPage = res.data.data
           }
 
         })
       },
-      handleIconClick(ev) {
-        this.select();
-      },
       updateSupplier(supplierId) { //修改供应商详情
-        let url = '/supplier/suppliers/updatesupplier/' + supplierId;
-        this.$router.push(url);
+        this.$router.push({path:'/supplier/suppliers/updatesupplier',query:{supplierId:supplierId}});
       },
       deleteSupplier(row) { //删除单个供应商详情
         let self = this;
@@ -171,6 +158,17 @@
         })
       },
       outputSupplier() { //导出供应商
+        if(this.multipleSelection.length === 0){
+          this.$message.error('请选中要导出的项');
+          return;
+        }
+//        let skuList = [];
+//        for (let i = 0; i < this.multipleSelection.length; i++) {
+//          skuList.push(this.multipleSelection[i].id);
+//        }
+//
+//        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
+//      },
         let self = this
         let supplierString = ''
         for (let i = 0; i < self.multipleSelection.length; i++) {

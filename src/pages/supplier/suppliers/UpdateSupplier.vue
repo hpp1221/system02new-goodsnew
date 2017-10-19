@@ -53,7 +53,7 @@
     },
     watch: {},
     created() {
-      this.$route.params.supplierId ? this.select(this.$route.params.supplierId) : this.$router.push('/error')
+      this.$route.query.supplierId ? this.select(this.$route.query.supplierId) : this.$router.push('/error')
     },
     methods: {
       select(supplierId) {
