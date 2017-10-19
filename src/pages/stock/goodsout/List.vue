@@ -120,16 +120,10 @@
         self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
         self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/recordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('出库list', response);
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-            self.loading = false;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.recordList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+          self.loading = false;
         });
       },
 

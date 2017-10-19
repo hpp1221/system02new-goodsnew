@@ -87,7 +87,7 @@
 		          	let requestData = {
 		          		username:JSON.parse(window.localStorage.getItem('userinfo')).loginId + '-' + value
 		          	};
-		          	self.$http.post('/ui/user/checkUserCount',self.qs.stringify(requestData)).then(function (response) {
+		          	self.$http.post('/ui/user.js/checkUserCount',self.qs.stringify(requestData)).then(function (response) {
 					    let data = response.data;
 					    console.log('checkUserCount',response)
 						if(data.code == 10000){
@@ -107,7 +107,7 @@
 		        } else {
 		          	let self = this;
 		          	let requestData = {phone:value};
-		          	self.$http.post('/ui/user/checkUserCelCount',self.qs.stringify(requestData)).then(function (response) {
+		          	self.$http.post('/ui/user.js/checkUserCelCount',self.qs.stringify(requestData)).then(function (response) {
 					    let data = response.data;
 					    console.log('checkUserCelCount',response)
 						if(data.code == 10000){
@@ -127,7 +127,7 @@
 		        } else {
 		          	let self = this;
 		          	let requestData = {email:value};
-		          	self.$http.post('/ui/user/selectUserCountByEmail',self.qs.stringify(requestData)).then(function (response) {
+		          	self.$http.post('/ui/user.js/selectUserCountByEmail',self.qs.stringify(requestData)).then(function (response) {
 					    let data = response.data;
 					    console.log('selectUserCountByEmail',response)
 						if(data.code == 10000){
@@ -244,7 +244,7 @@
       getPrimaryUserLoginId(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/user/selectPrimaryUserLoginId',self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/user.js/selectPrimaryUserLoginId',self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('selectPrimaryUserLoginId',response)
           if(data.code == 10000){
@@ -263,12 +263,12 @@
 						};
 						requestData = Object.assign(requestData,self.shallowCopy(self.form));
 						//requestData.roleIds = JSON.parse(requestData.roleIds);
-						self.$http.post('/ui/user/addUser',self.qs.stringify(requestData)).then(function (response) {
+						self.$http.post('/ui/user.js/addUser',self.qs.stringify(requestData)).then(function (response) {
 						    let data = response.data;
 						    console.log('addUser',response)
 							if(data.code == 10000){
 								self.$message.success('保存成功');
-								self.$router.push('/personal/user/list');
+								self.$router.push('/personal/user.js/list');
 							}
 					    }).catch(function (error) {
 					    	console.log(error);

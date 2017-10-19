@@ -52,14 +52,8 @@
           token: window.localStorage.getItem('token'),
           id: id
         };
-        self.$http.post('/ui/getRecord', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('出库详情', response);
-          if (data.code === 10000) {
-            self.detailData = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.getRecord(requestData, function (data) {
+          self.detailData = data.data;
         });
       },
     }

@@ -120,7 +120,7 @@
       <!--</thead>-->
       <!--<tbody>-->
       <!--<tr v-for="m in configs" :id="m.permissionId">-->
-      <!--<td @click="showChild(m.permissionId,m.toggle)" style="cursor:pointer;user-select:none;text-align: left;">-->
+      <!--<td @click="showChild(m.permissionId,m.toggle)" style="cursor:poinuser.jsuser-select:none;text-align: left;">-->
       <!--<span v-if="m.level == 1" style="margin-left:30px">{{m.level}}.</span>-->
       <!--<span v-if="m.level == 2" style="margin-left:60px">{{m.level}}.</span>-->
       <!--<span v-if="m.level == 3" style="margin-left:90px">{{m.level}}.</span>-->
@@ -280,17 +280,8 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
         };
-        self.$http.post('/ui/permission/selectPermissionList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectPermissionList', response)
-          if (data.code == 10000) {
-            self.tableData = data.data;
-//            self.configs = [];
-//            self.hasNext(self.tableData);
-//            console.log('configs', self.configs)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.selectPermissionList(requestData, function (data) {
+          self.tableData = data.data;
         });
       },
       addAuthority(id, name){//打开添加权限模态框
@@ -302,18 +293,11 @@
             token: window.localStorage.getItem('token'),
             permissionId: id
           };
-          self.$http.post('/ui/permission/selectPermissionById', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log('添加', response)
-            if (data.code == 10000) {
-              self.addForm.pid = data.data.permissionId;
-              self.addForm.pids = data.data.pids + ',' + self.addForm.pid;
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.permission.selectPermissionById(requestData, function (data) {
+            self.addForm.pid = data.data.permissionId;
+            self.addForm.pids = data.data.pids + ',' + self.addForm.pid;
           });
         }
-
       },
       sureAddAuthority(){
         let self = this;
@@ -324,18 +308,12 @@
           self.addForm.orders = 0;
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/permission/addPermission', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.addAuthorityDialog = false;
-            self.$message.success('操作成功');
-            setTimeout(function () {
-              self.$router.go(0);
-            }, 500);
-
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.addPermission(requestData, function (data) {
+          self.addAuthorityDialog = false;
+          self.$message.success('操作成功');
+          setTimeout(function () {
+            self.$router.go(0);
+          }, 500);
         });
       },
       sureUpdateAuthority(id){
@@ -349,17 +327,12 @@
           self.updateForm.orders = 0;
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
-        self.$http.post('/ui/permission/updatePermission', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.updateAuthorityDialog = false;
-            self.$message.success('操作成功');
-            setTimeout(function () {
-              self.$router.go(0);
-            }, 500);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.updatePermission(requestData, function (data) {
+          self.updateAuthorityDialog = false;
+          self.$message.success('操作成功');
+          setTimeout(function () {
+            self.$router.go(0);
+          }, 500);
         });
       },
       deleteItem(id){
@@ -373,15 +346,12 @@
             token: window.localStorage.getItem('token'),
             permissionId: id
           };
-          self.$http.post('/ui/permission/deletePermission', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log('selectOrganizationListByCompanyId', response)
-            if (data.code == 10000) {
-              self.$message.success('删除成功');
+          self.httpApi.permission.deletePermission(requestData, function (data) {
+            self.updateAuthorityDialog = false;
+            self.$message.success('删除成功');
+            setTimeout(function () {
               self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
+            }, 500);
           });
         }).catch(() => {
           this.$message({
@@ -398,14 +368,8 @@
           token: window.localStorage.getItem('token'),
           permissionId: id
         };
-        self.$http.post('/ui/permission/selectPermissionById', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response)
-          if (data.code == 10000) {
-            self.updateForm = self.formPass(self.updateForm, data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.selectPermissionById(requestData, function (data) {
+          self.updateForm = self.formPass(self.updateForm, data.data);
         });
       },
 //      hasNext(arr){

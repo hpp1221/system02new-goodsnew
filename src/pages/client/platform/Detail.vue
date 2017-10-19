@@ -62,15 +62,9 @@
           token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
-        self.$http.post('/ui/dict/selectDictByType', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectDictByType', response)
-          if (data.code === 10000) {
-            self.totalRoleList = data.data;
-            self.select(id);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.dict.selectDictByType(requestData, function (data) {
+          self.totalRoleList = data.data;
+          self.select(id);
         });
       },
       select(id){
@@ -79,19 +73,13 @@
           token: window.localStorage.getItem('token'),
           customerId: id
         };
-        self.$http.get('/ui/customer/selectCustomerById', {params: requestData}).then(function (response) {
-          let data = response.data;
-          console.log('selectCustomerById', response)
-          if (data.code === 10000) {
-            self.addForm = self.formPass(self.addForm, data.data);
-            for (let i = 0; i < self.totalRoleList.length; i++) {
-              if (self.addForm.customerRole === self.totalRoleList[i].value) {
-                self.addForm.customerRole = self.totalRoleList[i].name;
-              }
+        self.httpApi.customer.selectCustomerById(requestData, function (data) {
+          self.addForm = self.formPass(self.addForm, data.data);
+          for (let i = 0; i < self.totalRoleList.length; i++) {
+            if (self.addForm.customerRole === self.totalRoleList[i].value) {
+              self.addForm.customerRole = self.totalRoleList[i].name;
             }
           }
-        }).catch(function (error) {
-          console.log(error);
         });
       },
       sureUpdateClient(){
@@ -100,14 +88,8 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/customer/updateCustomerById', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('updateCustomerById', response)
-          if (data.code === 10000) {
-            self.$router.push('/client/platform/list');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.customer.updateCustomerById(requestData, function (data) {
+          self.$router.push('/client/platform/list');
         });
       },
       cancel(){

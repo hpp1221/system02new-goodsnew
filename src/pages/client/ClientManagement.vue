@@ -123,15 +123,10 @@
           pageSize: self.pageSize,
           pageNo: self.pageNum
         };
-        self.$http.post('/ui/viplist', self.qs.stringify(params)).then(function (response) {
-          console.log('0929', response)
-          if (response.data.code === 0) {
-            self.tableData = response.data.data.list
-            self.totalPage = response.data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        })
+        self.httpApi.vip.viplist(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+        });
       },
       select(size, num) { //查询
         let self = this
@@ -142,14 +137,9 @@
           pageNo: num,
           pageSize: size
         }
-        self.$http.post('/ui/vipterm', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data
-          if (data.code == 0) {
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.vip.vipterm(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       handleIconClick(ev) {//输入发查询条件的搜索图标点击
@@ -167,21 +157,10 @@
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/vipdelete', self.qs.stringify(params)).then((res) => {
-            if (res.data.code == 0) {
-              self.$message({
-                type: 'success',
-                message: '您已成功删除!'
-              });
-              this.getClientList()
-            } else {
-              self.$message({
-                type: 'info',
-                message: '您已取消删除'
-              });
-            }
-          })
-
+          self.httpApi.vip.vipdelete(requestData, function (data) {
+            self.$message('删除成功');
+            this.getClientList();
+          });
         })
       },
       outputClient() { //导出客户

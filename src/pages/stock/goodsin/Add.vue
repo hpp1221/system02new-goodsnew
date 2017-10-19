@@ -202,13 +202,8 @@
               self.$delete(self.form.data[i], 'combination');
             }
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.$http.post('/ui/addRecord', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              if (data.code === 10000) {
-                self.$router.push('/stock/goodsin/list');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.stock.addRecord(requestData, function (data) {
+              self.$router.push('/stock/goodsin/list');
             });
           } else {
             console.log('error submit!!');
@@ -228,19 +223,14 @@
           keyword: queryString,
           fromAddress: JSON.stringify(self.form.selfAddress),
         };
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code === 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
       },
 

@@ -20,6 +20,9 @@
           </el-input>
         </el-form-item>
         <el-form-item>
+          <el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>
+        </el-form-item>
+        <el-form-item>
           <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
@@ -178,7 +181,8 @@
         easyForm: {//简单查询
           address: [],//所属仓库
           keyword: '',//关键词,
-          type: 1//1是库存，2是门店
+          type: 1,//1是库存，2是门店
+          merge: 0
         },
         totalStores: [],//仓库列表
         totalCategories: [],//分类列表
@@ -257,15 +261,9 @@
           pageNum: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('list', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.list(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
 
@@ -273,14 +271,9 @@
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code === 10000) {
-            self.advanceSearch = false;
-            self.tableData = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.list(requestData, function (data) {
+          self.advanceSearch = false;
+          self.tableData = data.data;
         });
       },
       update(id, upLimit, downLimit){
@@ -295,18 +288,12 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
-        self.$http.post('/ui/editStoreHouseLimit', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('editStoreHouseLimit', response)
-          if (data.code === 10000) {
-            self.updateVisible = false;
-            self.$message.success('修改成功');
-            setTimeout(function () {
-              self.$router.go(0);
-            }, 500);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.editStoreHouseLimit(requestData, function (data) {
+          self.updateVisible = false;
+          self.$message.success('修改成功');
+          setTimeout(function () {
+            self.$router.go(0);
+          }, 500);
         });
       },
 
@@ -314,30 +301,24 @@
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData = {token: window.localStorage.getItem('token')};
         } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
+          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          let data = response.data;
-          if (data.code === 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
+        self.httpApi.stock.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
             }
           }
-        }).catch(function (error) {
-          console.log(error);
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.insertCat(self.totalCategories, val, data.data, 0);
+          }
         });
       },
-
       insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
           if (arr[i].id === val[level].id) {

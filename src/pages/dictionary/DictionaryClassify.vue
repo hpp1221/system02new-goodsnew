@@ -88,25 +88,19 @@
         } else {
           requestData = {params: {token: window.localStorage.getItem('token'), catId: val.id}};
         }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            console.log(data)
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [{}];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-              console.log(self.totalCategories)
+        self.httpApi.goods.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [{}];
             }
           }
-        }).catch(function (error) {
-          console.log(error);
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.insertCat(self.totalCategories, val, data.data, 0);
+            console.log(self.totalCategories)
+          }
         });
       },
       insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
@@ -168,19 +162,13 @@
           token: window.localStorage.getItem('token'),
           oldParentId: self.updateForm.parent.parentId,
         };
-        self.$http.post('/ui/editCategory', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('update', response)
-          if (data.code == 10000) {
-            self.updateDictionaryClassify = false
-            self.$message.success('修改成功')
-            self.totalCategories = []
-            self.getCatChild()
-            self.childForm.name = ''
-            self.childForm.parent = {}
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goodsCat.editCategory(requestData, function (data) {
+          self.updateDictionaryClassify = false
+          self.$message.success('修改成功')
+          self.totalCategories = []
+          self.getCatChild()
+          self.childForm.name = ''
+          self.childForm.parent = {}
         });
       },
       deleteNode(node, now) {
@@ -199,16 +187,10 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.$http.post('/ui/deleteCategory', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log('deleteCategory', response)
-            if (data.code == 10000) {
-              self.$message.success('删除成功')
-              self.totalCategories = []
-              self.getCatChild()
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.goodsCat.deleteCategory(requestData, function (data) {
+            self.$message.success('删除成功');
+            self.totalCategories = [];
+            self.getCatChild();
           });
         }).catch(() => {
           this.$message({

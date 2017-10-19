@@ -127,7 +127,7 @@
         form: {
           orderType: 1,//1是采购订单，2是销售订单
           orderDetails: [{
-            goodsNo: '123',//商品编号
+            goodsNo: '',//商品编号
             goodsName: '',//商品名
             goodsSpec: '',//规格
             goodsUnit: '',

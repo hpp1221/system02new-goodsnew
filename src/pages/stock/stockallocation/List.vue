@@ -174,15 +174,9 @@
         self.easyForm.startDate = self.easyForm.dateRange[0] === null ? '' : self.easyForm.dateRange[0];
         self.easyForm.endDate = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        self.$http.post('/ui/allocationRecordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('allocationRecordList', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.allocationRecordList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){//高级搜索
@@ -193,16 +187,10 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/allocationRecordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('allocationRecordList', response)
-          if (data.code === 10000) {
-            self.advanceSearch = false;
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.allocationRecordList(requestData, function (data) {
+          self.advanceSearch = false;
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       add(){

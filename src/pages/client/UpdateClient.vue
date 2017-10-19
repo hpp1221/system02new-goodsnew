@@ -128,15 +128,9 @@
 					id: id
 				};
 				requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
-				self.$http.post('/ui/upvipdata', self.qs.stringify(requestData)).then(function(response) {
-					let data = response.data;
-					if(data.error_code == 0){
-						self.ruleForm = response.data.data;
-					}
-
-				}).catch(function(error) {
-					console.log(error);
-				});
+        self.httpApi.vip.upvipdata(requestData, function (data) {
+          self.ruleForm = data.data;
+        });
 			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
@@ -146,14 +140,9 @@
 							token: window.localStorage.getItem('token')
 						};
 						requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
-						self.$http.post('/ui/upuser', self.qs.stringify(requestData)).then(function(response) {
-							let data = response.data;
-							if(data.code == 0) {
-								self.$router.push('/client/clientmanagement');
-							}
-						}).catch(function(error) {
-							console.log(error)
-						});
+            self.httpApi.vip.upuser(requestData, function (data) {
+              self.$router.push('/client/clientmanagement');
+            });
 					} else {
 						console.log('error submit!!');
 						return false;

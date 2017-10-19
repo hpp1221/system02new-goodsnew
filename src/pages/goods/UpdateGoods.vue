@@ -354,91 +354,90 @@
   export default{
     data(){
       return {
-        form:{
-          name:'',
-          brand:'',
-          spec:[],
-          cat:[],
-          unit:'',
-          skus:[],
-          supplierName:'',
-          keyword:'',
-          goodsSkuList:[],
-          tags:[],
-          goodsExtend:{
-            imgs:[],
-            content:'',
-            annex:[]
+        form: {
+          name: '',
+          brand: '',
+          spec: [],
+          cat: [],
+          unit: '',
+          skus: [],
+          supplierName: '',
+          keyword: '',
+          goodsSkuList: [],
+          tags: [],
+          goodsExtend: {
+            imgs: [],
+            content: '',
+            annex: []
           }
         },
-        goodsForm:{
-          id:'',
-          name:'',
-          brand:'',
-          spec:[],
-          cat:[],
-          unit:'',
-          skus:[],
-          supplierName:'',
-          keyword:'',
-          goodsSkuList:[],
-          tags:[],
-          goodsExtend:{
-            imgs:[],
-            content:'',
-            annex:[]
+        goodsForm: {
+          id: '',
+          name: '',
+          brand: '',
+          spec: [],
+          cat: [],
+          unit: '',
+          skus: [],
+          supplierName: '',
+          keyword: '',
+          goodsSkuList: [],
+          tags: [],
+          goodsExtend: {
+            imgs: [],
+            content: '',
+            annex: []
           }
         },
-        inputValue:'',
-        goodsTags:[],//商品标签
-        editorConfig1:{
-          readonly:true
+        inputValue: '',
+        goodsTags: [],//商品标签
+        editorConfig1: {
+          readonly: true
         },//编辑器配置
-        editorConfig2:{
-        },
+        editorConfig2: {},
         props: {
           value: 'res',
           children: 'children',
           label: 'name'
         },
-        totalCategories:[],
-        totalBrandList:[],
-        tabName:'first',//当前选中的tab
-        skuImgIndex:0,
-        imgToken:'',
-        getCat:false,//是否获取过cat数据
-        originCat:''
+        totalCategories: [],
+        totalBrandList: [],
+        tabName: 'first',//当前选中的tab
+        skuImgIndex: 0,
+        imgToken: '',
+        getCat: false,//是否获取过cat数据
+        originCat: ''
       }
     },
-    components:{
-      'uploadmultipleimg':require('../../components/uploadmultipleimg'),
-      'uploadfiles':require('../../components/uploadfiles'),
-      'uploadoneimg':require('../../components/uploadoneimg'),
+    components: {
+      'uploadmultipleimg': require('../../components/uploadmultipleimg'),
+      'uploadfiles': require('../../components/uploadfiles'),
+      'uploadoneimg': require('../../components/uploadoneimg'),
     },
-    watch:{
-      tabName:function(newVal,oldVal){
-        if(newVal === 'first'){
+    watch: {
+      tabName: function (newVal, oldVal) {
+        if (newVal === 'first') {
           this.select(this.$route.query.id);
-        }else if(newVal === 'second'){
+        } else if (newVal === 'second') {
           this.selectGoods(this.$route.query.goodsId);
         }
       }
     },
     created(){
-      this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
       let self = this;
-      self.getBrandList(function(data){
+      self.getBrandList(function (data) {
         self.totalBrandList = data;
       });//获取品牌列表
-      self.getTagList(function(data){
+      self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
-      self.getImgAccess(function(data){
+      self.getImgAccess(function (data) {
         self.imgToken = data;
       });//获取图片token
       //获取分类列表
     },
-    methods:{
+    methods: {
       getFileList(file){//sku，商品图片
         this.form.goodsExtend.imgs.push(file);
       },
@@ -446,7 +445,7 @@
         this.goodsForm.goodsExtend.imgs.push(file);
       },
       removeFileList(file){//商品移除某商品图片
-        this.goodsForm.goodsExtend.imgs.splice(file,1);
+        this.goodsForm.goodsExtend.imgs.splice(file, 1);
       },
       getAnnex(file){//sku，附件
         this.form.goodsExtend.annex.push(file);
@@ -455,7 +454,7 @@
         this.goodsForm.goodsExtend.annex.push(file);
       },
       removeAnnex(file){//商品移除某附件
-        this.goodsForm.goodsExtend.annex.splice(file,1);
+        this.goodsForm.goodsExtend.annex.splice(file, 1);
       },
       getSkuImg(file){//sku,sku图片
         this.form.skus[this.skuImgIndex].img = file.url;
@@ -468,69 +467,57 @@
       },
       select(skuId){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'),skuId:skuId};
-        self.$http.post('/ui/goodsDetail',self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('form',response)
-          if(data.code === 10000){
-            self.form = self.formPass(self.form,data.data);
-            self.form.spec = JSON.parse(self.form.spec);
-            self.form.brand = JSON.parse(self.form.brand);
-            let cat = JSON.parse(self.form.cat);
-            cat.res = cat;
-            self.totalCategories = [cat];
-            self.form.cat = [cat];
-            self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
-            self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
-            self.form.skus = JSON.parse(self.form.skus);
-            self.form.skus[0].sku = JSON.parse(self.form.skus[0].sku);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        let requestData = {token: window.localStorage.getItem('token'), skuId: skuId};
+        self.httpApi.goods.goodsDetail(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
+          self.form.spec = JSON.parse(self.form.spec);
+          self.form.brand = JSON.parse(self.form.brand);
+          let cat = JSON.parse(self.form.cat);
+          cat.res = cat;
+          self.totalCategories = [cat];
+          self.form.cat = [cat];
+          self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
+          self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
+          self.form.skus = JSON.parse(self.form.skus);
+          self.form.skus[0].sku = JSON.parse(self.form.skus[0].sku);
         });
       },
       clickCat(){
-        if(!this.getCat){
+        if (!this.getCat) {
           this.getCatList();
         }
       },
       selectGoods(goodsId){
 
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'),goodsId:goodsId};
-        self.$http.post('/ui/showGoodsDetail',self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('showGoodsDetail1',response)
-          if(data.code === 10000){
-            self.goodsForm = self.formPass(self.goodsForm,data.data);
-            self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
-            self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
-            self.originCat = [JSON.parse(self.goodsForm.cat)];
-            let cat = JSON.parse(self.goodsForm.cat);
+        let requestData = {token: window.localStorage.getItem('token'), goodsId: goodsId};
+        self.httpApi.goods.showGoodsDetail(requestData, function (data) {
+          self.goodsForm = self.formPass(self.goodsForm, data.data);
+          self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
+          self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
+          self.originCat = [JSON.parse(self.goodsForm.cat)];
+          let cat = JSON.parse(self.goodsForm.cat);
 
-            cat.res = cat;
-            self.totalCategories = [cat];
-            self.goodsForm.cat = [cat];
-            self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
-            self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
-            self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
-            for(let i = 0;i < self.goodsForm.skus.length;i++){
-              self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
-            }
+          cat.res = cat;
+          self.totalCategories = [cat];
+          self.goodsForm.cat = [cat];
+          self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
+          self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
+          self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
+          for (let i = 0; i < self.goodsForm.skus.length; i++) {
+            self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
           }
-        }).catch(function (error) {
-          console.log(error);
         });
       },
       editorReady(editorInstance){//修改sku ueditor初始化
         editorInstance.setContent(this.form.goodsExtend.content);
-        editorInstance.addListener('contentChange',() => {
+        editorInstance.addListener('contentChange', () => {
           this.form.goodsExtend.content = editorInstance.getContent()
         });
       },
       editorReady2(editorInstance){//修改商品ueditor初始化
         editorInstance.setContent(this.goodsForm.goodsExtend.content);
-        editorInstance.addListener('contentChange',() => {
+        editorInstance.addListener('contentChange', () => {
           this.goodsForm.goodsExtend.content = editorInstance.getContent()
         });
       },
@@ -541,15 +528,9 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = {token: window.localStorage.getItem('token'),skuInfo:JSON.stringify(self.form.skus)};
-            self.$http.post('/ui/editSku',self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('editGoods',response)
-              if(data.code == 10000){
-                self.$router.push('/goods/goodslist');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            let requestData = {token: window.localStorage.getItem('token'), skuInfo: JSON.stringify(self.form.skus)};
+            self.httpApi.goods.editSku(requestData, function (data) {
+              self.$router.push('/goods/goodslist');
             });
           } else {
             console.log('error submit!!');
@@ -562,21 +543,15 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            if(self.getCat){
-              self.goodsForm.cat = [self.goodsForm.cat[self.goodsForm.cat.length-1]];
-            }else{
+            if (self.getCat) {
+              self.goodsForm.cat = [self.goodsForm.cat[self.goodsForm.cat.length - 1]];
+            } else {
               self.goodsForm.cat = self.originCat;
             }
 
-            let requestData = {token: window.localStorage.getItem('token'),goodsInfo:JSON.stringify(self.goodsForm)};
-            self.$http.post('/ui/editGoods',self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('editGoods',response)
-              if(data.code == 10000){
-                self.$router.push('/goods/goodslist');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
+            self.httpApi.goods.editGoods(requestData, function (data) {
+              self.$router.push('/goods/goodslist');
             });
           } else {
             console.log('error submit!!');
@@ -587,41 +562,34 @@
       getCatList(val){
         let self = this;
         var requestData;
-        if(val === undefined){
-          requestData = {params:{token: window.localStorage.getItem('token')}};
-        }else{
-          requestData = {params:{token: window.localStorage.getItem('token'),catId:val[val.length-1].id}};
+        if (val === undefined) {
+          requestData = {params: {token: window.localStorage.getItem('token')}};
+        } else {
+          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
         }
-        self.$http.get('/ui/catList',requestData).then(function (response) {
-          let data = response.data;
-          console.log('catList',response)
-          if(data.code == 10000){
-            for(let i = 0;i < data.data.length;i++){
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if(parseInt(data.data[i].hasChild) > 0){
-                data.data[i].children = [];
-              }
+        self.httpApi.goods.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
             }
-            if(val === undefined){
-              self.totalCategories = data.data;
-            }else{
-              self.getCat = true;
-              self.insertCat(self.totalCategories,val,data.data,0);
-            }
-
           }
-        }).catch(function (error) {
-          console.log(error);
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.getCat = true;
+            self.insertCat(self.totalCategories, val, data.data, 0);
+          }
         });
       },
-      insertCat(arr,val,data,level){//val:所有父级的数组,data:当前获取到的数据
-        for(let i = 0;i < arr.length;i++){
-          if(arr[i].id === val[level].id){
-            if(val.length === level + 1){
+      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].id === val[level].id) {
+            if (val.length === level + 1) {
               arr[i].children = data;
-            }else{
+            } else {
               level++;
-              this.insertCat(arr[i].children,val,data,level);
+              this.insertCat(arr[i].children, val, data, level);
             }
           }
         }
@@ -629,6 +597,3 @@
     }
   }
 </script>
-
-<style>
-</style>

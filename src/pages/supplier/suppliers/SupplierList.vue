@@ -91,50 +91,32 @@
       },
       getSupplierList() { //供应商管理列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum
         };
-        self.$http.post('/ui/supplier/listByPage', self.qs.stringify(params)).then(function (response) {
-          console.log(response)
-          console.log('code', response.data.data)
-
-          if (response.data.code === 10000) {
-            self.tableData = response.data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        })
-
-        self.$http.post('/ui/supplier/getSupplierCountByQuery').then(res => {
-          self.totalPage = res.data.data
-        })
+        self.httpApi.supplier.listByPage(requestData, function (data) {
+          self.tableData = data.data
+        });
+        self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+          self.totalPage = data.data
+        });
       },
       select(size, num) { //查询
-        let self = this
+        let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageNo: num,
           pageSize: size,
           query: self.form.query
-        }
-        self.$http.post('/ui/supplier/listByPageAndQuery', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('list', response)
-          if (data.code == 10000) {
-            self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        };
+        self.httpApi.supplier.listByPageAndQuery(requestData, function (data) {
+          self.tableData = data.data;
         });
-        self.$http.post('/ui/supplier/getSupplierCountByQuery', self.qs.stringify(requestData)).then(res => {
-          console.log('926', res)
-          if (res.data.code == 10000) {
-            self.totalPage = res.data.data
-          }
-
-        })
+        self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+          self.totalPage = data.data;
+        });
       },
       handleIconClick(ev) {
         this.select();
@@ -145,7 +127,7 @@
       },
       deleteSupplier(row) { //删除单个供应商详情
         let self = this;
-        let params = {
+        let requestData = {
           supplierId: row.supplierId
         };
         self.$confirm('请确认是否删除？', '提示', {
@@ -153,21 +135,13 @@
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/supplier/deleteSupplierBySupplierId', self.qs.stringify(params)).then((res) => {
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '您已成功删除!'
-              });
-              this.getSupplierList()
-            } else {
-              self.$message({
-                type: 'info',
-                message: '您已取消删除'
-              });
-            }
-          })
-
+          self.httpApi.supplier.deleteSupplierBySupplierId(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '您已成功删除!'
+            });
+            self.getSupplierList();
+          });
         })
       },
       outputSupplier() { //导出供应商

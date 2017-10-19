@@ -94,15 +94,9 @@
           rows: self.pageNum,
           page: self.pageSize
         };
-        self.$http.post('/ui/supplierGoodsList', self.qs.stringify(params)).then(function (response) {
-          console.log('0929', response)
-          if (response.data.code === 10000) {
-            self.tableData = response.data.data.list
-            self.totalPage = response.data.data.total
-          }
-
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.supplier.supplierGoodsList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         })
       },
 //      select(size, num) { //查询
@@ -124,7 +118,7 @@
 //        });
 //      },
       updateSupplier(supplierId) { //修改供应商商品详情
-        let url = '/goods/updategoods/' + supplierId
+        let url = '/goods/updategoods/' + supplierId;
         this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品

@@ -30,7 +30,7 @@
 //				let requestData = {
 //					token: window.localStorage.getItem('token')
 //				}
-//				self.$http.get('/ui/user/shortcut',requestData).then(function (response) {
+//				self.$http.get('/ui/user.js/shortcut',requestData).then(function (response) {
 //				    let data = response.data;
 //				    console.log('shortcut',response)
 //					if(data.code == 10000){

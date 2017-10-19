@@ -196,15 +196,9 @@
           requestData.endDate = self.form.dateRange[1].getTime()
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        self.form.dateRange = dateRange
-        self.$http.post('/ui/recordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('list', response)
-          if (data.code == 10000) {
-            self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.form.dateRange = dateRange;
+        self.httpApi.stock.recordList(requestData, function (data) {
+          self.tableData = data.data
         });
       },
       advanceSelect(){//高级搜索

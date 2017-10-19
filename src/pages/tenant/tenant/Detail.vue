@@ -81,14 +81,8 @@
             userId: id
           }
         };
-        self.$http.get('/ui/user/selectUserById', requestData).then(function (response) {
-          let data = response.data;
-          console.log('selectUserById', response)
-          if (data.code === 10000) {
-            self.formPass(self.form, data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.selectUserById(requestData, function (data) {
+          self.formPass(self.form, data.data);
         });
       },
       getDepartmentList(){
@@ -97,14 +91,8 @@
           token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/organization/selectOrganizationList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectOrganizationList', response)
-          if (data.code == 10000) {
-            self.totalDepartmentList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.organization.selectOrganizationList(requestData, function (data) {
+          self.totalDepartmentList = data.data;
         });
       },
     }

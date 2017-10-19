@@ -35,23 +35,23 @@
   export default{
     data(){
       return {
-        files:[],
-        explainVisible:false,
-        file_obj:{},
-        key:{
-          token:'',
-          file:''
+        files: [],
+        explainVisible: false,
+        file_obj: {},
+        key: {
+          token: '',
+          file: ''
         },
-        successFiles:[],
-        fileNum:0,
-        successNum:0
+        successFiles: [],
+        fileNum: 0,
+        successNum: 0
       }
     },
     created(){
       //this.getBaseData();
       this.getImgAccess();
     },
-    methods:{
+    methods: {
       upload(){
 //				let url = 'http://upload.qiniu.com/';
 //				let formData = new FormData();
@@ -80,30 +80,30 @@
             'Content-Type': 'application/x-www-form-urlencoded'
           }
         };
-        var promise =  new Promise(function(resolve,reject){
+        var promise = new Promise(function (resolve, reject) {
           Zip.loadAsync(file).then(function (zip) {
-            for(let z in zip.files){
-              if((zip.files[z].name.split('/')).length - 1 !== 1){
+            for (let z in zip.files) {
+              if ((zip.files[z].name.split('/')).length - 1 !== 1) {
                 reject('压缩包不符合格式')
               }
-              if(!zip.files[z].dir){
+              if (!zip.files[z].dir) {
                 self.fileNum++;
               }
             }
             resolve(zip)
           });
         });
-        promise.then(function(zip){
-          for(let z in zip.files){
-            if(!zip.files[z].dir){
-              Zip.file(zip.files[z].name).async("base64").then(function(result){
-                let uploadFile = 'data:image/' + zip.files[z].name.substring(zip.files[z].name.length-3,zip.files[z].name.length) + ';base64,' + result;
+        promise.then(function (zip) {
+          for (let z in zip.files) {
+            if (!zip.files[z].dir) {
+              Zip.file(zip.files[z].name).async("base64").then(function (result) {
+                let uploadFile = 'data:image/' + zip.files[z].name.substring(zip.files[z].name.length - 3, zip.files[z].name.length) + ';base64,' + result;
                 let formData = new FormData();
-                formData.append('token',self.key.token);
-                formData.append('file',uploadFile);
-                self.$http.post(url,formData,config).then(function (response) {
+                formData.append('token', self.key.token);
+                formData.append('file', uploadFile);
+                self.$http.post(url, formData, config).then(function (response) {
                   console.log(response)
-                  self.uploadSuccess(self.imgDomain + response.data.key,zip.files[z].name);
+                  self.uploadSuccess(self.imgDomain + response.data.key, zip.files[z].name);
                 }).catch(function (error) {
                   console.log(error);
                 });
@@ -112,30 +112,24 @@
             }
 
           }
-        },function(value){
+        }, function (value) {
           alert(value);
         });
         return promise;
       },
-      uploadSuccess(url,fileName){
-        this.successFiles.push({fileName:fileName,url:url});
+      uploadSuccess(url, fileName){
+        this.successFiles.push({fileName: fileName, url: url});
         this.successNum++;
-        console.log('successnum',this.successNum)
-        if(this.successNum === this.fileNum){
+        console.log('successnum', this.successNum)
+        if (this.successNum === this.fileNum) {
           let self = this;
           console.log(self.successFiles)
           let requestData = {
             token: window.localStorage.getItem('token'),
             picList: JSON.stringify(self.successFiles),
-            companyId:1
+            companyId: 1
           };
-          self.$http.post('ui/importPicture',self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            if(data.code == 10000){
-              console.log('sb')
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.goods.importPicture(requestData, function (data) {
           });
         }
       },
@@ -145,25 +139,16 @@
           token: window.localStorage.getItem('token'),
           bucketName: 'sass'
         };
-        self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if(data.code == 10000){
-            self.key.token = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.aliyun.imgSignature(requestData, function (data) {
+          self.key.token = data.data;
         });
       },
       removeFile(){
 
       },
       showExplain(){
-
         this.explainVisible = !this.explainVisible;
       }
     }
   }
 </script>
-
-<style>
-</style>

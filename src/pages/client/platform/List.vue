@@ -95,12 +95,12 @@
         tableData: [],
         form: {
           customerRole: '',
-          name:'',
-          tel:'',
-          cel:'',
-          customerNo:''
+          name: '',
+          tel: '',
+          cel: '',
+          customerNo: ''
         },
-        totalRoleList:[]
+        totalRoleList: []
       }
     },
     components: {
@@ -117,14 +117,8 @@
           token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
-        self.$http.post('/ui/dict/selectDictByType', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectDictByType', response)
-          if (data.code === 10000) {
-            self.totalRoleList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.dict.selectDictByType(requestData, function (data) {
+          self.totalRoleList = data.data;
         });
       },
       pageChanged(page){
@@ -143,17 +137,11 @@
             token: window.localStorage.getItem('token'),
             customerId: id,
           };
-          self.$http.post('/ui/customer/deleteCustomerById', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(response)
-            if (data.code === 10000) {
-              self.$message.success('删除成功');
-              setTimeout(function () {
-                self.$router.go(0);
-              },500);
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.customer.deleteCustomerById(requestData, function (data) {
+            self.$message.success('删除成功');
+            setTimeout(function () {
+              self.$router.go(0);
+            }, 500);
           });
         }).catch(() => {
           this.$message({
@@ -171,16 +159,9 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        console.log('size',1);
-        self.$http.get('/ui/customer/selectCustomerListPage', {params: requestData}).then(function (response) {
-          let data = response.data;
-          console.log('selectCustomerListPage', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.customer.selectCustomerListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       seeDetail(id){
@@ -205,15 +186,11 @@
             userId: id,
             status: status
           };
-          self.$http.post('/ui/user/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(response)
-            if (data.code === 10000) {
-              self.$message.success('操作成功');
+          self.httpApi.user.updateUserStatus(requestData, function (data) {
+            self.$message.success('操作成功');
+            setTimeout(function () {
               self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
+            },500);
           });
         }).catch(() => {
           this.$message({
@@ -225,6 +202,3 @@
     }
   }
 </script>
-
-<style>
-</style>

@@ -112,27 +112,13 @@
               username: form.username,
               password: form.password
             };
-            self.$http.post('/ui/user/login.do', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code === 10000) {
-                window.localStorage.setItem('token', data.data.token);
-                self.$http.get('/ui/user/getMyInfo', {params: {token: data.data.token}}).then(function (response) {
-                  let data = response.data;
-                  if (data.code === 10000) {
-                    window.localStorage.setItem('userinfo', JSON.stringify(data.data));
-                    self.$router.push('/');
-                  } else {
-                    self.$message.error(data.message);
-                  }
-                }).catch(function (error) {
-                  console.log(error);
-                });
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.user.login(requestData, function (data) {
+              window.localStorage.setItem('token', data.data.token);
+              let requestData = {token: data.data.token};
+              self.httpApi.user.getMyInfo(requestData, function (data) {
+                window.localStorage.setItem('userinfo', JSON.stringify(data.data));
+                self.$router.push('/');
+              })
             });
           } else {
             console.log('error submit!!');
@@ -145,16 +131,8 @@
           if (valid) {
             let self = this;
             let requestData = self.shallowCopy(self.registerForm);
-            self.$http.post('/ui/user/register.do', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code == 10000) {
-                self.$message.success('注册成功');
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.user.register(requestData, function (data) {
+              self.$message.success('注册成功');
             });
           } else {
             console.log('error submit!!');
@@ -165,15 +143,8 @@
       checkUserName(){//注册判断用户名是否重复
         let self = this;
         let requestData = {username: self.registerForm.username};
-        self.$http.post('/ui/user/checkUserCount.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.$message.success('用户名可用');
-          } else {
-            self.$message.error('用户名已重复');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.checkUserCount(requestData, function (data) {
+          self.$message.success('用户名可用');
         });
       },
       forgetPwd(){//忘记密码跳转
@@ -184,42 +155,26 @@
       },
       getVerifyCode(){//获取短信验证码
         let self = this;
+        if (!self.registerForm.phone) {
+          self.$message.error('请输入手机号');
+          return;
+        }
         let requestData = {phone: self.registerForm.phone};
-        self.$http.post('/ui/user/checkUserCelCount.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.verifyText = 60;
-            var messageCount = setInterval(function () {
-              self.verifyText--;
-              if (self.verifyText === 0) {
-                self.verifyText = '获取验证码';
-                clearInterval(messageCount);
-              }
-            }, 1000);
-            let requestData = {params: {phone: self.registerForm.phone, type: 1}};//1代表修改
-            self.$http.get('/ui/user/getMessage.do', requestData).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code == 10000) {
-                self.$message.success('已成功发送');
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-          } else {
-            self.$message.error('该手机号已被使用');
-            return;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.checkUserCelCount(requestData, function (data) {
+          self.verifyText = 60;
+          const messageCount = setInterval(function () {
+            self.verifyText--;
+            if (self.verifyText === 0) {
+              self.verifyText = '获取验证码';
+              clearInterval(messageCount);
+            }
+          }, 1000);
+          let requestData = {phone: self.registerForm.phone, type: 1};//1代表修改
+          self.httpApi.user.getMessage(requestData, function (data) {
+            self.$message.success('已成功发送');
+          });
         });
-
       }
     }
   }
 </script>
-
-<style>
-</style>
