@@ -61,10 +61,31 @@
           <!--v-if="imgToken">-->
           <!--</uploadfiles>-->
         </el-form-item>
+        <el-form-item label="操作日志" >
+          <el-switch
+            v-model="operationLogVisible"
+            on-text=""
+            off-text="">
+          </el-switch>
+        </el-form-item>
+        <el-table v-if="operationLogVisible" :data="operationList">
+          <el-table-column label="操作人" prop="operator">
+
+          </el-table-column>
+          <el-table-column label="时间" prop="operateTime">
+
+          </el-table-column>
+          <el-table-column label="操作类别" prop="operateType">
+
+          </el-table-column>
+          <el-table-column label="操作日志" prop="operateLog">
+
+          </el-table-column>
+        </el-table>
       </el-form>
 
-      <el-button @click="verifyOrder">通过</el-button>
-      <el-button @click="verifyOrder">作废</el-button>
+      <el-button @click="verifyOrder(1)">通过</el-button>
+      <el-button @click="verifyOrder(2)">作废</el-button>
     </div>
   </div>
 </template>
@@ -97,11 +118,20 @@
             id: 2,
             name: '普通发票'
           }
-        ]
+        ],
+        operationList:[],
+        operationLogVisible: false
       }
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+    },
+    watch:{
+      operationLogVisible:function (newVal,oldVal) {
+        if(newVal && this.operationList.length === 0){
+          this.getOperationList();
+        }
+      }
     },
     methods: {
       select(id){
@@ -121,16 +151,34 @@
           console.log(error);
         });
       },
-      tabClick(){
-
-      },
-      verifyOrder(){//通过还是作废
+      getOperationList(){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          orderId: id,
+          orderId: this.$route.params.id,
+        }
+        self.$http.post('/ui/order/log', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('detail',response);
+          if (data.code == 10000) {
+            self.operationList = data.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      tabClick(){
+
+      },
+      verifyOrder(type){//通过还是作废
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+          orderStatus:this.$route.params.status,
+          verifyType: type
         };
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
+        self.$http.post('/ui/order/verify', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('订单详情', response);
           if (data.code === 10000) {

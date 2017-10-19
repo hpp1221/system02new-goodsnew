@@ -103,10 +103,6 @@
         tableData: [],
       }
     },
-    created() {
-      this.getClientList()
-    },
-
     components: {
       'pagination': require('../../components/pagination')
     },
@@ -164,7 +160,17 @@
         })
       },
       outputClient() { //导出客户
-        let self = this
+        if(this.multipleSelection.length === 0){
+          this.$message.error('请选中要导出的项');
+          return;
+        }
+//        let skuList = [];
+//        for (let i = 0; i < this.multipleSelection.length; i++) {
+//          skuList.push(this.multipleSelection[i].id);
+//        }
+//
+//        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
+//      },
         let supplierString = ''
         for (let i = 0; i < self.multipleSelection.length; i++) {
           supplierString += ',' + self.multipleSelection[i].id
@@ -178,6 +184,7 @@
         location.href = '/ui/exportVips?vipIds=' + supplierString;
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
+        console.log("val",val)
         this.multipleSelection = val;
       },
       toggleSelection(rows) {

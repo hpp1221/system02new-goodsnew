@@ -37,16 +37,16 @@
         <el-table-column prop="payAmount" label="金额">
 
         </el-table-column>
-        <el-table-column prop="orderStatus" label="出库/发货">
-          <template scope="scope">
-            <span v-if="scope.row.orderStatus == 1">其他入库</span>
-            <span v-if="scope.row.orderStatus == 2">采购入库</span>
-            <span v-if="scope.row.orderStatus == 3">销售退货</span>
-            <span v-if="scope.row.orderStatus == 4">调拨入库</span>
-            <span v-if="scope.row.orderStatus == 5">盘盈</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createUserName" label="状态">
+        <!--<el-table-column prop="orderStatus" label="出库/发货">-->
+          <!--<template scope="scope">-->
+            <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
+            <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
+            <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
+            <!--<span v-if="scope.row.orderStatus == 4">调拨入库</span>-->
+            <!--<span v-if="scope.row.orderStatus == 5">盘盈</span>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <el-table-column prop="orderStatus" label="状态">
 
         </el-table-column>
         <!--<el-table-column prop="createUserName" label="付款状态">-->
@@ -106,11 +106,11 @@
           <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
           <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
-          <el-form-item label="订单标签">
-            <el-checkbox-group v-model="form.storeStatus">
-              <el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+          <!--<el-form-item label="订单标签">-->
+            <!--<el-checkbox-group v-model="form.storeStatus">-->
+              <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
             <el-button @click="advanceSearch = false">取消</el-button>

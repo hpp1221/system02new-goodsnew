@@ -135,18 +135,16 @@
             subtotal: '',//小计
             price: '',//价格
             combination: '',//编号和名称组合
-            goodsSkuId: '',//规格id
+            goodsSkuId: ''//规格id
           }],
-          orderShipment: {
-            customer: '',//客户名称
-            userName: '',//收货人
-            userPhone: '',//联系方式
-            userAddress: '',//收货地址
-          },
+          customer: '',//客户名称
+          contacts: '',//收货人
+          cel: '',//联系方式
+          address: '',//收货地址
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          att: [],//附件
+          att: '',//附件
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -199,10 +197,10 @@
     created(){
       if (window.localStorage.getItem('userinfo')) {
         let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
+        this.form.customer = userinfo.companyName;
+        this.form.contacts = userinfo.name;
+        this.form.cel = userinfo.cel;
+        this.form.address = userinfo.address;
       }
     },
     methods: {
@@ -261,9 +259,13 @@
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
+        let requestData = {
+            token: window.localStorage.getItem('token')
+//            order:self.form
+        };
+//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        requestData = Object.assign(requestData, self.form);
+        self.$http.post('/ui/order/create', requestData).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
           if (data.code === 10000) {

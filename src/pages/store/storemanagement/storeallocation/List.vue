@@ -183,7 +183,7 @@
     },
     methods: {
       handleCheckAllChange(event) {//全选
-        this.form.typeList = event ? cityOptions : [];
+        this.form.Type = event ? cityOptions : [];
         this.isIappndeterminate = false;
       },
       handleCheckedCitiesChange(value) {//状态列表
@@ -256,7 +256,7 @@
         self.form.dateRange = '',
           self.form.to = '',
           self.form.from = '',
-          self.form.typeList = [],
+          self.form.Type = [],
           self.checkAll = false
       },
       storeAllocationAdd() {//新增

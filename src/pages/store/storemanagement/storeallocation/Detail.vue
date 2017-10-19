@@ -156,30 +156,79 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          type: 2,
-          tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
+          status: 2,
+          allocationRecordId: self.form.id
         }
-        self.$confirm('确认要通过该审核？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(() => {
-          self.$http.post('/ui/examine', self.qs.stringify(requestData)).then((res) => {
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已通过该审核!'
-              });
-              this.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
+        if(self.type == "1"){
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.$http.post('/ui/storeAllocationRecordAdopt', self.qs.stringify(requestData)).then((res) => {
+              console.log('deta',res)
+              if (res.data.code == 10000) {
+                self.$message({
+                  type: 'success',
+                  message: '已通过该审核!'
+                });
+                this.$router.push('/store/storemanagement/storeallocation/list');
+              } else {
+                self.$message({
+                  type: 'info',
+                  message: '已取消'
+                });
+              }
+            })
           })
+        }else if(self.type == "2"){
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.$http.post('/ui/storeAllocationRecordSendAdopt', self.qs.stringify(requestData)).then((res) => {
+              console.log('deta',res)
+              if (res.data.code == 10000) {
+                self.$message({
+                  type: 'success',
+                  message: '已通过该审核!'
+                });
+                this.$router.push('/store/storemanagement/storeallocation/list');
+              } else {
+                self.$message({
+                  type: 'info',
+                  message: '已取消'
+                });
+              }
+            })
+          })
+        }else if (self.type == "3"){
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.$http.post('/ui/storeAllocationRecordReceiveAdopt', self.qs.stringify(requestData)).then((res) => {
+              console.log('deta',res)
+              if (res.data.code == 10000) {
+                self.$message({
+                  type: 'success',
+                  message: '已通过该审核!'
+                });
+                this.$router.push('/store/storemanagement/storeallocation/list');
+              } else {
+                self.$message({
+                  type: 'info',
+                  message: '已取消'
+                });
+              }
+            })
+          })
+        }
 
-        })
+
+
       },
       cancelGetGoods() { //作废
         let self = this;
