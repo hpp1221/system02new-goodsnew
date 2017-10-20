@@ -67,14 +67,9 @@
           token: window.localStorage.getItem('token'),
           roleId: id,
         };
-        self.$http.post('/ui/role/selectRoleInfoById', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.defaultPermission = data.data.permissionIds;
-            self.addForm = self.formPass(self.addForm, data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.role.selectRoleInfoById(requestData, function (data) {
+          self.defaultPermission = data.data.permissionIds;
+          self.addForm = self.formPass(self.addForm, data.data);
         });
       },
       checkChange(obj, isChecked, other){
@@ -96,14 +91,8 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
         };
-        self.$http.post('/ui/permission/selectPermissionList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectPermissionList', response)
-          if (data.code == 10000) {
-            self.data = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.selectPermissionList(requestData, function (data) {
+          self.data = data.data;
         });
       },
       sureAddRole(){
@@ -119,15 +108,9 @@
           roleId: self.$route.params.id
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/role/updateRole', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addRole', response)
-          if (data.code == 10000) {
-            self.$message.success('修改成功');
-            self.$router.push('/personal/role/list');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.role.updateRole(requestData, function (data) {
+          self.$message.success('修改成功');
+          self.$router.push('/personal/role/list');
         });
       },
       cancel(){

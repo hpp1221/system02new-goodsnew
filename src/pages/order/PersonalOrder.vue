@@ -161,28 +161,17 @@
           pageSize: size,
           pageNo: num
         };
-        self.$http.post('/ui/order/list/self', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('list', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.listSelf(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       getAddressList(){
-        let self = this
-        let requestData = {token: window.localStorage.getItem('token')}
-        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addressList', response)
-          if (data.code == 10000) {
-            //self.totalStores = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.httpApi.stock.addressList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       seeDetail(id){
@@ -195,6 +184,3 @@
     }
   }
 </script>
-
-<style>
-</style>

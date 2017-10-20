@@ -563,9 +563,9 @@
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData = {token: window.localStorage.getItem('token')};
         } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
+          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {

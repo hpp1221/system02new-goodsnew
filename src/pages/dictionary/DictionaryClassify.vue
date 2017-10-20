@@ -3,7 +3,6 @@
     <div class="wrapper">
       <h3 class="page-title">商品分类</h3>
       <el-button @click="openFirstModal">新增一级类目</el-button>
-      <div class="dictionaryclassify-main">
         <el-tree
           :data="totalCategories"
           :props="defaultProps"
@@ -15,7 +14,6 @@
           :render-content="renderContent"
           v-if="totalCategories.length > 0">
         </el-tree>
-      </div>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
         <el-form :model="childForm">
@@ -84,9 +82,9 @@
         let self = this;
         let requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData =  {token: window.localStorage.getItem('token')};
         } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val.id}};
+          requestData =  {token: window.localStorage.getItem('token'), catId: val.id};
         }
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {

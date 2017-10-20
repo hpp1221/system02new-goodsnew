@@ -101,15 +101,9 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/role/selectRoleListPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectRoleListPage', response)
-          if (data.code == 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.role.selectRoleListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       update(id){

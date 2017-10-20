@@ -48,20 +48,18 @@
               {{form.deliveryTime}}
             </el-form-item>
             <el-form-item label="发票信息">
-              <el-select v-model="form.invoiceType">
-                <el-option v-for="i in invoiceTypes" :key="i.id" :value="i.id" :label="i.name"></el-option>
-              </el-select>
+              <span v-for="i in invoiceTypes" v-if="form.invoiceType == i.id">{{i.name}}</span>
             </el-form-item>
             <el-form-item label="备注说明">
               {{form.remark}}
             </el-form-item>
             <el-form-item label="附件信息">
-              <!--<uploadfiles-->
-              <!--:fileList="form.annex"-->
-              <!--:disabled="true"-->
-              <!--:token="imgToken"-->
-              <!--v-if="imgToken">-->
-              <!--</uploadfiles>-->
+              <uploadfiles
+                :fileList="form.att"
+                :disabled="true"
+                :token="imgToken"
+                v-if="imgToken">
+              </uploadfiles>
             </el-form-item>
             <el-form-item label="操作日志">
               <el-switch
@@ -89,8 +87,19 @@
         <el-tab-pane label="出库发货记录" name="second">配置管理</el-tab-pane>
         <el-tab-pane label="收款记录" name="third">角色管理</el-tab-pane>
       </el-tabs>
-      <el-button @click="verifyOrder">通过</el-button>
-      <el-button @click="verifyOrder">作废</el-button>
+      <el-button @click="verifyOrder(1)">通过</el-button>
+      <el-button @click="writeFailReason = true">作废</el-button>
+      <el-dialog title="提示" :visible.sync="writeFailReason" width="600px">
+        <el-form :model="reasonForm" label-width="70px">
+          <el-form-item label="作废原因">
+            <el-input v-model="reasonForm.reason"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer">
+          <el-button @click="verifyOrder(2)" type="primary">确定</el-button>
+          <el-button @click="writeFailReason = false">取消</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -99,7 +108,13 @@
     data(){
       return {
         activeName: 'first',
+        writeFailReason:false,//填写作废原因
+        reasonForm:{
+          reason:''
+        },
         form: {
+          orderId: '',
+          orderStatus: '',
           orderDetails: [],
           customer: '',//客户名称
           contacts: '',//收货人
@@ -124,11 +139,23 @@
             name: '普通发票'
           }
         ],
-        operationLogVisible:false
+        operationLogVisible: false,
+        imgToken: ''
       }
     },
     created(){
-      this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.imgToken = data.data;
+      });
+    },
+    components: {
+      'uploadfiles': require('../../../components/uploadfiles'),
     },
     methods: {
       select(id){
@@ -137,35 +164,24 @@
           token: window.localStorage.getItem('token'),
           orderId: id,
         };
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('订单详情',response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form,data.data);
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.detail(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
         });
       },
       tabClick(){
 
       },
-      verifyOrder(){//通过还是作废
+      verifyOrder(type){//通过还是作废
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          orderId: id,
+          orderId: self.form.orderId,
+          orderStatus: self.form.orderStatus,
+          verifyType: type,
+          reason:self.reasonForm.reason
         };
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('订单详情',response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form,data.data);
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.verify(requestData, function (data) {
+          self.$router.push('/order/purchaseorder/list');
         });
       }
     }

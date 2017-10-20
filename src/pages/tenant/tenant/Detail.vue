@@ -76,10 +76,8 @@
       select(id){
         let self = this;
         let requestData = {
-          params: {
-            token: window.localStorage.getItem('token'),
-            userId: id
-          }
+          token: window.localStorage.getItem('token'),
+          userId: id
         };
         self.httpApi.user.selectUserById(requestData, function (data) {
           self.formPass(self.form, data.data);

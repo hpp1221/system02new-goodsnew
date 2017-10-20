@@ -104,19 +104,13 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/user.js/selectUserListPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectUserListPage', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.selectUserListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       update(id){
-        let url = '/personal/user.js/update/' + id;
+        let url = '/personal/user/update/' + id;
         this.$router.push(url);
       },
       deleteItem(id, status){
@@ -133,17 +127,11 @@
             userId: id,
             status: status
           };
-          self.$http.post('/ui/user.js/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(response)
-            if (data.code === 10000) {
-              self.$message.success('操作成功');
-              setTimeout(function () {
-                self.$router.go(0);
-              },500);
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.user.updateUserStatus(requestData, function (data) {
+            self.$message.success('操作成功');
+            setTimeout(function () {
+              self.$router.go(0);
+            },500);
           });
         }).catch(() => {
           this.$message({
@@ -155,6 +143,3 @@
     }
   }
 </script>
-
-<style>
-</style>

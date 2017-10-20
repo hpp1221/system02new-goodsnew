@@ -2,11 +2,14 @@ import Vue from 'vue';
 Vue.prototype.shallowCopy = function (obj) {//将对象中的数据迭代出来
   let newObj = {};
   for (let o in obj) {
-    newObj[o] = typeof(obj[o]) === 'object' ? JSON.stringify(obj[o]) : obj[o];
-    newObj[o] = obj[o] instanceof Date ? obj[o].pattern('yyyy-MM-dd HH:mm:ss') : obj[o];
+    typeof(obj[o]) === 'object' ? newObj[o] = JSON.stringify(obj[o]) : newObj[o] = obj[o];
+    if (obj[o] instanceof Date) {
+      newObj[o] = obj[o].pattern('yyyy-MM-dd HH:mm:ss');
+    }
   }
   return newObj;
 }
+
 
 Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form一一传入自己的form
   for (let o in myForm) {
@@ -17,8 +20,8 @@ Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form�
 
 Vue.prototype.getUserInfo = function () {//获取用户信息
   let self = this;
-  let requestData = {params: {token: window.localStorage.getItem('token')}};
-  self.$http.get('/ui/user.js/getMyInfo', requestData).then(function (response) {
+  let requestData = {token: window.localStorage.getItem('token')};
+  self.$http.get('/ui/user/getMyInfo', requestData).then(function (response) {
     let data = response.data;
     if (data.code === 10000) {
       window.localStorage.setItem('userinfo', JSON.stringify(data.data));

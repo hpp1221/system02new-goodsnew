@@ -49,7 +49,8 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
+          <p><i class="el-icon-edit" @click="editDelivery"
+                style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
@@ -158,7 +159,7 @@
       }
     },
     created(){
-      this.$route.query.id ?　this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
     },
     methods: {
       select(id){
@@ -166,24 +167,18 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: id,
-        }
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail',response);
-          if (data.code == 10000) {
-            self.form = self.formPass(self.form,data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        };
+        self.httpApi.order.detail(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
         });
       },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
@@ -192,24 +187,17 @@
           keyword: queryString,
           companyId: 1
         }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code == 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].num = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
+            list[i].subtotal = '';
+            list[i].num = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
@@ -228,16 +216,8 @@
       submit(){//提交订单
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
-
-        self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('order/create', response)
-          if (data.code == 10000) {
-            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.create(requestData, function (data) {
+          self.$router.push('/order/orderlist');
         });
       },
     }

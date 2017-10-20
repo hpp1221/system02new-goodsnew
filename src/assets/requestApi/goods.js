@@ -74,7 +74,7 @@ Vue.prototype.httpApi.goods.exportGoodsDemo = function (params, successCallback)
 
 //导出供应商商品信息
 Vue.prototype.httpApi.goods.exportSupplierGoodsInfo = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/exportSupplierGoodsInfo', params,
+  Vue.prototype.httpPost('/ui/exportSupplierGoodsInfo', params,
     function (data) {
       successCallback(data);
     })

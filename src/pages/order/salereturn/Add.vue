@@ -265,26 +265,14 @@
           pageSize: self.pageSize,
           pageNo: self.pageNum
         };
-        self.$http.post('/ui/supplier/listByPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code === 10000) {
-            self.supplierList = data.data;
-            let requestData = {
-              token: window.localStorage.getItem('token'),
-            };
-            self.$http.post('/ui/supplier/getSupplierCountByQuery', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log(response.data);
-              if (data.code === 10000) {
-                self.totalPage = data.data;
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.supplier.listByPage(requestData, function (data) {
+          self.supplierList = data.data;
+          let requestData = {
+            token: window.localStorage.getItem('token'),
+          };
+          self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+            self.totalPage = data.data;
+          });
         });
       },
       judgeNum(value, index){//判断数量是否为整数
@@ -305,26 +293,19 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-        }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code === 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].num = '';
-              list[i].approvePrice = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        };
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
+            list[i].subtotal = '';
+            list[i].num = '';
+            list[i].approvePrice = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
@@ -344,14 +325,8 @@
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/returnOrder/insertReturnOrder', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('returnOrder/insertReturnOrder', response)
-          if (data.code === 10000) {
-            self.$router.push('/order/purchasereturn/list');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
+          self.$router.push('/order/purchasereturn/list');
         });
       },
       addLine(){//添加一行

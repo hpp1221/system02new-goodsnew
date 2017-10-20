@@ -5,7 +5,7 @@
         <div class="left">
           <p><span v-for="o in totalOrderStatus" v-if="form.orderStatus == o.id">{{o.name}}</span></p>
           <p>退货单号: <span>{{form.orderNumber}}</span></p>
-          <p>供应商名称: <span>{{form .partnerName}}</span></p>
+          <p>供应商名称: <span>{{form.partnerName}}</span></p>
         </div>
       </div>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
@@ -174,14 +174,8 @@
           token: window.localStorage.getItem('token'),
           returnOrderId: id,
         };
-        self.$http.post('/ui/returnOrder/selectReturnOrderById', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('详情', response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form,data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.returnOrder.selectReturnOrderById(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
         });
       },
       editDelivery(){//显示修改模态框
@@ -197,26 +191,18 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          companyId: 1
-        }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code == 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].num = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        };
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
+            list[i].subtotal = '';
+            list[i].num = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
@@ -235,16 +221,8 @@
       submit(){//提交订单
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
-
-        self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('order/create', response)
-          if (data.code == 10000) {
-            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.create(requestData, function (data) {
+          self.$router.push('/order/orderlist');
         });
       },
     }

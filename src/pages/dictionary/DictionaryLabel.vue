@@ -67,10 +67,10 @@
     },
     methods: {
       cancelUpdateLabel() {//取消修改
-        let self = this
-        self.updateStoreLabel = false
-        self.$message.success('已取消修改')
-        self.getStoreLabel()
+        let self = this;
+        self.updateStoreLabel = false;
+        self.$message.success('已取消修改');
+        self.getStoreLabel();
       },
       storeEditLabel(tag) {//修改弹框
         this.updateForm = tag
@@ -113,7 +113,7 @@
       },
       getStoreLabel() {//标签列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token')
         };
         self.httpApi.goods.tagList(requestData, function (data) {

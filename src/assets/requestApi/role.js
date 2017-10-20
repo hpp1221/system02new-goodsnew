@@ -9,8 +9,6 @@ Vue.prototype.httpApi.role.addRole = function (params, successCallback) {
     })
 };
 
-
-
 //删除角色
 Vue.prototype.httpApi.role.deleteRole = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/role/deleteRole', params,
