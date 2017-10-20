@@ -69,7 +69,7 @@
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
           <p><i class="el-icon-edit" @click="editDelivery"
-                style="cursor: pointer"></i>客户名称：{{form.orderShipment.customer}} 收货人：{{form.orderShipment.userName}} 联系电话：{{form.orderShipment.userPhone}} 收货地址：{{form.orderShipment.userAddress}}
+                style="cursor: pointer"></i>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
@@ -106,13 +106,13 @@
             <el-input v-model="editDeliveryForm.customer"></el-input>
           </el-form-item>
           <el-form-item label="收货人">
-            <el-input v-model="editDeliveryForm.userName"></el-input>
+            <el-input v-model="editDeliveryForm.contacts"></el-input>
           </el-form-item>
           <el-form-item label="联系方式">
-            <el-input v-model="editDeliveryForm.userPhone"></el-input>
+            <el-input v-model="editDeliveryForm.cel"></el-input>
           </el-form-item>
           <el-form-item label="仓库地址">
-            <el-input v-model="editDeliveryForm.userAddress"></el-input>
+            <el-input v-model="editDeliveryForm.address"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer">
@@ -140,12 +140,10 @@
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
           }],
-          orderShipment: {
-            customer: '',//客户名称
-            userName: '',//收货人
-            userPhone: '',//联系方式
-            userAddress: '',//收货地址
-          },
+          customer: '',//客户名称
+          contacts: '',//收货人
+          cel: '',//联系方式
+          address: '',//收货地址
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
@@ -154,9 +152,9 @@
         },
         editDeliveryForm: {
           customer: '',
-          userName: '',
-          userPhone: '',
-          userAddress: ''
+          contacts: '',
+          cel: '',
+          address: ''
         },
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
@@ -197,10 +195,10 @@
     created(){
       if (window.localStorage.getItem('userinfo')) {
         let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
+        this.form.customer = userinfo.companyName;
+        this.form.contacts = userinfo.name;
+        this.form.cel = userinfo.cel;
+        this.form.address = userinfo.companyName;
       }
     },
     methods: {

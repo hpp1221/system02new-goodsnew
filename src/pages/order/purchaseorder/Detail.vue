@@ -83,17 +83,17 @@
             off-text="">
           </el-switch>
         </el-form-item>
-        <el-table v-if="operationLogVisible">
-          <el-table-column label="操作人">
+        <el-table v-if="operationLogVisible" :data="operationList">
+          <el-table-column label="操作人" prop="operator">
 
           </el-table-column>
-          <el-table-column label="时间">
+          <el-table-column label="时间" prop="operateTime">
 
           </el-table-column>
-          <el-table-column label="操作类别">
+          <el-table-column label="操作类别" prop="operateType">
 
           </el-table-column>
-          <el-table-column label="操作日志">
+          <el-table-column label="操作日志" prop="operateLog">
 
           </el-table-column>
         </el-table>
@@ -171,11 +171,19 @@
             id: 2,
             name: '普通发票'
           }
-        ]
+        ],
+        operationList:[],
       }
     },
     created(){
       this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
+    },
+    watch:{
+      operationLogVisible:function (newVal,oldVal) {
+        if(newVal && this.operationList.length === 0){
+          this.getOperationList();
+        }
+      }
     },
     methods: {
       select(id){
@@ -189,6 +197,22 @@
           console.log('detail',response);
           if (data.code == 10000) {
             self.form = self.formPass(self.form,data.data);
+          }
+        }).catch(function (error) {
+          console.log(error);
+        });
+      },
+      getOperationList(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+        }
+        self.$http.post('/ui/order/log', self.qs.stringify(requestData)).then(function (response) {
+          let data = response.data;
+          console.log('detail',response);
+          if (data.code == 10000) {
+            self.operationList = data.data;
           }
         }).catch(function (error) {
           console.log(error);
