@@ -133,6 +133,9 @@
         let requestData = {
           token: window.localStorage.getItem('token')
         }
+//        self.httpApi.store.createAllocationRecordNumber(requestData, function (data) {
+//          self.totalDepartmentList = data.data;
+//        });
         self.$http.post('/ui/createAllocationRecordNumber', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
           console.log('number000', response);

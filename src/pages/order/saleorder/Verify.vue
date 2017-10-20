@@ -137,15 +137,8 @@
           token: window.localStorage.getItem('token'),
           orderId: id,
         };
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('订单详情',response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form,data.data);
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.detail(requestData, function (data) {
+          self.form = self.formPass(self.form,data.data);
         });
       }
     }

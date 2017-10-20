@@ -99,17 +99,11 @@
               token: window.localStorage.getItem('token'),
             };
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.$http.post('/ui/user/updateMyInfo', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('updateUser', response)
-              if (data.code == 10000) {
-                self.$message.success('保存成功');
-                setTimeout(function () {
-                  self.$router.go(0)
-                },1000);
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.user.updateMyInfo(requestData, function (data) {
+              self.$message.success('保存成功');
+              setTimeout(function () {
+                self.$router.go(0)
+              }, 1000);
             });
           } else {
             console.log('error submit!!');
@@ -123,19 +117,10 @@
           token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/organization/selectOrganizationList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectOrganizationList', response)
-          if (data.code == 10000) {
-            self.totalDepartmentList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.organization.selectOrganizationList(requestData, function (data) {
+          self.totalDepartmentList = data.data;
         });
       },
     }
   }
 </script>
-
-<style>
-</style>

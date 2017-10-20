@@ -9,6 +9,8 @@ Vue.prototype.shallowCopy = function (obj) {//将对象中的数据迭代出来
   }
   return newObj;
 }
+
+
 Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form一一传入自己的form
   for (let o in myForm) {
     myForm[o] = responseForm[o];
@@ -18,8 +20,8 @@ Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form�
 
 Vue.prototype.getUserInfo = function () {//获取用户信息
   let self = this;
-  let requestData = {params: {token: window.localStorage.getItem('token')}};
-  self.$http.get('/ui/user.js/getMyInfo', requestData).then(function (response) {
+  let requestData = {token: window.localStorage.getItem('token')};
+  self.$http.get('/ui/user/getMyInfo', requestData).then(function (response) {
     let data = response.data;
     if (data.code === 10000) {
       window.localStorage.setItem('userinfo', JSON.stringify(data.data));

@@ -38,16 +38,18 @@
 
         </el-table-column>
         <!--<el-table-column prop="orderStatus" label="出库/发货">-->
-          <!--<template scope="scope">-->
-            <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
-            <!--<span v-if="scope.row.orderStatus == 4">调拨入库</span>-->
-            <!--<span v-if="scope.row.orderStatus == 5">盘盈</span>-->
-          <!--</template>-->
+        <!--<template scope="scope">-->
+        <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
+        <!--<span v-if="scope.row.orderStatus == 4">调拨入库</span>-->
+        <!--<span v-if="scope.row.orderStatus == 5">盘盈</span>-->
+        <!--</template>-->
         <!--</el-table-column>-->
-        <el-table-column prop="orderStatus" label="状态">
-
+        <el-table-column label="状态">
+          <template scope="scope">
+            <span v-for="t in totalOrderStatus" v-if="scope.row.orderStatus == t.id">{{t.name}}</span>
+          </template>
         </el-table-column>
         <!--<el-table-column prop="createUserName" label="付款状态">-->
 
@@ -107,9 +109,9 @@
           <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
           <!--<el-form-item label="订单标签">-->
-            <!--<el-checkbox-group v-model="form.storeStatus">-->
-              <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
-            <!--</el-checkbox-group>-->
+          <!--<el-checkbox-group v-model="form.storeStatus">-->
+          <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
+          <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -132,7 +134,7 @@
           payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
-          dateRange: [null,null],
+          dateRange: [null, null],
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
           startTime: '',
@@ -248,16 +250,9 @@
           orderType: 1
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            console.log('list', self.tableData)
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.list(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){//高级搜索
@@ -271,30 +266,16 @@
         self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
         self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-
-        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            console.log('list', self.tableData)
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.list(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       getAddressList(){
-        let self = this
-        let requestData = {token: window.localStorage.getItem('token')}
-        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addressList', response)
-          if (data.code == 10000) {
-            //self.totalStores = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.httpApi.stock.addressList(requestData, function (data) {
+
         });
       },
       seeDetail(id){

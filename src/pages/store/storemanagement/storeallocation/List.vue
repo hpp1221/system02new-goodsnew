@@ -139,13 +139,13 @@
         form: {
           tradeNo: '',//调拨单号
           outputDateRange: '',
-          inputDateRange:'',
-          outPutStartDate:'',
-          outPutEndDate:'',
-          inPutStartDate:'',
-          inPutEndDate:'',
-          inputAddressId:'',
-          outputAddressId:'',
+          inputDateRange: '',
+          outPutStartDate: '',
+          outPutEndDate: '',
+          inPutStartDate: '',
+          inPutEndDate: '',
+          inputAddressId: '',
+          outputAddressId: '',
           Type: [],//状态
         },
         totalStores: [],
@@ -210,7 +210,7 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status:2
+          status: 2
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.$http.post('/ui/storeAllocationList', self.qs.stringify(requestData)).then(function (response) {
@@ -227,7 +227,7 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status:2
+          status: 2
         };
         if (self.advanceSearch) {//高级搜索
           if (self.form.outputDateRange instanceof Array || self.form.inputDateRange instanceof Array) {
@@ -239,7 +239,7 @@
           requestData = Object.assign(requestData, self.shallowCopy(self.form))
         }
         self.$http.post('/ui/storeAllocationList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('storeAllocationList2',response)
+          console.log('storeAllocationList2', response)
           let data = response.data;
           if (data.code == 10000) {
             self.advanceSearch = false
@@ -269,9 +269,8 @@
         this.$router.push({path: '/store/storemanagement/storeallocation/detail', query: {allocationId: id}});
       },
       cancelGetGoods(row) { //作废
-        console.log('row',row)
         let self = this;
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           allocationRecordId: row.id
         };
@@ -280,27 +279,15 @@
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/storeAllocationRecordCancel', self.qs.stringify(params)).then((res) => {
-            console.log('set', res)
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已成功作废!'
-              });
-              this.getGoodsList()
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
-
+          self.httpApi.store.storeAllocationRecordCancel(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '已成功作废!'
+            });
+            this.getGoodsList()
+          });
         })
       },
     }
   }
 </script>
-
-<style>
-</style>

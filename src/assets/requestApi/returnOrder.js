@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import '../js'
 
-
 //添加订单
 Vue.prototype.httpApi.returnOrder.insertReturnOrder = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/returnOrder/insertReturnOrder', params,
@@ -26,6 +25,13 @@ Vue.prototype.httpApi.returnOrder.selectReturnOrderListPage = function (params, 
 //修改订单
 Vue.prototype.httpApi.returnOrder.updateReturnOrderById = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/returnOrder/updateReturnOrderById', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//修改订单
+Vue.prototype.httpApi.returnOrder.updateReturnOrderStatusById = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/returnOrder/updateReturnOrderStatusById', params,
     function (data) {
       successCallback(data);
     })

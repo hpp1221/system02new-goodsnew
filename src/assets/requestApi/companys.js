@@ -2,14 +2,14 @@ import Vue from 'vue'
 import '../js'
 //添加客户
 Vue.prototype.httpApi.company.addCompany = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/company/addCompany', params,
+  Vue.prototype.httpPost('/ui/company/addCompany', params,
     function (data) {
       successCallback(data);
     })
 };
 //查询公司详情
 Vue.prototype.httpApi.company.selectCompanyById = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/company/selectCompanyById', params,
+  Vue.prototype.httpPost('/ui/company/selectCompanyById', params,
     function (data) {
       successCallback(data);
     })

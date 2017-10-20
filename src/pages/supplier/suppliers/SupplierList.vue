@@ -116,7 +116,7 @@
         });
       },
       updateSupplier(supplierId) { //修改供应商详情
-        this.$router.push({path:'/supplier/suppliers/updatesupplier',query:{supplierId:supplierId}});
+        this.$router.push({path: '/supplier/suppliers/updatesupplier', query: {supplierId: supplierId}});
       },
       deleteSupplier(row) { //删除单个供应商详情
         let self = this;
@@ -138,7 +138,7 @@
         })
       },
       outputSupplier() { //导出供应商
-        if(this.multipleSelection.length === 0){
+        if (this.multipleSelection.length === 0) {
           this.$message.error('请选中要导出的项');
           return;
         }
@@ -154,16 +154,11 @@
         for (let i = 0; i < self.multipleSelection.length; i++) {
           supplierString += ',' + self.multipleSelection[i].supplierId
         }
-          supplierString = supplierString.substring(1, supplierString.length)
-          let requestData = {
-            params: {
-              supplierIds: supplierString
-            }
-          };
-          location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
+        supplierString = supplierString.substring(1, supplierString.length)
+        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
       },
       handleSelectionChange(val) {
-        console.log('val',val)
+        console.log('val', val)
         this.multipleSelection = val;
       },
       toggleSelection(rows) {

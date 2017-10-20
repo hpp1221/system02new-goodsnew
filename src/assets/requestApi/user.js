@@ -91,7 +91,7 @@ Vue.prototype.httpApi.user.selectUserById = function (params, successCallback) {
 
 //查询邮箱是否存在
 Vue.prototype.httpApi.user.selectUserCountByEmail = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/selectUserCountByEmail', params,
+  Vue.prototype.httpPost('/ui/user/selectUserCountByEmail', params,
     function (data) {
       successCallback(data);
     })
@@ -99,7 +99,7 @@ Vue.prototype.httpApi.user.selectUserCountByEmail = function (params, successCal
 
 //条件查询用户列表
 Vue.prototype.httpApi.user.selectUserListPage = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/selectUserListPage', params,
+  Vue.prototype.httpPost('/ui/user/selectUserListPage', params,
     function (data) {
       successCallback(data);
     })
@@ -107,7 +107,7 @@ Vue.prototype.httpApi.user.selectUserListPage = function (params, successCallbac
 
 //更新用户自己的信息
 Vue.prototype.httpApi.user.updateMyInfo = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/updateMyInfo.do', params,
+  Vue.prototype.httpPost('/ui/user/updateMyInfo.do', params,
     function (data) {
       successCallback(data);
     })
@@ -115,7 +115,7 @@ Vue.prototype.httpApi.user.updateMyInfo = function (params, successCallback) {
 
 //修改用户密码
 Vue.prototype.httpApi.user.updatePwd = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/updatePwd.do', params,
+  Vue.prototype.httpPost('/ui/user/updatePwd.do', params,
     function (data) {
       successCallback(data);
     })
@@ -123,21 +123,21 @@ Vue.prototype.httpApi.user.updatePwd = function (params, successCallback) {
 
 //更新用户
 Vue.prototype.httpApi.user.updateUser = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/updateUser.do', params,
+  Vue.prototype.httpPost('/ui/user/updateUser.do', params,
     function (data) {
       successCallback(data);
     })
 };
 //更新用户邮箱
 Vue.prototype.httpApi.user.updateUserEmail = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/updateUserEmail.do', params,
+  Vue.prototype.httpPost('/ui/user/updateUserEmail.do', params,
     function (data) {
       successCallback(data);
     })
 };
 //更新用户手机号
 Vue.prototype.httpApi.user.updateUserPhone = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/user/updateUserPhone.do', params,
+  Vue.prototype.httpPost('/ui/user/updateUserPhone.do', params,
     function (data) {
       successCallback(data);
     })
@@ -149,13 +149,5 @@ Vue.prototype.httpApi.user.updateUserStatus = function (params, successCallback)
       successCallback(data);
     })
 };
-
-// //获取短信
-// Vue.prototype.httpApi.user.getMessage = function (params, successCallback) {
-//   Vue.prototype.httpGet('/ui/user/getMessage.do', params,
-//     function (data) {
-//       successCallback(data);
-//     })
-// };
 
 

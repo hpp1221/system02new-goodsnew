@@ -87,7 +87,8 @@
           </el-form-item>
           <el-form-item label="订单状态">
             <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange" style="display: inline;margin-left: 30px">
+            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
+                               style="display: inline;margin-left: 30px">
               <el-checkbox
                 v-for="t in totalOrderStatus"
                 :key="t.id"
@@ -97,14 +98,14 @@
             </el-checkbox-group>
           </el-form-item>
           <!--<el-form-item label="付款状态">-->
-            <!--<el-checkbox-group v-model="form.payType">-->
-              <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
-            <!--</el-checkbox-group>-->
+          <!--<el-checkbox-group v-model="form.payType">-->
+          <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
+          <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
           <!--<el-form-item label="订单标签">-->
-            <!--<el-checkbox-group v-model="form.storeStatus">-->
-              <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
-            <!--</el-checkbox-group>-->
+          <!--<el-checkbox-group v-model="form.storeStatus">-->
+          <!--<el-checkbox v-for="t in totalOrderTags" :key="t.name" :label="t.name"></el-checkbox>-->
+          <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
         </el-form>
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -125,14 +126,14 @@
           payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
-          dateRange: [null,null],
+          dateRange: [null, null],
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
           startTime: '',
           endTime: ''
         },
         easyForm: {//简单查询
-          orderStatus:''
+          orderStatus: ''
         },
         pageSize: 5,
         pageNum: 1,
@@ -141,41 +142,41 @@
         totalOrderStatus: [
           {
             name: '已作废',
-            id:1
+            id: 1
           },
           {
             name: '待确认审核',
-            id:2
+            id: 2
           },
           {
             name: '待收款确认',
-            id:3
+            id: 3
           },
           {
             name: '已完成',
-            id:4
+            id: 4
           },
           {
             name: '待出库确认',
-            id:5
+            id: 5
           },
         ],//订单状态
         totalPayStatus: [
           {
             name: '未付款',
-            id:1
+            id: 1
           },
           {
             name: '付款待审核',
-            id:2
+            id: 2
           },
           {
             name: '部分付款',
-            id:3
+            id: 3
           },
           {
             name: '已付款',
-            id:4
+            id: 4
           },
         ],//付款状态
         totalOrderTags: [
@@ -217,21 +218,13 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          orderType:2
+          orderType: 2
         };
 
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-
-        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            console.log('list', self.tableData)
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.list(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){
@@ -240,36 +233,22 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          orderType:2
+          orderType: 2
         };
         self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
         self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-
-        self.$http.post('/ui/order/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            console.log('list', self.tableData)
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.list(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       getAddressList(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addressList', response)
-          if (data.code === 10000) {
-            //self.totalStores = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.addressList(requestData, function (data) {
         });
+
       },
       seeDetail(id){
         let url = '/order/saleorder/detail/' + id;
@@ -302,6 +281,3 @@
     }
   }
 </script>
-
-<style>
-</style>

@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column prop="goodsSpec" label="商品名称">
 
-      </el-table-column>
+        </el-table-column>
         <el-table-column prop="goodsSpec" label="规格">
 
         </el-table-column>
@@ -106,13 +106,13 @@
               <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
             </el-select>
             <!--<el-select-->
-              <!--placeholder="全部仓库"-->
-              <!--v-model="form.address"-->
-              <!--multiple-->
-              <!--filterable-->
-              <!--:loading="addressLoading"-->
-              <!--@visible-change="getAddress">-->3v
-              <!--<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>-->
+            <!--placeholder="全部仓库"-->
+            <!--v-model="form.address"-->
+            <!--multiple-->
+            <!--filterable-->
+            <!--:loading="addressLoading"-->
+            <!--@visible-change="getAddress">-->3v
+            <!--<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>-->
             <!--</el-select>-->
           </el-form-item>
           <el-form-item label="商品标签">
@@ -121,9 +121,12 @@
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="库存状态">
-            <el-checkbox v-model="form.storeStatus" label="高于库存上限值" :true-label="1" :false-label="0">高于库存上限值</el-checkbox>
-            <el-checkbox v-model="form.storeStatus" label="低于库存下限值" :true-label="1" :false-label="0">低于库存下限值</el-checkbox>
-            <el-checkbox v-model="form.storeStatus" label="库存<=0商品" :true-label="1" :false-label="0">库存<=0商品</el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="高于库存上限值" :true-label="1" :false-label="0">高于库存上限值
+            </el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="低于库存下限值" :true-label="1" :false-label="0">低于库存下限值
+            </el-checkbox>
+            <el-checkbox v-model="form.storeStatus" label="库存<=0商品" :true-label="1" :false-label="0">库存<=0商品
+            </el-checkbox>
           </el-form-item>
           <el-form-item label="商品状态">
             <el-radio class="radio" v-model="form.goodsStatus" label="0">全部</el-radio>
@@ -143,7 +146,7 @@
     data(){
       return {
         tableData: [],
-        storeIds:[],
+        storeIds: [],
         advanceSearch: false,
         form: {
           brandName: '',//商品品牌
@@ -151,13 +154,13 @@
           tagId: [],//商品标签
           goodsStatus: '',//商品状态
           keyword: '',//关键词
-          storeStatus:'',//库存上下限
+          storeStatus: '',//库存上下限
           series: '',//商品分类
           cat: []
         },
         easyForm: {//简单查询
-          cat:[],//商品分类
-          storeId:[]//所属门店
+          cat: [],//商品分类
+          storeId: []//所属门店
         },
         storeIds: [],//门店列表
         totalCategories: [],//分类列表
@@ -223,11 +226,11 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          type:2
+          type: 2
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
-          console.log('list',response)
+          console.log('list', response)
           let data = response.data;
           if (data.code === 10000) {
             self.tableData = data.data;
@@ -248,7 +251,7 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          type:2
+          type: 2
         };
         if (self.advanceSearch) {//高级搜索
           requestData = Object.assign(requestData, self.shallowCopy(self.form))
@@ -268,9 +271,9 @@
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData = {token: window.localStorage.getItem('token')};
         } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
+          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
         self.$http.get('/ui/catList', requestData).then(function (response) {
           let data = response.data;

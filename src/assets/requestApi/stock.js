@@ -100,7 +100,7 @@ Vue.prototype.httpApi.stock.exportStore = function (params, successCallback) {
 };
 //查询调拨详情
 Vue.prototype.httpApi.stock.getAllocationRecordDetail = function (params, successCallback) {
-  Vue.prototype.httpGet('/ui/getAllocationRecordDetail', params,
+  Vue.prototype.httpPost('/ui/getAllocationRecordDetail', params,
     function (data) {
       successCallback(data);
     })
@@ -158,13 +158,7 @@ Vue.prototype.httpApi.stock.searchOrderDetail = function (params, successCallbac
       successCallback(data);
     })
 };
-// //类目列表
-// Vue.prototype.httpApi.stock.catList = function (params, successCallback) {
-//   Vue.prototype.httpGet('/ui/catList', params,
-//     function (data) {
-//       successCallback(data);
-//     })
-// };
+
 
 
 

@@ -13,20 +13,21 @@
                    class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
         </el-button>
 
-        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
+                   :label="item.value" :key="item.value">
           {{item.label}}
         </el-button>
       </div>
 
-        <!--<el-button  @click="getGoodsExaminePass" v-model="type">-->
-          <!--<template scope="scope">-->
-            <!--<span v-if="scope.row.type == '0'">已完成</span>-->
-            <!--<span v-if="scope.row.type == '1'">待审核通过</span>-->
-            <!--<span v-if="scope.row.type == '2'">待发货确认</span>-->
-            <!--<span v-if="scope.row.type == '3'">待收货确认</span>-->
-            <!--<span v-if="scope.row.type == '4'">作废</span>-->
-          <!--</template>-->
-        <!--</el-button>-->
+      <!--<el-button  @click="getGoodsExaminePass" v-model="type">-->
+      <!--<template scope="scope">-->
+      <!--<span v-if="scope.row.type == '0'">已完成</span>-->
+      <!--<span v-if="scope.row.type == '1'">待审核通过</span>-->
+      <!--<span v-if="scope.row.type == '2'">待发货确认</span>-->
+      <!--<span v-if="scope.row.type == '3'">待收货确认</span>-->
+      <!--<span v-if="scope.row.type == '4'">作废</span>-->
+      <!--</template>-->
+      <!--</el-button>-->
       <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px"
                inline>
         <el-form-item label="调拨单号">
@@ -159,14 +160,14 @@
           status: 2,
           allocationRecordId: self.form.id
         }
-        if(self.type == "1"){
+        if (self.type == "1") {
           self.$confirm('确认要通过该审核？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
             self.$http.post('/ui/storeAllocationRecordAdopt', self.qs.stringify(requestData)).then((res) => {
-              console.log('deta',res)
+              console.log('deta', res)
               if (res.data.code == 10000) {
                 self.$message({
                   type: 'success',
@@ -181,14 +182,14 @@
               }
             })
           })
-        }else if(self.type == "2"){
+        } else if (self.type == "2") {
           self.$confirm('确认要通过该审核？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
             self.$http.post('/ui/storeAllocationRecordSendAdopt', self.qs.stringify(requestData)).then((res) => {
-              console.log('deta',res)
+              console.log('deta', res)
               if (res.data.code == 10000) {
                 self.$message({
                   type: 'success',
@@ -203,14 +204,14 @@
               }
             })
           })
-        }else if (self.type == "3"){
+        } else if (self.type == "3") {
           self.$confirm('确认要通过该审核？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
             self.$http.post('/ui/storeAllocationRecordReceiveAdopt', self.qs.stringify(requestData)).then((res) => {
-              console.log('deta',res)
+              console.log('deta', res)
               if (res.data.code == 10000) {
                 self.$message({
                   type: 'success',
@@ -228,11 +229,10 @@
         }
 
 
-
       },
       cancelGetGoods() { //作废
         let self = this;
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           id: self.form.id
         };
@@ -241,22 +241,13 @@
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set', res)
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已成功作废!'
-              });
-              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
-
+          self.httpApi.store.setInvalid(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '已成功作废!'
+            });
+            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+          });
         })
       },
       outputGetGoods() {
@@ -266,11 +257,6 @@
           supplierString += ',' + self.multipleSelection[i].supplierId
         }
         supplierString = supplierString.substring(1, supplierString.length)
-        let requestData = {
-          params: {
-            supplierIds: supplierString
-          }
-        };
         location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
       },
       handleSelectionChange(val) {

@@ -179,12 +179,12 @@
     },
     watch: {
       statisticsType: function (newVal, oldVal) {//改变统计方式
-        newVal === '1' ? this.selectGoodsList(this.pageSize1,this.pageNum1) : this.selectOrdersList(this.pageSize2,this.pageNum2);
+        newVal === '1' ? this.selectGoodsList(this.pageSize1, this.pageNum1) : this.selectOrdersList(this.pageSize2, this.pageNum2);
       },
       dateRange: function () {//改变日期范围，重新查总数和列表
         this.selectCount();
-        this.selectGoodsList(this.pageSize1,this.pageNum1);
-        this.selectOrdersList(this.pageSize2,this.pageNum2);
+        this.selectGoodsList(this.pageSize1, this.pageNum1);
+        this.selectOrdersList(this.pageSize2, this.pageNum2);
       },
 
     },
@@ -210,16 +210,10 @@
           startTime: self.startTime,
           endTime: self.endTime,
         };
-        self.$http.post('/ui/order/statistics', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('statistics', data)
-          if (data.code === 10000) {
-            self.countAmount = data.data.countAmount;
-            self.countOrder = data.data.countOrder;
-            self.countGoods = data.data.countGoods;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.statistics(requestData, function (data) {
+          self.countAmount = data.data.countAmount;
+          self.countOrder = data.data.countOrder;
+          self.countGoods = data.data.countGoods;
         });
       },
       selectGoodsList(size, num){
@@ -230,23 +224,14 @@
         }
         let requestData = {
           token: window.localStorage.getItem('token'),
-          startTime:self.startTime,
-          endTime:self.endTime,
+          startTime: self.startTime,
+          endTime: self.endTime,
           pageSize: size,
           pageNo: num
         };
-        self.$http.post('/ui/order/goods/details', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('goodsdetail', data)
-          if (data.code == 10000) {
-            self.goodsData = data.data.list;
-            self.totalPage1 = data.data.total;
-//            self.countAmount = data.data.countAmount;
-//            self.countOrder = data.data.countOrder;
-//            self.countGoods = data.data.countGoods;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.goodsDetails(requestData, function (data) {
+          self.goodsData = data.data.list;
+          self.totalPage1 = data.data.total;
         });
       },
       selectOrdersList(size, num){
@@ -262,25 +247,17 @@
           pageSize: size,
           pageNo: num
         };
-        self.$http.post('/ui/order/details', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail', data)
-          if (data.code == 10000) {
-            self.orderData = data.data.list;
-            self.totalPage2 = data.data.total;
+        self.httpApi.order.details(requestData, function (data) {
+          self.orderData = data.data.list;
+          self.totalPage2 = data.data.total;
 //            self.countAmount = data.data.countAmount;
 //            self.countOrder = data.data.countOrder;
 //            self.countGoods = data.data.countGoods;
-          }
-        }).catch(function (error) {
-          console.log(error);
         });
       }
     }
   }
 </script>
-
-
 <style scoped="scoped">
   .goodssummary {
     height: 100px;

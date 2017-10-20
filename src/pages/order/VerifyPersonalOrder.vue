@@ -61,7 +61,7 @@
           <!--v-if="imgToken">-->
           <!--</uploadfiles>-->
         </el-form-item>
-        <el-form-item label="操作日志" >
+        <el-form-item label="操作日志">
           <el-switch
             v-model="operationLogVisible"
             on-text=""
@@ -119,16 +119,16 @@
             name: '普通发票'
           }
         ],
-        operationList:[],
+        operationList: [],
         operationLogVisible: false
       }
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
-    watch:{
-      operationLogVisible:function (newVal,oldVal) {
-        if(newVal && this.operationList.length === 0){
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
           this.getOperationList();
         }
       }
@@ -140,15 +140,9 @@
           token: window.localStorage.getItem('token'),
           orderId: id,
         };
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('订单详情', response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form, data.data);
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.detail(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
+          console.log(self.form)
         });
       },
       getOperationList(){
@@ -156,15 +150,9 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
-        }
-        self.$http.post('/ui/order/log', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail',response);
-          if (data.code == 10000) {
-            self.operationList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        };
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
         });
       },
       tabClick(){
@@ -175,18 +163,12 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
-          orderStatus:this.$route.params.status,
+          orderStatus: this.$route.params.status,
           verifyType: type
         };
-        self.$http.post('/ui/order/verify', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('订单详情', response);
-          if (data.code === 10000) {
-            self.form = self.formPass(self.form, data.data);
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.verify(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
+          console.log(self.form)
         });
       }
     }
