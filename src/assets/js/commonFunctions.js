@@ -2,12 +2,13 @@ import Vue from 'vue';
 Vue.prototype.shallowCopy = function (obj) {//将对象中的数据迭代出来
   let newObj = {};
   for (let o in obj) {
-    newObj[o] = typeof(obj[o]) === 'object' ? JSON.stringify(obj[o]) : obj[o];
-    newObj[o] = obj[o] instanceof Date ? obj[o].pattern('yyyy-MM-dd HH:mm:ss') : obj[o];
+    typeof(obj[o]) === 'object' ? newObj[o] = JSON.stringify(obj[o]) : newObj[o] = obj[o];
+    if (obj[o] instanceof Date) {
+      newObj[o] = obj[o].pattern('yyyy-MM-dd HH:mm:ss');
+    }
   }
   return newObj;
 }
-
 Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form一一传入自己的form
   for (let o in myForm) {
     myForm[o] = responseForm[o];

@@ -15,9 +15,24 @@ Vue.prototype.httpApi.store.addStoreHouseContact = function (params, successCall
     })
 };
 
+//生成调拨单号
+Vue.prototype.httpApi.store.createAllocationRecordNumber = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/createAllocationRecordNumber', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
 //生成要货单号
 Vue.prototype.httpApi.store.createGetGoodsNumber = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/createGetGoodsNumber', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//新增门店调拨单
+Vue.prototype.httpApi.store.createStoreAllocation = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/createStoreAllocation', params,
     function (data) {
       successCallback(data);
     })
@@ -45,6 +60,20 @@ Vue.prototype.httpApi.store.getGoodsRecordList = function (params, successCallba
       successCallback(data);
     })
 };
+//查询出入库门店的某一商品库存
+Vue.prototype.httpApi.store.selectOutPutAndInputGoodsStoreHouse = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/selectOutPutAndInputGoodsStoreHouse', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//关键字查询出库门店的商品信息列表
+Vue.prototype.httpApi.store.selectStoreGoodsInfo = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/selectStoreGoodsInfo', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 
 //要货单作废
 Vue.prototype.httpApi.store.setInvalid = function (params, successCallback) {
@@ -54,6 +83,48 @@ Vue.prototype.httpApi.store.setInvalid = function (params, successCallback) {
     })
 };
 
+//门店调拨单详情
+Vue.prototype.httpApi.store.storeAllocationInfo = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationInfo', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//门店调拨单列表
+Vue.prototype.httpApi.store.storeAllocationList = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//门店调拨单 审核
+Vue.prototype.httpApi.store.storeAllocationRecordAdopt = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationRecordAdopt', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//门店调拨单 作废
+Vue.prototype.httpApi.store.storeAllocationRecordCancel = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationRecordCancel', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//门店调拨单 确认收货审核
+Vue.prototype.httpApi.store.storeAllocationRecordReceiveAdopt = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationRecordReceiveAdopt', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//门店调拨单 发货审核
+Vue.prototype.httpApi.store.storeAllocationRecordSendAdopt = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeAllocationRecordSendAdopt', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //要货单商品信息
 Vue.prototype.httpApi.store.storeGoodsInfo = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/storeGoodsInfo', params,

@@ -7,7 +7,7 @@
           {{form.tradeNo}}
         </el-form-item>
         <el-form-item label="调入门店">
-          <el-select placeholder="请选择门店" v-model="form.inPutAddressId" style="width: 130px" @change="changeinput">
+          <el-select placeholder="请选择门店" v-model="form.inPutAddressId" style="width: 130px">
             <el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item">
             </el-option>
           </el-select>
@@ -91,12 +91,12 @@
         storeHouseIds: [],
         form: {
           tradeNo: '',
-          name:'',
+          name: '',
           inPutAddressId: '',
-          outPutAddressId:'',
+          outPutAddressId: '',
           inPutAddress: '',
-          outPutAddress:'',
-          goodsSkuId:'',
+          outPutAddress: '',
+          goodsSkuId: '',
           getGoodsRecordDetails: [{
             number: '',//商品编号
             goodsName: '',//商品名
@@ -110,7 +110,7 @@
             priceFen: '',
             sum: 0,//金额
             combination: '',//编号和名称组合
-            goodsSkuId:'',
+            goodsSkuId: '',
             remark: '',//备注
           }],
         },
@@ -128,9 +128,6 @@
       },
     },
     methods: {
-      changeinput(val){
-        console.log('val',val)
-      },
       getTradeNumber() {//调拨单号
         let self = this
         let requestData = {
@@ -152,11 +149,8 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          inPutAddressId:self.form.inPutAddressId,
-//          inPutAddress:self.inputStoreVal[0].name,
-          outPutAddressId:self.form.outPutAddressId,
-//          outPutAddress:self.outputStoreVal[0].name
-
+          inPutAddressId: self.form.inPutAddressId,
+          outPutAddressId:self.form.outPutAddressId
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.$http.post('/ui/createStoreAllocation', self.qs.stringify(requestData)).then(function (response) {
@@ -176,7 +170,7 @@
           token: window.localStorage.getItem('token'),
         }
         self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('store',response.data.data[0].name)
+          console.log('store', response.data.data[0].name)
           let data = response.data;
           if (data.code == 10000) {
             self.storeIds = data.data
@@ -198,14 +192,12 @@
         this.form.getGoodsRecordDetails[index].sum = price;
       },
       querySearchAsync(queryString, cb) {//商品关键字查询
-        console.log('queryString',queryString)
-        console.log('cb',cb)
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          inPutAddressId:self.form.inPutAddressId,
-          outPutAddressId:self.form.outPutAddressId
+          inPutAddressId: self.form.inPutAddressId.id,
+          outPutAddressId: self.form.outPutAddressId.id
         }
         self.$http.post('/ui/selectStoreGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
