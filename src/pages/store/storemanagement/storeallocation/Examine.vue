@@ -84,12 +84,12 @@
     data() {
       return {
         form: {
-          id:'',
+          id: '',
           tradeNo: '',
           inPutAddressId: '',
           inPutAddress: '',
-          outPutAddressId:'',
-          outPutAddress:'',
+          outPutAddressId: '',
+          outPutAddress: '',
           createUseraName: ''
         },
         getGoodsRecordDetails: [],
@@ -131,7 +131,7 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/storeAllocationRecordAdopt', self.qs.stringify(requestData)).then((res) => {
-            console.log('deta',res)
+            console.log('deta', res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
@@ -152,7 +152,7 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/storeAllocationRecordSendAdopt', self.qs.stringify(requestData)).then((res) => {
-            console.log('deta',res)
+            console.log('deta', res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
@@ -173,7 +173,7 @@
           type: 'warning',
         }).then(() => {
           self.$http.post('/ui/storeAllocationRecordReceiveAdopt', self.qs.stringify(requestData)).then((res) => {
-            console.log('deta',res)
+            console.log('deta', res)
             if (res.data.code == 10000) {
               self.$message({
                 type: 'success',
@@ -191,31 +191,22 @@
       },
       cancelGetGoods() { //作废
         let self = this;
-        let params = {
-          token:window.localStorage.getItem('token'),
-          id:self.form.id
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          id: self.form.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set',res)
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已成功作废!'
-              });
-              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
-
+          self.httpApi.store.setInvalid(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '已成功作废!'
+            });
+            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+          });
         })
       },
     }

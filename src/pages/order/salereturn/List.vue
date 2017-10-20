@@ -186,16 +186,9 @@
           type: 2//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-
-        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectReturnOrderListPage', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){
@@ -207,15 +200,9 @@
           type: 2//1是采购退货，2是销售退货
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/returnOrder/selectReturnOrderListPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectReturnOrderListPage', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       orderStatusAllChange(event){//订单checkbox全选按钮
@@ -233,6 +220,3 @@
     }
   }
 </script>
-
-<style>
-</style>

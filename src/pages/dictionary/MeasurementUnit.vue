@@ -55,7 +55,7 @@
       },
       getUnitList(size, num) {//单位列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
@@ -83,7 +83,7 @@
       },
       deleteUnit(item){//删除
         let self = this;
-        let params = {unitId: item.id};
+        let requestData = {unitId: item.id};
         self.$confirm('请确认是否删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

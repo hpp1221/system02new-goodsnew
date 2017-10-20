@@ -96,7 +96,7 @@
       },
       getSupplierGoodsList() { //供应商商品管理列表
         let self = this
-        let params = {
+        let requestData = {
           rows: self.pageNum,
           page: self.pageSize
         };

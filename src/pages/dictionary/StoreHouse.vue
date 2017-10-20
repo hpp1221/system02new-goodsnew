@@ -106,7 +106,7 @@
       },
       getStoreHouseList(size,num) {//仓库列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize:size,
           pageNo: num,

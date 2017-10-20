@@ -210,19 +210,11 @@
               oldPwd: self.pwdForm.oldPwd,
               pwd: self.pwdForm.pwd,
             };
-            self.$http.post('/ui/user/updatePwd.do', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code == 10000) {
-                self.pwdModalVisible = false;
-                self.$message.success('修改成功！');
-                self.getUserInfo();
-                location.reload();
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.user.updatePwd(requestData, function (data) {
+              self.pwdModalVisible = false;
+              self.$message.success('修改成功！');
+              self.getUserInfo();
+              location.reload();
             });
           } else {
             console.log('error submit!!');
@@ -237,19 +229,13 @@
           phone: self.phoneForm.phone,
           code: self.phoneForm.code,
         };
-        self.$http.post('/ui/user/updateUserPhone.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response);
-          if (data.code == 10000) {
-            self.phoneModalVisible = false;
-            self.$message.success('修改成功！');
-            self.getUserInfo();
-            location.reload();
-          } else {
-            self.$message.error(data.message);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.updateUserPhone(requestData, function (data) {
+          self.phoneModalVisible = false;
+          self.$message.success('修改成功！');
+          self.getUserInfo();
+          setTimeout(function () {
+            self.$router.go(0);
+          }, 500)
         });
       },
       getVerifyCode(){//获取短信验证码
@@ -258,38 +244,20 @@
           token: window.localStorage.getItem('token'),
           phone: self.phoneForm.phone
         };
-        self.$http.post('/ui/user/checkUserCelCount.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.verifyText = 60;
-            var messageCount = setInterval(function () {
-              self.verifyText--;
-              if (self.verifyText === 0) {
-                self.verifyText = '获取验证码';
-                clearInterval(messageCount);
-              }
-            }, 1000);
-            let requestData = {params: {phone: self.phoneForm.phone, type: 2}};//1代表修改
-            self.$http.get('/ui/user/getMessage.do', requestData).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code == 10000) {
-                self.$message.success('已成功发送');
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-          } else {
-            self.$message.error(data.message);
-            return;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.checkUserCelCount(requestData, function (data) {
+          self.verifyText = 60;
+          var messageCount = setInterval(function () {
+            self.verifyText--;
+            if (self.verifyText === 0) {
+              self.verifyText = '获取验证码';
+              clearInterval(messageCount);
+            }
+          }, 1000);
+          let requestData = {phone: self.phoneForm.phone, type: 2};//1代表修改
+          self.httpApi.user.getMessage(requestData, function (data) {
+            self.$message.success('已成功发送');
+          });
         });
-
-
       },
       getEmailVerifyCode(){//验证身份
         let self = this;
@@ -302,22 +270,12 @@
           }
         }, 1000);
         let requestData = {
-          params: {
-            token: window.localStorage.getItem('token'),
-            phone: self.userInfo.cel,
-            type: 3
-          }
+          token: window.localStorage.getItem('token'),
+          phone: self.userInfo.cel,
+          type: 3
         };//3代表修改邮箱
-        self.$http.get('/ui/user/getMessage.do', requestData).then(function (response) {
-          let data = response.data;
-          console.log(response);
-          if (data.code == 10000) {
-            self.$message.success('已成功发送');
-          } else {
-            self.$message.error(data.message);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.getMessage(requestData, function (data) {
+          self.$message.success('已成功发送');
         });
       },
       confirmEmailFirst(){//修改邮箱时验证手机
@@ -328,54 +286,29 @@
           phone: self.userInfo.cel,
           code: self.emailForm.code
         };//3代表修改邮箱
-        self.$http.post('/ui/user/checkMsg.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response);
-          if (data.code == 10000) {
-            self.$message.success('验证身份通过');
-            self.changeEmailVisible = true;
-            self.verifyText = '获取验证码';
-            clearInterval(self.messageCount);
-          } else {
-            self.$message.error(data.message);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.getMessage(requestData, function (data) {
+          self.$message.success('验证身份通过');
+          self.changeEmailVisible = true;
+          self.verifyText = '获取验证码';
+          clearInterval(self.messageCount);
         });
       },
       sendEmail(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), email: self.changeEmailForm.email};
-        self.$http.post('/ui/user/selectUserCountByEmail.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response)
-          if (data.code == 10000) {
-            self.verifyText = 60;
-            self.messageCount = setInterval(function () {
-              self.verifyText--;
-              if (self.verifyText === 0) {
-                self.verifyText = '获取验证码';
-                clearInterval(self.messageCount);
-              }
-            }, 1000);
-            let requestData = {params: {email: self.changeEmailForm.email, type: 1}};//1修改邮箱
-            self.$http.get('/ui/user/getEmailMessage.do', requestData).then(function (response) {
-              let data = response.data;
-              console.log(response);
-              if (data.code == 10000) {
-                self.$message.success('已成功发送');
-              } else {
-                self.$message.error(data.message);
-              }
-            }).catch(function (error) {
-              console.log(error);
-            });
-          } else {
-            self.$message.error(data.message);
-            return;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.selectUserCountByEmail(requestData, function (data) {
+          self.verifyText = 60;
+          self.messageCount = setInterval(function () {
+            self.verifyText--;
+            if (self.verifyText === 0) {
+              self.verifyText = '获取验证码';
+              clearInterval(self.messageCount);
+            }
+          }, 1000);
+          let requestData = {email: self.changeEmailForm.email, type: 1};//1修改邮箱
+          self.httpApi.user.getEmailMessage(requestData, function (data) {
+            self.$message.success('已成功发送');
+          });
         });
       },
       sureChangeEmail(){
@@ -385,24 +318,15 @@
           email: self.changeEmailForm.email,
           code: self.changeEmailForm.code
         };//1修改邮箱
-        self.$http.post('/ui/user/updateUserEmail.do', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response);
-          if (data.code == 10000) {
-            self.changeEmailVisible = false;
-            self.$message.success('修改成功！');
-            self.getUserInfo();
-            location.reload();
-          } else {
-            self.$message.error(data.message);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.updateUserEmail(requestData, function (data) {
+          self.changeEmailVisible = false;
+          self.$message.success('修改成功！');
+          self.getUserInfo();
+          setTimeout(function () {
+            self.$router.go(0);
+          }, 500)
         });
       },
     }
   }
 </script>
-
-<style>
-</style>

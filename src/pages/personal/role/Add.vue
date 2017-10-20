@@ -65,14 +65,8 @@
           token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/permission/selectPermissionListByCompanyId', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectPermissionList', response)
-          if (data.code == 10000) {
-            self.data = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.permission.selectPermissionListByCompanyId(requestData, function (data) {
+          self.data = data.data;
         });
       },
       checkChange(obj, isChecked, other){
@@ -102,14 +96,8 @@
           permissionIdStr: str
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/role/addRole', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addRole', response)
-          if (data.code == 10000) {
-            self.$router.push('/personal/role/list');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.role.addRole(requestData, function (data) {
+          self.$router.push('/personal/role/list');
         });
       },
       cancel(){

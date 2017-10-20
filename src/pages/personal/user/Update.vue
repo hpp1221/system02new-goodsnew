@@ -209,34 +209,16 @@
       getPrimaryUserLoginId(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/user.js/selectPrimaryUserLoginId', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectPrimaryUserLoginId', response)
-          if (data.code == 10000) {
-            self.companySuffix = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.selectPrimaryUserLoginId(requestData, function (data) {
+          self.companySuffix = data.data;
         });
       },
       select(id){
         let self = this;
-        let requestData = {
-          params: {
-            token: window.localStorage.getItem('token'),
-            userId: id
-          }
-        };
-        self.$http.get('/ui/user.js/selectUserById', requestData).then(function (response) {
-          let data = response.data;
-          console.log('selectUserById', response)
-          if (data.code == 10000) {
-            self.formPass(self.form, data.data);
-            self.form.pwd = '';
-            console.log(self.form)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        let requestData = {token: window.localStorage.getItem('token'), userId: id};
+        self.httpApi.user.selectUserById(requestData, function (data) {
+          self.formPass(self.form, data.data);
+          self.form.pwd = '';
         });
       },
       getLogo(file){//获取logo
@@ -252,15 +234,12 @@
             };
             //self.form.loginId = JSON.parse(window.localStorage.getItem('userinfo')).loginId + '-' + self.form.loginId;
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.$http.post('/ui/user.js/updateUser', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('addUser', response)
-              if (data.code == 10000) {
-                self.$message.success('保存成功');
-                self.$router.push('/personal/user.js/list');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.user.updateUser(requestData, function (data) {
+              self.$message.success('保存成功');
+              setTimeout(function () {
+                self.$router.push('/personal/user/list');
+              }, 500);
+
             });
           } else {
             console.log('error submit!!');
@@ -271,14 +250,8 @@
       getRoleList(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/role/selectRoleList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectRoleList', response)
-          if (data.code == 10000) {
-            self.totalRoleList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.role.selectRoleList(requestData, function (data) {
+          self.totalRoleList = data.data;
         });
       },
       getDepartmentList(){
@@ -287,19 +260,10 @@
           token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/organization/selectOrganizationList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectOrganizationList', response)
-          if (data.code == 10000) {
-            self.totalDepartmentList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.organization.selectOrganizationList(requestData, function (data) {
+          self.totalDepartmentList = data.data;
         });
       },
     }
   }
 </script>
-
-<style>
-</style>

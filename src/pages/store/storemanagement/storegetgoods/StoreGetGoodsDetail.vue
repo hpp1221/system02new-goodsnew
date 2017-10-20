@@ -103,7 +103,7 @@
     data() {
       return {
         form: {
-          id:'',
+          id: '',
           tradeNumber: '',
           storeId: '',
           storeName: '',
@@ -169,31 +169,22 @@
       },
       cancelGetGoods() { //作废
         let self = this;
-        let params = {
-          token:window.localStorage.getItem('token'),
-          id:self.form.id
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          id: self.form.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set',res)
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已成功作废!'
-              });
-              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
-
+          self.httpApi.store.setInvalid(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '已成功作废!'
+            });
+            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+          });
         })
       },
       outputGetGoods(){
@@ -203,11 +194,6 @@
           supplierString += ',' + self.multipleSelection[i].supplierId
         }
         supplierString = supplierString.substring(1, supplierString.length)
-        let requestData = {
-          params: {
-            supplierIds: supplierString
-          }
-        };
         location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
       },
       handleSelectionChange(val) {
@@ -215,7 +201,6 @@
       },
       toggleSelection(rows) {
         if (rows) {
-          console.log('rows', rows)
           rows.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });

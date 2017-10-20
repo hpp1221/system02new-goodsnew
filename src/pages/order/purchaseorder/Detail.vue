@@ -3,6 +3,15 @@
     <div class="wrapper">
       <h3 class="page-title">采购订单详情</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+        <el-form-item label="订单状态">
+          <span v-for="t in totalOrderStatus" v-if="form.orderStatus == t.id">{{t.name}}</span>
+        </el-form-item>
+        <el-form-item label="订单号">
+          <span>{{form.orderNumber}}</span>
+        </el-form-item>
+        <el-form-item label="业务员">
+          <span>{{form.creater}}</span>
+        </el-form-item>
         <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
@@ -50,31 +59,26 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery" style="cursor: pointer"></i>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
+          <p><i class="el-icon-edit" @click="editDelivery"
+                style="cursor: pointer"></i>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
-          <el-date-picker
-            v-model="form.deliveryTime"
-            type="date"
-            placeholder="选择日期">
-          </el-date-picker>
+          {{moment(form.deliveryTime).format('YYYY-MM-DD HH:mm:ss')}}
         </el-form-item>
         <el-form-item label="发票信息">
-          <el-select v-model="form.invoiceType">
-            <el-option v-for="i in invoiceTypes" :key="i.id" :value="i.id" :label="i.name"></el-option>
-          </el-select>
+          <span v-for="i in invoiceTypes" v-if="form.invoiceType == i.id">{{i.name}}</span>
         </el-form-item>
         <el-form-item label="备注说明">
-          <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
+          {{form.remark}}
         </el-form-item>
         <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
+          <uploadfiles
+            :fileList="form.annex"
+            :disabled="true"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadfiles>
         </el-form-item>
         <el-form-item label="操作日志">
           <el-switch
@@ -127,8 +131,11 @@
     data(){
       return {
         form: {
+          creater: '',
+          orderStatus: '',
+          orderNumber: '',
           orderDetails: [{
-            goodsNo: '123',//商品编号
+            goodsNo: '',//商品编号
             goodsName: '',//商品名
             goodsSpec: '',//规格
             goodsUnit: '',
@@ -145,6 +152,7 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
+          att: []
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -153,11 +161,41 @@
           cel: '',
           address: ''
         },
+        totalOrderStatus: [
+          {
+            name: '待订单审核',
+            id: 1
+          },
+          {
+            name: '待财务审核',
+            id: 2
+          },
+          {
+            name: '待出库审核',
+            id: 3
+          },
+          {
+            name: '待发货确认',
+            id: 4
+          },
+          {
+            name: '待收货确认',
+            id: 5
+          },
+          {
+            name: '已完成',
+            id: 6
+          },
+          {
+            name: '已作废',
+            id: 7
+          },
+        ],//订单状态
         rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
-        operationLogVisible:false,
+        operationLogVisible: false,
         invoiceTypes: [
           {
             id: 0,
@@ -172,15 +210,26 @@
             name: '普通发票'
           }
         ],
-        operationList:[],
+        operationList: [],
       }
     },
     created(){
-      this.$route.params.id ?　this.select(this.$route.params.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.imgToken = data.data;
+      });
     },
-    watch:{
-      operationLogVisible:function (newVal,oldVal) {
-        if(newVal && this.operationList.length === 0){
+    components: {
+      'uploadfiles': require('../../../components/uploadfiles'),
+    },
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
           this.getOperationList();
         }
       }
@@ -191,15 +240,9 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: id,
-        }
-        self.$http.post('/ui/order/detail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail',response);
-          if (data.code == 10000) {
-            self.form = self.formPass(self.form,data.data);
-          }
-        }).catch(function (error) {
-          console.log(error);
+        };
+        self.httpApi.order.detail(requestData, function (data) {
+          self.form = self.formPass(self.form, data.data);
         });
       },
       getOperationList(){
@@ -208,49 +251,35 @@
           token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
         }
-        self.$http.post('/ui/order/log', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('detail',response);
-          if (data.code == 10000) {
-            self.operationList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
         });
       },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm,this.form.orderShipment);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment,this.editDeliveryForm);
+        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          companyId: 1
-        }
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code == 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].num = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        };
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
+            list[i].subtotal = '';
+            list[i].num = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
@@ -269,16 +298,8 @@
       submit(){//提交订单
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
-
-        self.$http.post('/ui/order/create', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('order/create', response)
-          if (data.code == 10000) {
-            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.order.create(requestData, function (data) {
+          self.$router.push('/order/orderlist');
         });
       },
     }

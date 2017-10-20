@@ -237,11 +237,11 @@
         let self = this
         self.form.storeId = ''
         self.form.dateRange = '',
-        self.form.tradeNumber = '',
-        self.form.typeList = [],
-        self.form.startTime = '',
-        self.form.endTime = '',
-        self.checkAll = false
+          self.form.tradeNumber = '',
+          self.form.typeList = [],
+          self.form.startTime = '',
+          self.form.endTime = '',
+          self.checkAll = false
       },
       advanceSelect(size, num) {//高级查询
         let self = this
@@ -282,7 +282,7 @@
       },
       cancelGetGoods(row) { //作废
         let self = this;
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           id: row.id
         };
@@ -291,27 +291,15 @@
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/setInvalid', self.qs.stringify(params)).then((res) => {
-            console.log('set', res)
-            if (res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已成功作废!'
-              });
-              this.getGoodsList()
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
-
+          self.httpApi.store.setInvalid(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '已成功作废!'
+            });
+            this.getGoodsList()
+          });
         })
       },
     }
   }
 </script>
-
-<style>
-</style>

@@ -114,7 +114,7 @@
       },
       getClientList() { //客户管理列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum
@@ -147,7 +147,7 @@
       },
       deleteClient(row) { //删除单个客户详情
         let self = this;
-        let params = {id: row.id};
+        let requestData = {id: row.id};
         self.$confirm('请确认是否删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -160,7 +160,7 @@
         })
       },
       outputClient() { //导出客户
-        if(this.multipleSelection.length === 0){
+        if (this.multipleSelection.length === 0) {
           this.$message.error('请选中要导出的项');
           return;
         }
@@ -176,15 +176,10 @@
           supplierString += ',' + self.multipleSelection[i].id
         }
         supplierString = supplierString.substring(1, supplierString.length)
-        let requestData = {
-          params: {
-            vipIds: supplierString
-          }
-        };
         location.href = '/ui/exportVips?vipIds=' + supplierString;
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
-        console.log("val",val)
+        console.log("val", val)
         this.multipleSelection = val;
       },
       toggleSelection(rows) {

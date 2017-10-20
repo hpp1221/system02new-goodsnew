@@ -105,22 +105,16 @@
       },
       getStoreHouseList(size,num) {//门店列表
         let self = this
-        let params = {
+        let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize:size,
           pageNo: num,
           type:2
         };
-        self.$http.post('/ui/addressListLimit', self.qs.stringify(params)).then(function (response) {
-          console.log('getStoreHouseList', response)
-          let data = response.data
-          if (data.code == 10000) {
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
+        self.httpApi.stock.addressListLimit(requestData, function (data) {
+          self.tableData = data.data.list
+          self.totalPage = data.data.total
+        });
       },
       createStoreHouse() {//新增弹框
         this.createStore = true

@@ -33,7 +33,8 @@
           <el-button type="text" @click="getExcel">下载商品库存数据模板</el-button>
         </el-form-item>
         <el-form-item label="3、导入数据">
-          <el-upload action="/ui/analysisCheckStoreExcel" :on-success="uploadSuccess" :on-remove="removeExcel" :file-list="form.excelFile" multiple style="width: 300px;">
+          <el-upload action="/ui/analysisCheckStoreExcel" :on-success="uploadSuccess" :on-remove="removeExcel"
+                     :file-list="form.excelFile" multiple style="width: 300px;">
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip">请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除</div>
           </el-upload>
@@ -99,14 +100,14 @@
     data() {
       return {
         active: 1,
-        storeIds:[],//门店列表
-        totalCategories:[],//分类列表
+        storeIds: [],//门店列表
+        totalCategories: [],//分类列表
         props: {
           value: 'res',
           children: 'children',
           label: 'name'
         },
-        catIds:'',
+        catIds: '',
         form: {
           storeId: '',
           catId: [],
@@ -149,7 +150,7 @@
           token: window.localStorage.getItem('token')
         };
         self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('store',response)
+          console.log('store', response)
           let data = response.data;
           if (data.code == 10000) {
             self.storeIds = data.data
@@ -168,13 +169,13 @@
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData = {token: window.localStorage.getItem('token')};
         } else {
           console.log(val[val.length - 1].id)
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
+          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
         self.$http.get('/ui/catList', requestData).then(function (response) {
-          console.log('catlist',response)
+          console.log('catlist', response)
           let data = response.data;
           if (data.code === 10000) {
             for (let i = 0; i < data.data.length; i++) {
@@ -210,7 +211,7 @@
         this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
       },
       getExcel(){//下载excelmodel
-        if(this.form.storeId && this.form.catId){
+        if (this.form.storeId && this.form.catId) {
           location.href = '/ui/exportStore?addressId=' + this.form.storeId + '&catId=' + this.form.catId[this.form.catId.length - 1].id
         }
       },
@@ -218,8 +219,8 @@
         console.log(file);
         this.excelAnalysisStatus = true;
         this.form.excelFile = [file]
-        if(response.data.length > 0) {
-          for(let i = 0; i < response.data.length; i++) {
+        if (response.data.length > 0) {
+          for (let i = 0; i < response.data.length; i++) {
             this.excelResponse = response.data;
           }
         } else {
@@ -245,7 +246,7 @@
 //          catId:self.catIds
 //        };
         let string = JSON.stringify(this.excelResponse);
-        location.href = '/ui/checkStoreExcel?data=' + string+ '&catId=' +  this.form.catId[this.form.catId.length - 1].id+ '&addressId=' + this.form.storeId
+        location.href = '/ui/checkStoreExcel?data=' + string + '&catId=' + this.form.catId[this.form.catId.length - 1].id + '&addressId=' + this.form.storeId
 //        self.$http.get('/ui/checkStoreExcel', self.qs.stringify(requestData)).then(function(res) {
 //          let data = res.data;
 //          if(data.code == 10000) {

@@ -144,7 +144,7 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          att: '',//附件
+          att: [],//附件
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -202,9 +202,18 @@
         this.form.cel = userinfo.cel;
         this.form.address = userinfo.address;
       }
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.imgToken = data.data;
+      });
     },
     methods: {
       judgeNum(value, index){//判断数量是否为整数
+
         this.form.orderDetails[index].num = value.replace(/\D/g, '');
       },
       getAtt(file){//附件
@@ -260,17 +269,17 @@
       submit(){//提交订单
         let self = this;
         let requestData = {
-            token: window.localStorage.getItem('token')
-//            order:self.form
+          token: window.localStorage.getItem('token'),
         };
-//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         requestData = Object.assign(requestData, self.form);
+        
+        //self.form["token"] = window.localStorage.getItem('token')
+//        self.$http.post('/ui/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
         self.$http.post('/ui/order/create', requestData).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
           if (data.code === 10000) {
-            self.$router.push('/order/orderlist');
-            //self.tableData = data.data
+            self.$router.push('/order/purchaseorder/list');
           }
         }).catch(function (error) {
           console.log(error);
