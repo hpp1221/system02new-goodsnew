@@ -340,7 +340,7 @@
               </uploadfiles>
             </el-form-item>
             <el-form-item>
-              <el-button @click="updateGoods('goodsForm')">创建</el-button>
+              <el-button @click="updateGoods">创建</el-button>
               <el-button @click="cancel">取消</el-button>
             </el-form-item>
           </el-form>
@@ -539,24 +539,17 @@
         });
 
       },
-      updateGoods(formName){//修改商品
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            let self = this;
-            if (self.getCat) {
-              self.goodsForm.cat = [self.goodsForm.cat[self.goodsForm.cat.length - 1]];
-            } else {
-              self.goodsForm.cat = self.originCat;
-            }
+      updateGoods(){//修改商品
+        let self = this;
+        if (self.getCat) {
+          self.goodsForm.cat = [self.goodsForm.cat[self.goodsForm.cat.length - 1]];
+        } else {
+          self.goodsForm.cat = self.originCat;
+        }
 
-            let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
-            self.httpApi.goods.editGoods(requestData, function (data) {
-              self.$router.push('/goods/goodslist');
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
+        self.httpApi.goods.editGoods(requestData, function (data) {
+          self.$router.push('/goods/goodslist');
         });
       },
       getCatList(val){

@@ -4,7 +4,7 @@
       <h3 class="page-title">新增商品</h3>
       <el-tabs v-model="activeName">
         <el-tab-pane label="创建商品" name="first">
-          <el-form ref="form" :model="form" class="request-form" label-width="120px">
+          <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="120px">
             <h4 class="item-title">基础信息</h4>
             <el-form-item label="商品名称">
               <el-input placeholder="请输入商品名称" v-model="form.name" class="form-input">
@@ -187,7 +187,7 @@
               </uploadfiles>
             </el-form-item>
             <el-form-item>
-              <el-button @click="submit('form')" type="primary">创建</el-button>
+              <el-button @click="submit" type="primary">创建</el-button>
               <el-button @click="cancel">取消</el-button>
             </el-form-item>
           </el-form>
@@ -359,7 +359,7 @@
               </uploadfiles>
             </el-form-item>
             <el-form-item>
-              <el-button @click="submitExportGoods('exportForm')">创建</el-button>
+              <el-button @click="submitExportGoods">创建</el-button>
               <el-button @click="cancel">取消</el-button>
             </el-form-item>
           </el-form>
@@ -428,6 +428,7 @@
           },
           isPlatForm: 0
         },
+        rules: {},
         inputValue: '',
         goodsTags: [],//商品标签
         editorInstance: {},//编辑器实例
@@ -569,40 +570,28 @@
           }
         }
       },
-      submit(formName){
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            let self = this;
-            self.form.cat = [self.form.cat[self.form.cat.length - 1]];
-            for (let i = 0; i < self.form.spec.length; i++) {
-              self.$delete(self.form.spec[i], 'inputVisible');
-            }
-            let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
-            self.httpApi.goods.addGoods(requestData, function (data) {
-              self.$router.push('/goods/goodslist');
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+      submit(){
+        let self = this;
+        self.form.cat = [self.form.cat[self.form.cat.length - 1]];
+        for (let i = 0; i < self.form.spec.length; i++) {
+          self.$delete(self.form.spec[i], 'inputVisible');
+        }
+        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
+        self.httpApi.goods.addGoods(requestData, function (data) {
+          self.$router.push('/goods/goodslist');
         });
+//
       },
-      submitExportGoods(formName){//提交引入的商品
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            let self = this;
-            self.exportForm.isPlatForm = 0;
-            self.exportForm.cat = self.originCat;
-            let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.exportForm)};
-            //requestData = Object.assign(requestData,self.shallowCopy(self.form));
-            self.httpApi.goods.addGoods(requestData, function (data) {
-              self.$router.push('/goods/goodslist');
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+      submitExportGoods(){//提交引入的商品
+        let self = this;
+        self.exportForm.isPlatForm = 0;
+        self.exportForm.cat = self.originCat;
+        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.exportForm)};
+        //requestData = Object.assign(requestData,self.shallowCopy(self.form));
+        self.httpApi.goods.addGoods(requestData, function (data) {
+          self.$router.push('/goods/goodslist');
         });
+
       },
       addSpec(){//添加规格
         this.form.spec.push({specName: '', specValue: [], inputVisible: false});
