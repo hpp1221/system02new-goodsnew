@@ -154,15 +154,10 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/addGetGoodsRecord', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('getgoodssubmit', response)
-          if (data.code == 10000) {
-            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        console.log(requestData)
+        self.httpApi.store.addGetGoodsRecord(requestData,function (data) {
+          self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+        })
       },
       getStoreList() {//要货门店
         let self = this
