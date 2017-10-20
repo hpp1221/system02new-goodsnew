@@ -3,9 +3,9 @@
     <div class="wrapper">
       <h3 class="page-title">公司列表</h3>
       <!--<el-form ref="form" :model="form" inline class="request-form">-->
-        <!--<el-form-item>-->
-          <!--<el-button @click="addUser">新增用户</el-button>-->
-        <!--</el-form-item>-->
+      <!--<el-form-item>-->
+      <!--<el-button @click="addUser">新增用户</el-button>-->
+      <!--</el-form-item>-->
       <!--</el-form>-->
       <el-form ref="form" :model="form" inline class="request-form">
         <el-form-item label="公司名">
@@ -57,7 +57,7 @@
         totalPage: 10,
         tableData: [],
         form: {
-            name:''
+          name: ''
         },
       }
     },
@@ -82,16 +82,10 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/company/selectCompanyListPage', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectCompanyListPage', response)
-          if (data.code === 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.company.selectCompanyListPage(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+        })
       },
       seeDetail(id){
         let url = '/tenant/company/detail/' + id;
@@ -111,15 +105,9 @@
             userId: id,
             status: status
           };
-          self.$http.post('/ui/user/updateUserStatus', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(response)
-            if (data.code === 10000) {
-              self.$message.success('操作成功');
-              self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
+          self.httpApi.user.updateUserStatus(requestData, function (data) {
+            self.$message.success('操作成功');
+            self.$router.go(0);
           });
         }).catch(() => {
           this.$message({
@@ -131,6 +119,3 @@
     }
   }
 </script>
-
-<style>
-</style>

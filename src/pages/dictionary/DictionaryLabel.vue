@@ -83,16 +83,9 @@
           name: self.updateForm.name,
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/editTag', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('update', response)
-          if (data.code == 10000) {
-            self.updateStoreLabel = false
-            self.$message.success('修改成功')
-//            self.getStoreHouseList(self.pageSize,self.pageNum)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goodsCat.editTag(requestData, function (data) {
+          self.updateStoreLabel = false;
+          self.$message.success('修改成功');
         });
       },
       showDialog() {//新增弹框
@@ -112,16 +105,10 @@
           token: window.localStorage.getItem('token'),
           tagName: self.dialogForm.name
         };
-        self.$http.post('/ui/addTag', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('addTag', response)
-          if (data.code == 10000) {
-            self.dialogFormVisible = false
-            self.$message.success('添加成功')
-            self.getStoreLabel()
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goodsCat.addTag(requestData, function (data) {
+          self.dialogFormVisible = false;
+          self.$message.success('添加成功');
+          self.getStoreLabel();
         });
       },
       getStoreLabel() {//标签列表
@@ -129,15 +116,9 @@
         let params = {
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/tagList', self.qs.stringify(params)).then(function (response) {
-          let data = response.data
-          console.log('label', response)
-          if (data.code === 10000) {
-            self.dynamicTags = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        })
+        self.httpApi.goods.tagList(requestData, function (data) {
+          self.dynamicTags = data.data
+        });
       },
       handleClose(tag) {
         console.log('tag', tag)

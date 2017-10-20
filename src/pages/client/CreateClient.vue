@@ -126,14 +126,9 @@
 							token: window.localStorage.getItem('token')
 						};
 						requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
-						self.$http.post('/ui/insertvip', self.qs.stringify(requestData)).then(function(response) {
-							let data = response.data;
-							if(data.code == 0) {
-								self.$router.push('/personal/client/clientmanagement');
-							}
-						}).catch(function(error) {
-							console.log(error)
-						});
+            self.httpApi.vip.insertvip(requestData, function (data) {
+              self.$router.push('/personal/client/clientmanagement');
+            });
 					} else {
 						console.log('error submit!!');
 						return false;

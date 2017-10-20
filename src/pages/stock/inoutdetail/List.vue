@@ -203,64 +203,44 @@
           self.easyForm.endTime = self.easyForm.dateRange[1]
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
-
-        self.$http.post('/ui/recordListBySku', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('出入库明细', response)
-          if (data.code == 10000) {
-            self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.recordListBySku(requestData, function (data) {
+          self.tableData = data.data
         });
       },
       advanceSelect(){
-        let self = this
-        let requestData = {token: window.localStorage.getItem('token')}
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
 
         if (self.form.dateRange instanceof Array) {
-          self.form.createTime = self.form.dateRange[0]
-          self.form.endTime = self.form.dateRange[1]
+          self.form.createTime = self.form.dateRange[0];
+          self.form.endTime = self.form.dateRange[1];
         }
-        requestData = Object.assign(requestData, self.shallowCopy(self.form))
-
-        self.$http.post('/ui/recordListBySku', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('出入库明细', response)
-          if (data.code == 10000) {
-            self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.httpApi.stock.recordListBySku(requestData, function (data) {
+          self.advanceSearch = false;
+          self.tableData = data.data
         });
       },
       getCatList(val){
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {params: {token: window.localStorage.getItem('token')}};
+          requestData = {token: window.localStorage.getItem('token')};
         } else {
-          requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
+          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          let data = response.data;
-          console.log('catList', response)
-          if (data.code == 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
+        self.httpApi.stock.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
             }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-            }
-
           }
-        }).catch(function (error) {
-          console.log(error);
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.insertCat(self.totalCategories, val, data.data, 0);
+          }
         });
       },
       insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据

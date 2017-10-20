@@ -122,14 +122,9 @@
 					token: window.localStorage.getItem('token'),
 					vips: JSON.stringify(self.excelResponse)
 				};
-				self.$http.post('/ui/insertvipList', self.qs.stringify(requestData)).then(function(res) {
-					let data = res.data;
-					if(data.code == 0) {
-						self.$router.push('/personal/client/clientmanagement');
-					}
-				}).catch(function(error) {
-					console.log(error);
-				});
+        self.httpApi.vip.insertvipList(requestData, function (data) {
+          self.$router.push('/personal/client/clientmanagement');
+        });
 			}
 		}
 	}

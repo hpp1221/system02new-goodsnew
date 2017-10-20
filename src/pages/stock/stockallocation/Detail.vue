@@ -7,9 +7,9 @@
           <p>调拨单号: <span>{{detailData.tradeNo}}</span> <span>(在途)</span></p>
         </div>
         <!--<div class="right">-->
-          <!--<el-button type="text">入库</el-button>-->
-          <!--<el-button type="text">导出</el-button>-->
-          <!--<el-button type="text">作废</el-button>-->
+        <!--<el-button type="text">入库</el-button>-->
+        <!--<el-button type="text">导出</el-button>-->
+        <!--<el-button type="text">作废</el-button>-->
         <!--</div>-->
       </div>
       <div class="goodsinout-detail-top">
@@ -86,14 +86,8 @@
           token: window.localStorage.getItem('token'),
           id: id
         };
-        self.$http.post('/ui/getAllocationRecordDetail', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('调拨详情', response)
-          if (data.code === 10000) {
-            self.detailData = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.getAllocationRecordDetail(requestData, function (data) {
+          self.detailData = data.data;
         });
       },
       save(){//保存

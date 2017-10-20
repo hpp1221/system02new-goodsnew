@@ -229,14 +229,8 @@
           token: window.localStorage.getItem('token'),
           goodsList:JSON.stringify(self.excelResponse)
         };
-        self.$http.post('/ui/inputGoods',self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('inputGoods',response)
-          if(data.code == 10000){
-            self.exportResult = {success:data.success,fail:data.fail};
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goods.inputGoods(requestData, function (data) {
+          self.exportResult = {success:data.success,fail:data.fail};
         });
       }
     }

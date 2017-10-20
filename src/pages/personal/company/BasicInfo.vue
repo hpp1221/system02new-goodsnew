@@ -178,17 +178,11 @@
           token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
-        self.$http.post('/ui/company/selectCompanyById', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectCompanyById', response)
-          if (data.code == 10000) {
-            if (data.data.companyId) {
-              self.type = true;
-            }
-            self.form = self.formPass(self.form, data.data);
+        self.httpApi.company.selectCompanyById(requestData, function (data) {
+          if (data.data.companyId) {
+            self.type = true;
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.form = self.formPass(self.form, data.data);
         });
       },
       submit(formName){
@@ -200,14 +194,8 @@
               companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
             };
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.$http.post('/ui/company/addCompany', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('addCompany', response)
-              if (data.code == 10000) {
-                self.$message.success('保存成功');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.company.addCompany(requestData, function (data) {
+              self.$message.success('保存成功');
             });
           } else {
             console.log('error submit!!');
@@ -224,14 +212,8 @@
       getIndustry(){
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), type: 'industry'};
-        self.$http.post('/ui/dict/selectDictByType', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectDictByType', response)
-          if (data.code == 10000) {
-            self.totalIndustryTypes = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.dict.selectDictByType(requestData, function (data) {
+          self.totalIndustryTypes = data.data;
         });
       },
       industryChanged(){
@@ -251,7 +233,7 @@
           cel: '',
           qq: '',
           email: '',
-        }
+        };
         if (this.form.externalContacts === null) {
           let arr = [];
           arr.push(obj);

@@ -129,10 +129,6 @@
         leftHover: ''
       }
     },
-    created(){
-      this.getMenu();
-      //this.getUserInfo();
-    },
     computed: {
       'userinfo': function () {
         return JSON.parse(localStorage.getItem('userinfo'));
@@ -146,8 +142,6 @@
         localStorage.setItem('menu', JSON.stringify(data));
         let collapseStatus = localStorage.getItem('collapseStatus');
         let rightMenuVisible = localStorage.getItem('rightMenuVisible');
-        console.log(localStorage.getItem('collapseStatus'))
-        console.log(localStorage.getItem('rightMenuVisible'))
         if (collapseStatus === 'true') {
           self.isCollapse = true;
         }
@@ -182,16 +176,9 @@
       },
       getMenu(callback){//获取菜单
         let self = this;
-        let requestData = {params: {token: window.localStorage.getItem('token')}};
-        self.$http.get('/ui/index/menus', requestData).then(function (response) {
-          let data = response.data;
-          console.log('menus', response);
-          if (data.code == 10000) {
-            //self.menuList = data.data;
-            callback(data.data)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.httpApi.index.menus(requestData, function (data) {
+          callback(data.data);
         });
       },
       changeRightMenuVisible(){
@@ -233,14 +220,8 @@
       logout(){//注销
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.$http.post('/ui/user/logout', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('logout', response);
-          if (data.code == 10000) {
-            self.$router.push('/login');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.user.logout(requestData, function (data) {
+          self.$router.push('/login');
         });
       }
     }

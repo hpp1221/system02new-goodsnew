@@ -94,7 +94,18 @@
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
-//      getSupplierGoodsList() { //供应商商品管理列表
+      getSupplierGoodsList() { //供应商商品管理列表
+        let self = this
+        let params = {
+          rows: self.pageNum,
+          page: self.pageSize
+        };
+        self.httpApi.supplier.supplierGoodsList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+        })
+      },
+//      select(size, num) { //查询
 //        let self = this
 //        let params = {
 //          token: window.localStorage.getItem('token'),
@@ -112,29 +123,9 @@
 //          console.log(error);
 //        })
 //      },
-      select(size, num) { //查询
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          query: self.form.query,//id是后台给的url后跟的参数
-          supplierName: self.form.supplierName,
-          pageNo: num,
-          pageSize: size
-        }
-        self.$http.post('/ui/supplier/supplierGoodslistByPageAndQuery', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('list', response)
-          if (data.code == 10000) {
-            self.form = data.data
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-      updateSupplier(id, goodsId) { //修改供应商商品详情
-        this.$router.push({path: '/goods/updateGoods', query: {id: id, goodsId: goodsId}});
+      updateSupplier(supplierId) { //修改供应商商品详情
+        let url = '/goods/updategoods/' + supplierId;
+        this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
         if (this.multipleSelection.length === 0) {

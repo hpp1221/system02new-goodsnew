@@ -21,18 +21,16 @@ export default new Router({
       path: '/',
       component: require('@/pages/Index'),
       redirect: '/index',
-      children: [{
-        path: '/index',
-        component: require('@/pages/IndexPage'),
-      },
+      children: [
+        {
+          path: '/index',
+          component: require('@/pages/IndexPage'),
+        },
         {
           path: '/error', //错误页面
           component: require('@/pages/Error')
         },
-        {
-          path: '/user/personcenter', //修改商品详情
-          component: require('@/pages/user/PersonCenter'),
-        },
+
         ...Stock,
         ...Order,
         ...Goods,

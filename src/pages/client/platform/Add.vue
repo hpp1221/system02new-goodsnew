@@ -57,14 +57,8 @@
           token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
-        self.$http.post('/ui/dict/selectDictByType', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('selectDictByType', response)
-          if (data.code === 10000) {
-            self.totalRoleList = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.dict.selectDictByType(requestData, function (data) {
+          self.totalRoleList = data.data;
         });
       },
 
@@ -74,14 +68,8 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
-        self.$http.post('/ui/customer/insertCustomer', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('insertCustomer', response)
-          if (data.code === 10000) {
-            self.$router.push('/client/platform/list');
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.customer.insertCustomer(requestData, function (data) {
+          self.$router.push('/client/platform/list');
         });
       },
       cancel(){

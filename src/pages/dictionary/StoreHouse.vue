@@ -112,16 +112,10 @@
           pageNo: num,
           type:1
         };
-        self.$http.post('/ui/addressListLimit', self.qs.stringify(params)).then(function (response) {
-          console.log('getStoreHouseList', response)
-          let data = response.data
-          if (data.code == 10000) {
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error)
-        })
+        self.httpApi.stock.addressListLimit(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+        });
       },
       createStoreHouse() {//新增弹框
         this.createStore = true
@@ -136,16 +130,10 @@
           address: self.createForm.address,
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/createStoreHouse', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('storehouse', response)
-          if (data.code == 10000) {
-            self.createStore = false
-            self.$message.success('添加成功')
-            self.getStoreHouseList(self.pageSize,self.pageNum)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.createStoreHouse(requestData, function (data) {
+          self.createStore = false;
+          self.$message.success('添加成功');
+          self.getStoreHouseList(self.pageSize,self.pageNum);
         });
       },
       updateStoreHouse(index, row){
@@ -161,16 +149,9 @@
           address: self.updateForm.address,
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/editStoreHouse', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('update', response)
-          if (data.code == 10000) {
-            self.updateStore = false
-            self.$message.success('修改成功')
-//            self.getStoreHouseList(self.pageSize,self.pageNum)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.stock.editStoreHouse(requestData, function (data) {
+          self.updateStore = false;
+          self.$message.success('修改成功');
         });
       },
       cancelUpdateStore(){

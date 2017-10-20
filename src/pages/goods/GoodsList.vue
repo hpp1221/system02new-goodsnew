@@ -189,7 +189,7 @@
         advanceSearch: false,
         form: {
           storeHouseAddress: '',//所属仓库
-          storeStatus:-1,
+          storeStatus: -1,
           tagId: '',//商品标签
           goodsStatus: '',//商品状态
           keyword: '',//关键词
@@ -222,7 +222,7 @@
         },
         totalBrandList: [],
         totalAddressList: [],
-        goodsTags:[]
+        goodsTags: []
 
       }
     },
@@ -268,16 +268,9 @@
           self.easyForm.cat = [self.easyForm.cat[self.easyForm.cat.length - 1]];
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-
-        self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('skuList', response)
-          if (data.code == 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goods.skuList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){
@@ -291,16 +284,10 @@
           self.form.cat = [self.form.cat[self.form.cat.length - 1]];
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.$http.post('/ui/skuList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('skuList', response)
-          if (data.code == 10000) {
-            self.advanceSearch = false;
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goods.skuList(requestData, function (data) {
+          self.advanceSearch = false;
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       getCatList(val){
@@ -311,25 +298,18 @@
         } else {
           requestData = {params: {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id}};
         }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          let data = response.data;
-          console.log('catList', response)
-          if (data.code == 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
+        self.httpApi.goods.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
             }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-            }
-
           }
-        }).catch(function (error) {
-          console.log(error);
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.insertCat(self.totalCategories, val, data.data, 0);
+          }
         });
       },
       insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
@@ -358,9 +338,9 @@
         this.$router.push('/goods/createGoods');
       },
       outputFile(){//导出
-        if(this.multipleSelection.length === 0){
-            this.$message.error('请选中要导出的项');
-            return;
+        if (this.multipleSelection.length === 0) {
+          this.$message.error('请选中要导出的项');
+          return;
         }
         let skuList = [];
         for (let i = 0; i < this.multipleSelection.length; i++) {
@@ -388,14 +368,11 @@
             skuList: JSON.stringify(self.multipleSelection),
             type: 1
           };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
+          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
+            self.$message.success('操作成功');
+            setTimeout(function () {
               self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
+            }, 500);
           });
         }).catch(() => {
           self.$message({
@@ -416,14 +393,11 @@
             skuList: JSON.stringify(self.multipleSelection),
             type: 0
           };
-          self.$http.post('/ui/upOrDownGoods', self.qs.stringify(requestData)).then(function (response) {
-            let data = response.data;
-            console.log(data);
-            if (data.code == 10000) {
+          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
+            self.$message.success('操作成功');
+            setTimeout(function () {
               self.$router.go(0);
-            }
-          }).catch(function (error) {
-            console.log(error);
+            }, 500);
           });
         }).catch(() => {
           this.$message({
@@ -459,6 +433,3 @@
     }
   }
 </script>
-
-<style>
-</style>

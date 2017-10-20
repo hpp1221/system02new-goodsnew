@@ -61,13 +61,9 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           supplierId: supplierId
-        }
-        self.$http.post('/ui/supplier/getById', self.qs.stringify(requestData)).then(function (response) {
-          if (response.data.code == 10000) {
-            self.form = response.data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
+        };
+        self.httpApi.supplier.getById(requestData, function (data) {
+          self.form = data.data;
         });
       },
       submit(formName) {//修改后保存
@@ -78,14 +74,8 @@
               token: window.localStorage.getItem('token')
             };
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.$http.post('/ui/supplier/modifySupplier', self.qs.stringify(requestData)).then(function (response) {
-              let data = response.data;
-              console.log('addGoods', response)
-              if (response.data.code == 10000) {
-                self.$router.push('/supplier/suppliers/supplierlist');
-              }
-            }).catch(function (error) {
-              console.log(error);
+            self.httpApi.supplier.modifySupplier(requestData, function (data) {
+              self.$router.push('/supplier/suppliers/supplierlist');
             });
           } else {
             console.log('error submit!!');
@@ -97,7 +87,3 @@
     }
   }
 </script>
-
-<style>
-
-</style>

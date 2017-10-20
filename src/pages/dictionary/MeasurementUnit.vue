@@ -53,23 +53,17 @@
         this.pageNum = page.num;
         this.getUnitList(page.size, page.num);
       },
-      getUnitList(size,num) {//单位列表
+      getUnitList(size, num) {//单位列表
         let self = this
         let params = {
           token: window.localStorage.getItem('token'),
-          pageSize:size,
+          pageSize: size,
           pageNo: num
         };
-        self.$http.post('/ui/unitList', self.qs.stringify(params)).then(function (response) {
-          let data = response.data
-          console.log('222',response.data.data.list)
-          if (data.code === 10000) {
-            self.list = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        })
+        self.httpApi.goodsCat.unitList(requestData, function (data) {
+          self.list = data.data.list;
+          self.totalPage = data.data.total;
+        });
       },
       createUnit() {//新增单元
         this.dictionaryUnitCreate = true;
@@ -81,42 +75,24 @@
           name: self.form.name,
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/createUnit', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('createUnit', response)
-          if (data.code == 10000) {
-            self.dictionaryUnitCreate = false
-            self.$message.success('添加成功')
-            self.getUnitList(self.pageSize,self.pageNum)
-          }
-        }).catch(function (error) {
-          console.log(error);
+        self.httpApi.goodsCat.createUnit(requestData, function (data) {
+          self.dictionaryUnitCreate = false
+          self.$message.success('添加成功')
+          self.getUnitList(self.pageSize, self.pageNum)
         });
       },
       deleteUnit(item){//删除
         let self = this;
-        let params = { unitId: item.id};
+        let params = {unitId: item.id};
         self.$confirm('请确认是否删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.$http.post('/ui/deleteUnit', self.qs.stringify(params)).then((res) => {
-            console.log('1003',res)
-            if(res.data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '您已成功删除!'
-              });
-              self.getUnitList(self.pageSize,self.pageNum)
-            } else {
-              self.$message({
-                type: 'info',
-                message: '您已取消删除'
-              });
-            }
-          })
-
+          self.httpApi.goodsCat.deleteUnit(requestData, function (data) {
+            self.$message('删除成功');
+            self.getUnitList(self.pageSize, self.pageNum)
+          });
         })
       }
     }
