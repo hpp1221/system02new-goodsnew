@@ -1,23 +1,20 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <el-form ref="titleForm" :model="titleForm" class="storegetgoods-nav storegetgoodsdetail-title">
-        <el-form-item class="storegetgoodsdetail-title-left">
-          <h3>门店要货详情</h3>
-        </el-form-item>
-        <el-form-item class="storegetgoodsdetail-title-right">
-          <el-button type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
-          </el-button>
-          <el-button type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-          </el-button>
-          <el-button type="text" @click="cancelGetGoods"
-                     class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
-          </el-button>
-          <el-button @click="getGoodsExaminePass">通过</el-button>
-        </el-form-item>
-      </el-form>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px"
-               inline>
+      <h3 class="page-title">门店要货单详情</h3>
+      <div class="storegetgoodsdetail-title-right">
+        <el-button type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        </el-button>
+        <el-button type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        </el-button>
+        <el-button type="text" @click="cancelGetGoods" class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        </el-button>
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+          {{item.label}}
+        </el-button>
+      </div>
+      <el-form ref="form" :model="form" class="request-form storegetgoods-nav" label-width="80px"
+               inline style="margin-top: 75px">
         <el-form-item label="单据编码">
           {{form.tradeNumber}}
         </el-form-item>
@@ -104,11 +101,34 @@
           tradeNumber: '',
           storeId: '',
           storeName: '',
-          createUseraName: ''
+          createUseraName: '',
+          type:''
         },
+        type:'',
         tableData: [],
         getGoodsRecordDetails: [],
-        rules: {},
+        typeLists: [//高级查询的单据状态
+          {
+            value: '4',
+            label: "作废"
+          },
+          {
+            value: '1',
+            label: "待审核确认"
+          },
+          {
+            value: '2',
+            label: "待发货审核"
+          },
+          {
+            value: '0',
+            label: "已完成"
+          },
+          {
+            value: '3',
+            label: "待收货确认"
+          },
+        ],
         listIndex: '',//现在正在添加的某个list的下标
       }
     },
@@ -123,7 +143,9 @@
           id: id,
         }
         self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
+          console.log('detailgoods',data)
           self.form = data.data
+          self.type = data.data.type
           self.getGoodsRecordDetails = data.data.list
           self.tableData = data.data.flowList
         })
@@ -132,7 +154,7 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          type: 2,
+          type: self.type,
           tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
         }
         self.$confirm('确认要通过该审核？', '提示', {
@@ -141,12 +163,13 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.store.examine(requestData, function (data) {
-            if (res.data.code == 10000) {
+            console.log('storepass',data)
+            if (data.code == 10000) {
               self.$message({
                 type: 'success',
                 message: '已通过该审核!'
               });
-              this.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
             } else {
               self.$message({
                 type: 'info',

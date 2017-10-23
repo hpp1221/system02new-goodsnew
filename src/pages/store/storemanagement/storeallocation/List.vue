@@ -14,7 +14,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
@@ -108,11 +108,12 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="advanceSelect">确 定</el-button>
+          <el-button type="primary" @click="advanceSelect(pageSize,pageNum)">确 定</el-button>
           <el-button @click="advanceSearch = false">取 消</el-button>
           <el-button @click="resetGetGoodsForm">清空</el-button>
         </div>
       </el-dialog>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
     </div>
   </div>
 </template>
@@ -143,6 +144,9 @@
           Type: [],//状态
         },
         totalStores: [],
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
         advanceSearch: false,
         typeLists: [//高级查询的单据状态
           {
@@ -170,9 +174,16 @@
     },
     created() {
       this.getStoreList()
-      this.select()
+    },
+    components: {
+      'pagination': require('../../../../components/pagination')
     },
     methods: {
+      pageChanged(page) {
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num);
+      },
       handleCheckAllChange(event) {//全选
         this.form.Type = event ? cityOptions : [];
         this.isIappndeterminate = false;
@@ -191,22 +202,28 @@
           self.totalStores = data.data
         })
       },
-      select() {//查询
+      select(size,num) {//查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
           status: 2,
+          pageSize:size,
+          pageNo:num
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
-          self.tableData = data.data
+          console.log('storeAllocationList',data)
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         })
       },
-      advanceSelect() {//高级查询
+      advanceSelect(size,num) {//高级查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
           status: 2,
+          pageSize:size,
+          pageNo:num
         };
         self.form.outPutStartDate = self.form.outputDateRange[0]
         self.form.outPutEndDate = self.form.outputDateRange[1]
@@ -215,7 +232,8 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
           self.advanceSearch = false
-          self.tableData = data.data
+          self.tableData = data.data.list
+          self.totalPage = data.data.total;
         })
       },
       resetGetGoodsForm() {//高级搜索的清空

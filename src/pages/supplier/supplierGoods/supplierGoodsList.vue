@@ -10,9 +10,9 @@
           <el-input placeholder="请输入联系电话/手机/编码" icon="search" class="fast-query" v-model="form.query">
           </el-input>
         </el-form-item>
-        <el-form.item>
+        <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
-        </el-form.item>
+        </el-form-item>
 
         <el-form-item>
           <el-dropdown trigger="click">
@@ -39,7 +39,8 @@
 
         <el-table-column prop="img" label="商品图片">
           <template scope="scope">
-            <img :src="scope.row.img" alt=""/>
+            <img v-lazy="scope.row.img.url" alt=""
+                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品名称">
@@ -76,6 +77,7 @@
         tableData: [],
         form: {
           supplierName: '',
+          supplierId: '',
           query: '',
         },
         multipleSelection: [],
@@ -88,41 +90,53 @@
     components: {
       'pagination': require('../../../components/pagination')
     },
+    created() {
+      this.getSupplierGoodsList()
+    },
     methods: {
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+//        this.select(page.size, page.num);
       },
       getSupplierGoodsList() { //供应商商品管理列表
         let self = this
         let requestData = {
-          rows: self.pageNum,
-          page: self.pageSize
+          token: window.localStorage.getItem('token'),
+          supplierName: self.form.supplierName,
+          supplierId: self.form.supplierId,
+          rows: self.pageSize,
+          page: self.pageNum
         };
-        self.httpApi.supplier.supplierGoodsList(requestData, function (data) {
+        self.httpApi.goods.supplierGoodsList(requestData, function (data) {
           self.tableData = data.data.list;
+          for (let i = 0; i < data.data.list.length; i++) {
+            data.data.list[i].img = data.data.list[i].img !== ""?  JSON.parse(data.data.list[i].img):"";
+          }
           self.totalPage = data.data.total;
         })
       },
-//      select(size, num) { //查询
-//        let self = this
-//        let params = {
-//          token: window.localStorage.getItem('token'),
-//          rows: self.pageNum,
-//          page: self.pageSize
-//        };
-//        self.$http.post('/ui/supplierGoodsList', self.qs.stringify(params)).then(function (response) {
-//          console.log('0929', response)
-//          if (response.data.code === 10000) {
-//            self.tableData = response.data.data.list
-//            self.totalPage = response.data.data.total
-//          }
-//
-//        }).catch(function (error) {
-//          console.log(error);
-//        })
-//      },
+      select(size, num) { //查询
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          supplierName: self.form.supplierName,
+          query: self.form.query,
+          pageNo: num,
+          pageSize: size
+        };
+        self.httpApi.supplier.supplierGoodslistByPageAndQuery(requestData, function (data) {
+          console.log('supplierGoodslistByPageAndQuery', data)
+          if(data.data){
+            self.tableData = data.data
+            self.getSupplierGoodsList()
+          }else {
+            self.tableData = data.data.data.list;
+            self.totalPage = data.data.data.total;
+            self.getSupplierGoodsList()
+          }
+        })
+      },
       updateSupplier(supplierId) { //修改供应商商品详情
         let url = '/goods/updategoods/' + supplierId;
         this.$router.push(url);
@@ -136,7 +150,7 @@
         for (let i = 0; i < this.multipleSelection.length; i++) {
           list.push(this.multipleSelection[i].id);
         }
-        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(list);
+        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(list)+ '&supplierName='+this.form.supplierName + '&supplierId='+this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
         console.log('val', val)
