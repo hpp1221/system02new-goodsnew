@@ -96,7 +96,7 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">明细</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
                 <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
@@ -120,8 +120,8 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-              <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="brandId">
+              <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="所属供应商">
@@ -255,7 +255,10 @@
           this.getCatList();//获取分类列表
         }
       },
-
+      seeDetail(id){
+        let url = '/goods/goodsDetail/' + id;
+        this.$router.push(url);
+      },
       select(size, num){//查询
         let self = this;
         let requestData = {
@@ -332,7 +335,8 @@
         console.log('10101', val);
       },
       update(id, goodsId){//修改商品详情
-        this.$router.push({path: '/goods/updateGoods', query: {id: id, goodsId: goodsId}});
+        let url = '/goods/updateGoods/' + id + '/' + goodsId;
+        this.$router.push(url);
       },
       createGoods(){
         this.$router.push('/goods/createGoods');

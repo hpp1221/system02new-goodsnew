@@ -5,6 +5,7 @@
       <div class="storeLabel">
         <el-tag
           v-for="tag in dynamicTags"
+          :key="tag.id"
           size="medium"
         >
           <i class="el-icon-edit" @click="storeEditLabel(tag)"></i>
@@ -32,7 +33,7 @@
       <el-dialog title="添加商品标签" :visible.sync="dialogFormVisible">
         <el-form :model="dialogForm">
           <el-form-item>
-            <el-input v-model="dialogForm.name" auto-complete="off"></el-input>
+            <el-input v-model="dialogForm.name"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">

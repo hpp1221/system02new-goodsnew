@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">新增退货单</h3>
+      <h3 class="page-title">新增采购退货单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="供应商">
           <el-input
@@ -24,7 +24,8 @@
           </el-table-column>
           <el-table-column label="主图" width="80">
             <template scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                   v-if="scope.row.url"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称">
@@ -116,16 +117,16 @@
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
-      <el-dialog title="修改退货信息" :visible.sync="editDeliveryVisible">
-        <el-form :model="editDeliveryForm" label-width="70px">
+      <el-dialog title="修改退货信息" :visible.sync="editDeliveryVisible" width="350px">
+        <el-form :model="editDeliveryForm" label-width="90px" class="request-form">
           <el-form-item label="联系人">
-            <el-input v-model="editDeliveryForm.contacts"></el-input>
+            <el-input v-model="editDeliveryForm.contacts" class="form-input"></el-input>
           </el-form-item>
           <el-form-item label="联系电话">
-            <el-input v-model="editDeliveryForm.cel"></el-input>
+            <el-input v-model="editDeliveryForm.cel" class="form-input"></el-input>
           </el-form-item>
           <el-form-item label="退货地址">
-            <el-input v-model="editDeliveryForm.address"></el-input>
+            <el-input v-model="editDeliveryForm.address" class="form-input"></el-input>
           </el-form-item>
           <!--<el-form-item label="仓库地址">-->
           <!--<el-input v-model="editDeliveryForm.userAddress"></el-input>-->
@@ -239,10 +240,10 @@
       if (window.localStorage.getItem('userinfo')) {
         console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
         let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
+//        this.form.orderShipment.customer = userinfo.companyName;
+//        this.form.orderShipment.userName = userinfo.name;
+//        this.form.orderShipment.userPhone = userinfo.cel;
+//        this.form.orderShipment.userAddress = userinfo.companyName;
       }
     },
     methods: {
@@ -255,7 +256,7 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.iconClick();
       },
       iconClick(){//输入框icon点击事件
         this.supplierListVisible = true;
@@ -292,9 +293,10 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
+          supplierId: self.form.partnerId,
           keyword: queryString,
         };
-        self.httpApi.stock.goodsInfo(requestData, function (data) {
+        self.httpApi.goods.orderGoodsInfo(requestData, function (data) {
           let list = data.data;
           for (let i = 0, listLength = list.length; i < listLength; i++) {
             list[i].combination = list[i].goodsNo + list[i].goodsName;

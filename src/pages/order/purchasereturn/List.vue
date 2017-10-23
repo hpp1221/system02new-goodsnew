@@ -39,9 +39,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="供应商名称">
-            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-              <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-            </el-select>
+            <el-input placeholder="请输入供应商名称/退单号" v-model="form.supplier" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="退单状态">
             <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
@@ -205,7 +203,18 @@
           self.totalPage = data.data.total;
         });
       },
-
+      orderStatusAllChange(event){//订单checkbox全选按钮
+        this.form.orderStatus = [];
+        if (event) {
+          for (let i = 0; i < this.totalOrderStatus.length; i++) {
+            this.form.orderStatus.push(this.totalOrderStatus[i].id);
+          }
+        }
+      },
+      orderStatusChange(value){//订单checkbox单个按钮
+        let checkedCount = value.length;
+        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
+      },
       sureSetTags(){//确定设置标签
 
       },

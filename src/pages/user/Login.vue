@@ -20,7 +20,9 @@
             <el-form-item>
               <el-checkbox label="两周内免密登录" name="type" v-model="form.twoWeek"></el-checkbox>
             </el-form-item>
-            <el-button type="primary" @click="submitForm('form')" class="login-btn">登录</el-button>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('form')" class="login-btn">登录</el-button>
+            </el-form-item>
           </el-form>
           <el-button type="text" @click="forgetPwd" class="forget-btn">忘记密码</el-button>
         </el-tab-pane>
@@ -43,7 +45,9 @@
             <el-form-item prop="verifyCode">
               <el-input v-model="registerForm.code" placeholder="输入验证码"></el-input>
             </el-form-item>
-            <el-button type="primary" @click="register('registerForm')" class="login-btn">注册</el-button>
+            <el-form-item>
+              <el-button type="primary" @click="register('registerForm')" class="login-btn">注册</el-button>
+            </el-form-item>
           </el-form>
         </el-tab-pane>
       </el-tabs>

@@ -11,8 +11,8 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="name">
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+              <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="brandId">
+                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="商品分类">
@@ -32,13 +32,21 @@
                             </el-select>-->
             </el-form-item>
             <el-form-item label="计量单位">
-              <el-input placeholder="请输入计量单位" v-model="form.unit" class="form-input"></el-input>
+              <el-select v-model="form.unit">
+                <el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">
+
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="关键字">
               <el-input placeholder="搜索关键字" class="form-input" v-model="form.keyword"></el-input>
             </el-form-item>
             <el-form-item label="所属供应商名称">
-              <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+              <el-select v-model="form.supplier" value-key="supplierId">
+                <el-option v-for="u in totalSupplierList" :key="u.supplierId" :label="u.name" :value="u">
+
+                </el-option>
+              </el-select>
             </el-form-item>
 
 
@@ -74,12 +82,11 @@
             <el-form-item>
               <el-table
                 :data="form.skus"
-                border
                 v-if="form.skus.length > 0"
-                style="width: 100%">
+              >
                 <el-table-column
                   label="主图"
-                  width="180">
+                  width="160">
                   <template scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
@@ -93,11 +100,11 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
-                  width="180"
+                  width="80"
                   v-for="s in form.spec"
                   :key="s.specName">
                   <template scope="scope">
-                    <span style="margin-left: 10px">{{scope.row.sku[s.specName]}}</span>
+                    <span>{{scope.row.sku[s.specName]}}</span>
                   </template>
                 </el-table-column>
 
@@ -201,8 +208,8 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="exportForm.brand" value-key="name" disabled>
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+              <el-select placeholder="请选择商品品牌" v-model="exportForm.brand" value-key="brandId">
+                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="商品分类">
@@ -210,20 +217,56 @@
                 :options="totalCategories"
                 v-model="exportForm.cat"
                 @active-item-change="getCatList"
-                @click.native="clickCat"
-                disabled
                 :show-all-levels="false"
                 :props="props">
               </el-cascader>
+              <!--<el-select v-model="form.cat" placeholder="请选择商品分类" value-key="id">
+                                <el-option v-for="t in totalCategories"
+                                    :key="t.id"
+                                    :label="t.name"
+                                    :value="t">
+                                </el-option>
+                            </el-select>-->
             </el-form-item>
             <el-form-item label="计量单位">
-              <el-input placeholder="请输入计量单位" v-model="exportForm.unit" class="form-input" disabled></el-input>
+              <el-select v-model="exportForm.unit">
+                <el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">
+
+                </el-option>
+              </el-select>
             </el-form-item>
+            <!--<el-form-item label="商品品牌">-->
+            <!--<el-select placeholder="请选择商品品牌" v-model="exportForm.brand" value-key="brandId" disabled>-->
+            <!--<el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>-->
+            <!--</el-select>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="商品分类">-->
+            <!--<el-cascader-->
+            <!--:options="totalCategories"-->
+            <!--v-model="exportForm.cat"-->
+            <!--@active-item-change="getCatList"-->
+            <!--@click.native="clickCat"-->
+            <!--disabled-->
+            <!--:show-all-levels="false"-->
+            <!--:props="props">-->
+            <!--</el-cascader>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="计量单位">-->
+            <!--<el-select v-model="exportForm.unit" disabled>-->
+            <!--<el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">-->
+
+            <!--</el-option>-->
+            <!--</el-select>-->
+            <!--</el-form-item>-->
             <el-form-item label="关键字">
-              <el-input placeholder="搜索关键字" class="form-input" v-model="exportForm.keyword" disabled></el-input>
+              <el-input placeholder="搜索关键字" class="form-input" v-model="exportForm.keyword"></el-input>
             </el-form-item>
             <el-form-item label="所属供应商名称">
-              <el-input placeholder="请输入供应商名称" class="form-input" v-model="exportForm.supplierName" disabled></el-input>
+              <el-select v-model="exportForm.supplierName" disabled>
+                <el-option v-for="u in totalSupplierList" :key="u.supplierId" :label="u.name" :value="u.name">
+
+                </el-option>
+              </el-select>
             </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
@@ -251,7 +294,7 @@
                 style="width: 100%">
                 <el-table-column
                   label="主图"
-                  width="180">
+                  width="160">
                   <template scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
@@ -264,7 +307,7 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
-                  width="180"
+                  width="80"
                   v-for="s in exportForm.spec"
                   :key="s.specName">
                   <template scope="scope">
@@ -398,10 +441,14 @@
         form: {
           name: '',
           brand: '',
-          spec: [],
           cat: [],
-          skus: [],
+          unit: '',
+          keyword: '',
+          supplier: '',
           supplierName: '',
+          supplierId: '',
+          spec: [],
+          skus: [],
           goodsExtend: {
             imgs: [],
             content: '',
@@ -417,7 +464,9 @@
           cat: [],
           unit: '',
           skus: [],
+          supplier: '',
           supplierName: '',
+          supplierId: '',
           keyword: '',
           goodsSkuList: [],
           tags: [],
@@ -441,6 +490,8 @@
           label: 'name'
         },
         totalBrandList: [],
+        totalUnitList: [],
+        totalSupplierList: [],
         exportGoodsVisible: false,//导入商品
         exportGoodsList: [],
         activeName: 'first',
@@ -467,6 +518,7 @@
     created(){
       let self = this;
       self.getBrandList(function (data) {
+        console.log('brand', data)
         self.totalBrandList = data;
       });//获取品牌列表
       self.getTagList(function (data) {
@@ -475,6 +527,13 @@
       self.getImgAccess(function (data) {
         self.imgToken = data;
       });//获取图片token
+      self.getUnitList(function (data) {
+        self.totalUnitList = data.list;
+      });
+      self.getSupplierList(function (data) {
+        console.log('supplier', data)
+        self.totalSupplierList = data;
+      });
       this.getCatList();//获取分类列表
     },
     methods: {
@@ -509,13 +568,15 @@
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.exportForm = self.formPass(self.exportForm, data.data);
           self.exportForm.spec = JSON.parse(self.exportForm.spec);
-          self.exportForm.brand = JSON.parse(self.exportForm.brand);
-          self.originCat = [JSON.parse(self.exportForm.cat)];
-          let cat = JSON.parse(self.exportForm.cat);
+          self.exportForm.brand = '';
+          self.exportForm.unit = '';
+          self.exportForm.keyword = '';
+          //self.originCat = [JSON.parse(self.exportForm.cat)];
+          //let cat = JSON.parse(self.exportForm.cat);
 
-          cat.res = cat;
-          self.totalCategories = [cat];
-          self.exportForm.cat = [cat];
+          //cat.res = cat;
+          // self.totalCategories = [cat];
+          self.exportForm.cat = [];
           self.exportForm.goodsExtend.annex = JSON.parse(self.exportForm.goodsExtend.annex);
           self.exportForm.goodsExtend.imgs = JSON.parse(self.exportForm.goodsExtend.imgs);
           self.exportForm.skus = JSON.parse(self.exportForm.skus);
@@ -576,16 +637,17 @@
         for (let i = 0; i < self.form.spec.length; i++) {
           self.$delete(self.form.spec[i], 'inputVisible');
         }
+        self.form.supplierId = self.form.supplier.supplierId;
+        self.form.supplierName = self.form.supplier.name;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
         self.httpApi.goods.addGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });
-//
       },
       submitExportGoods(){//提交引入的商品
         let self = this;
+        console.log(self.exportForm)
         self.exportForm.isPlatForm = 0;
-        self.exportForm.cat = self.originCat;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.exportForm)};
         //requestData = Object.assign(requestData,self.shallowCopy(self.form));
         self.httpApi.goods.addGoods(requestData, function (data) {

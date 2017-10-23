@@ -1,57 +1,54 @@
 import Vue from 'vue';
+Vue.prototype.getUserInfo = function () {//获取用户信息
+  let self = this;
+  let requestData = {token: window.localStorage.getItem('token')};
+  self.httpApi.user.getMyInfo(requestData,function (data) {
+    window.localStorage.setItem('userinfo', JSON.stringify(data.data));
+  });
+};
 Vue.prototype.getBrandList = function(callback){//获取品牌列表
   let self = this;
   let requestData = {token: window.localStorage.getItem('token')};
-  self.$http.post('/ui/brandList',self.qs.stringify(requestData)).then(function (response) {
-    let data = response.data;
-    console.log('brandList',response)
-    if(data.code == 10000){
-      return callback(data.data);
-    }
-  }).catch(function (error) {
-    console.log(error);
-  });
-}
+  self.httpApi.brand.getBrandList(requestData,function (data) {
+    return callback(data.data);
+  })
+};
 Vue.prototype.getTagList = function(callback){//获取品牌列表
   let self = this;
   let requestData = {token: window.localStorage.getItem('token')};
-  self.$http.post('/ui/tagList',self.qs.stringify(requestData)).then(function (response) {
-    let data = response.data;
-    console.log('tagList',response)
-    if(data.code == 10000){
-      callback(data.data);
-    }
-  }).catch(function (error) {
-    console.log(error);
+  self.httpApi.goods.tagList(requestData,function (data) {
+    return callback(data.data);
   });
-}
+};
+
 Vue.prototype.getAddressList = function(callback){//获取地址列表
   let self = this;
-  let requestData = {token: window.localStorage.getItem('token'),type:1};//1是仓库2是门店
-  self.$http.post('/ui/addressList',self.qs.stringify(requestData)).then(function (response) {
-    let data = response.data;
-    console.log('addressList',response)
-    if(data.code == 10000){
-      callback(data.data);
-
-    }
-  }).catch(function (error) {
-    console.log(error);
+  let requestData = {token: window.localStorage.getItem('token')};
+  self.httpApi.stock.addressList(requestData,function (data) {
+    return callback(data.data);
   });
-}
+};
+Vue.prototype.getUnitList = function(callback){//获取单位列表
+  let self = this;
+  let requestData = {token: window.localStorage.getItem('token'),pageNo:1,pageSize:999};//
+  self.httpApi.goodsCat.unitList(requestData,function (data) {
+    return callback(data.data);
+  });
+};
+Vue.prototype.getSupplierList = function(callback){//获取供应商列表
+  let self = this;
+  let requestData = {token: window.localStorage.getItem('token')};//
+  self.httpApi.supplier.list(requestData,function (data) {
+    return callback(data.data);
+  });
+};
 Vue.prototype.getImgAccess = function(callback){//获取图片token
   let self = this;
   let requestData = {
     token: window.localStorage.getItem('token'),
     bucketName: 'sass'
   };
-  self.$http.post('/ui/imgSignature',self.qs.stringify(requestData)).then(function (response) {
-    let data = response.data;
-    console.log('imgSignature',response)
-    if(data.code == 10000){
-      callback(data.data);
-    }
-  }).catch(function (error) {
-    console.log(error);
+  self.httpApi.aliyun.imgSignature(requestData,function (data) {
+    return callback(data.data);
   });
-}
+};
