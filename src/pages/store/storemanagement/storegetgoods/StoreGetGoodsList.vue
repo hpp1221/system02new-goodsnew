@@ -119,7 +119,7 @@
         typeLists: cityOptions,//状态列表
         isIndeterminate: false,
         form: {//高级搜索
-          dateRange: '',
+          dateRange: [null, null],
           tradeNumber: '',
           storeId: '',
           typeList: [],
@@ -185,9 +185,6 @@
 
       }
     },
-    created() {
-      this.select(size, num);//获取分类列表
-    },
     components: {
       'pagination': require('../../../../components/pagination')
     },
@@ -215,23 +212,13 @@
           pageNo: num,
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
-        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.storeIds = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.getGoodsRecordList(requestData, function (data) {
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+        })
+        self.httpApi.store.storeList(requestData, function (data) {
+          self.storeIds = data.data
+        })
       },
       resetGetGoodsForm() {//高级搜索的清空
         let self = this
@@ -250,29 +237,19 @@
           pageSize: size,
           pageNo: num
         };
-        if (self.advanceSearch) {//高级搜索
-          if (self.form.dateRange instanceof Array) {
-            self.form.startTime = self.form.dateRange[0]
-            self.form.endTime = self.form.dateRange[1]
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        }
-        self.$http.post('/ui/getGoodsRecordList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.advanceSearch = false
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.form.startTime = self.form.dateRange[0]
+        self.form.endTime = self.form.dateRange[1]
+        requestData = Object.assign(requestData, self.shallowCopy(self.form))
+        self.httpApi.store.getGoodsRecordList(requestData, function (data) {
+          self.advanceSearch = false
+          self.tableData = data.data.list
+          self.totalPage = data.data.total
+        })
       },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
-//        this.advanceSelect(page.size, page.num)
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -296,7 +273,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            this.getGoodsList()
+            self.select(size,num)
           });
         })
       },

@@ -4,12 +4,12 @@
       <h3 class="page-title">门店调拨</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item label="调入门店">
-          <el-select v-model="easyForm.to">
+          <el-select v-model="easyForm.inputAddressId">
             <el-option :label="item.name" :key="item.name" :value="item.id" v-for="item in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="调出门店">
-          <el-select v-model="easyForm.from">
+          <el-select v-model="easyForm.outputAddressId">
             <el-option :label="item.name" :key="item.name" :value="item.id" v-for="item in totalStores"></el-option>
           </el-select>
         </el-form-item>
@@ -68,7 +68,7 @@
         </el-table-column>
       </el-table>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+        <el-form :model="form" ref="form" v-if="advanceSearch">
           <el-form-item label="调拨单号">
             <el-input placeholder="请输入调拨单号" v-model="form.tradeNo" class="long-input">
 
@@ -76,33 +76,25 @@
           </el-form-item>
           <el-form-item label="出货时间">
             <el-date-picker
-              type="daterange"
-              placeholder="选择日期范围"
-              v-model="form.outputDateRange">
+              v-model="form.outputDateRange"
+              type="datetimerange"
+              placeholder="选择日期范围">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="入货时间">
             <el-date-picker
-              type="daterange"
-              placeholder="选择日期范围"
-              v-model="form.inputDateRange">
+              v-model="form.inputDateRange"
+              type="datetimerange"
+              placeholder="选择日期范围">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="调入门店">
-            <el-select
-              v-model="form.inputAddressId"
-              value-key="id"
-              :loading="addressLoading"
-              @visible-change="getAddress">
+            <el-select v-model="form.inputAddressId">
               <el-option :label="item.name" :key="item.name" :value="item.id" v-for="item in totalStores"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="调出门店">
-            <el-select
-              v-model="form.outputAddressId"
-              value-key="id"
-              :loading="addressLoading"
-              @visible-change="getAddress">
+            <el-select v-model="form.outputAddressId">
               <el-option :label="item.name" :key="item.name" :value="item.id" v-for="item in totalStores"></el-option>
             </el-select>
           </el-form-item>
@@ -115,9 +107,11 @@
             </el-checkbox-group>
           </el-form-item>
         </el-form>
-        <el-button @click="advanceSelect">确定</el-button>
-        <el-button @click="advanceSearch = false">取消</el-button>
-        <el-button @click="resetGetGoodsForm">清空</el-button>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="advanceSelect">确 定</el-button>
+          <el-button @click="advanceSearch = false">取 消</el-button>
+          <el-button @click="resetGetGoodsForm">清空</el-button>
+        </div>
       </el-dialog>
     </div>
   </div>
@@ -133,13 +127,13 @@
         typeLists: cityOptions,//状态列表
         isIndeterminate: false,
         easyForm: {
-          to: '',//调入门店
-          from: '',//调出门店
+          inputAddressId: '',
+          outputAddressId: '',
         },
         form: {
           tradeNo: '',//调拨单号
-          outputDateRange: '',
-          inputDateRange: '',
+          outputDateRange: [null, null],
+          inputDateRange: [null, null],
           outPutStartDate: '',
           outPutEndDate: '',
           inPutStartDate: '',
@@ -178,9 +172,6 @@
       this.getStoreList()
       this.select()
     },
-    components: {
-      'pagination': require('../../../../components/pagination')
-    },
     methods: {
       handleCheckAllChange(event) {//全选
         this.form.Type = event ? cityOptions : [];
@@ -191,73 +182,51 @@
         this.checkAll = checkedCount === this.typeLists.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.typeLists.length;
       },
-      getStoreList() {//门店列表
-        let self = this;
+      getStoreList() {//要货门店
+        let self = this
         let requestData = {
-          token: window.localStorage.getItem('token')
-        };
-        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('store', response)
-          let data = response.data;
-          if (data.code == 10000) {
-            self.totalStores = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+          token: window.localStorage.getItem('token'),
+        }
+        self.httpApi.store.storeList(requestData, function (data) {
+          self.totalStores = data.data
+        })
       },
       select() {//查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status: 2
+          status: 2,
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
-        self.$http.post('/ui/storeAllocationList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('storeAllocationList', response)
-          if (data.code == 10000) {
-            self.tableData = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.storeAllocationList(requestData, function (data) {
+          self.tableData = data.data
+        })
       },
       advanceSelect() {//高级查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status: 2
+          status: 2,
         };
-        if (self.advanceSearch) {//高级搜索
-          if (self.form.outputDateRange instanceof Array || self.form.inputDateRange instanceof Array) {
-            self.form.outPutStartDate = self.form.outputDateRange[0]
-            self.form.outPutEndDate = self.form.outputDateRange[1]
-            self.form.inPutStartDate = self.form.inputDateRange[0]
-            self.form.inPutEndDate = self.form.inputDateRange[1]
-          }
-          requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        }
-        self.$http.post('/ui/storeAllocationList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('storeAllocationList2', response)
-          let data = response.data;
-          if (data.code == 10000) {
-            self.advanceSearch = false
-            self.tableData = data.data.list
-//            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.form.outPutStartDate = self.form.outputDateRange[0]
+        self.form.outPutEndDate = self.form.outputDateRange[1]
+        self.form.inPutStartDate = self.form.inputDateRange[0]
+        self.form.inPutEndDate = self.form.inputDateRange[1]
+        requestData = Object.assign(requestData, self.shallowCopy(self.form))
+        self.httpApi.store.storeAllocationList(requestData, function (data) {
+          self.advanceSearch = false
+          self.tableData = data.data
+        })
       },
       resetGetGoodsForm() {//高级搜索的清空
         let self = this
-        self.form.keyword = ''
-        self.form.dateRange = '',
-          self.form.to = '',
-          self.form.from = '',
-          self.form.Type = [],
-          self.checkAll = false
+        self.form.tradeNo = ''
+        self.form.outputDateRange = [null, null],
+        self.form.inputDateRange = [null, null],
+        self.form.inputAddressId = '',
+        self.form.outputAddressId = '',
+        self.form.Type = [],
+        self.checkAll = false
       },
       storeAllocationAdd() {//新增
         this.$router.push('/store/storemanagement/storeallocation/allocationadd')
@@ -272,7 +241,9 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          allocationRecordId: row.id
+          allocationRecordId: row.id,
+          status:row.status,
+          tradeNo:row.tradeNo
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
@@ -284,7 +255,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            this.getGoodsList()
+            self.select()
           });
         })
       },
