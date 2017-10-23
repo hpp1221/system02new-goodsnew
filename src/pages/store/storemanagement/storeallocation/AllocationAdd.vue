@@ -201,6 +201,9 @@
         }
         self.httpApi.store.selectStoreGoodsInfo(requestData, function (data) {
           let list = data.data;
+//          if(list){
+//            self.$message.message('没有该商品')
+//          }
           for (let i = 0, listLength = list.length; i < listLength; i++) {
             list[i].combination = list[i].number + '  ' + list[i].goodsName;
             list[i].sum = '';

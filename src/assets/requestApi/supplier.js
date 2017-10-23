@@ -91,3 +91,10 @@ Vue.prototype.httpApi.supplier.searchSuppliersByName = function (params, success
       successCallback(data);
     })
 };
+//供应商商品列表查询
+Vue.prototype.httpApi.supplier.supplierGoodslistByPageAndQuery = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/supplier/supplierGoodslistByPageAndQuery', params,
+    function (data) {
+      successCallback(data);
+    })
+};

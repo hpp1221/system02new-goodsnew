@@ -1,23 +1,20 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <el-form ref="titleForm" :model="titleForm" class="storegetgoods-nav storegetgoodsdetail-title">
-        <el-form-item class="storegetgoodsdetail-title-left">
-          <h3>门店要货详情</h3>
-        </el-form-item>
-        <el-form-item class="storegetgoodsdetail-title-right">
-          <el-button type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
-          </el-button>
-          <el-button type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-          </el-button>
-          <el-button type="text" @click="cancelGetGoods"
-                     class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
-          </el-button>
-          <el-button @click="getGoodsExaminePass">通过</el-button>
-        </el-form-item>
-      </el-form>
+      <h3 class="page-title">门店要货单详情</h3>
+      <div class="storegetgoodsdetail-title-right">
+        <el-button type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        </el-button>
+        <el-button type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        </el-button>
+        <el-button type="text" @click="cancelGetGoods" class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        </el-button>
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+          {{item.label}}
+        </el-button>
+      </div>
       <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px"
-               inline>
+               inline style="margin-top: 75px">
         <el-form-item label="单据编码">
           {{form.tradeNumber}}
         </el-form-item>

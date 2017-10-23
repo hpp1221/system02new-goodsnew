@@ -157,7 +157,6 @@
         location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
       },
       handleSelectionChange(val) {
-        console.log('val', val)
         this.multipleSelection = val;
       },
       toggleSelection(rows) {

@@ -19,5 +19,6 @@ Vue.prototype.httpApi = {
   stock:{},
   supplier:{},
   user:{},
-  vip:{}
+  vip:{},
+  level:{},
 };

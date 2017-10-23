@@ -144,13 +144,13 @@
             type: 'warning',
           }).then(() => {
               self.httpApi.store.storeAllocationRecordAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (res.data.code == 10000) {
+              console.log('deta', data)
+              if (data.code == 10000) {
                 self.$message({
                   type: 'success',
                   message: '已通过该审核!'
                 });
-                this.$router.push('/store/storemanagement/storeallocation/list');
+                self.$router.push('/store/storemanagement/storeallocation/list');
               } else {
                 self.$message({
                   type: 'info',
@@ -166,13 +166,13 @@
             type: 'warning',
           }).then(() => {
               self.httpApi.store.storeAllocationRecordSendAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (res.data.code == 10000) {
+              console.log('deta', data)
+              if (data.code == 10000) {
                 self.$message({
                   type: 'success',
                   message: '已通过该审核!'
                 });
-                this.$router.push('/store/storemanagement/storeallocation/list');
+                self.$router.push('/store/storemanagement/storeallocation/list');
               } else {
                 self.$message({
                   type: 'info',
@@ -188,13 +188,13 @@
             type: 'warning',
           }).then(() => {
               self.httpApi.store.storeAllocationRecordReceiveAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (res.data.code == 10000) {
+              console.log('deta', data)
+              if (data.code == 10000) {
                 self.$message({
                   type: 'success',
                   message: '已通过该审核!'
                 });
-                this.$router.push('/store/storemanagement/storeallocation/list');
+                self.$router.push('/store/storemanagement/storeallocation/list');
               } else {
                 self.$message({
                   type: 'info',

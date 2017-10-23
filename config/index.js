@@ -33,9 +33,9 @@ module.exports = {
           //target: 'http://192.168.41.78:8083',
         //   target: 'http://192.168.41.191:8081',
         // target: 'http://192.168.41.216:8081',
-        target: 'http://192.168.41.93:8081',
-        // target: 'http://192.168.41.218:8081',
-        //target: 'http://192.168.41.216:8081',
+        // target: 'http://192.168.41.93:8081',
+        target: 'http://192.168.41.218:8081',
+        // target: 'http://192.168.41.216:8081',
         // target: 'http://192.168.41.97:8081',
         changeOrigin: true,
         pathRewrite: {
