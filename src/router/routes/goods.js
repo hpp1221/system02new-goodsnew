@@ -11,7 +11,11 @@ export default [
     component: resolve => require(['@/pages/goods/CreateGoods'], resolve)
   },
   {
-    path: '/goods/updategoods', //修改商品详情
+    path: '/goods/goodsDetail/:id', //商品详情
+    component: resolve => require(['@/pages/goods/goodsDetail'], resolve)
+  },
+  {
+    path: '/goods/updategoods/:id/:goodsId', //修改商品详情
     component: resolve => require(['@/pages/goods/UpdateGoods'], resolve)
   },
   {

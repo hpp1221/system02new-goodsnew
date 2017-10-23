@@ -22,7 +22,7 @@
             :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="form.selfAddress">
+        <el-form-item>
           <el-table :data="form.data">
             <el-table-column
               type="index"
@@ -221,7 +221,6 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          fromAddress: JSON.stringify(self.form.selfAddress),
         };
         self.httpApi.stock.goodsInfo(requestData, function (data) {
           let list = data.data;

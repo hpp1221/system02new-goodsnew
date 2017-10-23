@@ -226,11 +226,10 @@
               <el-table
                 :data="goodsForm.skus"
                 border
-                v-if="goodsForm.skus.length > 0"
-                style="width: 100%">
+                v-if="goodsForm.skus.length > 0">
                 <el-table-column
                   label="主图"
-                  width="180">
+                  width="160">
                   <template scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
@@ -243,7 +242,7 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
-                  width="180"
+                  width="80"
                   v-for="s in goodsForm.spec"
                   :key="s.specName">
                   <template scope="scope">
@@ -417,14 +416,14 @@
     watch: {
       tabName: function (newVal, oldVal) {
         if (newVal === 'first') {
-          this.select(this.$route.query.id);
+          this.select(this.$route.params.id);
         } else if (newVal === 'second') {
-          this.selectGoods(this.$route.query.goodsId);
+          this.selectGoods(this.$route.params.goodsId);
         }
       }
     },
     created(){
-      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
       self.getBrandList(function (data) {
         self.totalBrandList = data;

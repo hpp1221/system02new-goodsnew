@@ -1,31 +1,88 @@
 <template>
-	<div class="container">
-		<div class="wrapper">
-			<div class="indexpage-docket-div">
-				<div class="indexpage-docket-header">
-					<p>记事表</p>
-					<div>
-						<img src="" alt="" />
-						<img src="" alt="" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="container">
+    <div class="wrapper">
+      <div class="index-top-icon-div">
+        <p class="icon-p">
+          <i class="el-icon-question"></i>
+          <span>帮助</span>
+        </p>
+        <p class="icon-p">
+          <i class="el-icon-menu"></i>
+          <span>配置</span>
+        </p>
+      </div>
+      <el-row :gutter="10" style="width: 100%">
+        <el-col :span="8">
+          <el-card class="card-body">
+            <div slot="header">
+              <span>通知公告</span>
+              <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+            </div>
+            <div v-for="n in noticeList" :key="n.id" class="data-div">
+              <p>{{n.name}}</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="6">
+          <el-card class="card-body">
+            <div slot="header">
+              <span>库存提醒</span>
+              <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+            </div>
+            <div v-for="s in stockRemindList" :key="s.storeHouseId" class="data-div">
+              <p>仓库:{{s.storeHouseName}},商品:{{s.goodsName}},库存即将达到库存下限</p>
+              <p>{{s.storeHouseName}}库存总数：{{s.inStoreHouse + s.onTheWay}}</p>
+              <p>{{s.storeHouseName}}库存下限值：{{s.downLimit}}</p>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="10">
+          <el-card class="card-body">
+            <div slot="header">
+              <span>待处理任务</span>
+              <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+            </div>
+            <div v-for="n in noticeList" :key="n.id" class="data-div">
+              <p>{{n.name}}</p>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <chart></chart>
+
+    </div>
+  </div>
 </template>
 
 <script>
-	export default{
-		data(){
-			return {
-				shortCut:[]
-			}
-		},
-		created(){
-			this.getShortCut()
-		},
-		methods:{
-			getShortCut(){//获取快捷菜单
+  export default{
+    data(){
+      return {
+        noticeList: [{
+          name: '商品管理版本更新V1.0',
+          id: 1
+        }],
+        stockRemindList: [],
+      }
+    },
+    created(){
+      this.getStockRemind()
+    },
+    components: {
+      'chart': require('../components/indexcharts')
+    },
+    methods: {
+      getStockRemind(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          ratio: 30
+        };
+        self.httpApi.stock.storeHouseRemind(requestData, function (data) {
+          self.stockRemindList = data.data;
+        })
+      },
+      getShortCut(){//获取快捷菜单
 //				let self = this
 //				let requestData = {
 //					token: window.localStorage.getItem('token')
@@ -39,10 +96,30 @@
 //			    }).catch(function (error) {
 //			    	console.log(error);
 //			    });
-			}
-		}
-	}
+      }
+    }
+  }
 </script>
 
 <style>
+  .card-body {
+    height: 300px;
+  }
+
+  .data-div {
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 0;
+  }
+
+  .data-div:first-child {
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    padding-top: 0;
+    padding-bottom: 10px;
+  }
+
+  .index-top-icon-div {
+    overflow: hidden;
+  }
 </style>

@@ -5,7 +5,7 @@
       <el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px">
         <h4 class="item-title">账户信息</h4>
         <el-form-item label="账号">
-          <el-input v-model="form.loginId" class="form-input"></el-input>
+          <el-input v-model="form.loginId" class="form-input" disabled></el-input>
         </el-form-item>
         <el-form-item label="真实姓名">
           <el-input v-model="form.name" class="form-input">
@@ -74,7 +74,7 @@
     },
     created(){
       let self = this;
-      self.getUserInfo();//查询用户信息
+
       self.userInfoToForm();//把userinfo放入form
       self.getDepartmentList();
       self.getImgAccess(function (data) {
@@ -86,7 +86,13 @@
     },
     methods: {
       userInfoToForm(){//查询公司信息
-        this.formPass(this.form, JSON.parse(window.localStorage.getItem('userinfo')));
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.httpApi.user.getMyInfo(requestData,function (data) {
+          window.localStorage.setItem('userinfo', JSON.stringify(data.data));
+          self.formPass(self.form, data.data);
+        });
+
       },
       getLogo(file){//获取logo
         this.form.avatar = file.url;
@@ -103,7 +109,7 @@
               self.$message.success('保存成功');
               setTimeout(function () {
                 self.$router.go(0)
-              }, 1000);
+              }, 500);
             });
           } else {
             console.log('error submit!!');

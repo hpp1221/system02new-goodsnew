@@ -51,23 +51,15 @@
       }
     },
     methods: {
-      submit(formName) { //保存
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            let self = this;
-            let requestData = {
-              token: window.localStorage.getItem('token')
-            };
-            requestData = Object.assign(requestData, self.shallowCopy(self.form));
-            self.httpApi.supplier.createSupplier(requestData, function (data) {
-              self.$router.push('/supplier/suppliers/supplierlist');
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+      submit() { //保存
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token')
+        };
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        self.httpApi.supplier.createSupplier(requestData, function (data) {
+          self.$router.push('/supplier/suppliers/supplierlist');
         });
-
       },
     }
   }

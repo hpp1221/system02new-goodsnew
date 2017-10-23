@@ -158,6 +158,13 @@ Vue.prototype.httpApi.stock.searchOrderDetail = function (params, successCallbac
       successCallback(data);
     })
 };
+//库存提醒
+Vue.prototype.httpApi.stock.storeHouseRemind = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeHouseRemind', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 
 
 

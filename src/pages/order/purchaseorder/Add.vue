@@ -131,6 +131,8 @@
             goodsName: '',//商品名
             goodsSpec: '',//规格
             goodsUnit: '',
+            catName: '',
+            catId: '',
             num: '',
             subtotal: '',//小计
             price: '',//价格
@@ -233,35 +235,29 @@
           token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
-        self.$http.post('/ui/goodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code === 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNo + list[i].goodsName;
-              list[i].subtotal = '';
-              list[i].num = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
+        self.httpApi.stock.goodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].goodsNo + list[i].goodsName;
+            list[i].subtotal = '';
+            list[i].num = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item){//判断是否已选该商品
         let list = this.form.orderDetails;
         for (let i = 0; i < list.length; i++) {
           if (item.goodsNo === list[i].goodsNo) {
             this.$message.error('已有此类商品');
-            this.form.orderDetails[this.listIndex].combination = ''
+            this.form.orderDetails[this.listIndex].combination = '';
             return
           }
         }
-        this.form.orderDetails[this.listIndex] = item
+        this.form.orderDetails[this.listIndex] = item;
+
       },
       handleClick(index){//存商品index
         this.listIndex = index
@@ -272,7 +268,7 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.form);
-        
+        requestData.att = JSON.stringify(requestData.att);
         //self.form["token"] = window.localStorage.getItem('token')
 //        self.$http.post('/ui/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
         self.$http.post('/ui/order/create', requestData).then(function (response) {
@@ -291,6 +287,8 @@
           goodsName: '',//商品名
           goodsSpec: '',//规格
           goodsUnit: '',
+          catName: '',
+          catId: '',
           price: '',//价格
           num: '',
           subtotal: '',//小计

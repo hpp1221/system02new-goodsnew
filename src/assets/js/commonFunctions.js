@@ -16,20 +16,8 @@ Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form�
     myForm[o] = responseForm[o];
   }
   return myForm;
-}
+};
 
-Vue.prototype.getUserInfo = function () {//获取用户信息
-  let self = this;
-  let requestData = {token: window.localStorage.getItem('token')};
-  self.$http.get('/ui/user/getMyInfo', requestData).then(function (response) {
-    let data = response.data;
-    if (data.code === 10000) {
-      window.localStorage.setItem('userinfo', JSON.stringify(data.data));
-    }
-  }).catch(function (error) {
-    console.log(error);
-  });
-}
 
 Vue.prototype.accAdd = function (arg1, arg2) {//精确计算加法
   var r1, r2, m;
@@ -45,7 +33,7 @@ Vue.prototype.accAdd = function (arg1, arg2) {//精确计算加法
   }
   m = Math.pow(10, Math.max(r1, r2));
   return (accMul(arg1, m) + accMul(arg2, m)) / m;
-}
+};
 
 Vue.prototype.accMul = function (arg1, arg2) {//精确计算乘法
   var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
@@ -58,7 +46,7 @@ Vue.prototype.accMul = function (arg1, arg2) {//精确计算乘法
   } catch (e) {
   }
   return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
-}
+};
 Vue.prototype.checkImg = function (file) {
   const isIMG = file.type === 'image/jpeg' || file.type === 'image/png';
   const isLt2M = file.size / 1024 / 1024 < 2;
@@ -70,7 +58,7 @@ Vue.prototype.checkImg = function (file) {
     this.$message.error('上传头像图片大小不能超过 2MB!');
   }
   return isIMG && isLt2M;
-}
+};
 Date.prototype.pattern = function (fmt) {
   var o = {
     "M+": this.getMonth() + 1, //月份
@@ -103,4 +91,4 @@ Date.prototype.pattern = function (fmt) {
     }
   }
   return fmt;
-}
+};
