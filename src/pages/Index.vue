@@ -6,7 +6,14 @@
           <img src="../assets/images/cloud.png?1" alt=""/>
         </div>
       </div>
-
+      <div class="header-left-div">
+        <div class="header-left-homepage-div">
+          <router-link to="/index" style="color:white;">
+            <i class="iconfont icon-homepage"></i>
+            <span>首页</span>
+          </router-link>
+        </div>
+      </div>
       <div class="header-right-div">
         <div class="header-right-search-div">
           <i class="el-icon-search"></i>
@@ -82,7 +89,7 @@
       <transition name="custom-classes-transition"
                   enter-active-class="animated slideInLeft"
                   leave-active-class="animated slideOutLeft"
-                >
+      >
         <el-aside width="180px" class="right-aside" v-if="rightMenuVisible" id="right-menu-aside">
           <i class="iconfont icon-return"
              v-if="rightMenuVisible"
@@ -242,9 +249,11 @@
     color: white;
     height: 100%;
   }
-  #menu-animate{
+
+  #menu-animate {
     animate-duration: .1s !important;
   }
+
   .router-class {
     background-color: #606368 !important;
   }
