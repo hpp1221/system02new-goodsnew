@@ -154,7 +154,6 @@
           token: window.localStorage.getItem('token'),
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        console.log(requestData)
         self.httpApi.store.addGetGoodsRecord(requestData,function (data) {
           self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
         })
@@ -163,33 +162,20 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          storeNumber: self.form.storeNumber,
-          storeName: ''
         }
-        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.storeIds = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.storeList(requestData, function (data) {
+          self.totalStores = data.data
+        })
       },
       getTradeNumber() {//单据编码
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token')
         }
-        self.$http.post('/ui/createGetGoodsNumber', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('number', response);
-          if (data.code == 10000) {
-            let list = data.data;
-            self.form.tradeNumber = list;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.createGetGoodsNumber(requestData, function (data) {
+          let list = data.data;
+          self.form.tradeNumber = list;
+        })
       },
       getStoreHouse() {//仓库接口
         let self = this
@@ -197,15 +183,9 @@
           token: window.localStorage.getItem('token'),
           type: 1
         }
-        self.$http.post('/ui/addressList', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('storehouse', response);
-          if (data.code == 10000) {
-            self.storeHouseIds = data.data;
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.addressList(requestData, function (data) {
+          self.storeHouseIds = data.data;
+        })
       },
       judgeNum(value, index) {//判断数量是否为整数
         if (value === '') {
@@ -226,24 +206,16 @@
           keyword: queryString,
           storeId: self.form.storeId
         }
-        self.$http.post('/ui/storeGoodsInfo', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log(response.data);
-          if (data.code == 10000) {
-            let list = data.data;
-            for (let i = 0, listLength = list.length; i < listLength; i++) {
-              list[i].combination = list[i].goodsNumber + '  ' + list[i].goodsName;
-              list[i].sum = '';
-            }
-            self.goodsInfoList = list;
-            // 调用 callback 返回建议列表的数据
-            cb(self.goodsInfoList);
-            console.log('goods', self.goodsInfoList);
+        self.httpApi.store.storeGoodsInfo(requestData, function (data) {
+          let list = data.data;
+          for (let i = 0, listLength = list.length; i < listLength; i++) {
+            list[i].combination = list[i].number + '  ' + list[i].goodsName;
+            list[i].sum = '';
           }
-        }).catch(function (error) {
-          console.log(error);
+          self.goodsInfoList = list;
+          // 调用 callback 返回建议列表的数据
+          cb(self.goodsInfoList);
         });
-
       },
       handleSelect(item) {//判断是否已选该商品
         let list = this.form.getGoodsRecordDetails;

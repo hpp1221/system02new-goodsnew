@@ -142,13 +142,12 @@
           this.$message.error('请选中要导出的项');
           return;
         }
-//        let skuList = [];
+//        let supplierString = [];
 //        for (let i = 0; i < this.multipleSelection.length; i++) {
-//          skuList.push(this.multipleSelection[i].id);
+//          supplierString.push(this.multipleSelection[i].supplierId)
 //        }
-//
-//        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
-//      },
+//        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + JSON.stringify(supplierString);
+//        skuList: JSON.stringify(self.multipleSelection),
         let self = this
         let supplierString = ''
         for (let i = 0; i < self.multipleSelection.length; i++) {
