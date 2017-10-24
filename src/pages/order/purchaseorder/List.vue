@@ -5,9 +5,9 @@
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
           <el-select
-            placeholder="全部订单"
-            v-model="easyForm.orderStatus">
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
+            v-model="easyForm.orderStatus"
+            multiple>
+            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -124,6 +124,7 @@
 </template>
 
 <script>
+  const axios = require('axios')
   export default{
     data(){
       return {
@@ -131,7 +132,7 @@
         checkAllOrderStatus: false,
         checkAllPayStatus: false,
         form: {
-          payStatus: [],//付款状态
+//          payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
           dateRange: [null, null],
@@ -141,7 +142,7 @@
           endTime: ''
         },
         easyForm: {//简单查询
-          orderStatus: ''
+          orderStatus: []
         },
         pageSize: 5,
         pageNum: 1,
@@ -249,7 +250,32 @@
           pageNo: num,
           orderType: 1
         };
+
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
+        if (requestData.orderStatus === "[]") {
+          requestData.orderStatus = null;
+        }
+        console.log(requestData)
+//        axios({
+//          url: '/ui/order/list',
+//          method: 'post',
+//          data: self.easyForm,
+//          headers: {
+//            'Content-Type': 'application/x-www-form-urlencoded'
+//          }
+//        }).then(function(response) {
+//          console.log(response)
+//        });
+//        self.$http.post('/ui/order/list', {username:'123'}, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
+//          let data = response.data;
+//          console.log('order/create', response)
+//          if (data.code === 10000) {
+//            self.tableData = data.data.list;
+//            self.totalPage = data.data.total;
+//          }
+//        }).catch(function (error) {
+//          console.log(error);
+//        });
         self.httpApi.order.list(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
@@ -267,6 +293,7 @@
         self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.order.list(requestData, function (data) {
+          self.advanceSearch = false;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });

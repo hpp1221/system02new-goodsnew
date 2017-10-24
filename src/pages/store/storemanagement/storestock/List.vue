@@ -91,15 +91,16 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select
-              placeholder="请选择商品品牌"
-              v-model="form.brandName"
-              value-key="name"
-              filterable
-              :loading="brandLoading"
-              @visible-change="getBrand">
-              <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-            </el-select>
+            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
+            <!--<el-select-->
+              <!--placeholder="请选择商品品牌"-->
+              <!--v-model="form.brandName"-->
+              <!--value-key="name"-->
+              <!--filterable-->
+              <!--:loading="brandLoading"-->
+              <!--@visible-change="getBrand">-->
+              <!--<el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>-->
+            <!--</el-select>-->
           </el-form-item>
           <el-form-item label="门店">
             <el-select placeholder="全部门店" v-model="easyForm.storeId">
@@ -149,7 +150,9 @@
         storeIds: [],
         advanceSearch: false,
         form: {
-          brandName: '',//商品品牌
+          brand: '',
+          brandName: '',
+          brandId: '',//商品品牌
           address: '',//所属门店
           tagId: [],//商品标签
           goodsStatus: '',//商品状态
@@ -169,7 +172,6 @@
           children: 'children',
           label: 'name'
         },
-        totalBrandList: [],//品牌列表
         tagIds: [],//商品标签列表
         addressLoading: false,//仓库列表加载图片
         brandLoading: false,//品牌列表加载图片
@@ -179,17 +181,15 @@
     created(){
       this.select();
     },
-
+    components: {
+      'pagination': require('../../../../components/pagination'),
+      'brandselect': require('../../../../components/getbrandselect')
+    },
     methods: {
-      getBrand(type){
-        if (type && this.totalBrandList.length === 0) {
-          this.brandLoading = true;
-          let self = this;
-          self.getBrandList(function (data) {
-            self.totalBrandList = data;
-            self.brandLoading = false;
-          });//获取品牌列表
-        }
+      getBrandSelect(e){
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
       },
       getAddress(type){//所属门店
         if (type && this.totalStores.length === 0) {
@@ -233,7 +233,7 @@
           console.log('list', response)
           let data = response.data;
           if (data.code === 10000) {
-            self.tableData = data.data;
+            self.tableData = data.data.list;
           }
         }).catch(function (error) {
           console.log(error);

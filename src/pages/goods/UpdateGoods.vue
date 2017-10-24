@@ -11,21 +11,29 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select v-model="form.brand" value-key="name" disabled>
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-              </el-select>
+              <brandselect
+                :outBrand="form.brand"
+                :disabled="true"
+                v-if="form.name"
+                :isClickFetch="false">
+              </brandselect>
             </el-form-item>
             <el-form-item label="商品分类">
-              <el-cascader
-                :options="totalCategories"
-                v-model="form.cat"
-                @active-item-change="getCatList"
-                disabled
-                :props="props">
-              </el-cascader>
+              <catselect
+                :outCat="form.cat"
+                v-if="form.name"
+                :disabled="true">
+              </catselect>
+              <!--<el-cascader-->
+              <!--:options="totalCategories"-->
+              <!--v-model="form.cat"-->
+              <!--@active-item-change="getCatList"-->
+              <!--disabled-->
+              <!--:props="props">-->
+              <!--</el-cascader>-->
             </el-form-item>
             <el-form-item label="计量单位">
-              <el-input v-model="form.unit" class="form-input" disabled></el-input>
+              <unitselect :outUnit="form.unit" :disabled="true" v-if="form.unit"></unitselect>
             </el-form-item>
             <el-form-item label="关键字">
               <el-input class="form-input" v-model="form.keyword" disabled></el-input>
@@ -181,9 +189,13 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="goodsForm.brand" value-key="name">
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-              </el-select>
+              <brandselect
+                :outBrand="goodsForm.brand"
+                @getBrandSelect="getGoodsFormBrandSelect"
+                :isClickFetch="false"
+                v-if="goodsForm.id"
+                :selectAllVisible="false">
+              </brandselect>
             </el-form-item>
             <el-form-item label="商品分类">
               <el-cascader
@@ -196,7 +208,13 @@
               </el-cascader>
             </el-form-item>
             <el-form-item label="计量单位">
-              <el-input placeholder="请输入计量单位" v-model="goodsForm.unit" class="form-input"></el-input>
+              <unitselect
+                @getUnitSelect="getGoodsFormUnitSelect"
+                :outUnit="goodsForm.unit"
+                :isClickFetch="false"
+                v-if="goodsForm.id"
+                :selectAllVisible="false">
+              </unitselect>
             </el-form-item>
             <el-form-item label="关键字">
               <el-input placeholder="搜索关键字" class="form-input" v-model="goodsForm.keyword"></el-input>
@@ -356,11 +374,17 @@
         form: {
           name: '',
           brand: '',
+          brandName: '',
+          brandId: '',
           spec: [],
           cat: [],
+          catId: '',
+          catName: '',
           unit: '',
           skus: [],
+          supplier: '',
           supplierName: '',
+          supplierId: '',
           keyword: '',
           goodsSkuList: [],
           tags: [],
@@ -374,11 +398,17 @@
           id: '',
           name: '',
           brand: '',
+          brandName: '',
+          brandId: '',
           spec: [],
           cat: [],
+          catId: '',
+          catName: '',
           unit: '',
           skus: [],
+          supplier: '',
           supplierName: '',
+          supplierId: '',
           keyword: '',
           goodsSkuList: [],
           tags: [],
@@ -400,7 +430,6 @@
           label: 'name'
         },
         totalCategories: [],
-        totalBrandList: [],
         tabName: 'first',//当前选中的tab
         skuImgIndex: 0,
         imgToken: '',
@@ -412,6 +441,9 @@
       'uploadmultipleimg': require('../../components/uploadmultipleimg'),
       'uploadfiles': require('../../components/uploadfiles'),
       'uploadoneimg': require('../../components/uploadoneimg'),
+      'brandselect': require('../../components/getbrandselect'),
+      'unitselect': require('../../components/getunitselect'),
+      'catselect': require('../../components/getcatselect')
     },
     watch: {
       tabName: function (newVal, oldVal) {
@@ -425,9 +457,6 @@
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
-      self.getBrandList(function (data) {
-        self.totalBrandList = data;
-      });//获取品牌列表
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
@@ -437,6 +466,19 @@
       //获取分类列表
     },
     methods: {
+      getGoodsFormBrandSelect(e){//修改商品品牌select
+        this.goodsForm.brand = e.brand;
+        this.goodsForm.brandName = e.brandName;
+        this.goodsForm.brandId = e.brandId;
+      },
+      getGoodsFormUnitSelect(e){
+        this.goodsForm.unit = e;
+      },
+      getGoodsFormCatSelect(e){
+        this.goodsForm.cat = e.cat;
+        this.goodsForm.catName = e.catName;
+        this.goodsForm.catId = e.catId;
+      },
       getFileList(file){//sku，商品图片
         this.form.goodsExtend.imgs.push(file);
       },
@@ -471,14 +513,15 @@
           self.form = self.formPass(self.form, data.data);
           self.form.spec = JSON.parse(self.form.spec);
           self.form.brand = JSON.parse(self.form.brand);
-          let cat = JSON.parse(self.form.cat);
-          cat.res = cat;
-          self.totalCategories = [cat];
-          self.form.cat = [cat];
+          //let cat = JSON.parse(self.form.cat);
+          //cat.res = cat;
+          //self.totalCategories = [cat];
+          self.form.cat = [JSON.parse(self.form.cat)];
           self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
           self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
           self.form.skus = JSON.parse(self.form.skus);
           self.form.skus[0].sku = JSON.parse(self.form.skus[0].sku);
+          console.log(self.form)
         });
       },
       clickCat(){
@@ -487,7 +530,6 @@
         }
       },
       selectGoods(goodsId){
-
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), goodsId: goodsId};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
@@ -527,6 +569,8 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
+            self.form.supplierId = self.form.supplier.supplierId;
+            self.form.supplierName = self.form.supplier.name;
             let requestData = {token: window.localStorage.getItem('token'), skuInfo: JSON.stringify(self.form.skus)};
             self.httpApi.goods.editSku(requestData, function (data) {
               self.$router.push('/goods/goodslist');
@@ -545,7 +589,8 @@
         } else {
           self.goodsForm.cat = self.originCat;
         }
-
+        self.goodsForm.supplierId = self.goodsForm.supplier.supplierId;
+        self.goodsForm.supplierName = self.goodsForm.supplier.name;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');

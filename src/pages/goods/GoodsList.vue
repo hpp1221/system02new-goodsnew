@@ -120,9 +120,7 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="brandId">
-              <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
-            </el-select>
+            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
           </el-form-item>
           <el-form-item label="所属供应商">
             <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
@@ -195,7 +193,9 @@
           keyword: '',//关键词
           series: '',//商品分类
           cat: [],
-          brand: '',//商品品牌
+          brand: '',
+          brandName: '',
+          brandId: '',
           supplierName: '',//供应商名称
           tags: [],//标签
           source: -1,//商品来源,全部是-1，手动新增0，批量导入1
@@ -220,7 +220,6 @@
           children: 'children',
           label: 'name'
         },
-        totalBrandList: [],
         totalAddressList: [],
         goodsTags: []
 
@@ -229,9 +228,6 @@
     created(){
       let self = this;
       // self.select(this.pageSize,this.pageNum);
-      self.getBrandList(function (data) {
-        self.totalBrandList = data;
-      });//获取品牌列表
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
@@ -242,9 +238,16 @@
       self.getCatList();//获取分类列表
     },
     components: {
-      'pagination': require('../../components/pagination')
+      'pagination': require('../../components/pagination'),
+      'brandselect': require('../../components/getbrandselect'),
+      ' ': require('../../components/getsupplierselect'),
     },
     methods: {
+      getBrandSelect(e){
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
+      },
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
