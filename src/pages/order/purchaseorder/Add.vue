@@ -235,7 +235,7 @@
           token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
-        self.httpApi.stock.goodsInfo(requestData, function (data) {
+        self.httpApi.goods.orderGoodsInfo(requestData, function (data) {
           let list = data.data;
           for (let i = 0, listLength = list.length; i < listLength; i++) {
             list[i].combination = list[i].goodsNo + list[i].goodsName;

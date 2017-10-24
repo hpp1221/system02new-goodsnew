@@ -97,7 +97,7 @@
             token: window.localStorage.getItem('token'),
             userId: id
           };
-          self.httpApi.tenant.initUserPwd(requestData, function (data) {
+          self.httpApi.user.initUserPwd(requestData, function (data) {
             self.$message.success('操作成功');
           });
         }).catch(() => {
@@ -123,7 +123,7 @@
           pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.company.selectCompanyUserListPage(requestData, function (data) {
+        self.httpApi.user.selectCompanyUserListPage(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });

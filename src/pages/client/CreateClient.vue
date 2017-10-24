@@ -136,10 +136,9 @@
 				});
 
 			},
-			resetForm(formName) {//取消
+			resetForm() {//取消
 				let self = this
-				self.$refs[formName].resetFields()
-				self.$router.push('/personal/client/clientmanagement')
+				self.$router.push('/client/clientmanagement')
 			}
 		}
 	}

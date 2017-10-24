@@ -106,15 +106,7 @@
             </el-cascader>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select
-              placeholder="请选择商品品牌"
-              v-model="form.brandName"
-              value-key="name"
-              filterable
-              :loading="brandLoading"
-              @visible-change="getBrand">
-              <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
-            </el-select>
+            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
           </el-form-item>
           <el-form-item label="所属仓库">
             <el-select
@@ -161,7 +153,9 @@
         advanceSearch: false,
         updateVisible: false,//修改库存上下限
         form: {
-          brandName: '',//商品品牌
+          brand: '',
+          brandName: '',
+          brandId: '',//商品品牌
           address: [],//所属仓库
           tagList: [],//商品标签
           goodsStatus: '',//商品状态
@@ -201,18 +195,14 @@
       }
     },
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'brandselect': require('../../../components/getbrandselect')
     },
     methods: {
-      getBrand(type){
-        if (type && this.totalBrandList.length === 0) {
-          this.brandLoading = true;
-          let self = this;
-          self.getBrandList(function (data) {
-            self.totalBrandList = data;
-            self.brandLoading = false;
-          });//获取品牌列表
-        }
+      getBrandSelect(e){
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
       },
       pageChanged(page){
         this.pageSize = page.size;
@@ -273,7 +263,8 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.list(requestData, function (data) {
           self.advanceSearch = false;
-          self.tableData = data.data;
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       update(id, upLimit, downLimit){

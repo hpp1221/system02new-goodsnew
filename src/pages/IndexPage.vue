@@ -43,7 +43,9 @@
               <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
             </div>
             <div v-for="p in pendingTaskList" :key="p.id" class="data-div">
-              <p>{{p.name}}</p>
+              <p style="float: left;"><span v-for="t in totalOrderStatus" v-if="p.orderStatus == t.id">{{t.name}}</span></p>
+              <p style="float: left;"><span v-for="o in orderTypeList" v-if="p.orderType == o.type">{{o.name}}</span></p>
+              <p style="float: right">{{p.count}}笔</p>
             </div>
           </el-card>
         </el-col>
@@ -62,11 +64,59 @@
           name: '商品管理版本更新V1.0',
           id: 1
         }],
-        pendingTaskList:[{
+        pendingTaskList: [{
           name: '商品管理版本更新V1.0',
           id: 1
         }],
         stockRemindList: [],
+        orderTypeList: [
+          {
+            type: 1,
+            name: '采购订单'
+          },
+          {
+            type: 2,
+            name: '销售订单'
+          },
+          {
+            type: 3,
+            name: '采购退单'
+          },
+          {
+            type: 4,
+            name: '销售退单'
+          },
+        ],
+        totalOrderStatus: [
+          {
+            name: '待订单审核',
+            id: 1
+          },
+          {
+            name: '待财务审核',
+            id: 2
+          },
+          {
+            name: '待出库审核',
+            id: 3
+          },
+          {
+            name: '待发货确认',
+            id: 4
+          },
+          {
+            name: '待收货确认',
+            id: 5
+          },
+          {
+            name: '已完成',
+            id: 6
+          },
+          {
+            name: '已作废',
+            id: 7
+          },
+        ],//订单状态
       }
     },
     created(){
@@ -94,7 +144,7 @@
           token: window.localStorage.getItem('token'),
         };
         self.httpApi.order.pendingTask(requestData, function (data) {
-            console.log(data)
+          console.log(data)
           self.pendingTaskList = data.data;
         })
       },
@@ -127,6 +177,7 @@
     text-align: center;
     border-bottom: 1px solid #f0f0f0;
     padding: 10px 0;
+    overflow: hidden;
   }
 
   .data-div:first-child {
