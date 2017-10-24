@@ -81,6 +81,22 @@ Vue.prototype.httpApi.order.log = function (params, successCallback) {
     })
 };
 
+//待处理任务(首页)
+Vue.prototype.httpApi.order.pendingTask = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/order/pendingTask', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
+//品类销售汇总
+Vue.prototype.httpApi.order.salesSummary = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/order/salesSummary', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
 //订单统计
 Vue.prototype.httpApi.order.statistics = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/order/statistics', params,

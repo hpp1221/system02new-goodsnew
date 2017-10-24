@@ -22,8 +22,8 @@ Vue.prototype.httpApi.vip.importVips = function (params, successCallback) {
     })
 };
 //会员新增
-Vue.prototype.httpApi.vip.insertVip = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/insertVip', params,
+Vue.prototype.httpApi.vip.insertvip = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/insertvip', params,
     function (data) {
       successCallback(data);
     })

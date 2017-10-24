@@ -42,8 +42,8 @@
               <span>待处理任务</span>
               <!--<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
             </div>
-            <div v-for="n in noticeList" :key="n.id" class="data-div">
-              <p>{{n.name}}</p>
+            <div v-for="p in pendingTaskList" :key="p.id" class="data-div">
+              <p>{{p.name}}</p>
             </div>
           </el-card>
         </el-col>
@@ -62,17 +62,23 @@
           name: '商品管理版本更新V1.0',
           id: 1
         }],
+        pendingTaskList:[{
+          name: '商品管理版本更新V1.0',
+          id: 1
+        }],
         stockRemindList: [],
       }
     },
     created(){
-      this.getStockRemind()
+      this.getStockRemind();
+      this.getPendingTask();
+
     },
     components: {
       'chart': require('../components/indexcharts')
     },
     methods: {
-      getStockRemind(){
+      getStockRemind(){//首页库存信息
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -82,6 +88,17 @@
           self.stockRemindList = data.data;
         })
       },
+      getPendingTask(){//首页待处理任务信息
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        self.httpApi.order.pendingTask(requestData, function (data) {
+            console.log(data)
+          self.pendingTaskList = data.data;
+        })
+      },
+
       getShortCut(){//获取快捷菜单
 //				let self = this
 //				let requestData = {

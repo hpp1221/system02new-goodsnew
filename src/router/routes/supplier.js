@@ -20,6 +20,10 @@ export default [
   },
   {
     path: '/supplier/suppliergoods/suppliergoodslist', //供应商商品管理列表
-    component: resolve => require(['@/pages/supplier/supplierGoods/supplierGoodsList'], resolve)
+    component: resolve => require(['@/pages/supplier/supplierGoods/SupplierGoodsList'], resolve)
+  },
+  {
+    path: '/supplier/suppliergoods/suppliergoodscreate', //供应商商品新增
+    component: resolve => require(['@/pages/supplier/supplierGoods/SupplierGoodsCreate'], resolve)
   },
 ]

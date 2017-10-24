@@ -199,237 +199,7 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="引入平台商品" name="second">
-          <el-button @click="exportGoods" style="margin-bottom: 20px;">引入</el-button>
-          <el-form ref="exportForm" :model="exportForm" class="request-form" label-width="120px" v-if="exportForm.name">
-            <h4 class="item-title">基础信息</h4>
-            <el-form-item label="商品名称">
-              <el-input placeholder="请输入商品名称" v-model="exportForm.name" class="form-input" disabled>
-              </el-input>
-            </el-form-item>
-            <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="exportForm.brand" value-key="brandId">
-                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="商品分类">
-              <el-cascader
-                :options="totalCategories"
-                v-model="exportForm.cat"
-                @active-item-change="getCatList"
-                :show-all-levels="false"
-                :props="props">
-              </el-cascader>
-              <!--<el-select v-model="form.cat" placeholder="请选择商品分类" value-key="id">
-                                <el-option v-for="t in totalCategories"
-                                    :key="t.id"
-                                    :label="t.name"
-                                    :value="t">
-                                </el-option>
-                            </el-select>-->
-            </el-form-item>
-            <el-form-item label="计量单位">
-              <el-select v-model="exportForm.unit">
-                <el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">
-
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <!--<el-form-item label="商品品牌">-->
-            <!--<el-select placeholder="请选择商品品牌" v-model="exportForm.brand" value-key="brandId" disabled>-->
-            <!--<el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>-->
-            <!--</el-select>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="商品分类">-->
-            <!--<el-cascader-->
-            <!--:options="totalCategories"-->
-            <!--v-model="exportForm.cat"-->
-            <!--@active-item-change="getCatList"-->
-            <!--@click.native="clickCat"-->
-            <!--disabled-->
-            <!--:show-all-levels="false"-->
-            <!--:props="props">-->
-            <!--</el-cascader>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item label="计量单位">-->
-            <!--<el-select v-model="exportForm.unit" disabled>-->
-            <!--<el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">-->
-
-            <!--</el-option>-->
-            <!--</el-select>-->
-            <!--</el-form-item>-->
-            <el-form-item label="关键字">
-              <el-input placeholder="搜索关键字" class="form-input" v-model="exportForm.keyword"></el-input>
-            </el-form-item>
-            <el-form-item label="所属供应商名称">
-              <el-select v-model="exportForm.supplierName" disabled>
-                <el-option v-for="u in totalSupplierList" :key="u.supplierId" :label="u.name" :value="u.name">
-
-                </el-option>
-              </el-select>
-            </el-form-item>
-
-            <h4 class="item-title">商品规格</h4>
-
-            <el-form-item label="商品规格">
-              <div v-for="(s,sindex) in exportForm.spec" style="margin-top: 10px;">
-                <el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName" disabled></el-input>
-                <el-tag
-                  :key="v.name"
-                  v-for="v in s.specValue"
-                  :closable="false"
-                  :close-transition="false"
-                  @close="handleClose(v,sindex)"
-                  style="margin-left: 10px"
-                >
-                  {{v}}
-                </el-tag>
-              </div>
-            </el-form-item>
-            <el-form-item>
-              <el-table
-                :data="exportForm.skus"
-                border
-                v-if="exportForm.skus.length > 0"
-                style="width: 100%">
-                <el-table-column
-                  label="主图"
-                  width="160">
-                  <template slot-scope="scope">
-                    <uploadoneimg
-                      :fileList="scope.row.img"
-                      @click.native="rememberIndex(scope)"
-                      :disabled="true"
-                      :token="imgToken"
-                      v-if="imgToken">
-                    </uploadoneimg>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  :label="s.specName"
-                  width="80"
-                  v-for="s in exportForm.spec"
-                  :key="s.specName">
-                  <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{scope.row.sku[s.specName]}}</span>
-                  </template>
-                </el-table-column>
-
-
-                <el-table-column
-                  label="商品编码"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.number" disabled>
-
-                    </el-input>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  label="条形码"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.barCode" disabled>
-
-                    </el-input>
-                  </template>
-                </el-table-column>
-
-                <el-table-column
-                  label="市场价格"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.marketPrice" disabled>
-
-                    </el-input>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  label="参考成本价"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.price" disabled>
-
-                    </el-input>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  label="是否上架"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0" disabled></el-checkbox>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  label="商品标签"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.tagList" value-key="id" multiple disabled>
-                      <el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
-                    </el-select>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-form-item>
-
-            <h4 class="item-title">商品图片</h4>
-            <el-form-item>
-              <uploadmultipleimg
-                :fileList="exportForm.goodsExtend.imgs"
-                :disabled="true"
-                :token="imgToken"
-                v-if="imgToken">
-              </uploadmultipleimg>
-            </el-form-item>
-            <h4 class="item-title">商品描述</h4>
-            <el-form-item>
-              <VueEditor
-                ueditorPath="../../static/ueditor1_4_3_3-utf8-net"
-                @ready="editorReady2"
-                style="width:500px;height:300px"
-                :ueditorConfig="editorConfig2"
-                v-if="exportForm.name">
-              </VueEditor>
-            </el-form-item>
-            <h4 class="item-title">添加附件</h4>
-            <el-form-item>
-              <uploadfiles
-                :fileList="exportForm.goodsExtend.annex"
-                :disabled="true"
-                :token="imgToken"
-                v-if="imgToken">
-              </uploadfiles>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="submitExportGoods">创建</el-button>
-              <el-button @click="cancel">取消</el-button>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
       </el-tabs>
-
-      <el-dialog title="引入商品" :visible.sync="exportGoodsVisible">
-        <el-table :data="exportGoodsList">
-          <el-table-column label="商品名称" prop="name">
-
-          </el-table-column>
-          <el-table-column label="商品品牌" prop="brandName">
-
-          </el-table-column>
-          <el-table-column label="商品分类" prop="catName">
-
-          </el-table-column>
-          <el-table-column label="商品单位" prop="unit">
-
-          </el-table-column>
-          <el-table-column>
-            <template slot-scope="scope">
-              <el-button @click="sureExport(scope.row.id)">引入</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -455,27 +225,6 @@
             annex: []
           },
           isPlatform: 0//是否为平台商品，1是0否
-        },
-        exportForm: {
-          id: '',
-          name: '',
-          brand: '',
-          spec: [],
-          cat: [],
-          unit: '',
-          skus: [],
-          supplier: '',
-          supplierName: '',
-          supplierId: '',
-          keyword: '',
-          goodsSkuList: [],
-          tags: [],
-          goodsExtend: {
-            imgs: [],
-            content: '',
-            annex: []
-          },
-          isPlatForm: 0
         },
         rules: {},
         inputValue: '',
@@ -511,9 +260,9 @@
       }
     },
     components: {
-      'uploadmultipleimg': require('../../components/uploadmultipleimg'),
-      'uploadfiles': require('../../components/uploadfiles'),
-      'uploadoneimg': require('../../components/uploadoneimg'),
+      'uploadmultipleimg': require('../../../components/uploadmultipleimg'),
+      'uploadfiles': require('../../../components/uploadfiles'),
+      'uploadoneimg': require('../../../components/uploadoneimg'),
     },
     created(){
       let self = this;
@@ -561,40 +310,10 @@
       cancel(){
         this.$router.push('/goods/goodslist');
       },
-      sureExport(id){//确定引入
-        let self = this;
-        self.exportGoodsVisible = false;
-        let requestData = {token: window.localStorage.getItem('token'), goodsId: id};
-        self.httpApi.goods.showGoodsDetail(requestData, function (data) {
-          self.exportForm = self.formPass(self.exportForm, data.data);
-          self.exportForm.spec = JSON.parse(self.exportForm.spec);
-          self.exportForm.brand = '';
-          self.exportForm.unit = '';
-          self.exportForm.keyword = '';
-          //self.originCat = [JSON.parse(self.exportForm.cat)];
-          //let cat = JSON.parse(self.exportForm.cat);
-
-          //cat.res = cat;
-          // self.totalCategories = [cat];
-          self.exportForm.cat = [];
-          self.exportForm.goodsExtend.annex = JSON.parse(self.exportForm.goodsExtend.annex);
-          self.exportForm.goodsExtend.imgs = JSON.parse(self.exportForm.goodsExtend.imgs);
-          self.exportForm.skus = JSON.parse(self.exportForm.skus);
-          for (let i = 0; i < self.exportForm.skus.length; i++) {
-            self.exportForm.skus[i].sku = JSON.parse(self.exportForm.skus[i].sku);
-          }
-        });
-      },
       editorReady(editorInstance){
         editorInstance.setContent(this.form.goodsExtend.content);
         editorInstance.addListener('contentChange', () => {
           this.form.goodsExtend.content = editorInstance.getContent()
-        });
-      },
-      editorReady2(editorInstance){
-        editorInstance.setContent(this.exportForm.goodsExtend.content);
-        editorInstance.addListener('contentChange', () => {
-          this.exportForm.goodsExtend.content = editorInstance.getContent()
         });
       },
       getCatList(val){
@@ -641,19 +360,8 @@
         self.form.supplierName = self.form.supplier.name;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
         self.httpApi.goods.addGoods(requestData, function (data) {
-          self.$router.push('/goods/goodslist');
+          self.$router.push('/supplier/suppliergoods/suppliergoodslist');
         });
-      },
-      submitExportGoods(){//提交引入的商品
-        let self = this;
-        console.log(self.exportForm)
-        self.exportForm.isPlatForm = 0;
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.exportForm)};
-        //requestData = Object.assign(requestData,self.shallowCopy(self.form));
-        self.httpApi.goods.addGoods(requestData, function (data) {
-          self.$router.push('/goods/goodslist');
-        });
-
       },
       addSpec(){//添加规格
         this.form.spec.push({specName: '', specValue: [], inputVisible: false});

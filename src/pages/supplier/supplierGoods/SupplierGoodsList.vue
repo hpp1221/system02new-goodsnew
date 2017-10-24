@@ -80,7 +80,9 @@
           supplierId: '',
           query: '',
         },
+        getGoodsList: [],
         multipleSelection: [],
+        selectionObj: {},
         supplierIdVal: [],
         pageSize: 5,
         pageNum: 1,
@@ -91,31 +93,35 @@
       'pagination': require('../../../components/pagination')
     },
     created() {
-      this.getSupplierGoodsList()
+      // this.getSupplierGoodsList()
     },
     methods: {
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-//        this.select(page.size, page.num);
+        this.select(page.size, page.num);
       },
-      getSupplierGoodsList() { //供应商商品管理列表
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          supplierName: self.form.supplierName,
-          supplierId: self.form.supplierId,
-          rows: self.pageSize,
-          page: self.pageNum
-        };
-        self.httpApi.goods.supplierGoodsList(requestData, function (data) {
-          self.tableData = data.data.list;
-          for (let i = 0; i < data.data.list.length; i++) {
-            data.data.list[i].img = data.data.list[i].img !== ""?  JSON.parse(data.data.list[i].img):"";
-          }
-          self.totalPage = data.data.total;
-        })
-      },
+//      getSupplierGoodsList() { //供应商商品管理列表
+//        let self = this
+//        let requestData = {
+//          token: window.localStorage.getItem('token'),
+//          supplierName: self.form.supplierName,
+//          supplierId: self.form.supplierId,
+//          rows: self.pageSize,
+//          page: self.pageNum,
+//          temp:self.selectionObj
+//        };
+//        self.httpApi.goods.supplierGoodsList(requestData, function (data) {
+//          console.log('123r',data)
+//          self.tableData = data.data.list;
+//          self.multipleSelection = data.temp
+//
+//          for (let i = 0; i < data.data.list.length; i++) {
+//            data.data.list[i].img = data.data.list[i].img !== "" ? JSON.parse(data.data.list[i].img) : "";
+//          }
+//          self.totalPage = data.data.total;
+//        })
+//      },
       select(size, num) { //查询
         let self = this
         let requestData = {
@@ -123,17 +129,19 @@
           supplierName: self.form.supplierName,
           query: self.form.query,
           pageNo: num,
-          pageSize: size
+          pageSize: size,
+          selectedSupplierGoodsList: JSON.stringify(self.selectionObj)
         };
         self.httpApi.supplier.supplierGoodslistByPageAndQuery(requestData, function (data) {
-          console.log('supplierGoodslistByPageAndQuery', data)
-          if(data.data){
-            self.tableData = data.data
-            self.getSupplierGoodsList()
-          }else {
-            self.tableData = data.data.data.list;
-            self.totalPage = data.data.data.total;
-            self.getSupplierGoodsList()
+          console.log('supplierGoodslistByPageAndQuery111', data)
+          self.tableData = data.data.list;
+          self.totalPage = data.data.total;
+
+          if (data.selectedSupplierGoodsList !== "{}") {
+            let list = JSON.parse(data.selectedSupplierGoodsList);
+            self.$nextTick(function () {
+              self.toggleSelection(list[num])
+            })
           }
         })
       },
@@ -146,28 +154,51 @@
           this.$message.error('请选中要导出的项');
           return;
         }
-        let list = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          list.push(this.multipleSelection[i].id);
+        let list = this.selectionObj === '{}'?[]:this.selectionObj;
+        let arr = [];
+        for(let i in list){
+          for(let j = 0;j < list[i].length;j++){
+            arr.push(list[i][j]);
+          }
         }
-        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(list)+ '&supplierName='+this.form.supplierName + '&supplierId='+this.form.supplierId + '&token=' + window.localStorage.getItem('token');
+        location.href = '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
-        console.log('val', val)
-        this.multipleSelection = val;
+        console.log('456', this.selectionObj[this.pageNum])
+        if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {
+
+
+        } else {
+          console.log('123')
+          this.multipleSelection = val
+          this.selectionObj[this.pageNum] = val;
+        }
+
+        console.log('全部', this.selectionObj)
+//        for (let i = 0; i < val.length; i++) {
+//          this.multipleSelection.push(val[i].id);
+//        }
+        //this.multipleSelection = JSON.stringify(this.multipleSelection)
       },
       toggleSelection(rows) {
+        console.log('toggle')
         if (rows) {
+          let arr = [];
+          for (let i = 0; i < this.tableData.length; i++) {
+            for (let j = 0; j < rows.length; j++) {
+              if (this.tableData[i].id == rows[j].id) {
+                arr.push(this.tableData[i]);
+              }
+            }
+          }
           console.log('rows', rows)
-          rows.forEach(row => {
+          arr.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });
-        } else {
-          this.$refs.multipleTable.clearSelection();
         }
       },
       createSupplier() { //新增供应商商品
-        this.$router.push('/goods/creategoods');
+        this.$router.push('/supplier/suppliergoods/suppliergoodscreate');
       },
       seeDetail() {//明细
 

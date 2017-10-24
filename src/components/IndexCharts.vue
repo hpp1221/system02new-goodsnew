@@ -16,15 +16,38 @@
         timeRange: ''
       }
     },
+    created(){
+      this.getSalesSummary()
+    },
+    methods: {
+      getSalesSummary(){//品类销售汇总
+        let self = this;
+
+
+      },
+    },
     mounted(){
       const myChart = echarts.init(document.getElementById('main'));
       const time = new Date().getTime();
       let timeArr = [];
+      let yearTimeArr = [];
       for (let i = 0; i < 7; i++) {
         let day = time - i * 86400 * 1000;
         timeArr.push(moment(day).format('MM-DD'));
+        yearTimeArr.push(moment(day).format('YYYY-MM-DD'));
       }
       timeArr = Array.reverse(timeArr);
+      yearTimeArr = Array.reverse(yearTimeArr);
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        startTime: yearTimeArr[0],
+        endTime: yearTimeArr[yearTimeArr.length - 1]
+      };
+      self.httpApi.order.salesSummary(requestData, function (data) {
+        console.log('summary', data);
+        // self.pendingTaskList = data.data;
+      })
       // 指定图表的配置项和数据
       const option = {
         title: {
@@ -76,7 +99,7 @@
 //            type: 'line',
 //            data: [51, 21, 49, 15, 19, 27, 100]
 //          }
-          ]
+        ]
       };
 
       // 使用刚指定的配置项和数据显示图表。

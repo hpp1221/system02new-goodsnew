@@ -66,9 +66,9 @@
     data() {
       return {
         tableData: [],
-        input2: '',
         multipleSelection: [],
         supplierIdVal: [],
+        supplierString: [],
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
@@ -102,11 +102,16 @@
       },
       select(size, num) { //查询
         let self = this;
+//        for (let i = 0; i < this.multipleSelection.length; i++) {
+//          self.supplierString.push(this.multipleSelection[i].supplierId)
+//        }
+//        console.log('888',self.supplierString)
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageNo: num,
           pageSize: size,
-          query: self.form.query
+          query: self.form.query,
+          selectedSupplierIds: self.supplierString
         };
         self.httpApi.supplier.listByPageAndQuery(requestData, function (data) {
           self.tableData = data.data;
@@ -142,19 +147,19 @@
           this.$message.error('请选中要导出的项');
           return;
         }
-//        let supplierString = [];
+//        let supplierString = []
 //        for (let i = 0; i < this.multipleSelection.length; i++) {
 //          supplierString.push(this.multipleSelection[i].supplierId)
 //        }
 //        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + JSON.stringify(supplierString);
-//        skuList: JSON.stringify(self.multipleSelection),
-        let self = this
-        let supplierString = ''
-        for (let i = 0; i < self.multipleSelection.length; i++) {
-          supplierString += ',' + self.multipleSelection[i].supplierId
-        }
-        supplierString = supplierString.substring(1, supplierString.length)
-        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString;
+//        let self = this
+//        let supplierString = ''
+//        for (let i = 0; i < self.multipleSelection.length; i++) {
+//          self.supplierString += ',' + self.multipleSelection[i].supplierId
+//        }
+//        self.supplierString = self.supplierString.substring(1, self.supplierString.length)
+//        console.log('111', self.supplierString)
+        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + self.supplierString;
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;

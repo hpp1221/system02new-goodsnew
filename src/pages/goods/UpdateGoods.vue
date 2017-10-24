@@ -11,8 +11,8 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select v-model="form.brand" value-key="name" disabled>
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+              <el-select v-model="form.brand" value-key="brandName" disabled>
+                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="商品分类">
@@ -181,8 +181,8 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="goodsForm.brand" value-key="name">
-                <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
+              <el-select placeholder="请选择商品品牌" v-model="goodsForm.brand" value-key="brandId">
+                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="商品分类">
@@ -426,7 +426,7 @@
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
       self.getBrandList(function (data) {
-        self.totalBrandList = data;
+        self.totalBrandList = data.list;
       });//获取品牌列表
       self.getTagList(function (data) {
         self.goodsTags = data;
