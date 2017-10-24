@@ -117,9 +117,10 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
-          pageNo: self.pageNum
+          pageNo: self.pageNum,
         };
         self.httpApi.vip.viplist(requestData, function (data) {
+          console.log('vip',data)
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
