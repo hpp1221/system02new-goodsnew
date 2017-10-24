@@ -27,18 +27,18 @@
             width="70">
           </el-table-column>
           <el-table-column width="70">
-            <template scope="scope">
+            <template slot-scope="scope">
               <i class="el-icon-plus" @click="addLine"></i>
               <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
             </template>
           </el-table-column>
           <el-table-column label="主图" width="80" prop="img">
-            <template scope="scope">
+            <template slot-scope="scope">
               <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称" width="150">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
                                :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
                                :props="{value:'combination',label:'combination'}">
@@ -56,7 +56,7 @@
 
           </el-table-column>
           <el-table-column label="要货数量" prop="num">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
                         @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
             </template>
@@ -70,7 +70,7 @@
           <el-table-column label="金额" prop="sum" width="120px">
           </el-table-column>
           <el-table-column label="备注" prop="remark">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model="scope.row.remark"></el-input>
             </template>
           </el-table-column>

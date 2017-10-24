@@ -17,18 +17,18 @@
             width="70">
           </el-table-column>
           <el-table-column width="70">
-            <template scope="scope">
+            <template slot-scope="scope">
               <i class="el-icon-plus" @click="addLine"></i>
               <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
             </template>
           </el-table-column>
           <el-table-column label="主图" width="80">
-            <template scope="scope">
+            <template slot-scope="scope">
               <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-autocomplete
                 @click.native="handleClick(scope.$index)"
                 v-model="scope.row.combination"
@@ -45,7 +45,7 @@
 
           </el-table-column>
           <el-table-column label="数量">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
                         @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
             </template>
@@ -57,18 +57,18 @@
 
           </el-table-column>
           <el-table-column label="小计" prop="subtotal">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span v-if="scope.row.subtotal">{{scope.row.subtotal}}</span>
               <span v-else></span>
             </template>
           </el-table-column>
           <el-table-column label="审批价">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model="scope.row.approvePrice"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="备注">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model="scope.row.remark"></el-input>
             </template>
           </el-table-column>

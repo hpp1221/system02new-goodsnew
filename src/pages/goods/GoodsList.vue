@@ -58,7 +58,7 @@
           width="55">
         </el-table-column>
         <el-table-column label="商品图片">
-          <template scope="scope">
+          <template slot-scope="scope">
             <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
@@ -91,7 +91,7 @@
 
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
@@ -168,7 +168,7 @@
 
           </el-table-column>
           <el-table-column label="商品上架">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-checkbox>新品上架</el-checkbox>
             </template>
           </el-table-column>

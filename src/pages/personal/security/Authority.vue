@@ -13,7 +13,7 @@
         style="width: 100%"
       >
         <el-table-column type="expand">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-table :data="scope.row.children" :show-header="false">
               <el-table-column
                 label="权限名称"
@@ -26,7 +26,7 @@
               <el-table-column
                 label="创建时间"
                 prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                   {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
                 </template>
               </el-table-column>
@@ -37,7 +37,7 @@
               <el-table-column
                 label="修改时间"
                 prop="name">
-                <template scope="scope">
+                <template slot-scope="scope">
                   {{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
                 </template>
               </el-table-column>
@@ -46,7 +46,7 @@
                 prop="updater">
               </el-table-column>
               <el-table-column>
-                <template scope="scope">
+                <template slot-scope="scope">
                   <el-dropdown trigger="click">
                     <i class="iconfont icon-more" style="cursor: pointer"></i>
                     <el-dropdown-menu slot="dropdown">
@@ -72,7 +72,7 @@
         <el-table-column
           label="创建时间"
           prop="name">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
@@ -83,7 +83,7 @@
         <el-table-column
           label="修改时间"
           prop="name">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
@@ -93,7 +93,7 @@
         </el-table-column>
         <el-table-column
           label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

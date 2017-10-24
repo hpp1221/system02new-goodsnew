@@ -90,12 +90,12 @@
 
         </el-table-column>
         <el-table-column label="调出时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{moment(scope.row.outPutTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
         <el-table-column label="调入时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{moment(scope.row.inPutTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
@@ -107,7 +107,7 @@
 
         <!--</el-table-column>-->
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
           </template>
         </el-table-column>

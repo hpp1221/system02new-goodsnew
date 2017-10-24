@@ -38,7 +38,7 @@
         </el-table-column>
 
         <el-table-column prop="img" label="商品图片">
-          <template scope="scope">
+          <template slot-scope="scope">
             <img v-lazy="scope.row.img.url" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
@@ -53,7 +53,7 @@
 
         </el-table-column>
         <el-table-column label="编辑">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

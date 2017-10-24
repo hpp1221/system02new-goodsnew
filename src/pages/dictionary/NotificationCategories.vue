@@ -32,7 +32,7 @@
         <el-table-column prop="level" label="通知类型">
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button
               size="small"
               @click="UpdateCategories = true " class="el-icon-edit icon-updatechilddependent">修改</el-button>

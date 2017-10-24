@@ -40,7 +40,7 @@
 
         </el-table-column>
         <el-table-column prop="createTime" label="出库日期">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -48,7 +48,7 @@
 
         </el-table-column>
         <el-table-column prop="type" label="类型">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.type == 6">销售出库</span>
             <span v-if="scope.row.type == 8">盘亏</span>
             <span v-if="scope.row.type == 9">采购退回</span>
@@ -59,7 +59,7 @@
 
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
           </template>
         </el-table-column>

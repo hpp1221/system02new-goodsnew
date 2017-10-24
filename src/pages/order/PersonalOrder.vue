@@ -7,7 +7,7 @@
 
         </el-table-column>
         <el-table-column prop="createTime" label="下单时间" sortable>
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -15,7 +15,7 @@
 
         </el-table-column>
         <!--<el-table-column prop="orderStatus" label="出库/发货">-->
-        <!--<template scope="scope">-->
+        <!--<template slot-scope="scope">-->
         <!--<span v-if="scope.row.orderStatus == 1">其他入库</span>-->
         <!--<span v-if="scope.row.orderStatus == 2">采购入库</span>-->
         <!--<span v-if="scope.row.orderStatus == 3">销售退货</span>-->
@@ -24,7 +24,7 @@
         <!--</template>-->
         <!--</el-table-column>-->
         <el-table-column label="状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="t.id == scope.row.orderStatus" v-for="t in totalOrderStatus">{{t.name}}</span>
           </template>
         </el-table-column>
@@ -32,7 +32,7 @@
 
         <!--</el-table-column>-->
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

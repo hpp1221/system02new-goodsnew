@@ -28,13 +28,13 @@
 
         </el-table-column>
         <el-table-column prop="status" label="状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.status == 1">已启用</span>
             <span v-if="scope.row.status == -1">已禁用</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -42,7 +42,7 @@
 
         </el-table-column>
         <el-table-column label="修改时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -50,7 +50,7 @@
 
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
