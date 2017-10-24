@@ -130,10 +130,12 @@
       return {
         form: {
           orderDetails: [{
-            goodsNo: '123',//商品编号
+            goodsNo: '',//商品编号
             goodsName: '',//商品名
             goodsSpec: '',//规格
             goodsUnit: '',
+            catName: '',
+            catId: '',
             num: '',
             subtotal: '',//小计
             price: '',//价格
@@ -262,6 +264,8 @@
           goodsName: '',//商品名
           goodsSpec: '',//规格
           goodsUnit: '',
+          catName: '',
+          catId: '',
           price: '',//价格
           num: '',
           subtotal: '',//小计

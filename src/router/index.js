@@ -8,7 +8,7 @@ import Dictionary from './routes/dictionary'//业务数据模块
 import Supplier from './routes/supplier'//供应商模块
 import Store from './routes/store'//门店模块
 import Client from './routes/client'//客户模块
-import Tenant from './routes/Tenant'//租户模块
+import Tenant from './routes/tenant'//租户模块
 Vue.use(Router)
 
 export default new Router({
