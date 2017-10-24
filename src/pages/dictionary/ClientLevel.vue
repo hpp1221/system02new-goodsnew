@@ -43,7 +43,7 @@
 
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button size="small" class="el-icon-edit updatecategories"
                        @click="updateClientLevel(scope.$index,scope.row)">修改
             </el-button>

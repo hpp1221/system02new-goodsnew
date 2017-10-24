@@ -66,28 +66,28 @@
             >
             </el-table-column>
             <el-table-column width="70">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <i class="el-icon-plus" @click="addLine"></i>
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
               </template>
             </el-table-column>
             <el-table-column label="姓名">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-input v-model="scope.row.name"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="手机">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-input v-model="scope.row.cel"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="QQ">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-input v-model="scope.row.qq"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="邮箱">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-input v-model="scope.row.email"></el-input>
               </template>
             </el-table-column>

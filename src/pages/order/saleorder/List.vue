@@ -35,7 +35,7 @@
 
         </el-table-column>
         <el-table-column label="下单时间" sortable>
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -49,7 +49,7 @@
 
         <!--</el-table-column>-->
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

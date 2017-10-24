@@ -1,39 +1,39 @@
 <template>
 	<el-table :data="tabledata" :show-header="header" class="childtable">
 		<el-table-column type="expand">
-			<template scope="scope">
-				<departmenttable 
-					:tabledata="scope.row.children" 
+			<template slot-scope="scope">
+				<departmenttable
+					:tabledata="scope.row.children"
 					:header="false"
 					>
 				</departmenttable>
 			</template>
-			
+
 		</el-table-column>
 		<el-table-column prop="name" label="部门名称">
-			
+
 		</el-table-column>
 		<el-table-column prop="remarks" label="备注">
-			
+
 		</el-table-column>
 		<el-table-column label="创建时间">
-			<template scope="scope">
+			<template slot-scope="scope">
 				{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
 			</template>
 		</el-table-column>
 		<el-table-column prop="creater" label="创建人">
-			
+
 		</el-table-column>
 		<el-table-column label="修改时间">
-			<template scope="scope">
+			<template slot-scope="scope">
 				{{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
 			</template>
 		</el-table-column>
 		<el-table-column prop="updater" label="修改人">
-			
+
 		</el-table-column>
 		<el-table-column label="操作">
-			<template scope="scope">
+			<template slot-scope="scope">
 				<el-dropdown trigger="click">
 					<el-button type="text" icon="more"></el-button>
 					<el-dropdown-menu slot="dropdown">
@@ -52,7 +52,7 @@
 		name:'departmenttable',
 		data(){
 			return {
-				
+
 			}
 		},
 		components:{

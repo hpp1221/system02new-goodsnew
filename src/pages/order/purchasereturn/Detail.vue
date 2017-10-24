@@ -15,7 +15,7 @@
             width="70">
           </el-table-column>
           <el-table-column label="主图" width="80">
-            <template scope="scope">
+            <template slot-scope="scope">
               <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
@@ -38,7 +38,7 @@
 
           </el-table-column>
           <el-table-column label="小计" prop="subtotal">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span v-if="scope.row.subtotal">{{scope.row.subtotal}}</span>
               <span v-else></span>
             </template>

@@ -32,7 +32,7 @@
             width="70">
           </el-table-column>
           <el-table-column label="主图" width="80" props="img">
-            <template scope="scope">
+            <template slot-scope="scope">
               <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>

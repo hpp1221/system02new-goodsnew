@@ -73,7 +73,7 @@
         <el-table-column prop="tradeNumber" label="单据编号">
         </el-table-column>
         <el-table-column prop="createTime" label="要货时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -82,7 +82,7 @@
         <el-table-column prop="createUserName" label="要货人">
         </el-table-column>
         <el-table-column prop="type" label="单据状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.type == '0'">已完成</span>
             <span v-if="scope.row.type == '1'">待审核通过</span>
             <span v-if="scope.row.type == '2'">待发货确认</span>
@@ -91,7 +91,7 @@
           </template>
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

@@ -50,7 +50,7 @@
         <el-table-column prop="address" label="门店地址">
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button
               size="small"
               @click="updateStoreHouse(scope.$index, scope.row)" class="el-icon-edit updatecategories">修改

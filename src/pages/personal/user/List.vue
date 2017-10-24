@@ -43,13 +43,13 @@
 
         </el-table-column>
         <el-table-column label="状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.status == 1">启用</span>
             <span v-else>禁用</span>
           </template>
         </el-table-column>
         <el-table-column>
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

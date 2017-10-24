@@ -41,13 +41,13 @@
             >
             </el-table-column>
             <el-table-column width="70">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <i class="el-icon-plus" @click="addLine"></i>
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
               </template>
             </el-table-column>
             <el-table-column label="商品编码  商品名称">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
                                  :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
                                  :props="{value:'combination',label:'combination'}">
@@ -62,7 +62,7 @@
 
             </el-table-column>
             <el-table-column label="调拨数量">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <el-input v-model="scope.row.num" type="number"></el-input>
               </template>
             </el-table-column>

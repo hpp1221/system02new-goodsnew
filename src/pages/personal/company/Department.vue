@@ -69,7 +69,7 @@
       </table>
       <!--<el-table :data="tableData">
                 <el-table-column type="expand">
-                    <template scope="scope">
+                    <template slot-scope="scope">
 
                     </template>
 
@@ -81,7 +81,7 @@
 
                 </el-table-column>
                 <el-table-column label="创建时间">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
                     </template>
                 </el-table-column>
@@ -89,7 +89,7 @@
 
                 </el-table-column>
                 <el-table-column label="修改时间">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         {{moment(scope.row.updateTime).format('YYYY-MM-DD HH:mm:ss')}}
                     </template>
                 </el-table-column>
@@ -97,7 +97,7 @@
 
                 </el-table-column>
                 <el-table-column label="操作">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <el-dropdown trigger="click">
                             <el-button type="text" icon="more"></el-button>
                             <el-dropdown-menu slot="dropdown">

@@ -33,12 +33,12 @@
 
         </el-table-column>
         <el-table-column prop="outPutTime" label="出货时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.outPutTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="inPutTime" label="收货时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span>{{moment(scope.row.inPutTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
           </template>
         </el-table-column>
@@ -46,7 +46,7 @@
 
         </el-table-column>
         <el-table-column prop="type" label="状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.type == '0'">已完成</span>
             <span v-if="scope.row.type == '1'">待审核通过</span>
             <span v-if="scope.row.type == '2'">待发货确认</span>
@@ -55,7 +55,7 @@
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

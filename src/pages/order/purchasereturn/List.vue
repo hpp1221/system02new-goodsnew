@@ -64,7 +64,7 @@
 
         </el-table-column>
         <el-table-column label="下单时间">
-          <template scope="scope">
+          <template slot-scope="scope">
             {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
@@ -75,12 +75,12 @@
 
         </el-table-column>
         <el-table-column label="状态">
-          <template scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.orderStatus == o.id" v-for="o in totalOrderStatus">{{o.name}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">

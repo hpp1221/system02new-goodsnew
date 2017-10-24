@@ -59,7 +59,7 @@
                 <el-table-column
                   label="主图"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg"
@@ -74,7 +74,7 @@
                   width="180"
                   v-for="s in form.spec"
                   :key="s.specName">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <span style="margin-left: 10px">{{scope.row.sku[s.specName]}}</span>
                   </template>
                 </el-table-column>
@@ -83,7 +83,7 @@
                 <el-table-column
                   label="商品编码"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.number">
 
                     </el-input>
@@ -93,7 +93,7 @@
                 <el-table-column
                   label="条形码"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
                     </el-input>
@@ -103,7 +103,7 @@
                 <el-table-column
                   label="市场价格"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.marketPrice">
 
                     </el-input>
@@ -112,7 +112,7 @@
                 <el-table-column
                   label="参考成本价"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
 
                     </el-input>
@@ -121,14 +121,14 @@
                 <el-table-column
                   label="是否上架"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
                 </el-table-column>
                 <el-table-column
                   label="商品标签"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-select v-model="scope.row.tagList" value-key="id" multiple>
                       <el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
                     </el-select>
@@ -230,7 +230,7 @@
                 <el-table-column
                   label="主图"
                   width="160">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg2"
@@ -245,7 +245,7 @@
                   width="80"
                   v-for="s in goodsForm.spec"
                   :key="s.specName">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <span style="margin-left: 10px">{{scope.row.sku[s.specName]}}</span>
                   </template>
                 </el-table-column>
@@ -254,7 +254,7 @@
                 <el-table-column
                   label="商品编码"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.number">
 
                     </el-input>
@@ -264,7 +264,7 @@
                 <el-table-column
                   label="条形码"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
                     </el-input>
@@ -274,7 +274,7 @@
                 <el-table-column
                   label="市场价格"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.marketPrice">
 
                     </el-input>
@@ -283,7 +283,7 @@
                 <el-table-column
                   label="参考成本价"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
 
                     </el-input>
@@ -292,14 +292,14 @@
                 <el-table-column
                   label="是否上架"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
                 </el-table-column>
                 <el-table-column
                   label="商品标签"
                   width="180">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-select v-model="scope.row.tagList" value-key="id" multiple>
                       <el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
                     </el-select>
