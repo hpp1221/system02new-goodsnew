@@ -198,14 +198,12 @@
               </brandselect>
             </el-form-item>
             <el-form-item label="商品分类">
-              <el-cascader
-                :options="totalCategories"
-                v-model="goodsForm.cat"
-                @active-item-change="getCatList"
-                @click.native="clickCat"
-                :show-all-levels="false"
-                :props="props">
-              </el-cascader>
+              <catselect
+                @getCatSelect="getGoodsFormCatSelect"
+                :outCat="goodsForm.cat"
+                v-if="goodsForm.id"
+                >
+              </catselect>
             </el-form-item>
             <el-form-item label="计量单位">
               <unitselect
@@ -513,10 +511,7 @@
           self.form = self.formPass(self.form, data.data);
           self.form.spec = JSON.parse(self.form.spec);
           self.form.brand = JSON.parse(self.form.brand);
-          //let cat = JSON.parse(self.form.cat);
-          //cat.res = cat;
-          //self.totalCategories = [cat];
-          self.form.cat = [JSON.parse(self.form.cat)];
+
           self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
           self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
           self.form.skus = JSON.parse(self.form.skus);
@@ -536,12 +531,12 @@
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
           self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
-          self.originCat = [JSON.parse(self.goodsForm.cat)];
-          let cat = JSON.parse(self.goodsForm.cat);
-
-          cat.res = cat;
-          self.totalCategories = [cat];
-          self.goodsForm.cat = [cat];
+         // self.originCat = [JSON.parse(self.goodsForm.cat)];
+//          let cat = JSON.parse(self.goodsForm.cat);
+//
+//          cat.res = cat;
+//          self.totalCategories = [cat];
+          //self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
           self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
           self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
           self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
@@ -595,41 +590,6 @@
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });
-      },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
-            }
-          }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.getCat = true;
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        });
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
       },
     }
   }

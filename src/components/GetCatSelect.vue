@@ -25,8 +25,13 @@
     created(){
       this.getCatList();
       if (this.outCat) {
-        this.totalCatList = [this.outCat];
-        this.cat = this.outCat;
+        this.totalCatList = [{id:1,name:2,res:3,children:[]}]
+        this.$nextTick(function () {
+          this.cat = [3];
+        })
+
+        console.log('1',this.totalCatList)
+        console.log('2',this.cat)
       }
     },
     props: {
@@ -49,7 +54,7 @@
       },
       getCat(cat){
         let nowCat = cat[cat.length - 1];
-        this.$emit('getCatSelect', {cat: nowCat, catName: nowCat.name, catId: nowCat.id});
+        this.$emit('getCatSelect', {cat: [nowCat], catName: nowCat.name, catId: nowCat.id});
       },
       getCatList(val){
         let self = this;

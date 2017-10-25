@@ -4,12 +4,13 @@
       <h3 class="page-title">出入库明细</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item>
-          <el-select placeholder="全部仓库"
-                     v-model="easyForm.addressName"
-                     multiple
-                     filterable
-                     :loading="addressLoading"
-                     @visible-change="getAddress">
+          <el-select
+            placeholder="全部仓库"
+            v-model="easyForm.addressName"
+            multiple
+            filterable
+            :loading="addressLoading"
+            @visible-change="getAddress">
             <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
@@ -105,16 +106,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="商品分类">
-            <el-select v-model="form.goodsSeriesId">
-              <el-option label="全部分类" :value="-1"></el-option>
-              <el-option :label="t.name" :value="t.id" :key="t.id" v-for="t in totalSeries"></el-option>
-            </el-select>
+            <catselect @getCatSelect="getCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-select v-model="form.goodsBrandId">
-              <el-option label="全部分类" :value="-1"></el-option>
-              <el-option :label="t.name" :value="t.id" :key="t.id" v-for="t in totalSeries"></el-option>
-            </el-select>
+            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
           </el-form-item>
           <el-form-item label="出入库时间">
             <el-date-picker
@@ -137,6 +132,7 @@
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
       </el-dialog>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
@@ -167,8 +163,10 @@
         advanceSearch: false,//高级搜索
         totalStores: [],
         goodsTags: [],
-        totalCategories: [],
         addressLoading: false,//仓库列表加载图片
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
       }
     },
     created(){
@@ -180,9 +178,24 @@
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
-      self.getCatList();//获取分类列表
+    },
+    components: {
+      'pagination': require('../../../components/pagination'),
+      'brandselect': require('../../../components/getbrandselect'),
+      'catselect':require('../../../components/getcatselect'),
     },
     methods: {
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num);
+      },
+      getCatSelect(e){
+        this.form.goodsSeriesId = e.catId;
+      },
+      getBrandSelect(e){
+        this.form.goodsBrandId = e.brandId;
+      },
       getAddress(type){
         if (type && this.totalStores.length === 0) {
           this.addressLoading = true;
@@ -193,15 +206,15 @@
           });
         }
       },
-      select(){//查询
-        let self = this
-        let requestData = {token: window.localStorage.getItem('token')}
-
-
-        if (self.easyForm.dateRange instanceof Array) {
-          self.easyForm.createTime = self.easyForm.dateRange[0]
-          self.easyForm.endTime = self.easyForm.dateRange[1]
-        }
+      select(size, num){//查询
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNum: num
+        };
+        self.easyForm.createTime = self.easyForm.dateRange[0] === null ? '' : self.easyForm.dateRange[0];
+        self.easyForm.endTime = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.stock.recordListBySku(requestData, function (data) {
           self.tableData = data.data
@@ -209,55 +222,24 @@
       },
       advanceSelect(){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNum: num
+        };
 
-        if (self.form.dateRange instanceof Array) {
-          self.form.createTime = self.form.dateRange[0];
-          self.form.endTime = self.form.dateRange[1];
-        }
+        self.form.createTime = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endTime = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordListBySku(requestData, function (data) {
           self.advanceSearch = false;
           self.tableData = data.data
         });
       },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.stock.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
-            }
-          }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        });
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
+
+      seeDetail(id){
+
+      }
     }
   }
 </script>
-
-<style>
-</style>

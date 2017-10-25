@@ -15,15 +15,16 @@
     data(){
       return {
         pageNum: 1,//页码
-        pageSize: 5,//一页的数量
+        pageSize: 3,//一页的数量
         pageSizes: [5, 10, 15, 20],//页码选择
       }
     },
     created(){
       if (localStorage.getItem('pageSize')) {
-        this.pageSize = parseInt(localStorage.getItem('pageSize'))
+        this.pageSize = parseInt(localStorage.getItem('pageSize'));
+      } else {
+        this.pageSize = 5;
       }
-      this.changed();
     },
     props: {
       totalPage: {

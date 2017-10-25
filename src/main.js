@@ -25,6 +25,7 @@ Vue.component('VueEditor',VueEditor)
 var qs = require('qs')
 Vue.prototype.qs = qs
 
+
 var axios = require('axios')
 Vue.prototype.$http = axios
 
