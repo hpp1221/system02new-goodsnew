@@ -228,7 +228,6 @@
       'pagination': require('../../components/pagination'),
       'brandselect': require('../../components/getbrandselect'),
       'supplierselect': require('../../components/getsupplierlistselect'),
-      'catselect': require('../../components/getcatselect')
     },
     methods: {
       getBrandSelect(e){

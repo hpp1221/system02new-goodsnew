@@ -3,13 +3,22 @@
     <div class="wrapper">
       <h3 class="page-title">门店要货单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
-        <el-button type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
-        <el-button type="text" @click="cancelGetGoods" class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
-        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+        <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        </el-button>
+        <el-button v-if="type == 4 || type == 0" type="text" style="display: none" @click="cancelGetGoods"
+                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        </el-button>
+        <el-button v-else type="text" @click="cancelGetGoods"
+                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        </el-button>
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
+                   :label="item.value" :key="item.value">
           {{item.label}}
         </el-button>
       </div>
@@ -33,7 +42,7 @@
           </el-table-column>
           <el-table-column label="主图" width="80" props="img">
             <template slot-scope="scope">
-              <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码" prop="goodsNumber">
@@ -102,15 +111,15 @@
           storeId: '',
           storeName: '',
           createUseraName: '',
-          type:''
+          type: ''
         },
-        type:'',
+        type: '',
         tableData: [],
         getGoodsRecordDetails: [],
         typeLists: [//高级查询的单据状态
           {
             value: '4',
-            label: "作废"
+            label: "返回"
           },
           {
             value: '1',
@@ -143,7 +152,7 @@
           id: id,
         }
         self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
-          console.log('detailgoods',data)
+          console.log('detailgoods', data)
           self.form = data.data
           self.type = data.data.type
           self.getGoodsRecordDetails = data.data.list
@@ -152,33 +161,39 @@
       },
       getGoodsExaminePass() {//通过
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          type: self.type,
-          tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
+        if(self.type == 0 || self.type == 4){
+          self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
         }
-        self.$confirm('确认要通过该审核？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(() => {
-          self.httpApi.store.examine(requestData, function (data) {
-            console.log('storepass',data)
-            if (data.code == 10000) {
-              self.$message({
-                type: 'success',
-                message: '已通过该审核!'
-              });
-              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-            } else {
-              self.$message({
-                type: 'info',
-                message: '已取消'
-              });
-            }
-          })
+        if(self.type == 1 || self.type == 2 || self.type == 3){
+          let requestData = {
+            token: window.localStorage.getItem('token'),
+            type: self.type,
+            tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
+          }
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.httpApi.store.examine(requestData, function (data) {
+              console.log('storepass', data)
+              if (data.code == 10000) {
+                self.$message({
+                  type: 'success',
+                  message: '已通过该审核!'
+                });
+                self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+              } else {
+                self.$message({
+                  type: 'info',
+                  message: '已取消'
+                });
+              }
+            })
 
-        })
+          })
+        }
+
       },
       cancelGetGoods() { //作废
         let self = this;

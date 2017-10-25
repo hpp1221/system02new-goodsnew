@@ -37,7 +37,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="updateStoreHouseSure">确 定</el-button>
-          <el-button @click="updateStore = false">取 消</el-button>
+          <el-button @click="updateStoreCancel">取 消</el-button>
         </div>
       </el-dialog>
       <!--门店表格-->
@@ -56,8 +56,8 @@
               @click="updateStoreHouse(scope.$index, scope.row)" class="el-icon-edit updatecategories">修改
             </el-button>
             <!--<el-button-->
-              <!--size="small"-->
-              <!--@click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除-->
+            <!--size="small"-->
+            <!--@click="handleDelete(scope.$index, scope.row)" class="el-icon-delete updatecategories">删除-->
             <!--</el-button>-->
           </template>
         </el-table-column>
@@ -91,9 +91,6 @@
         formLabelWidth: '80px'
       };
     },
-    created() {
-      this.getStoreHouseList()
-    },
     components: {
       'pagination': require('../../../components/pagination')
     },
@@ -103,13 +100,13 @@
         this.pageNum = page.num;
         this.getStoreHouseList(page.size, page.num);
       },
-      getStoreHouseList(size,num) {//门店列表
+      getStoreHouseList(size, num) {//门店列表
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize:size,
+          pageSize: size,
           pageNo: num,
-          type:2
+          type: 2
         };
         self.httpApi.stock.addressListLimit(requestData, function (data) {
           self.tableData = data.data.list
@@ -120,13 +117,13 @@
         this.createStore = true
         this.createForm = {data: {name: '', number: '', address: ''}};
       },
-      storeIntenance(){
+      storeIntenance() {
         this.$router.push('/')
       },
       createStoreHouseSure() {//新增确定
         let self = this
         let requestData = {
-          type:2,
+          type: 2,
           name: self.createForm.name,
           number: self.createForm.number,
           address: self.createForm.address,
@@ -138,22 +135,20 @@
           if (data.code == 10000) {
             self.createStore = false
             self.$message.success('添加成功')
-            self.getStoreHouseList(self.pageSize,self.pageNum)
+            self.getStoreHouseList(self.pageSize, self.pageNum)
           }
         }).catch(function (error) {
           console.log(error);
         });
       },
-      updateStoreHouse(index, row){
-        console.log('index',index)
-        console.log('row',row)
+      updateStoreHouse(index, row) {
         this.updateStore = true
         this.updateForm = row
       },
       updateStoreHouseSure() {
         let self = this
         let requestData = {
-          id:self.updateForm.id,
+          id: self.updateForm.id,
           name: self.updateForm.name,
           number: self.updateForm.number,
           address: self.updateForm.address,
@@ -161,7 +156,6 @@
         };
         self.$http.post('/ui/editStoreHouse', self.qs.stringify(requestData)).then(function (response) {
           let data = response.data;
-          console.log('update', response)
           if (data.code == 10000) {
             self.updateStore = false
             self.$message.success('修改成功')
@@ -169,6 +163,12 @@
         }).catch(function (error) {
           console.log(error);
         });
+      },
+      updateStoreCancel() {//修改取消
+        let self = this
+        self.updateStore = false
+        self.$message.success('已取消修改')
+        self.getStoreHouseList(self.pageSize,self.pageNum)
       },
       handleDelete(index, row) {
         console.log(index, row);

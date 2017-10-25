@@ -1,9 +1,39 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">供应商修改</h3>
-
-      <el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px" inline>
+      <h3 class="page-title" v-if="form.platform == 1">供应商详情</h3>
+      <h3 class="page-title" v-else>供应商修改</h3>
+      <el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px" inline
+      v-if="form.platform == 1">
+        <el-form-item label="供应商名称">
+          <el-input v-model="form.name" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="供应商电话">
+          <el-input placeholder="请输入供应商电话" v-model="form.tel" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="供应商手机">
+          <el-input placeholder="请输入供应商手机" v-model="form.phone" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="供应商地址">
+          <el-input placeholder="请输入供应商地址" v-model="form.address" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="供应商编码">
+          <el-input placeholder="请输入供应商编码" v-model="form.number" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="供应商邮箱">
+          <el-input placeholder="请输入供应商邮箱" v-model="form.email" class="form-input" disabled>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click.native="submitPlatForm">返回</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px" inline v-else>
         <el-form-item label="供应商名称">
           <el-input v-model="form.name" class="form-input">
           </el-input>
@@ -30,6 +60,7 @@
         </el-form-item>
         <el-form-item>
           <el-button @click.native="submit('form')">保存</el-button>
+          <el-button @click.native="submitCancel">取消</el-button>
         </el-form-item>
       </el-form>
 
@@ -47,7 +78,8 @@
           phone: '',
           address: '',
           number: '',
-          email: ''
+          email: '',
+          platform:''
         }
       }
     },
@@ -84,6 +116,12 @@
         });
 
       },
+      submitCancel(){//修改取消
+        this.$router.push('/supplier/suppliers/supplierlist')
+      },
+      submitPlatForm(){//平台供应商详情返回
+        this.$router.push('/supplier/suppliers/supplierlist')
+      }
     }
   }
 </script>

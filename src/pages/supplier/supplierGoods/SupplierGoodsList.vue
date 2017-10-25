@@ -37,9 +37,9 @@
 
         </el-table-column>
 
-        <el-table-column prop="img" label="商品图片">
+        <el-table-column label="商品图片">
           <template slot-scope="scope">
-            <img v-lazy="scope.row.img.url" alt=""
+            <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
@@ -81,7 +81,6 @@
           supplierId: '',
           query: '',
         },
-        getGoodsList: [],
         multipleSelection: [],
         selectionObj: {},
         supplierIdVal: [],

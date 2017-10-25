@@ -34,7 +34,7 @@
           </el-table-column>
           <el-table-column label="主图" width="80" prop="img">
             <template slot-scope="scope">
-              <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称" width="150">

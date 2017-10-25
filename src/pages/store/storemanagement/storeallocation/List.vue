@@ -39,7 +39,8 @@
         </el-table-column>
         <el-table-column prop="inPutTime" label="收货时间">
           <template slot-scope="scope">
-            <span>{{moment(scope.row.inPutTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
+            <span v-if="scope.row.inPutTime">{{moment(scope.row.inPutTime).format('YYYY-MM-DD  HH:mm:ss')}}</span>
+            <span v-else>还未收货</span>
           </template>
         </el-table-column>
         <el-table-column prop="createUserName" label="创建人">
@@ -70,7 +71,7 @@
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
         <el-form :model="form" ref="form" v-if="advanceSearch">
           <el-form-item label="调拨单号">
-            <el-input placeholder="请输入调拨单号" v-model="form.tradeNo" class="long-input">
+            <el-input placeholder="请输入调拨单号" v-model="form.tradeNo" style="width: 68%;">
 
             </el-input>
           </el-form-item>
@@ -133,8 +134,8 @@
         },
         form: {
           tradeNo: '',//调拨单号
-          outputDateRange: [null, null],
-          inputDateRange: [null, null],
+          outputDateRange: ["", ""],
+          inputDateRange: ["", ""],
           outPutStartDate: '',
           outPutEndDate: '',
           inPutStartDate: '',
@@ -239,8 +240,8 @@
       resetGetGoodsForm() {//高级搜索的清空
         let self = this
         self.form.tradeNo = ''
-        self.form.outputDateRange = [null, null],
-        self.form.inputDateRange = [null, null],
+        self.form.outputDateRange = ["", ""],
+        self.form.inputDateRange = ["", ""],
         self.form.inputAddressId = '',
         self.form.outputAddressId = '',
         self.form.Type = [],
@@ -256,26 +257,32 @@
         this.$router.push({path: '/store/storemanagement/storeallocation/detail', query: {allocationId: id}});
       },
       cancelGetGoods(row) { //作废
+        console.log('row',row)
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          allocationRecordId: row.id,
-          status:row.status,
-          tradeNo:row.tradeNo
-        };
-        self.$confirm('确认将此门店要货单作废？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(() => {
-          self.httpApi.store.storeAllocationRecordCancel(requestData, function (data) {
-            self.$message({
-              type: 'success',
-              message: '已成功作废!'
+        if(row.type == "1" || row.type == "2"){
+          let requestData = {
+            token: window.localStorage.getItem('token'),
+            allocationRecordId: row.id,
+            status:row.status,
+            tradeNo:row.tradeNo
+          };
+          self.$confirm('确认将此门店要货单作废？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.httpApi.store.storeAllocationRecordCancel(requestData, function (data) {
+              self.$message({
+                type: 'success',
+                message: '已成功作废!'
+              });
+              self.select(self.pageSize,self.pageNum)
             });
-            self.select()
-          });
-        })
+          })
+        }else {
+          self.$message('您已确认发货，无法作废!')
+        }
+
       },
     }
   }

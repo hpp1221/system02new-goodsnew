@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">新增门店要货</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px" inline>
+      <el-form ref="form" :model="form" class="request-form" label-width="80px" inline>
         <el-form-item label="单据编码">
           {{form.tradeNumber}}
         </el-form-item>
@@ -27,7 +27,7 @@
           </el-table-column>
           <el-table-column label="主图" width="80" prop="img">
             <template slot-scope="scope">
-              <img :src="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码  商品名称" width="150">
@@ -125,7 +125,6 @@
             remark: '',//备注
           }],
         },
-        rules: {},
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [
           {
@@ -164,7 +163,7 @@
           token: window.localStorage.getItem('token'),
         }
         self.httpApi.store.storeList(requestData, function (data) {
-          self.totalStores = data.data
+          self.storeIds = data.data
         })
       },
       getTradeNumber() {//单据编码
@@ -183,7 +182,7 @@
           token: window.localStorage.getItem('token'),
           type: 1
         }
-        self.httpApi.store.addressList(requestData, function (data) {
+        self.httpApi.stock.addressList(requestData, function (data) {
           self.storeHouseIds = data.data;
         })
       },
@@ -209,7 +208,7 @@
         self.httpApi.store.storeGoodsInfo(requestData, function (data) {
           let list = data.data;
           for (let i = 0, listLength = list.length; i < listLength; i++) {
-            list[i].combination = list[i].number + '  ' + list[i].goodsName;
+            list[i].combination = list[i].goodsNumber + '  ' + list[i].goodsName;
             list[i].sum = '';
           }
           self.goodsInfoList = list;
