@@ -47,8 +47,10 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="updateSupplier(scope.row.supplierId)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="deleteSupplier(scope.row)">删除</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.platform == 1" @click.native="updateSupplier(scope.row.supplierId)">详情</el-dropdown-item>
+                <el-dropdown-item v-else @click.native="updateSupplier(scope.row.supplierId)">修改</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.platform == 1" @click.native="deleteSupplier(scope.row)"></el-dropdown-item>
+                <el-dropdown-item v-else @click.native="deleteSupplier(scope.row)">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -69,6 +71,7 @@
         multipleSelection: [],
         supplierIdVal: [],
         supplierString: [],
+        selectionObj: {},
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
@@ -86,39 +89,80 @@
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
-      getSupplierList() { //供应商管理列表
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum
-        };
-        self.httpApi.supplier.listByPage(requestData, function (data) {
-          self.tableData = data.data
-        });
-        self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
-          self.totalPage = data.data
-        });
-      },
+//      getSupplierList() { //供应商管理列表
+//        let self = this
+//        let requestData = {
+//          token: window.localStorage.getItem('token'),
+//          pageSize: self.pageSize,
+//          pageNo: self.pageNum
+//        };
+//        self.httpApi.supplier.listByPage(requestData, function (data) {
+//          self.tableData = data.data
+//        });
+//        self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+//          self.totalPage = data.data
+//        });
+//      },
       select(size, num) { //查询
         let self = this;
-//        for (let i = 0; i < this.multipleSelection.length; i++) {
-//          self.supplierString.push(this.multipleSelection[i].supplierId)
-//        }
-//        console.log('888',self.supplierString)
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageNo: num,
           pageSize: size,
           query: self.form.query,
-          selectedSupplierIds: self.supplierString
+          selectedSupplierIds: JSON.stringify(self.selectionObj)
         };
         self.httpApi.supplier.listByPageAndQuery(requestData, function (data) {
           self.tableData = data.data;
+          if (data.selectedSupplierIds !== "{}") {
+            let list = JSON.parse(data.selectedSupplierIds);
+            self.$nextTick(function () {
+              self.toggleSelection(list[num])
+            })
+          }
         });
         self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
           self.totalPage = data.data;
         });
+
+      },
+      handleSelectionChange(val) {
+        if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {
+        } else {
+          this.multipleSelection = val
+          this.selectionObj[this.pageNum] = val;
+        }
+      },
+      toggleSelection(rows) {
+        if (rows) {
+          let arr = [];
+          for (let i = 0; i < this.tableData.length; i++) {
+            for (let j = 0; j < rows.length; j++) {
+              if (this.tableData[i].supplierId == rows[j].supplierId) {
+                arr.push(this.tableData[i]);
+              }
+            }
+          }
+          arr.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
+        }
+      },
+      outputSupplier() { //导出供应商
+        let list = this.selectionObj === '{}'?[]:this.selectionObj;
+        let arr = [];
+        for(let i in list){
+          for(let j = 0;j < list[i].length;j++){
+            arr.push(list[i][j]);
+          }
+        }
+        let supplierString = ''
+        for (let i = 0; i < arr.length; i++) {
+          supplierString += ',' + arr[i].supplierId
+        }
+        supplierString = supplierString.substring(1,supplierString.length)
+        console.log('supplierString',supplierString)
+        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString + '&token=' + window.localStorage.getItem('token') + '&query=' + this.form.query;
       },
       updateSupplier(supplierId) { //修改供应商详情
         this.$router.push({path: '/supplier/suppliers/updatesupplier', query: {supplierId: supplierId}});
@@ -138,41 +182,9 @@
               type: 'success',
               message: '您已成功删除!'
             });
-            self.getSupplierList();
+            self.select(self.pageSize,self.pageNum);
           });
         })
-      },
-      outputSupplier() { //导出供应商
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选中要导出的项');
-          return;
-        }
-//        let supplierString = []
-//        for (let i = 0; i < this.multipleSelection.length; i++) {
-//          supplierString.push(this.multipleSelection[i].supplierId)
-//        }
-//        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + JSON.stringify(supplierString);
-//        let self = this
-//        let supplierString = ''
-//        for (let i = 0; i < self.multipleSelection.length; i++) {
-//          self.supplierString += ',' + self.multipleSelection[i].supplierId
-//        }
-//        self.supplierString = self.supplierString.substring(1, self.supplierString.length)
-//        console.log('111', self.supplierString)
-        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + self.supplierString;
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-      toggleSelection(rows) {
-        if (rows) {
-          console.log('rows', rows)
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
-        }
       },
 
       createSupplier() { //新增供应商

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div class="wrapper">
+    <div class="wrapper" style="overflow: hidden">
       <h3 class="page-title">商品分类</h3>
-      <el-button @click="openFirstModal">新增一级类目</el-button>
+      <el-button @click="openFirstModal" style="float: right">新增一级类目</el-button>
         <el-tree
           :data="totalCategories"
           :props="defaultProps"
@@ -12,7 +12,7 @@
           @node-expand="handleNodeClick"
           :default-expanded-keys="defaultExpandedKeys"
           :render-content="renderContent"
-          v-if="totalCategories.length > 0">
+          v-if="totalCategories.length > 0" style="margin-top: 75px">
         </el-tree>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">

@@ -92,9 +92,6 @@
         formLabelWidth: '120px'
       };
     },
-    created() {
-      this.getStoreHouseList()
-    },
     components: {
       'pagination': require('../../components/pagination')
     },
@@ -102,7 +99,7 @@
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-//        this.getStoreHouseList(page.size, page.num);
+        this.getStoreHouseList(page.size, page.num);
       },
       getStoreHouseList(size,num) {//仓库列表
         let self = this

@@ -37,9 +37,9 @@
 
         </el-table-column>
 
-        <el-table-column prop="img" label="商品图片">
+        <el-table-column label="商品图片">
           <template slot-scope="scope">
-            <img v-lazy="scope.row.img.url" alt=""
+            <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
@@ -80,7 +80,6 @@
           supplierId: '',
           query: '',
         },
-        getGoodsList: [],
         multipleSelection: [],
         selectionObj: {},
         supplierIdVal: [],
@@ -150,10 +149,6 @@
         this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选中要导出的项');
-          return;
-        }
         let list = this.selectionObj === '{}'?[]:this.selectionObj;
         let arr = [];
         for(let i in list){
@@ -161,27 +156,21 @@
             arr.push(list[i][j]);
           }
         }
-        location.href = '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
+        let getGoodsList = []
+        for(let i = 0;i<arr.length;i++){
+          getGoodsList.push(arr[i].id)
+        }
+        console.log('getGoodsList',getGoodsList)
+        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
-        console.log('456', this.selectionObj[this.pageNum])
         if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {
-
-
         } else {
-          console.log('123')
           this.multipleSelection = val
           this.selectionObj[this.pageNum] = val;
         }
-
-        console.log('全部', this.selectionObj)
-//        for (let i = 0; i < val.length; i++) {
-//          this.multipleSelection.push(val[i].id);
-//        }
-        //this.multipleSelection = JSON.stringify(this.multipleSelection)
       },
       toggleSelection(rows) {
-        console.log('toggle')
         if (rows) {
           let arr = [];
           for (let i = 0; i < this.tableData.length; i++) {

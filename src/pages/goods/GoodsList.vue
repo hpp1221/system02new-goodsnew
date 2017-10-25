@@ -240,7 +240,7 @@
     components: {
       'pagination': require('../../components/pagination'),
       'brandselect': require('../../components/getbrandselect'),
-      ' ': require('../../components/getsupplierselect'),
+      'supplierselect': require('../../components/getsupplierlistselect'),
     },
     methods: {
       getBrandSelect(e){

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="dictionaryclassifytitle">门店要货</h3>
-      <el-form ref="easyForm" :model="easyForm" inline class="request-form storegetgoods-nav">
+      <h3 class="page-title">门店要货</h3>
+      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="单据状态">
           <el-select v-model="easyForm.typeList" placeholder="全部">
             <el-option v-for="item in easyTypeLists" :label="item.label" :value="item.value" :key="item.value">
@@ -119,7 +119,7 @@
         typeLists: cityOptions,//状态列表
         isIndeterminate: false,
         form: {//高级搜索
-          dateRange: [null, null],
+          dateRange: ["", ""],
           tradeNumber: '',
           storeId: '',
           typeList: [],
@@ -273,7 +273,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.select(size,num)
+            self.select(self.pageSize,self.pageNum)
           });
         })
       },

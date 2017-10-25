@@ -90,7 +90,7 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.goodsCat.deleteUnit(requestData, function (data) {
-            self.$message('删除成功');
+            self.$message.success('删除成功');
             self.getUnitList(self.pageSize, self.pageNum)
           });
         })

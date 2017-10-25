@@ -30,6 +30,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click.native="submit('form')">保存</el-button>
+          <el-button  @click.native="createCancel">取消</el-button>
         </el-form-item>
       </el-form>
 
@@ -61,6 +62,9 @@
           self.$router.push('/supplier/suppliers/supplierlist');
         });
       },
+      createCancel() {
+        this.$router.push('/supplier/suppliers/supplierlist')
+      }
     }
   }
 </script>
