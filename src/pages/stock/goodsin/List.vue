@@ -4,15 +4,7 @@
       <h3 class="page-title">商品入库</h3>
       <el-form ref="form" :model="form" inline>
         <el-form-item>
-          <el-select
-            v-model="form.addressId"
-            filterable
-            :loading="addressLoading"
-            @visible-change="getAddress"
-            value-key="id">
-            <el-option label="全部仓库" :value="-1"></el-option>
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getAddressSelect"></addressselect>
         </el-form-item>
         <el-form-item>
           <el-select placeholder="全部入库类型" v-model="form.type">
@@ -78,7 +70,7 @@
         tableData: [],
         form: {
           type: -1,
-          addressId: -1,
+          addressId: '',
           status: 1,//1代表入库
           dateRange: [null,null],
           startDate: '',
@@ -87,24 +79,17 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        totalStores: [],
         loading: false,//table加载图片
-        addressLoading: false,//仓库列表加载图片
       }
     },
+
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'addressselect': require('../../../components/getaddressselect')
     },
     methods: {
-      getAddress(type){
-        if (type && this.totalStores.length === 0) {
-          this.addressLoading = true;
-          let self = this;
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-            self.addressLoading = false;
-          });
-        }
+      getAddressSelect(e){
+        this.form.addressId = e.address;
       },
       pageChanged(page){
         this.pageSize = page.size;

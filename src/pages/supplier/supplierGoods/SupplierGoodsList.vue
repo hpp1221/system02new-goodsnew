@@ -71,6 +71,7 @@
 </template>
 
 <script>
+  const fs = require('../../../assets/js/fs.js');
   export default {
     data() {
       return {
@@ -122,7 +123,7 @@
 //        })
 //      },
       select(size, num) { //查询
-        let self = this
+        let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           supplierName: self.form.supplierName,
@@ -132,7 +133,6 @@
           selectedSupplierGoodsList: JSON.stringify(self.selectionObj)
         };
         self.httpApi.supplier.supplierGoodslistByPageAndQuery(requestData, function (data) {
-          console.log('supplierGoodslistByPageAndQuery111', data)
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
 
@@ -149,24 +149,33 @@
         this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
-        let list = this.selectionObj === '{}'?[]:this.selectionObj;
+//        if (this.multipleSelection.length === 0) {
+//          this.$message.error('请选中要导出的项');
+//          return;
+//        }
+        let list = this.selectionObj === '{}' ? [] : this.selectionObj;
         let arr = [];
-        for(let i in list){
-          for(let j = 0;j < list[i].length;j++){
+        for (let i in list) {
+          for (let j = 0; j < list[i].length; j++) {
             arr.push(list[i][j]);
           }
         }
-        let getGoodsList = []
-        for(let i = 0;i<arr.length;i++){
-          getGoodsList.push(arr[i].id)
-        }
-        console.log('getGoodsList',getGoodsList)
-        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
+        let self = this;
+//        self.$http({
+//          method: 'get',
+//          url: '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token'),
+//          // data: {skuList: JSON.stringify(arr)},
+//          responseType: 'stream',
+//        })
+//          .then(function (response) {
+//              console.log('123',response.data.pipe)
+//            //response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+//          });
+        //location.href = '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
-        if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {
-        } else {
-          this.multipleSelection = val
+        if (val.length > 0) {
+          this.multipleSelection = val;
           this.selectionObj[this.pageNum] = val;
         }
       },
@@ -175,12 +184,11 @@
           let arr = [];
           for (let i = 0; i < this.tableData.length; i++) {
             for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].id == rows[j].id) {
+              if (this.tableData[i].id === rows[j].id) {
                 arr.push(this.tableData[i]);
               }
             }
           }
-          console.log('rows', rows)
           arr.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });

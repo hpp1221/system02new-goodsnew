@@ -4,6 +4,7 @@
       <h3 class="page-title">商品库存</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
+          <!--<addressselect @getAddressSelect="getAddressSelect"></addressselect>-->
           <el-select
             placeholder="全部仓库"
             v-model="easyForm.address"
@@ -26,7 +27,7 @@
           <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -96,14 +97,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            <el-cascader
-              :options="totalCategories"
-              v-model="form.cat"
-              @active-item-change="getCatList"
-              placeholder="商品分类"
-              :props="props"
-              @click.native="getCat">
-            </el-cascader>
+            <catselect @getCatSelect="getCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect"></brandselect>
@@ -130,9 +124,9 @@
             <el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>
           </el-form-item>
           <el-form-item label="商品状态">
-            <el-radio class="radio" v-model="form.goodsStatus" label="0">全部</el-radio>
-            <el-radio class="radio" v-model="form.goodsStatus" label="1">上架</el-radio>
-            <el-radio class="radio" v-model="form.goodsStatus" label="-1">下架</el-radio>
+            <el-radio class="radio" v-model="form.goodsStatus" :label="0">全部</el-radio>
+            <el-radio class="radio" v-model="form.goodsStatus" :label="1">上架</el-radio>
+            <el-radio class="radio" v-model="form.goodsStatus" :label="-1">下架</el-radio>
           </el-form-item>
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -158,13 +152,12 @@
           brandId: '',//商品品牌
           address: [],//所属仓库
           tagList: [],//商品标签
-          goodsStatus: '',//商品状态
+          goodsStatus: 0,//商品状态
           keyword: '',//关键词
           series: '',//商品分类
           upLimit: 0,
           downLimit: 0,
           zero: 0,
-          cat: [],
           type: 1//1是库存，2是门店
         },
         updateForm: {
@@ -179,16 +172,8 @@
           merge: 0
         },
         totalStores: [],//仓库列表
-        totalCategories: [],//分类列表
-        props: {
-          value: 'res',
-          children: 'children',
-          label: 'name'
-        },
-        totalBrandList: [],//品牌列表
         goodsTags: [],//商品标签
         addressLoading: false,//仓库列表加载图片
-        brandLoading: false,//品牌列表加载图片
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
@@ -196,13 +181,17 @@
     },
     components: {
       'pagination': require('../../../components/pagination'),
-      'brandselect': require('../../../components/getbrandselect')
+      'brandselect': require('../../../components/getbrandselect'),
+      'catselect':require('../../../components/getcatselect'),
     },
     methods: {
       getBrandSelect(e){
         this.form.brand = e.brand;
         this.form.brandName = e.brandName;
         this.form.brandId = e.brandId;
+      },
+      getCatSelect(e){
+        this.form.series = e.catId;
       },
       pageChanged(page){
         this.pageSize = page.size;
@@ -286,41 +275,6 @@
             self.$router.go(0);
           }, 500);
         });
-      },
-
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.stock.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
-            }
-          }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        });
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
       },
     }
   }

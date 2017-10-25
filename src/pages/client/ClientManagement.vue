@@ -3,29 +3,24 @@
     <div class="wrapper">
       <h3 class="page-title">客户列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item>
-          <span class="client-list-allclass">全部级别</span>
-          <el-select v-model="easyForm.vip_level" placeholder="全部级别" style="width: 130px">
+        <el-form-item label="全部级别">
+          <el-select v-model="easyForm.vip_level" placeholder="全部级别">
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input placeholder="请输入客户名称/联系电话/手机/编码" icon="search" v-model="easyForm.condition"
-                    :on-icon-click="handleIconClick" class="client-input">
+          <el-input placeholder="请输入客户名称/联系电话/手机/编码" v-model="easyForm.condition" class="long-input">
           </el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
-        </el-form-item>
-        <el-form-item style="float: right;">
           <el-button @click="leadInClient">导入</el-button>
           <el-button @click="outputClient">导出</el-button>
           <el-button @click="createClient">新增</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable"
-                class="clientmanagement-input">
+      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column prop="name" label="客户名称" class="hpp">
@@ -113,34 +108,30 @@
         this.select(page.size, page.num);
       },
       getClientList() { //客户管理列表
-        let self = this
+        let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum,
         };
         self.httpApi.vip.viplist(requestData, function (data) {
-          console.log('vip',data)
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
       },
       select(size, num) { //查询
-        let self = this
+        let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           vip_level: self.easyForm.vip_level,
           condition: self.easyForm.condition,
           pageNo: num,
           pageSize: size
-        }
+        };
         self.httpApi.vip.vipterm(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
-      },
-      handleIconClick(ev) {//输入发查询条件的搜索图标点击
-        this.select();
       },
       updateClient(id) { //修改客户详情
         let url = '/client/updateclient/' + id;
@@ -180,16 +171,24 @@
         location.href = '/ui/exportVips?vipIds=' + supplierString;
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
-        console.log("val", val)
-        this.multipleSelection = val;
+        if (val.length > 0) {
+          this.multipleSelection = val;
+          this.selectionObj[this.pageNum] = val;
+        }
       },
       toggleSelection(rows) {
         if (rows) {
-          rows.forEach(row => {
+          let arr = [];
+          for (let i = 0; i < this.tableData.length; i++) {
+            for (let j = 0; j < rows.length; j++) {
+              if (this.tableData[i].id === rows[j].id) {
+                arr.push(this.tableData[i]);
+              }
+            }
+          }
+          arr.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });
-        } else {
-          this.$refs.multipleTable.clearSelection();
         }
       },
       createClient() { //新增客户

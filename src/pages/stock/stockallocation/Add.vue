@@ -4,23 +4,10 @@
       <h3 class="page-title">添加库存调拨</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="调出仓" prop="fromAddress">
-          <el-select
-            v-model="form.fromAddress"
-            value-key="id"
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getFromAddressSelect" :selectAllVisible="false"></addressselect>
         </el-form-item>
-
         <el-form-item label="调入仓" prop="selfAddress">
-          <el-select
-            v-model="form.selfAddress"
-            value-key="id"
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getSelfAddressSelect" :selectAllVisible="false"></addressselect>
         </el-form-item>
 
         <el-form-item label="调拨时间">
@@ -34,7 +21,7 @@
         </el-form-item>
 
         <el-form-item v-if="form.selfAddress && form.fromAddress">
-          <el-table :data="form.data" border>
+          <el-table :data="form.data" border :span-method="arraySpanMethod">
             <el-table-column
               type="index"
               width="70"
@@ -46,13 +33,26 @@
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
               </template>
             </el-table-column>
-            <el-table-column label="商品编码  商品名称">
+            <el-table-column label="主图" width="80">
               <template slot-scope="scope">
-                <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
-                                 :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                                 :props="{value:'combination',label:'combination'}">
+                <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                     v-if="scope.row.url"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="商品编码" width="80">
+              <template slot-scope="scope">
+                <el-autocomplete
+                  v-on:click.native="handleClick(scope.$index)"
+                  v-model="scope.row.combination"
+                  :trigger-on-focus="false"
+                  :fetch-suggestions="querySearchAsync"
+                  @select="handleSelect"
+                  :props="{value:'combination',label:'combination'}">
                 </el-autocomplete>
               </template>
+            </el-table-column>
+            <el-table-column label="商品名称" width="80">
+
             </el-table-column>
 
             <el-table-column label="规格" prop="goodsSpec">
@@ -137,12 +137,28 @@
     created(){
       this.createTradeNo();
     },
+    components: {
+      'addressselect': require('../../../components/getaddressselect')
+    },
     computed: {
       'userinfo': function () {
         return JSON.parse(window.localStorage.getItem('userinfo'));
       }
     },
     methods: {
+      arraySpanMethod({row, column, rowIndex, columnIndex}) {
+        if (columnIndex === 3) {
+          return [1, 2];
+        } else if (columnIndex === 4) {
+          return [0, 0];
+        }
+      },
+      getFromAddressSelect(e){
+        this.form.fromAddress = e.address;
+      },
+      getSelfAddressSelect(e){
+        this.form.selfAddress = e.address;
+      },
       getAddress(type){//点击时获取地址列表
         if (type && this.totalStores.length === 0) {
           this.addressLoading = true;
