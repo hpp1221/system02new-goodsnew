@@ -4,15 +4,7 @@
       <h3 class="page-title">添加入库</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="仓库" prop="selfAddress">
-          <el-select
-            v-model="form.selfAddress"
-            value-key="id"
-            filterable
-            :loading="addressLoading"
-            @visible-change="getAddress"
-          >
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getAddressSelect" :selectAllVisible="false"></addressselect>
         </el-form-item>
         <el-form-item label="入库日期">
           <el-date-picker
@@ -23,7 +15,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-table :data="form.data">
+          <el-table :data="form.data" border :span-method="arraySpanMethod">
             <el-table-column
               type="index"
               width="70">
@@ -34,7 +26,13 @@
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
               </template>
             </el-table-column>
-            <el-table-column label="商品编码  商品名称">
+            <el-table-column label="主图" width="80">
+              <template slot-scope="scope">
+                <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                     v-if="scope.row.url"/>
+              </template>
+            </el-table-column>
+            <el-table-column label="商品编码" width="80">
               <template slot-scope="scope">
                 <el-autocomplete
                   v-on:click.native="handleClick(scope.$index)"
@@ -45,6 +43,9 @@
                   :props="{value:'combination',label:'combination'}">
                 </el-autocomplete>
               </template>
+            </el-table-column>
+            <el-table-column label="商品名称" width="80">
+
             </el-table-column>
 
             <el-table-column label="规格" prop="goodsSpec">
@@ -99,6 +100,7 @@
           createTime: '',//入库日期
           tradeNo: '',//入库单号
           data: [{
+            url: '',
             goodsNo: '',//商品编号
             goodsName: '',//商品名
             goodsSpec: '',//规格
@@ -153,7 +155,9 @@
     created(){
       this.createTradeNo();
     },
-
+    components: {
+      'addressselect': require('../../../components/getaddressselect')
+    },
     computed: {
       'userinfo': function () {
         return JSON.parse(window.localStorage.getItem('userinfo'));
@@ -161,15 +165,15 @@
     },
 
     methods: {
-      getAddress(type){//点击时获取地址列表
-        if (type && this.totalStores.length === 0) {
-          this.addressLoading = true;
-          let self = this;
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-            self.addressLoading = false;
-          });
+      arraySpanMethod({row, column, rowIndex, columnIndex}) {
+        if (columnIndex === 3) {
+          return [1, 2];
+        } else if (columnIndex === 4) {
+          return [0, 0];
         }
+      },
+      getAddressSelect(e){
+        this.form.selfAddress = e.address;
       },
 
       createTradeNo(){//创建入库单号
@@ -243,6 +247,7 @@
 
       addLine(){//添加行
         this.form.data.push({
+          url: '',
           goodsNo: '',//商品编号
           goodsName: '',//商品名
           goodsSpec: '',//规格

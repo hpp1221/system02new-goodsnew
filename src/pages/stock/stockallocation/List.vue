@@ -4,24 +4,10 @@
       <h3 class="page-title">库存调拨</h3>
       <el-form ref="form" :model="form" inline>
         <el-form-item label="调出仓">
-          <el-select
-            v-model="easyForm.from"
-            value-key="id"
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option label="全部" :value="-1"></el-option>
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getFromAddressSelect"></addressselect>
         </el-form-item>
         <el-form-item label="调入仓">
-          <el-select
-            v-model="easyForm.to"
-            value-key="id"
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option label="全部" :value="-1"></el-option>
-            <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getSelfAddressSelect"></addressselect>
         </el-form-item>
 
         <el-form-item label="创建时间">
@@ -53,22 +39,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="调出仓">
-            <el-select
-              v-model="form.from"
-              value-key="id"
-              :loading="addressLoading"
-              @visible-change="getAddress">
-              <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-            </el-select>
+            <addressselect @getAddressSelect="getFormFromAddressSelect"></addressselect>
           </el-form-item>
           <el-form-item label="调入仓">
-            <el-select
-              v-model="form.to"
-              value-key="id"
-              :loading="addressLoading"
-              @visible-change="getAddress">
-              <el-option :label="t.name" :key="t.id" :value="t" v-for="t in totalStores"></el-option>
-            </el-select>
+            <addressselect @getAddressSelect="getFormSelfAddressSelect"></addressselect>
           </el-form-item>
           <!--<el-form-item label="商品信息">-->
             <!--<el-input placeholder="请输入商品信息" class="form-input" v-model="form.keyword"></el-input>-->
@@ -139,24 +113,25 @@
           to: '',
 //          keyword: ''
         },
-        addressLoading: false,
-        totalStores: [],
         advanceSearch: false,
       }
     },
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'addressselect': require('../../../components/getaddressselect')
     },
     methods: {
-      getAddress(type){//点击时获取地址列表
-        if (type && this.totalStores.length === 0) {
-          this.addressLoading = true;
-          let self = this;
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-            self.addressLoading = false;
-          });
-        }
+      getFromAddressSelect(e){
+        this.easyForm.from = e.address;
+      },
+      getSelfAddressSelect(e){
+        this.easyForm.to = e.address;
+      },
+      getFormFromAddressSelect(e){
+        this.form.from = e.address;
+      },
+      getFormSelfAddressSelect(e){
+        this.form.to = e.address;
       },
       pageChanged(page){
         this.pageSize = page.size;

@@ -3,7 +3,7 @@
     <div class="wrapper">
       <h3 class="page-title">创建采购订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
-        <el-table :data="form.orderDetails" border>
+        <el-table :data="form.orderDetails" border :span-method="arraySpanMethod">
           <el-table-column
             type="index"
             width="70">
@@ -20,15 +20,21 @@
                    v-if="scope.row.url"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称">
+          <el-table-column label="商品编码" width="80">
             <template slot-scope="scope">
-              <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
-                               :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                               :props="{value:'combination',label:'combination'}">
+              <el-autocomplete
+                v-on:click.native="handleClick(scope.$index)"
+                v-model="scope.row.combination"
+                :trigger-on-focus="false"
+                :fetch-suggestions="querySearchAsync"
+                @select="handleSelect"
+                :props="{value:'combination',label:'combination'}">
               </el-autocomplete>
             </template>
           </el-table-column>
+          <el-table-column label="商品名称" width="80">
 
+          </el-table-column>
           <el-table-column label="规格" prop="goodsSpec">
 
           </el-table-column>
@@ -214,6 +220,13 @@
       });
     },
     methods: {
+      arraySpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 3) {
+          return [1, 2];
+        } else if (columnIndex === 4) {
+          return [0, 0];
+        }
+      },
       judgeNum(value, index){//判断数量是否为整数
 
         this.form.orderDetails[index].num = value.replace(/\D/g, '');

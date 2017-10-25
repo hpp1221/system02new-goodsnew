@@ -4,14 +4,15 @@
       <h3 class="page-title">商品收发汇总</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
-          <el-select
-            v-model="easyForm.addressId"
-            filterable
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option label="全部仓库" :value="-1"></el-option>
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
-          </el-select>
+          <addressselect @getAddressSelect="getAddressSelect"></addressselect>
+          <!--<el-select-->
+          <!--v-model="easyForm.addressId"-->
+          <!--filterable-->
+          <!--:loading="addressLoading"-->
+          <!--@visible-change="getAddress">-->
+          <!--<el-option label="全部仓库" :value="-1"></el-option>-->
+          <!--<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>-->
+          <!--</el-select>-->
         </el-form-item>
         <el-form-item>
           <el-date-picker
@@ -119,15 +120,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            <el-select v-model="form.series">
-              <el-option label="分类1" value="1">
-
-              </el-option>
-            </el-select>
+            <catselect @getCatSelect="getCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <el-input placeholder="请选择商品品牌" v-model="form.brandName" class="form-input">
-            </el-input>
+            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
           </el-form-item>
           <el-form-item label="所属仓库">
             <el-checkbox-group v-model="form.address">
@@ -160,7 +156,10 @@
         form: {
           type: -1,
           addressId: '',
-          dateRange: ''
+          dateRange: [null, null],
+          brand: '',
+          brandName: '',
+          brandId: '',//商品品牌
         },
         advanceSearch: false,
         easyForm: {
@@ -169,36 +168,36 @@
           series: '',
           brandName: '',
         },
-        totalStores:[],
-        addressLoading:false,
       }
     },
     created(){
       this.select()
     },
+    components: {
+      'addressselect': require('../../../components/getaddressselect'),
+      'catselect':require('../../../components/getcatselect'),
+      'brandselect': require('../../../components/getbrandselect'),
+    },
     methods: {
-      getAddress(type){
-        if (type && this.totalStores.length === 0) {
-          this.addressLoading = true;
-          let self = this;
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-            self.addressLoading = false;
-          });
-        }
+      getAddressSelect(e){
+        this.easyForm.addressId = e.address;
+      },
+      getCatSelect(e){
+        this.form.series = e.catId;
+      },
+      getBrandSelect(e){
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
       },
       select(){//查询
-        let self = this
-        let dateRange = self.form.dateRange
-        let requestData = {token: window.localStorage.getItem('token')}
-        if (typeof(self.form.dateRange) === 'object') {
-          requestData.startDate = self.form.dateRange[0].getTime()
-          requestData.endDate = self.form.dateRange[1].getTime()
-        }
-        requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        self.form.dateRange = dateRange;
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token')};
+        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
+        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordList(requestData, function (data) {
-          self.tableData = data.data
+          self.tableData = data.data.list;
         });
       },
       advanceSelect(){//高级搜索

@@ -4,14 +4,7 @@
       <h3 class="page-title">商品列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item>
-          <el-cascader
-            :options="totalCategories"
-            v-model="easyForm.cat"
-            @active-item-change="getCatList"
-            placeholder="商品分类"
-            @click.native="getCat"
-            :props="props">
-          </el-cascader>
+          <catselect @getCatSelect="getCatSelect"></catselect>
         </el-form-item>
         <el-form-item>
           <el-select placeholder="商品状态" v-model="easyForm.type">
@@ -111,19 +104,14 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            <el-cascader
-              :options="totalCategories"
-              v-model="form.cat"
-              @active-item-change="getCatList"
-              placeholder="商品分类"
-              :props="props">
-            </el-cascader>
+            <catselect @getCatSelect="getFormCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect"></brandselect>
           </el-form-item>
           <el-form-item label="所属供应商">
-            <el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>
+            <supplierselect @getSupplierSelect="getSupplierSelect"></supplierselect>
+            <!--<el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>-->
           </el-form-item>
           <el-form-item label="商品标签">
             <el-checkbox-group v-model="form.tags">
@@ -212,7 +200,8 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        multipleSelection: [],//选中项
+        multipleSelection: [],
+        selectionObj: {},
         dialogTableVisible: false,//设置标签表格是否可见
         totalCategories: [],//分类列表
         props: {
@@ -227,7 +216,6 @@
     },
     created(){
       let self = this;
-      // self.select(this.pageSize,this.pageNum);
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
@@ -235,12 +223,12 @@
         self.totalAddressList = data.data;
         self.form.addressList = data.data;
       });
-      self.getCatList();//获取分类列表
     },
     components: {
       'pagination': require('../../components/pagination'),
       'brandselect': require('../../components/getbrandselect'),
-      ' ': require('../../components/getsupplierselect'),
+      'supplierselect': require('../../components/getsupplierlistselect'),
+      'catselect': require('../../components/getcatselect')
     },
     methods: {
       getBrandSelect(e){
@@ -253,10 +241,14 @@
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
-      getCat(){
-        if (this.totalCategories.length === 0) {
-          this.getCatList();//获取分类列表
-        }
+      getSupplierSelect(e){
+        this.form.supplierName = e.supplierName;
+      },
+      getCatSelect(e){
+        this.easyForm.cat = e.cat;
+      },
+      getFormCatSelect(e){
+        this.form.cat = e.cat;
       },
       seeDetail(id){
         let url = '/goods/goodsDetail/' + id;
@@ -267,16 +259,19 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          temp: JSON.stringify(self.selectionObj)
         };
-
-        if (self.easyForm.cat.length > 0) {
-          self.easyForm.cat = [self.easyForm.cat[self.easyForm.cat.length - 1]];
-        }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
+          if (data.temp !== "{}") {
+            let list = JSON.parse(data.temp);
+            self.$nextTick(function () {
+              self.toggleSelection(list[num]);
+            })
+          }
         });
       },
       advanceSelect(size, num){
@@ -286,9 +281,6 @@
           pageSize: size,
           pageNo: num
         };
-        if (self.form.cat.length > 0) {
-          self.form.cat = [self.form.cat[self.form.cat.length - 1]];
-        }
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.advanceSearch = false;
@@ -296,46 +288,29 @@
           self.totalPage = data.data.total;
         });
       },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
+      toggleSelection(rows) {
+        if (rows) {
+          let arr = [];
+          for (let i = 0; i < this.tableData.length; i++) {
+            for (let j = 0; j < rows.length; j++) {
+              if (this.tableData[i].id === rows[j].id) {
+                arr.push(this.tableData[i]);
+              }
             }
           }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        });
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
+          arr.forEach(row => {
+            this.$refs.multipleTable.toggleRowSelection(row);
+          });
         }
       },
       sureSetTags(){//确定设置标签
 
       },
       handleSelectionChange(val){
-        this.multipleSelection = val;
-        console.log('10101', val);
+        if (val.length > 0) {
+          this.multipleSelection = val;
+          this.selectionObj[this.pageNum] = val;
+        }
       },
       update(id, goodsId){//修改商品详情
         let url = '/goods/updateGoods/' + id + '/' + goodsId;
@@ -345,16 +320,24 @@
         this.$router.push('/goods/createGoods');
       },
       outputFile(){//导出
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选中要导出的项');
-          return;
-        }
-        let skuList = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          skuList.push(this.multipleSelection[i].id);
-        }
 
-        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
+        let arr = [];
+        for (let i in this.selectionObj) {
+          for (let j = 0; j < this.selectionObj[i].length; j++) {
+            arr.push(this.selectionObj[i][j].id)
+          }
+        }
+        let self = this;
+        self.$http({
+          method: 'get',
+          url: 'ui/exportGoods?token=' + localStorage.getItem('token') + '&skuList=' + JSON.stringify(arr),
+          // data: {skuList: JSON.stringify(arr)},
+          responseType: 'stream'
+        })
+          .then(function (response) {
+            response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+          });
+        // location.href = 'ui/exportGoods?skuList=' + JSON.stringify(arr);
       },
       multipleInputGoods(){
         this.$router.push('/goods/multipleInputGoods');
