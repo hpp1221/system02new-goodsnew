@@ -1,13 +1,15 @@
 <template>
   <div class="container">
-    <div class="wrapper">
-      <h3 class="page-title">门店要货单详情</h3>
+    <div class="wrapper allocationwrapper">
+      <h3 class="page-title">门店调拨单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
@@ -22,19 +24,22 @@
           {{item.label}}
         </el-button>
       </div>
-      <el-form ref="form" :model="form" class="request-form storegetgoods-nav" label-width="80px"
-               inline style="margin-top: 75px">
-        <el-form-item label="单据编码">
-          {{form.tradeNumber}}
+      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px" inline
+               style="margin-top: 75px">
+        <el-form-item label="调拨单号">
+          {{form.tradeNo}}
         </el-form-item>
-        <el-form-item label="要货门店">
-          <el-input v-model="form.storeName" :disabled="true"></el-input>
+        <el-form-item label="调入门店" v-model="form.inPutAddressId">
+          <el-input v-model="form.inPutAddress" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="调出门店" v-model="form.outPutAddressId">
+          <el-input v-model="form.outPutAddress" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="要货人">
           <el-input v-model="form.createUserName" :disabled="true"></el-input>
         </el-form-item>
         <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column type="selection" width="55" prop="supplierId">
+          <el-table-column type="selection" width="55" prop="goodsSkuId">
           </el-table-column>
           <el-table-column
             type="index"
@@ -45,33 +50,24 @@
               <img v-lazy="scope.row.img" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码" prop="goodsNumber">
+          <el-table-column label="商品编码" prop="number">
 
           </el-table-column>
           <el-table-column label="商品名称" prop="goodsName">
 
           </el-table-column>
-          <el-table-column label="规格" prop="goodsSpec">
+          <el-table-column label="规格" prop="goodsSpec" width="150">
 
           </el-table-column>
-          <el-table-column label="要货仓库" prop="storeHouseName">
+          <el-table-column label="调入门店库存" prop="inStoreHouseNum" width="120">
 
           </el-table-column>
-          <el-table-column label="门店库存" prop="storeInStoreHouse">
+          <el-table-column label="调出门店库存" prop="outStoreHouseNum" width="120">
 
           </el-table-column>
-          <el-table-column label="门店在途量" prop="storeOnTheWay">
-
+          <el-table-column label="要货数量" prop="num">
           </el-table-column>
-          <el-table-column label="仓库库存" prop="inStoreHouse">
-
-          </el-table-column>
-          <el-table-column label="仓库在途量" prop="onTheWay">
-
-          </el-table-column>
-          <el-table-column label="要货数量" prop="count">
-          </el-table-column>
-          <el-table-column label="单位" prop="unit">
+          <el-table-column label="单位" prop="goodsUnit">
 
           </el-table-column>
           <el-table-column label="单价" prop="price">
@@ -81,19 +77,6 @@
 
           </el-table-column>
           <el-table-column label="备注" prop="remark">
-          </el-table-column>
-        </el-table>
-        <el-form-item>
-          <h4 class="el-icon-arrow-down" style="margin-top: 30px">操作日志</h4>
-        </el-form-item>
-        <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column prop="time" label="操作时间">
-          </el-table-column>
-
-          <el-table-column prop="name" label="操作人">
-          </el-table-column>
-          <el-table-column prop="type" label="状态">
-
           </el-table-column>
         </el-table>
       </el-form>
@@ -107,15 +90,18 @@
       return {
         form: {
           id: '',
-          tradeNumber: '',
-          storeId: '',
-          storeName: '',
+          tradeNo: '',
+          inPutAddressId: '',
+          inPutAddress: '',
+          outPutAddressId: '',
+          outPutAddress: '',
           createUseraName: '',
           type: ''
         },
         type: '',
-        tableData: [],
         getGoodsRecordDetails: [],
+        rules: {},
+        listIndex: '',//现在正在添加的某个list的下标
         typeLists: [//高级查询的单据状态
           {
             value: '4',
@@ -138,80 +124,86 @@
             label: "待收货确认"
           },
         ],
-        listIndex: '',//现在正在添加的某个list的下标
       }
     },
     created() {
-      this.$route.query.id ? this.select(this.$route.query.id) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
     methods: {
       select(id) {//详情列表
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          id: id,
+          allocationId: id,
         }
-        self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
-          console.log('detailgoods', data)
+        self.httpApi.store.storeAllocationInfo(requestData, function (data) {
           self.form = data.data
           self.type = data.data.type
-          self.getGoodsRecordDetails = data.data.list
-          self.tableData = data.data.flowList
+          self.getGoodsRecordDetails = data.data.allocationRecordGoodslist
         })
       },
       getGoodsExaminePass() {//通过
         let self = this;
-        if(self.type == 0 || self.type == 4){
-          self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          status: 2,
+          allocationRecordId: self.form.id
         }
-        if(self.type == 1 || self.type == 2 || self.type == 3){
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            type: self.type,
-            tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
-          }
+        if (self.type == "1") {
           self.$confirm('确认要通过该审核？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
-            self.httpApi.store.examine(requestData, function (data) {
-              console.log('storepass', data)
-              if (data.code == 10000) {
-                self.$message({
-                  type: 'success',
-                  message: '已通过该审核!'
-                });
-                self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-              } else {
-                self.$message({
-                  type: 'info',
-                  message: '已取消'
-                });
-              }
+            self.httpApi.store.storeAllocationRecordAdopt(requestData, function (data) {
+              self.$router.push('/store/management/allocation/list');
             })
-
           })
+        } else if (self.type == "2") {
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.httpApi.store.storeAllocationRecordSendAdopt(requestData, function (data) {
+              self.$router.push('/store/management/allocation/list');
+            })
+          })
+        } else if (self.type == "3") {
+          self.$confirm('确认要通过该审核？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            self.httpApi.store.storeAllocationRecordReceiveAdopt(requestData, function (data) {
+              self.$router.push('/store/management/allocation/list');
+            })
+          })
+        } else if (self.type == "4" || self.type == "0") {
+          self.$router.push('/store/management/allocation/list');
         }
+
 
       },
       cancelGetGoods() { //作废
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          id: self.form.id
+          allocationRecordId: self.form.id,
+          status: self.form.type,
+          tradeNo: self.form.tradeNo
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          self.httpApi.store.setInvalid(requestData, function (data) {
+          self.httpApi.store.storeAllocationRecordCancel(requestData, function (data) {
             self.$message({
               type: 'success',
               message: '已成功作废!'
             });
-            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+            self.$router.push('/store/management/allocation/list');
           });
         })
       },

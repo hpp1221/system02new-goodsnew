@@ -1,27 +1,20 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">新增门店调拨单</h3>
+      <h3 class="page-title">新增门店要货</h3>
       <el-form ref="form" :model="form" class="request-form" label-width="80px" inline>
-        <el-form-item label="调拨单号">
-          {{form.tradeNo}}
+        <el-form-item label="单据编码">
+          {{form.tradeNumber}}
         </el-form-item>
-        <el-form-item label="调入门店">
-          <el-select placeholder="请选择门店" v-model="inputAdress" style="width: 130px" @change="selectOne">
-            <el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id">
-            </el-option>
+        <el-form-item label="要货门店">
+          <el-select placeholder="请选择门店" v-model="form.storeId">
+            <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="调出门店">
-          <el-select placeholder="请选择门店" v-model="outputAdress" style="width: 130px" @change="selectTwo">
-            <el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id">
-            </el-option>
-          </el-select>
+        <el-form-item label="要货人" v-if="userinfo">
+          <el-input v-model="userinfo.name" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="要货人">
-          <el-input v-model="form.name" :disabled="true"></el-input>
-        </el-form-item>
-        <el-table :data="form.getGoodsRecordDetails" v-if="form.outPutAddress">
+        <el-table :data="form.getGoodsRecordDetails" border v-if="form.storeId">
           <el-table-column
             type="index"
             width="70">
@@ -46,22 +39,40 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="规格" prop="goodsSpec" width="120">
+          <el-table-column label="规格" prop="sku" width="120">
 
           </el-table-column>
-          <el-table-column label="调入门店库存" prop="inStoreHouseNum" width="120">
+          <el-table-column label="要货仓库" prop="storeHouseName">
+
+            <!--<template slot-scope="scope">-->
+            <!--<el-select :disabled="goodsInfoList[0].count <= goodsInfoList[0].inStoreHouse"-->
+            <!--v-if="goodsInfoList[0].count > goodsInfoList[0].inStoreHouse" v-model="scope.row.storeHouseId">-->
+            <!--<el-option v-for="item in storeHouseIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
+            <!--</el-select>-->
+            <!--<span-->
+            <!--v-else>{{goodsInfoList[0].storeHouseName}}</span>-->
+            <!--</template>-->
 
           </el-table-column>
-          <el-table-column label="调出门店库存" prop="outStoreHouseNum" width="120">
+          <el-table-column label="门店库存" prop="storeInStoreHouse">
 
           </el-table-column>
-          <el-table-column label="要货数量" prop="num">
+          <el-table-column label="门店在途量" prop="storeOnTheWay" width="100">
+
+          </el-table-column>
+          <el-table-column label="仓库库存" prop="inStoreHouse">
+
+          </el-table-column>
+          <el-table-column label="仓库在途量" prop="onTheWay" width="120">
+
+          </el-table-column>
+          <el-table-column label="要货数量" prop="count">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
-                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
+              <el-input v-model="scope.row.count" @keyup.native="judgeNum(scope.row.count,scope.$index)"
+                        @afterpaste.native="judgeNum(scope.row.count,scope.$index)"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="单位" prop="goodsUnit">
+          <el-table-column label="单位" prop="unit">
 
           </el-table-column>
           <el-table-column label="单价" prop="price">
@@ -90,38 +101,45 @@
       return {
         storeIds: [],
         storeHouseIds: [],
-        inputAdress: '',
-        outputAdress: '',
         form: {
-          tradeNo: '',
-          name: '',
-          inPutAddress: '',
-          outPutAddress: '',
-          goodsSkuId: '',
+          tradeNumber: '',
+          storeId: '',
+          storeName: '',
           getGoodsRecordDetails: [{
-            number: '',//商品编号
+            goodsNumber: '',//商品编号
             goodsName: '',//商品名
-            goodsSpec: '',//规格
-            inStoreHouseNum: '',//调入门店库存
-            outStoreHouseNum: '',//调出门店库存
-            num: '',//数量
+            sku: '',//规格
+            storeHouseName: '',//要货仓库
+            storeHouseId: '',//要货仓库id
+            storeInStoreHouse: '',//门店库存
+            storeOnTheWay: '',//门店在途量
+            inStoreHouse: '',//仓库库存
+            onTheWay: '',//仓库在途量
+            count: '',//数量
             img: '',
-            goodsUnit: '',//单位
+            unit: '',//单位
             price: '',//价格
             priceFen: '',
             sum: 0,//金额
             combination: '',//编号和名称组合
-            goodsSkuId: '',
             remark: '',//备注
           }],
         },
         listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
+        goodsInfoList: [
+          {
+            storeHouseName: '',
+            count: '',
+            inStoreHouse: ''
+          }
+        ],
+
       }
     },
     created() {
       this.getStoreList()//要货门店
-      this.getTradeNumber()//调拨单号
+      this.getTradeNumber()//单据编码
+      this.getStoreHouse()//仓库
     },
     computed: {
       userinfo: function () {
@@ -129,45 +147,14 @@
       },
     },
     methods: {
-      selectOne: function(val1){
-        console.log(val1);
-        this.inputAdress = val1;
-        for(let i=0;i<this.storeIds.length;i++){
-          if(this.storeIds[i].id == val1){
-            this.form.inPutAddress = this.storeIds[i];
-          }
-        }
-        console.log(this.form.inPutAddress);
-      },
-      selectTwo(val2){
-        this.outputAdress = val2;
-        for(let i=0;i<this.storeIds.length;i++){
-          if(this.storeIds[i].id == val2){
-            this.form.outPutAddress = this.storeIds[i];
-          }
-        }
-      },
-      getTradeNumber() {//调拨单号
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        }
-        self.httpApi.store.createAllocationRecordNumber(requestData, function (data) {
-          let list = data.data;
-          self.form.tradeNo = list.tradeNo;
-          self.form.name = list.name;
-        });
-      },
-      getGoodsSubmit() {//提交门店调拨单
+      getGoodsSubmit() {//提交门店要货单
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          inPutAddress: self.form.inPutAddress,
-          outPutAddress: self.form.outPutAddress
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.store.createStoreAllocation(requestData,function (data) {
-          self.$router.push('/store/storemanagement/storeallocation/list');
+        self.httpApi.store.addGetGoodsRecord(requestData,function (data) {
+          self.$router.push('/store/management/getgoods/list');
         })
       },
       getStoreList() {//要货门店
@@ -175,8 +162,28 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
         }
-        self.httpApi.store.storeList(requestData,function (data) {
+        self.httpApi.store.storeList(requestData, function (data) {
           self.storeIds = data.data
+        })
+      },
+      getTradeNumber() {//单据编码
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token')
+        }
+        self.httpApi.store.createGetGoodsNumber(requestData, function (data) {
+          let list = data.data;
+          self.form.tradeNumber = list;
+        })
+      },
+      getStoreHouse() {//仓库接口
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type: 1
+        }
+        self.httpApi.stock.addressList(requestData, function (data) {
+          self.storeHouseIds = data.data;
         })
       },
       judgeNum(value, index) {//判断数量是否为整数
@@ -184,9 +191,9 @@
           this.form.getGoodsRecordDetails[index].sum = 0.00;
           return;
         }
-        this.form.getGoodsRecordDetails[index].num = value.replace(/\D/g, '');
+        this.form.getGoodsRecordDetails[index].count = value.replace(/\D/g, '');
         this.form.getGoodsRecordDetails[index].sum = "";
-        let price = JSON.stringify(this.form.getGoodsRecordDetails[index].num * this.form.getGoodsRecordDetails[index].priceFen);
+        let price = JSON.stringify(this.form.getGoodsRecordDetails[index].count * this.form.getGoodsRecordDetails[index].priceFen);
         let size = price.length;
         price = price.substring(0, size - 2) + "." + price.substring(size - 2, size);
         this.form.getGoodsRecordDetails[index].sum = price;
@@ -196,16 +203,12 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           keyword: queryString,
-          inPutAddressId: self.form.inPutAddress.id,
-          outPutAddressId: self.form.outPutAddress.id
+          storeId: self.form.storeId
         }
-        self.httpApi.store.selectStoreGoodsInfo(requestData, function (data) {
+        self.httpApi.store.storeGoodsInfo(requestData, function (data) {
           let list = data.data;
-//          if(list){
-//            self.$message.message('没有该商品')
-//          }
           for (let i = 0, listLength = list.length; i < listLength; i++) {
-            list[i].combination = list[i].number + '  ' + list[i].goodsName;
+            list[i].combination = list[i].goodsNumber + '  ' + list[i].goodsName;
             list[i].sum = '';
           }
           self.goodsInfoList = list;
@@ -216,7 +219,7 @@
       handleSelect(item) {//判断是否已选该商品
         let list = this.form.getGoodsRecordDetails;
         for (let i = 0; i < list.length; i++) {
-          if (item.number === list[i].number) {
+          if (item.goodsNumber === list[i].goodsNumber) {
             this.$message.error('已有此类商品');
             this.form.getGoodsRecordDetails[this.listIndex].combination = ''
             return
@@ -230,19 +233,21 @@
       },
       addLine() {//添加一行
         this.form.getGoodsRecordDetails.push({
-          number: '',//商品编号
+          goodsNumber: '',//商品编号
           goodsName: '',//商品名
-          goodsSpec: '',//规格
-          inStoreHouseNum: '',//调入门店库存
-          outStoreHouseNum: '',//调出门店库存
-          num: '',//数量
+          sku: '',//规格
+          storeHouseName: '',//要货仓库
+          storeHouseId: '',//要货仓库id
+          storeInStoreHouse: '',//门店库存
+          storeOnTheWay: '',//门店在途量
+          inStoreHouse: '',//仓库库存
+          onTheWay: '',//仓库在途量
+          count: '',//数量
           img: '',
-          goodsUnit: '',//单位
+          unit: '',//单位
           price: '',//价格
-          priceFen: '',
-          sum: 0,//金额
+          sum: '',//金额
           combination: '',//编号和名称组合
-          goodsSkuId: '',
           remark: '',//备注
         })
       },

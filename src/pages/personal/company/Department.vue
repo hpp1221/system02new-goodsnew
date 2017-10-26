@@ -109,10 +109,10 @@
                     </template>
                 </el-table-column>
             </el-table>-->
-      <el-dialog title="新增子部门" :visible.sync="addDepartmentDialog" size="tiny">
-        <el-form ref="form" :model="addForm" label-width="90px">
+      <el-dialog title="新增子部门" :visible.sync="addDepartmentDialog" width="400px">
+        <el-form ref="form" :model="addForm" label-width="90px" class="request-form">
           <el-form-item label="部门名称">
-            <el-input v-model="addForm.name"></el-input>
+            <el-input v-model="addForm.name" class="form-input"></el-input>
           </el-form-item>
           <el-form-item label="上级部门">
             <el-select v-model="addForm.pid" disabled v-if="addForm.pid!=0">
@@ -126,7 +126,7 @@
             <span v-else>根部门</span>
           </el-form-item>
           <el-form-item label="备注">
-            <el-input v-model="addForm.remarks"></el-input>
+            <el-input v-model="addForm.remarks" class="form-input"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="sureAddDepartment">确定</el-button>
@@ -134,10 +134,10 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <el-dialog title="修改部门信息" :visible.sync="updateDepartmentDialog" size="tiny">
-        <el-form ref="form" :model="updateForm" label-width="90px">
+      <el-dialog title="修改部门信息" :visible.sync="updateDepartmentDialog" width="400px">
+        <el-form ref="form" :model="updateForm" label-width="90px" class="request-form">
           <el-form-item label="部门名称">
-            <el-input v-model="updateForm.name"></el-input>
+            <el-input v-model="updateForm.name" class="form-input"></el-input>
           </el-form-item>
           <el-form-item label="上级部门">
             <el-select v-model="updateForm.pid" disabled v-if="updateForm.pid!=0">
@@ -151,7 +151,7 @@
             <span v-else>根部门</span>
           </el-form-item>
           <el-form-item label="备注">
-            <el-input v-model="updateForm.remarks"></el-input>
+            <el-input v-model="updateForm.remarks" class="form-input"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button @click="sureUpdateDepartment(updateForm.organizationId)">确定</el-button>

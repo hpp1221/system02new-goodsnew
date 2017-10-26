@@ -149,6 +149,7 @@
         pageNum: 1,
         totalPage: 10,
         advanceSearch: false,
+        searchType: 1,
         typeLists: [//高级查询的单据状态
           {
             value: '4',
@@ -183,7 +184,7 @@
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       handleCheckAllChange(event) {//全选
         this.form.Type = event ? cityOptions : [];
@@ -203,28 +204,29 @@
           self.totalStores = data.data
         })
       },
-      select(size,num) {//查询
+      select(size, num) {//查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
           status: 2,
-          pageSize:size,
-          pageNo:num
+          pageSize: size,
+          pageNo: num
         }
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
-          console.log('storeAllocationList',data)
+          console.log('storeAllocationList', data)
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         })
       },
-      advanceSelect(size,num) {//高级查询
+      advanceSelect(size, num) {//高级查询
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
           status: 2,
-          pageSize:size,
-          pageNo:num
+          pageSize: size,
+          pageNo: num
         };
         self.form.outPutStartDate = self.form.outputDateRange[0]
         self.form.outPutEndDate = self.form.outputDateRange[1]
@@ -233,6 +235,7 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
           self.advanceSearch = false
+          self.searchType = 2;
           self.tableData = data.data.list
           self.totalPage = data.data.total;
         })
@@ -241,30 +244,32 @@
         let self = this
         self.form.tradeNo = ''
         self.form.outputDateRange = ["", ""],
-        self.form.inputDateRange = ["", ""],
-        self.form.inputAddressId = '',
-        self.form.outputAddressId = '',
-        self.form.Type = [],
-        self.checkAll = false
+          self.form.inputDateRange = ["", ""],
+          self.form.inputAddressId = '',
+          self.form.outputAddressId = '',
+          self.form.Type = [],
+          self.checkAll = false
       },
       storeAllocationAdd() {//新增
-        this.$router.push('/store/storemanagement/storeallocation/allocationadd')
+        this.$router.push('/store/management/allocation/add');
       },
       getGoodsExamine(id) {//审核
-        this.$router.push({path: '/store/storemanagement/storeallocation/examine', query: {allocationId: id}});
+        let url = '/store/management/allocation/examine/' + id;
+        this.$router.push(url);
       },
       getGoodsNumberDetail(id) {//详情
-        this.$router.push({path: '/store/storemanagement/storeallocation/detail', query: {allocationId: id}});
+        let url = '/store/management/allocation/detail/' + id;
+        this.$router.push(url);
       },
       cancelGetGoods(row) { //作废
-        console.log('row',row)
+        console.log('row', row)
         let self = this;
-        if(row.type == "1" || row.type == "2"){
+        if (row.type == "1" || row.type == "2") {
           let requestData = {
             token: window.localStorage.getItem('token'),
             allocationRecordId: row.id,
-            status:row.status,
-            tradeNo:row.tradeNo
+            status: row.status,
+            tradeNo: row.tradeNo
           };
           self.$confirm('确认将此门店要货单作废？', '提示', {
             confirmButtonText: '确定',
@@ -276,10 +281,10 @@
                 type: 'success',
                 message: '已成功作废!'
               });
-              self.select(self.pageSize,self.pageNum)
+              self.select(self.pageSize, self.pageNum)
             });
           })
-        }else {
+        } else {
           self.$message('您已确认发货，无法作废!')
         }
 

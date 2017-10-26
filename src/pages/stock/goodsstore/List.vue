@@ -177,12 +177,13 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
+        searchType: 1
       }
     },
     components: {
       'pagination': require('../../../components/pagination'),
       'brandselect': require('../../../components/getbrandselect'),
-      'catselect':require('../../../components/getcatselect'),
+      'catselect': require('../../../components/getcatselect'),
     },
     methods: {
       getBrandSelect(e){
@@ -196,7 +197,7 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       getAddress(type){
         if (type && this.totalStores.length === 0) {
@@ -241,17 +242,23 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.list(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
       },
 
-      advanceSelect(){
+      advanceSelect(size, num){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: size,
+          pageNum: num
+        };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.list(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
