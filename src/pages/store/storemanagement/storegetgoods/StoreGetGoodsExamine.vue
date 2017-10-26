@@ -3,11 +3,13 @@
     <div class="wrapper">
       <h3 class="page-title">门店要货单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
@@ -161,38 +163,36 @@
       },
       getGoodsExaminePass() {//通过
         let self = this;
-        if(self.type == 0 || self.type == 4){
+        if (self.type == 0 || self.type == 4) {
           self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
         }
-        if(self.type == 1 || self.type == 2 || self.type == 3){
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-            type: self.type,
-            tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
-          }
-          self.$confirm('确认要通过该审核？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-          }).then(() => {
-            self.httpApi.store.examine(requestData, function (data) {
-              console.log('storepass', data)
-              if (data.code == 10000) {
-                self.$message({
-                  type: 'success',
-                  message: '已通过该审核!'
-                });
-                self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
-              } else {
-                self.$message({
-                  type: 'info',
-                  message: '已取消'
-                });
-              }
-            })
-
-          })
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          type: self.type,
+          tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
         }
+        self.$confirm('确认要通过该审核？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          self.httpApi.store.examine(requestData, function (data) {
+            console.log('storepass', data)
+            if (data.code == 10000) {
+              self.$message({
+                type: 'success',
+                message: '已通过该审核!'
+              });
+              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+            } else {
+              self.$message({
+                type: 'info',
+                message: '已取消'
+              });
+            }
+          })
+
+        })
 
       },
       cancelGetGoods() { //作废

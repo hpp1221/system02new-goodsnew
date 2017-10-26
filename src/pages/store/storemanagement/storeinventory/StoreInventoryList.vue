@@ -149,15 +149,9 @@
         let requestData = {
           token: window.localStorage.getItem('token')
         };
-        self.$http.post('/ui/storeList', self.qs.stringify(requestData)).then(function (response) {
-          console.log('store', response)
-          let data = response.data;
-          if (data.code == 10000) {
-            self.storeIds = data.data
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        self.httpApi.store.storeList(requestData, function (data) {
+          self.storeIds = data.data
+        })
       },
       getCat(){
         if (this.totalCategories.length === 0) {
@@ -174,26 +168,19 @@
           console.log(val[val.length - 1].id)
           requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
         }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          console.log('catlist', response)
-          let data = response.data;
-          if (data.code === 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-
+        self.httpApi.goods.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
             }
           }
-        }).catch(function (error) {
-          console.log(error);
-        });
+          if (val === undefined) {
+            self.totalCategories = data.data;
+          } else {
+            self.insertCat(self.totalCategories, val, data.data, 0);
+          }
+        })
       },
       insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
@@ -212,7 +199,7 @@
       },
       getExcel(){//下载excelmodel
         if (this.form.storeId && this.form.catId) {
-          location.href = '/ui/exportStore?addressId=' + this.form.storeId + '&catId=' + this.form.catId[this.form.catId.length - 1].id
+          location.href = '/ui/exportStore?addressId=' + this.form.storeId + '&catId=' + this.form.catId[this.form.catId.length - 1].id + '&token=' + window.localStorage.getItem('token')
         }
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
@@ -237,24 +224,10 @@
         this.active--;
       },
       sureExport() { //确定导入
-//        this.active++
-//        let self = this
-//        let requestData = {
-//          token: window.localStorage.getItem('token'),
-//          data: JSON.stringify(self.excelResponse),
-//          addressId:self.form.storeId,
-//          catId:self.catIds
-//        };
-        let string = JSON.stringify(this.excelResponse);
+        this.active++;
+        let string = encodeURI(JSON.stringify(this.excelResponse));
         location.href = '/ui/checkStoreExcel?data=' + string + '&catId=' + this.form.catId[this.form.catId.length - 1].id + '&addressId=' + this.form.storeId
-//        self.$http.get('/ui/checkStoreExcel', self.qs.stringify(requestData)).then(function(res) {
-//          let data = res.data;
-//          if(data.code == 10000) {
-////            self.$router.push('/supplier/suppliers/supplierlist');
-//          }
-//        }).catch(function(error) {
-//          console.log(error);
-//        });
+
       }
     }
   }

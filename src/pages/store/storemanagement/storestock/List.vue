@@ -7,14 +7,7 @@
           <el-radio class="radio" v-model="easyForm.goodsStatus" label="0">按商品合并</el-radio>
         </el-form-item>
         <el-form-item label="商品分类">
-          <el-cascader
-            :options="totalCategories"
-            v-model="easyForm.cat"
-            @active-item-change="getCatList"
-            placeholder="商品分类"
-            :props="props"
-            @click.native="getCat">
-          </el-cascader>
+          <catselect @getCatSelect="getCatSelect"></catselect>
         </el-form-item>
         <el-form-item label="门店">
           <el-select placeholder="全部门店" v-model="easyForm.storeId">
@@ -103,18 +96,15 @@
             <!--</el-select>-->
           </el-form-item>
           <el-form-item label="门店">
-            <el-select placeholder="全部门店" v-model="easyForm.storeId">
-              <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
+            <el-select
+            placeholder="全部仓库"
+            v-model="form.storeId"
+            multiple
+            filterable
+            :loading="addressLoading"
+            @visible-change="getAddress">
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
             </el-select>
-            <!--<el-select-->
-            <!--placeholder="全部仓库"-->
-            <!--v-model="form.address"-->
-            <!--multiple-->
-            <!--filterable-->
-            <!--:loading="addressLoading"-->
-            <!--@visible-change="getAddress">-->3v
-            <!--<el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>-->
-            <!--</el-select>-->
           </el-form-item>
           <el-form-item label="商品标签">
             <el-checkbox-group v-model="form.tagId">
@@ -147,7 +137,7 @@
     data(){
       return {
         tableData: [],
-        storeIds: [],
+        totalStores: [],
         advanceSearch: false,
         form: {
           brand: '',
@@ -183,13 +173,18 @@
     },
     components: {
       'pagination': require('../../../../components/pagination'),
-      'brandselect': require('../../../../components/getbrandselect')
+      'brandselect': require('../../../../components/getbrandselect'),
+      'catselect':require('../../../../components/getcatselect'),
     },
     methods: {
-      getBrandSelect(e){
-        this.form.brand = e.brand;
-        this.form.brandName = e.brandName;
-        this.form.brandId = e.brandId;
+      getStoreList() {//要货门店
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        }
+        self.httpApi.store.storeList(requestData, function (data) {
+          self.totalStores = data.data
+        })
       },
       getAddress(type){//所属门店
         if (type && this.totalStores.length === 0) {
@@ -201,12 +196,20 @@
           });
         }
       },
+      getBrandSelect(e){
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
+      },
+
       getCat(){
         if (this.totalCategories.length === 0) {
           this.getCatList();//获取分类列表
         }
       },
-
+      getCatSelect(e){
+        this.form.series = e.catId;
+      },
 //      startAdvanceSearch(){
 //        let self = this;
 //        self.advanceSearch = true;
@@ -267,46 +270,46 @@
           console.log(error);
         });
       },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.$http.get('/ui/catList', requestData).then(function (response) {
-          let data = response.data;
-          if (data.code === 10000) {
-            for (let i = 0; i < data.data.length; i++) {
-              data.data[i].res = JSON.parse(data.data[i].res);
-              if (parseInt(data.data[i].hasChild) > 0) {
-                data.data[i].children = [];
-              }
-            }
-            if (val === undefined) {
-              self.totalCategories = data.data;
-            } else {
-              self.insertCat(self.totalCategories, val, data.data, 0);
-            }
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      },
-
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
+//      getCatList(val){
+//        let self = this;
+//        var requestData;
+//        if (val === undefined) {
+//          requestData = {token: window.localStorage.getItem('token')};
+//        } else {
+//          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
+//        }
+//        self.$http.get('/ui/catList', requestData).then(function (response) {
+//          let data = response.data;
+//          if (data.code === 10000) {
+//            for (let i = 0; i < data.data.length; i++) {
+//              data.data[i].res = JSON.parse(data.data[i].res);
+//              if (parseInt(data.data[i].hasChild) > 0) {
+//                data.data[i].children = [];
+//              }
+//            }
+//            if (val === undefined) {
+//              self.totalCategories = data.data;
+//            } else {
+//              self.insertCat(self.totalCategories, val, data.data, 0);
+//            }
+//          }
+//        }).catch(function (error) {
+//          console.log(error);
+//        });
+//      },
+//
+//      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
+//        for (let i = 0; i < arr.length; i++) {
+//          if (arr[i].id === val[level].id) {
+//            if (val.length === level + 1) {
+//              arr[i].children = data;
+//            } else {
+//              level++;
+//              this.insertCat(arr[i].children, val, data, level);
+//            }
+//          }
+//        }
+//      },
     }
   }
 </script>

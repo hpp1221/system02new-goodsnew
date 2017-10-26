@@ -12,8 +12,8 @@
 					<el-button type="text" @click="getExcel">下载模板</el-button>
 				</el-form-item>
 				<el-form-item label="2、导入数据">
-					<el-upload action="/ui/importVips" :on-success="uploadSuccess" :on-remove="removeExcel" :file-list="form.excelFile" multiple style="width: 300px;">
-						<el-button size="small" type="primary">点击上传</el-button>
+					<el-upload class="upload-demo" action="/ui/importVips" :data="uploadData" :on-success="uploadSuccess" :on-remove="removeExcel" :file-list="form.excelFile" multiple style="width: 300px;">
+						<el-button size="small" type="primary" slot="trigger">点击上传</el-button>
 						<div slot="tip" class="el-upload__tip">请按照数据模板的格式准备导入数据，模板中的表头名称不可更改，表头行不能删除</div>
 					</el-upload>
 				</el-form-item>
@@ -61,11 +61,15 @@
 		data() {
 			return {
 				active: 1,
+        uploadData:{
+				  token:window.localStorage.getItem('token')
+        },
 				form: {
 					addressId: '',
 					catId: -1,
 					excelFile: []
 				},
+        local:window.localStorage.getItem('token'),
 				excelResponse: [], //excel解析后的数据
 				excelAnalysisStatus: false, //excelResponse默认是数组，不传数据也可以直接下一步，所以要先false
 				json_fields: {
@@ -92,9 +96,10 @@
 				this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
 			},
 			getExcel() { //下载excelmodel
-				location.href = '/ui/downVip'
+				location.href = '/ui/downVip?token=' + window.localStorage.getItem('token')
 			},
 			uploadSuccess(response, file, fileList) { //成功上传的回调
+
 				this.excelAnalysisStatus = true;
 				fileList = [file];
 				this.form.excelFile = [file]
@@ -116,14 +121,14 @@
 				this.active--;
 			},
 			sureExport() { //确定导入
-				this.active++
-				let self = this
+        let self = this
+        self.active++
 				let requestData = {
 					token: window.localStorage.getItem('token'),
 					vips: JSON.stringify(self.excelResponse)
 				};
         self.httpApi.vip.insertvipList(requestData, function (data) {
-          self.$router.push('/personal/client/clientmanagement');
+          self.$router.push('/client/clientmanagement');
         });
 			}
 		}

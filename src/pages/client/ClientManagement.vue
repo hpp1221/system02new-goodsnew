@@ -96,6 +96,7 @@
         pageNum: 1,//当前页码
         totalPage: 10,//总数
         tableData: [],
+        multipleSelection:[]
       }
     },
     components: {
@@ -107,18 +108,6 @@
         this.pageNum = page.num;
         this.select(page.size, page.num);
       },
-      getClientList() { //客户管理列表
-        let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum,
-        };
-        self.httpApi.vip.viplist(requestData, function (data) {
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-        });
-      },
       select(size, num) { //查询
         let self = this;
         let requestData = {
@@ -129,6 +118,7 @@
           pageSize: size
         };
         self.httpApi.vip.vipterm(requestData, function (data) {
+          console.log('vip',data)
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
@@ -146,16 +136,17 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.vip.vipdelete(requestData, function (data) {
-            self.$message('删除成功');
-            this.getClientList();
+            self.$message.success('删除成功');
+            self.select(self.pageSize,self.pageNum)
           });
         })
       },
       outputClient() { //导出客户
-        if (this.multipleSelection.length === 0) {
-          this.$message.error('请选中要导出的项');
-          return;
-        }
+        let self = this
+//        if (this.multipleSelection.length === 0) {
+//          this.$message.error('请选中要导出的项');
+//          return;
+//        }
 //        let skuList = [];
 //        for (let i = 0; i < this.multipleSelection.length; i++) {
 //          skuList.push(this.multipleSelection[i].id);
@@ -168,29 +159,41 @@
           supplierString += ',' + self.multipleSelection[i].id
         }
         supplierString = supplierString.substring(1, supplierString.length)
-        location.href = '/ui/exportVips?vipIds=' + supplierString;
+        location.href = '/ui/exportVips?vipIds=' + supplierString + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
-        if (val.length > 0) {
-          this.multipleSelection = val;
-          this.selectionObj[this.pageNum] = val;
-        }
+        console.log('this.multipleSelection',this.multipleSelection);
+        console.log('val',val);
+        this.multipleSelection = val;
+//        if (val.length > 0) {
+//          this.multipleSelection = val;
+//          this.selectionObj[this.pageNum] = val;
+//        }
       },
       toggleSelection(rows) {
         if (rows) {
-          let arr = [];
-          for (let i = 0; i < this.tableData.length; i++) {
-            for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].id === rows[j].id) {
-                arr.push(this.tableData[i]);
-              }
-            }
-          }
-          arr.forEach(row => {
+          rows.forEach(row => {
             this.$refs.multipleTable.toggleRowSelection(row);
           });
+        } else {
+          this.$refs.multipleTable.clearSelection();
         }
       },
+//      toggleSelection(rows) {
+//        if (rows) {
+//          let arr = [];
+//          for (let i = 0; i < this.tableData.length; i++) {
+//            for (let j = 0; j < rows.length; j++) {
+//              if (this.tableData[i].id === rows[j].id) {
+//                arr.push(this.tableData[i]);
+//              }
+//            }
+//          }
+//          arr.forEach(row => {
+//            this.$refs.multipleTable.toggleRowSelection(row);
+//          });
+//        }
+//      },
       createClient() { //新增客户
         this.$router.push('/client/createclient');
       },

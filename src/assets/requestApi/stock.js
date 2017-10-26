@@ -49,14 +49,14 @@ Vue.prototype.httpApi.stock.analysisExcel = function (params, successCallback) {
       successCallback(data);
     })
 };
-//解析当前excel
+//库存盘点
 Vue.prototype.httpApi.stock.checkExcel = function (params, successCallback) {
   Vue.prototype.httpGet('/ui/checkExcel', params,
     function (data) {
       successCallback(data);
     })
 };
-//解析当前excel
+//库存盘点(门店)
 Vue.prototype.httpApi.stock.checkStoreExcel = function (params, successCallback) {
   Vue.prototype.httpGet('/ui/checkStoreExcel', params,
     function (data) {

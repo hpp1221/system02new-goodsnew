@@ -38,7 +38,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" @click.native="submitForm('ruleForm')">保存</el-button>
+					<el-button type="primary" @click.native="submitForm">保存</el-button>
 					<el-button @click="resetForm('ruleForm')">取消</el-button>
 				</el-form-item>
 			</el-form>
@@ -118,23 +118,15 @@
 			};
 		},
 		methods: {
-			submitForm(formName) { //新增后保存
-				this.$refs[formName].validate((valid) => {
-					if(valid) {
+			submitForm() { //新增后保存
 						let self = this;
 						let requestData = {
 							token: window.localStorage.getItem('token')
 						};
 						requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
             self.httpApi.vip.insertvip(requestData, function (data) {
-              self.$router.push('/personal/client/clientmanagement');
+              self.$router.push('/client/clientmanagement');
             });
-					} else {
-						console.log('error submit!!');
-						return false;
-					}
-				});
-
 			},
 			resetForm() {//取消
 				let self = this
