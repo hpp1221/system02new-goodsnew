@@ -132,7 +132,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-form-item label="退款信息">
+          <el-form-item label="退款信息" style="float: left;">
             <p>
               <i class="el-icon-edit"
                  @click="editDelivery(rindex)"
@@ -148,10 +148,10 @@
               <!--<span v-if="form.postcode">邮编：{{form.postcode}}</span>-->
             </p>
           </el-form-item>
-          <el-form-item label="运单号">
+          <el-form-item label="运单号" style="float: left;">
             <el-input v-model="r.trackingNo" class="form-input"></el-input>
           </el-form-item>
-          <el-form-item label="备注说明">
+          <el-form-item label="备注说明" style="float: left;">
             <el-input type="textarea" v-model="r.remark" class="form-input" autosize resize="none"></el-input>
           </el-form-item>
         </el-form-item>
@@ -348,14 +348,14 @@
           token: localStorage.getItem('token'),
           supplierId: this.orderDetailsDialog[0].supplierId
         };
-        self.httpApi.supplier.getById(requestData, function (data) {
+        self.httpApi.supplier.getPlatformAndChannelSupplierById(requestData, function (data) {
           let obj = {};
           obj.orderDetails = self.orderDetailsDialog;
           obj.trackingNo = '';
           obj.partnerId = self.orderDetailsDialog[0].supplierId;
           obj.partnerName = self.orderDetailsDialog[0].supplierName;
-          obj.cel = data.data.tel;
-          obj.contacts = data.data.name;
+          obj.cel = data.data.cel;
+          obj.contacts = data.data.contacts;
           obj.address = data.data.address;
           vos.push(obj);
           self.clearOrderDetailDialog();

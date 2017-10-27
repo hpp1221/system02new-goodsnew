@@ -35,6 +35,13 @@ Vue.prototype.httpApi.supplier.getById = function (params, successCallback) {
       successCallback(data);
     })
 };
+//根据id查询平台或渠道供应商
+Vue.prototype.httpApi.supplier.getPlatformAndChannelSupplierById = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/supplier/getPlatformAndChannelSupplierById', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //查询供应商列表总数
 Vue.prototype.httpApi.supplier.getSupplierCountByQuery = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/supplier/getSupplierCountByQuery', params,

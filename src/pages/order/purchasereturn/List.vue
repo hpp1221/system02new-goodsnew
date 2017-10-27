@@ -9,7 +9,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="供应商">
-          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.partnerName" class="long-input"></el-input>
+          <el-input placeholder="请输入供应商名称" v-model="easyForm.partnerName" class="long-input"></el-input>
+        </el-form-item>
+        <el-form-item label="退单号">
+          <el-input placeholder="请输入退单号" v-model="easyForm.orderNumber" class="long-input"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -30,11 +33,9 @@
           </el-form-item>
           <el-form-item label="下单时间">
             <el-date-picker
-              v-model="form.createTime"
-              type="datetime"
-              placeholder="选择日期时间"
-              align="right"
-              :picker-options="pickerOptions1">
+              type="daterange"
+              placeholder="选择日期范围"
+              v-model="form.dateRange">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="供应商名称">
@@ -97,11 +98,15 @@
         form: {
           orderNumber: '',
           orderStatus: [],
-          partnerName: ''
+          partnerName: '',
+          dateRange: [null,null],
+          startTime: '',
+          endTime: ''
         },
         easyForm: {//简单查询
           partnerName: '',
-          orderStatus: []
+          orderStatus: [],
+          orderNumber: ''
         },
         totalOrderStatus: [
           {
@@ -181,8 +186,10 @@
           token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
-          type: 1//1是采购退货，2是销售退货
+          type: 1,//1是采购退货，2是销售退货
+          //  searchReturnOrderVO: JSON.stringify(self.easyForm)
         };
+
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
           self.searchType = 1;
@@ -198,9 +205,12 @@
           pageNo: num,
           type: 1//1是采购退货，2是销售退货
         };
+        self.form.startTime = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
+        self.form.endTime = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
           self.searchType = 2;
+          self.advanceSearch = false;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
