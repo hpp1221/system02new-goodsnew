@@ -3,41 +3,33 @@
     <div class="wrapper">
       <h3 class="page-title">门店要货单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button v-if="type == 4" style="display: none" type="text"
-                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <!--<el-button v-if="type != 4" style="display: none" type="text"-->
+        <!--class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印-->
+        <!--</el-button>-->
+        <el-button v-if="type != 4">导出
         </el-button>
-        <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
-        </el-button>
-        <el-button v-if="type == 4" style="display: none" type="text"
-                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-        </el-button>
-        <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-        </el-button>
-        <el-button v-if="type == 4 || type == 0" type="text" style="display: none" @click="cancelGetGoods"
-                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
-        </el-button>
-        <el-button v-else type="text" @click="cancelGetGoods"
-                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        <!--<el-button v-if="type == 4 || type == 0" type="text" style="display: none" @click="cancelGetGoods"-->
+        <!--class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废-->
+        <!--</el-button>-->
+        <el-button v-if="type == 1 || type == 2" type="text" @click="cancelGetGoods">作废
         </el-button>
         <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
                    :label="item.value" :key="item.value">
           {{item.label}}
         </el-button>
       </div>
-      <el-form ref="form" :model="form" class="request-form storegetgoods-nav" label-width="80px"
+      <el-form ref="form" :model="form" class="request-form" label-width="80px"
                inline style="margin-top: 75px">
-        <el-form-item label="单据编码">
+        <el-form-item label="单据编码:">
           {{form.tradeNumber}}
         </el-form-item>
-        <el-form-item label="要货门店">
+        <el-form-item label="要货门店:">
           {{form.storeName}}
         </el-form-item>
-        <el-form-item label="要货人">
+        <el-form-item label="要货人:">
           {{form.createUserName}}
         </el-form-item>
-        <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column type="selection" width="55" prop="supplierId">
-          </el-table-column>
+        <el-table :data="getGoodsRecordDetails" style="width: 100%">
           <el-table-column
             type="index"
             width="70">
@@ -85,11 +77,23 @@
           <el-table-column label="备注" prop="remark">
           </el-table-column>
         </el-table>
-        <el-form-item>
-          <h4 class="el-icon-arrow-down" style="margin-top: 30px">操作日志</h4>
-        </el-form-item>
-        <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
+        <!--<el-form-item>-->
+        <!--<h4 class="el-icon-arrow-down" style="margin-top: 30px">操作日志</h4>-->
+        <!--</el-form-item>-->
+        <div class="goodsinout-detail-bottom">
+          <p>操作日志
+            <el-switch
+              v-model="operationLogVisible"
+              on-text=""
+              off-text="">
+            </el-switch>
+          </p>
+        </div>
+        <el-table v-if="operationLogVisible" :data="tableData" style="width: 100%">
           <el-table-column prop="time" label="操作时间">
+            <template slot-scope="scope">
+              <span>{{moment(scope.row.time).format('YYYY-MM-DD  HH:mm:ss')}}</span>
+            </template>
           </el-table-column>
 
           <el-table-column prop="name" label="操作人">
@@ -117,10 +121,11 @@
         },
         type: '',
         tableData: [],
+        operationLogVisible: false,
         getGoodsRecordDetails: [],
         typeLists: [//高级查询的单据状态
           {
-            value: '4',
+            value: '0',
             label: "返回"
           },
           {
@@ -132,13 +137,14 @@
             label: "待发货审核"
           },
           {
-            value: '0',
-            label: "已完成"
-          },
-          {
             value: '3',
             label: "待收货确认"
           },
+          {
+            value: '4',
+            label: "返回"
+          },
+
         ],
         listIndex: '',//现在正在添加的某个list的下标
       }
@@ -152,13 +158,12 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           id: id,
-        }
+        };
         self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
-          console.log('detailgoods', data)
-          self.form = data.data
-          self.type = data.data.type
-          self.getGoodsRecordDetails = data.data.list
-          self.tableData = data.data.flowList
+          self.form = data.data;
+          self.type = data.data.type;
+          self.getGoodsRecordDetails = data.data.list;
+          self.tableData = data.data.flowList;
         })
       },
       getGoodsExaminePass() {//通过
@@ -170,14 +175,14 @@
             token: window.localStorage.getItem('token'),
             type: self.type,
             tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
-          }
+          };
           self.$confirm('确认要通过该审核？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
             self.httpApi.store.examine(requestData, function (data) {
-              self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+              self.$router.push('/store/management/getgoods/list');
             })
           })
         }
@@ -198,7 +203,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.$router.push('/store/management/getgoods/list');
+            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
           });
         })
       },

@@ -90,20 +90,6 @@
         this.select(page.size, page.num);
 
       },
-//      getSupplierList() { //供应商管理列表
-//        let self = this
-//        let requestData = {
-//          token: window.localStorage.getItem('token'),
-//          pageSize: self.pageSize,
-//          pageNo: self.pageNum
-//        };
-//        self.httpApi.supplier.listByPage(requestData, function (data) {
-//          self.tableData = data.data
-//        });
-//        self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
-//          self.totalPage = data.data
-//        });
-//      },
       select(size, num) { //查询
         let self = this;
         let requestData = {
@@ -162,7 +148,6 @@
           supplierString += ',' + arr[i].supplierId
         }
         supplierString = supplierString.substring(1,supplierString.length)
-        console.log('supplierString',supplierString)
         location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString + '&token=' + window.localStorage.getItem('token') + '&query=' + this.form.query;
       },
       updateSupplier(supplierId) { //修改供应商详情

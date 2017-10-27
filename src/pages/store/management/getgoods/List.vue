@@ -41,8 +41,6 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="要货门店">
-            <!--<el-input placeholder="请输入要货门店名称" class="form-input" v-model="form.storeId"-->
-            <!--style="width: 80%"></el-input>-->
             <el-select placeholder="全部门店" v-model="form.storeId">
               <el-option v-for="item in storeIds" :key="item.name" :label="item.name" :value="item.id"></el-option>
             </el-select>
@@ -54,11 +52,6 @@
             <el-checkbox-group v-model="form.typeList" @change="handleCheckedCitiesChange">
               <el-checkbox v-for="item in typeLists" :label="item.value" :key="item.value">{{item.label}}</el-checkbox>
             </el-checkbox-group>
-            <!--<el-checkbox-group v-model="form.typeList">-->
-            <!--<el-checkbox v-for="item in typeLists" :label="item.value" :value="item.value" :key="item.value">-->
-            <!--{{item.label}}-->
-            <!--</el-checkbox>-->
-            <!--</el-checkbox-group>-->
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -95,8 +88,8 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getGoodsNumberDetail(scope.row.id)">单据详情</el-dropdown-item>
-                <el-dropdown-item @click.native="getGoodsExamine(scope.row.id)">审核</el-dropdown-item>
-                <el-dropdown-item @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type != 0 && scope.row.type != 4 " @click.native="getGoodsExamine(scope.row)">审核</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type == 1 || scope.row.type == 2" @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -198,8 +191,8 @@
         this.checkAll = checkedCount === this.typeLists.length;
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.typeLists.length;
       },
-      getGoodsExamine(id) {//审核
-        let url = '/store/management/getgoods/examine/' + id;
+      getGoodsExamine(row) {//审核
+        let url = '/store/management/getgoods/examine/' + row.id;
         this.$router.push(url);
       },
       getGoodsNumberDetail(id) {//要货单详情

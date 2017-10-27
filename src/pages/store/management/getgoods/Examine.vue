@@ -3,20 +3,15 @@
     <div class="wrapper">
       <h3 class="page-title">门店要货单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <!--<el-button v-if="type == 4" style="display: none" type="text"-->
+        <!--<el-button v-if="type != 4" style="display: none" type="text"-->
         <!--class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印-->
-        <!--</el-button>-->
-        <!--<el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印-->
-        <!--</el-button>-->
-        <!--<el-button v-if="type == 4" style="display: none" type="text"-->
-        <!--class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出-->
         <!--</el-button>-->
         <el-button v-if="type != 4">导出
         </el-button>
         <!--<el-button v-if="type == 4 || type == 0" type="text" style="display: none" @click="cancelGetGoods"-->
         <!--class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废-->
         <!--</el-button>-->
-        <el-button v-if="type !=4 && type != 0" type="text" @click="cancelGetGoods">作废
+        <el-button v-if="type == 1 || type == 2" type="text" @click="cancelGetGoods">作废
         </el-button>
         <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
                    :label="item.value" :key="item.value">
@@ -96,6 +91,9 @@
         </div>
         <el-table v-if="operationLogVisible" :data="tableData" style="width: 100%">
           <el-table-column prop="time" label="操作时间">
+            <template slot-scope="scope">
+              <span>{{moment(scope.row.time).format('YYYY-MM-DD  HH:mm:ss')}}</span>
+            </template>
           </el-table-column>
 
           <el-table-column prop="name" label="操作人">
@@ -128,7 +126,7 @@
         typeLists: [//高级查询的单据状态
           {
             value: '0',
-            label: "已完成"
+            label: "返回"
           },
           {
             value: '1',
@@ -162,7 +160,6 @@
           id: id,
         };
         self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
-          console.log('detailgoods', data)
           self.form = data.data;
           self.type = data.data.type;
           self.getGoodsRecordDetails = data.data.list;
