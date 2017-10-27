@@ -2,6 +2,69 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">新增采购退货单</h3>
+      <el-dialog title="添加退货商品" :visible.sync="addGoodsVisible" width="1000px" style="z-index:9 !important;">
+        <el-table :data="orderDetailsDialog" border :span-method="arraySpanDialogMethod"
+        >
+          <el-table-column label="主图" width="80">
+            <template slot-scope="scope">
+              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                   v-if="scope.row.url"/>
+            </template>
+          </el-table-column>
+          <el-table-column label="商品编码" width="80">
+            <template slot-scope="scope">
+              <el-autocomplete
+                v-model="scope.row.combination"
+                :trigger-on-focus="false"
+                :fetch-suggestions="querySearchAsync"
+                @select="handleSelect"
+                :props="{value:'combination',label:'combination'}"
+                icon="el-icon-more"
+                popper-class="purchase-return-autocomplete">
+              </el-autocomplete>
+            </template>
+          </el-table-column>
+          <el-table-column label="商品名称" width="80">
+
+          </el-table-column>
+
+          <el-table-column label="规格" prop="goodsSpec">
+
+          </el-table-column>
+          <el-table-column label="数量">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.num" @keyup.native="judgeNum(scope.row.num,scope.$index)"
+                        @afterpaste.native="judgeNum(scope.row.num,scope.$index)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" prop="goodsUnit">
+
+          </el-table-column>
+          <el-table-column label="单价" prop="price">
+
+          </el-table-column>
+          <el-table-column label="小计" prop="subtotal">
+            <template slot-scope="scope">
+              <span v-if="scope.row.subtotal">{{scope.row.subtotal}}</span>
+              <span v-else></span>
+            </template>
+          </el-table-column>
+          <el-table-column label="审批价">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.approvePrice"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.remark"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer">
+          <el-button @click="sureAddGoods" type="primary">确定</el-button>
+          <el-button @click="cancelAddGoods">取消</el-button>
+        </div>
+      </el-dialog>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="供应商">
           <el-input
@@ -10,18 +73,18 @@
             placeholder="请选择供应商">
             <i slot="suffix" class="iconfont icon-more" @click="iconClick" style="cursor:pointer;line-height: 40px"></i>
           </el-input>
+          <el-button @click="openGoodsDialog">添加退货商品</el-button>
         </el-form-item>
-        <el-form-item v-for="r in form.returnOrderSupplierVOS" :key="r.partnerId">
+        <el-form-item v-for="(r,rindex) in form.returnOrderSupplierVOS" :key="r.partnerId" v-if="r.partnerId">
           <el-table :data="r.orderDetails" border :span-method="arraySpanMethod"
-                    >
+          >
             <el-table-column
               type="index"
               width="70">
             </el-table-column>
             <el-table-column width="70">
               <template slot-scope="scope">
-                <i class="el-icon-plus" @click="addLine"></i>
-                <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
+                <i class="el-icon-minus" @click="deleteLine(rindex,scope.$index)"></i>
               </template>
             </el-table-column>
             <el-table-column label="主图" width="80">
@@ -30,18 +93,8 @@
                      v-if="scope.row.url"/>
               </template>
             </el-table-column>
-            <el-table-column label="商品编码" width="80">
-              <template slot-scope="scope">
-                <el-autocomplete
-                  @click.native="handleClick(scope.$index)"
-                  v-model="scope.row.combination"
-                  :trigger-on-focus="false"
-                  :fetch-suggestions="querySearchAsync"
-                  @select="handleSelect"
-                  :props="{value:'combination',label:'combination'}"
-                  icon="el-icon-more">
-                </el-autocomplete>
-              </template>
+            <el-table-column label="商品编码" width="80" prop="combination">
+
             </el-table-column>
             <el-table-column label="商品名称" width="80">
 
@@ -79,27 +132,30 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-form-item label="退款信息" style="margin-top: 20px;clear:both">
+          <el-form-item label="退款信息">
             <p>
               <i class="el-icon-edit"
-                 @click="editDelivery"
+                 @click="editDelivery(rindex)"
                  style="cursor: pointer">
 
               </i>
-              <span v-if="form.contacts">联系人：{{form.contacts}}</span>
-              <span v-if="form.cel">联系电话：{{form.cel}}</span>
-              <span v-if="form.address">退货地址：{{form.address}}</span>
+              <span v-if="r.contacts">联系人：{{r.contacts}}</span>
+              <span v-if="r.cel">联系电话：{{r.cel}}</span>
+              <span v-if="r.address">退货地址：{{r.address}}</span>
               <!--<span v-if="form.depositBank">开户行：{{form.depositBank}}</span>-->
               <!--<span v-if="form.depositBankName">开户名称：{{form.depositBankName}}</span>-->
               <!--<span v-if="form.depositBankAccount">开户账号 {{form.depositBankAccount}}</span>-->
               <!--<span v-if="form.postcode">邮编：{{form.postcode}}</span>-->
             </p>
           </el-form-item>
+          <el-form-item label="运单号">
+            <el-input v-model="r.trackingNo" class="form-input"></el-input>
+          </el-form-item>
           <el-form-item label="备注说明">
-            <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
+            <el-input type="textarea" v-model="r.remark" class="form-input" autosize resize="none"></el-input>
           </el-form-item>
         </el-form-item>
-        <div class="order-table-total">
+        <div class="order-table-total" v-if="form.orderAmount">
           <!--<div class="top">-->
           <!--<el-checkbox class="checkbox"></el-checkbox>-->
           <!--<p class="checkbox">已经申请退货，请输入获批退款金额：</p>-->
@@ -107,20 +163,19 @@
           <!--</div>-->
           <div class="bottom">
             <p class="first-p">审批价格：</p>
-            <p class="second-p">86.40</p>
+            <p class="second-p">{{form.orderAmount}}</p>
           </div>
         </div>
 
 
-        <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
+        <el-form-item label="附件信息" style="margin-top: 20px;clear:both" v-if="form.orderAmount">
+          <uploadfiles
+            :fileList="form.att"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadfiles>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="form.orderAmount">
           <el-button type="primary" @click="submit">确定</el-button>
           <el-button>取消</el-button>
         </el-form-item>
@@ -141,7 +196,7 @@
           <!--</el-form-item>-->
         </el-form>
         <div slot="footer">
-          <el-button @click="sureEdit" type="primary">确定</el-button>
+          <el-button @click="sureEdit(editDeliveryForm.index)" type="primary">确定</el-button>
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </div>
       </el-dialog>
@@ -169,36 +224,38 @@
       return {
         form: {
           returnOrderSupplierVOS: [
-            {
-              orderDetails: [
-                {
-                  goodsNo: '',//商品编号
-                  goodsName: '',//商品名
-                  goodsSpec: '',//规格
-                  goodsUnit: '',
-                  num: '',
-                  subtotal: '',//小计
-                  price: '',//价格
-                  combination: '',//编号和名称组合
-                  goodsSkuId: '',//规格id
-                  approvePrice: '',//审批价格
-                  remark: '',//备注
-                }
-              ],
-              trackingNo: '',
-              partnerId: '',
-              partnerName: '',
-              cel: '',
-              contacts: '',
-              address: ''
-            }
+//            {
+//              orderDetails: [
+//                {
+//                  goodsNo: '',//商品编号
+//                  goodsName: '',//商品名
+//                  goodsSpec: '',//规格
+//                  goodsUnit: '',
+//                  num: '',
+//                  subtotal: '',//小计
+//                  price: '',//价格
+//                  combination: '',//编号和名称组合
+//                  goodsSkuId: '',//规格id
+//                  approvePrice: '',//审批价格
+//                  remark: '',//备注
+//                }
+//              ],
+//              trackingNo: '',
+//              partnerId: '',
+//              partnerName: '',
+//              cel: '',
+//              contacts: '',
+//              address: ''
+//            }
           ],
           type: 1,//1是采购退货，2是销售退货
           partnerId: '',
           partnerName: '',
-          orderAmount: ''
+          orderAmount: '',
+          att: []
         },
         editDeliveryForm: {
+          index: '',
           contacts: '',//联系人
           cel: '',//手机号
           address: '',//地址
@@ -208,56 +265,131 @@
 //          postcode:'',//邮编
         },
         rules: {},
-        listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
         supplierListVisible: false,//供应商modal
+        addGoodsVisible: false,
         supplierList: [],
+        orderDetailsDialog: [{
+          goodsNo: '',//商品编号
+          goodsName: '',//商品名
+          goodsSpec: '',//规格
+          goodsUnit: '',
+          num: '',
+          subtotal: '',//小计
+          price: '',//价格
+          combination: '',//编号和名称组合
+          goodsSkuId: '',//规格id
+          approvePrice: '',//审批价格
+          remark: '',//备注
+          supplierId: '',
+          supplierName: ''
+        }],
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        invoiceTypes: [
-          {
-            id: 0,
-            name: '不开发票'
-          },
-          {
-            id: 1,
-            name: '电子发票'
-          },
-          {
-            id: 2,
-            name: '普通发票'
-          }
-        ]
+        imgToken: ''
       }
-    },
-//    watch: {
-//      'form.returnOrderSupplierVOSorderDetails': {
-//        handler: function (val, oldVal) {
-//          for (let i = 0; i < val.length; i++) {
-//            this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
-//          }
-//        },
-//        // 深度观察
-//        deep: true
-//      }
-//
-//    },
-    components: {
-      'pagination': require('../../../components/pagination')
     },
     created(){
-      if (window.localStorage.getItem('userinfo')) {
-        console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
-        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-//        this.form.orderShipment.customer = userinfo.companyName;
-//        this.form.orderShipment.userName = userinfo.name;
-//        this.form.orderShipment.userPhone = userinfo.cel;
-//        this.form.orderShipment.userAddress = userinfo.companyName;
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      })
+    },
+    watch: {
+      'orderDetailsDialog': {
+        handler: function (val, oldVal) {
+          for (let i = 0; i < val.length; i++) {
+            this.orderDetailsDialog[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
+          }
+        },
+        // 深度观察
+        deep: true
+      },
+      'form.returnOrderSupplierVOS': {
+        handler: function (val, oldVal) {
+          let amount = 0;
+          for (let i = 0; i < val.length; i++) {
+            for (let j = 0; j < val[i].orderDetails.length; j++) {
+              amount += parseInt(val[i].orderDetails[j].approvePrice);
+            }
+          }
+          this.form.orderAmount = amount;
+        },
+        // 深度观察
+        deep: true
       }
     },
+    components: {
+      'pagination': require('../../../components/pagination'),
+      'uploadfiles':require('../../../components/uploadfiles'),
+    },
     methods: {
+      openGoodsDialog(){//打开添加退货商品model
+        if (!this.form.partnerId) {
+          this.$message.error('请先选择供应商');
+        } else {
+          this.addGoodsVisible = true;
+        }
+      },
+      sureAddGoods(){
+        let vos = this.form.returnOrderSupplierVOS;
+        for (let i = 0; i < vos.length; i++) {
+          if (vos[i].partnerId === this.orderDetailsDialog[0].supplierId) {
+            vos[i].orderDetails.push(this.orderDetailsDialog[0]);
+            this.clearOrderDetailDialog();
+            this.addGoodsVisible = false;
+            return
+          }
+        }
+        let self = this;
+        let requestData = {
+          token: localStorage.getItem('token'),
+          supplierId: this.orderDetailsDialog[0].supplierId
+        };
+        self.httpApi.supplier.getById(requestData, function (data) {
+          let obj = {};
+          obj.orderDetails = self.orderDetailsDialog;
+          obj.trackingNo = '';
+          obj.partnerId = self.orderDetailsDialog[0].supplierId;
+          obj.partnerName = self.orderDetailsDialog[0].supplierName;
+          obj.cel = data.data.tel;
+          obj.contacts = data.data.name;
+          obj.address = data.data.address;
+          vos.push(obj);
+          self.clearOrderDetailDialog();
+          self.addGoodsVisible = false;
+        });
+      },
+      cancelAddGoods(){
+        this.clearOrderDetailDialog();
+        this.addGoodsVisible = false;
+      },
+      clearOrderDetailDialog(){
+        this.orderDetailsDialog = [{
+          goodsNo: '',//商品编号
+          goodsName: '',//商品名
+          goodsSpec: '',//规格
+          goodsUnit: '',
+          num: '',
+          subtotal: '',//小计
+          price: '',//价格
+          combination: '',//编号和名称组合
+          goodsSkuId: '',//规格id
+          approvePrice: '',//审批价格
+          remark: '',//备注
+          supplierId: '',
+          supplierName: ''
+        }];
+      },
+      arraySpanDialogMethod({row, column, rowIndex, columnIndex}) {
+        if (columnIndex === 1) {
+          return [1, 2];
+        } else if (columnIndex === 2) {
+          return [0, 0];
+        }
+      },
       arraySpanMethod({row, column, rowIndex, columnIndex}) {
         if (columnIndex === 3) {
           return [1, 2];
@@ -295,17 +427,18 @@
         });
       },
       judgeNum(value, index){//判断数量是否为整数
-        this.form.orderDetails[index].num = value.replace(/\D/g, '');
+        this.orderDetailsDialog[index].num = value.replace(/\D/g, '');
       },
-      editDelivery(){//显示修改模态框
+      editDelivery(index){//显示修改模态框
         this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form);
+        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.returnOrderSupplierVOS[index]);
+        this.editDeliveryForm.index = index;
       },
-      sureEdit(){//确认修改
+      sureEdit(index){//确认修改
         this.editDeliveryVisible = false;
-        this.form.contacts = this.editDeliveryForm.contacts;
-        this.form.cel = this.editDeliveryForm.cel;
-        this.form.address = this.editDeliveryForm.address;
+        this.form.returnOrderSupplierVOS[index].contacts = this.editDeliveryForm.contacts;
+        this.form.returnOrderSupplierVOS[index].cel = this.editDeliveryForm.cel;
+        this.form.returnOrderSupplierVOS[index].address = this.editDeliveryForm.address;
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
@@ -329,44 +462,38 @@
         });
       },
       handleSelect(item){//判断是否已选该商品
-        let list = this.form.orderDetails;
+        let list = this.form.returnOrderSupplierVOS;
         for (let i = 0; i < list.length; i++) {
-          if (item.goodsNo === list[i].goodsNo) {
-            this.$message.error('已有此类商品');
-            this.form.orderDetails[this.listIndex].combination = '';
-            return
+          for (let j = 0; j < list[i].orderDetails.length; j++) {
+            if (item.goodsNo === list[i].orderDetails[j].goodsNo) {
+              this.$message.error('已有此类商品');
+              this.orderDetailsDialog[0].combination = '';
+              return
+            }
           }
         }
-        this.form.orderDetails[this.listIndex] = item;
+        this.orderDetailsDialog[0] = item;
       },
-      handleClick(index){//存商品index
-        this.listIndex = index;
-      },
+
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        let requestData = {token: window.localStorage.getItem('token'),returnOrderVO:JSON.stringify(self.form)};
+       //requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
           self.$router.push('/order/purchasereturn/list');
         });
       },
-      addLine(){//添加一行
-        this.form.returnOrderSupplierVOS.orderDetails.push({
-          goodsNo: '',//商品编号
-          goodsName: '',//商品名
-          goodsSpec: '',//规格
-          goodsUnit: '',
-          price: '',//价格
-          num: '',
-          subtotal: '',//小计
-          combination: '',//编号和名称组合
-          goodsSkuId: '',//规格id
-          approvePrice: '',//审批价
-        })
-      },
-      deleteLine(index){
-        this.form.orderDetails.length === 1 ? this.$message('请至少选择一个商品') : this.form.orderDetails.splice(index, 1);
+      deleteLine(outIndex, innerIndex){
+        this.form.returnOrderSupplierVOS[outIndex].orderDetails.splice(innerIndex, 1);
+        if (this.form.returnOrderSupplierVOS[outIndex].orderDetails.length === 0) {
+          this.form.returnOrderSupplierVOS.splice(outIndex, 1);
+        }
       },
     }
   }
 </script>
+<style>
+  .purchase-return-autocomplete {
+    z-index: 9999999999 !important;
+  }
+</style>

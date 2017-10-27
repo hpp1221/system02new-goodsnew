@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">租户详情</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="120px">
+      <el-form ref="form" :model="form" class="request-form" label-width="120px">
         <el-form-item label="登录账号" prop="loginId">
           <span>{{companySuffix}}{{form.loginId}}</span>
         </el-form-item>

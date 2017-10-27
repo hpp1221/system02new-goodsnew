@@ -92,16 +92,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="订单状态">
-            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
-                               style="display: inline;margin-left: 30px">
-              <el-checkbox
-                v-for="t in totalOrderStatus"
-                :key="t.id"
-                :label="t.id">
-                {{t.name}}
-              </el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox
+              @getCheckList="getCheckList"
+              :dataList="totalOrderStatus">
+            </getcheckbox>
           </el-form-item>
           <!--<el-form-item label="付款状态">-->
           <!--<el-checkbox-group v-model="form.payType">-->
@@ -227,13 +221,17 @@
       this.getAddressList()
     },
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'getcheckbox': require('../../../components/getcheckbox'),
     },
     methods: {
+      getCheckList(e){
+        this.form.orderStatus = e;
+      },
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       addOrder(){
         this.$router.push('/order/purchaseorder/add');

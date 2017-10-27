@@ -3,11 +3,13 @@
     <div class="wrapper allocationwrapper">
       <h3 class="page-title">门店调拨单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
         </el-button>
-        <el-button v-if="type == 4" style="display: none" type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
+        <el-button v-if="type == 4" style="display: none" type="text"
+                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
         <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
         </el-button>
@@ -17,11 +19,13 @@
         <el-button v-else type="text" @click="cancelGetGoods"
                    class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
         </el-button>
-        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists" :label="item.value" :key="item.value">
+        <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
+                   :label="item.value" :key="item.value">
           {{item.label}}
         </el-button>
       </div>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px" inline style="margin-top: 75px">
+      <el-form ref="form" :model="form" :rules="rules" class="request-form storegetgoods-nav" label-width="80px" inline
+               style="margin-top: 75px">
         <el-form-item label="调拨单号">
           {{form.tradeNo}}
         </el-form-item>
@@ -123,7 +127,7 @@
       }
     },
     created() {
-      this.$route.query.allocationId ? this.select(this.$route.query.allocationId) : this.$router.push('/error');
+      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
     methods: {
       select(id) {//详情列表
@@ -131,7 +135,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           allocationId: id,
-        }
+        };
         self.httpApi.store.storeAllocationInfo(requestData, function (data) {
           self.form = data.data
           self.type = data.data.type
@@ -152,19 +156,7 @@
             type: 'warning',
           }).then(() => {
             self.httpApi.store.storeAllocationRecordAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (data.code == 10000) {
-                self.$message({
-                  type: 'success',
-                  message: '已通过该审核!'
-                });
-                self.$router.push('/store/storemanagement/storeallocation/list');
-              } else {
-                self.$message({
-                  type: 'info',
-                  message: '已取消'
-                });
-              }
+              self.$router.push('/store/management/allocation/list');
             })
           })
         } else if (self.type == "2") {
@@ -174,19 +166,7 @@
             type: 'warning',
           }).then(() => {
             self.httpApi.store.storeAllocationRecordSendAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (data.code == 10000) {
-                self.$message({
-                  type: 'success',
-                  message: '已通过该审核!'
-                });
-                self.$router.push('/store/storemanagement/storeallocation/list');
-              } else {
-                self.$message({
-                  type: 'info',
-                  message: '已取消'
-                });
-              }
+              self.$router.push('/store/management/allocation/list');
             })
           })
         } else if (self.type == "3") {
@@ -196,23 +176,11 @@
             type: 'warning',
           }).then(() => {
             self.httpApi.store.storeAllocationRecordReceiveAdopt(requestData, function (data) {
-              console.log('deta', res)
-              if (data.code == 10000) {
-                self.$message({
-                  type: 'success',
-                  message: '已通过该审核!'
-                });
-                self.$router.push('/store/storemanagement/storeallocation/list');
-              } else {
-                self.$message({
-                  type: 'info',
-                  message: '已取消'
-                });
-              }
+              self.$router.push('/store/management/allocation/list');
             })
           })
-        }else if(self.type == "4" || self.type == "0"){
-          self.$router.push('/store/storemanagement/storeallocation/list');
+        } else if (self.type == "4" || self.type == "0") {
+          self.$router.push('/store/management/allocation/list');
         }
 
 
@@ -235,7 +203,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.$router.push('/store/storemanagement/storeallocation/list');
+            self.$router.push('/store/management/allocation/list');
           });
         })
       },

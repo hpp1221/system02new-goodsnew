@@ -12,7 +12,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="所属行业">
-          <el-radio-group @change="industryChanged" v-model="form.industryType">
+          <el-radio-group @change="industryChanged" v-model="form.industryType" v-if="form.industryType">
             <el-radio
               :key="t.value"
               :label="t.value"

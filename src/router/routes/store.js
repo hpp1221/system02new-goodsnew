@@ -3,51 +3,51 @@
  */
 export default [
   {
-    path: '/store/storemaintenance/storemaintenancelist', //门店维护
-    component: resolve => require(['@/pages/store/storemaintenance/StoreMaintenanceList'], resolve)
+    path: '/store/maintenance/list', //门店维护
+    component: resolve => require(['@/pages/store/maintenance/list'], resolve)
   },
   {
-    path: '/store/storemaintenance/intenance', //所属仓库维护
-    component: resolve => require(['@/pages/store/storemaintenance/intenance'], resolve)
+    path: '/store/maintenance/intenance', //所属仓库维护
+    component: resolve => require(['@/pages/store/maintenance/intenance'], resolve)
   },
   {
-    path: '/store/storemanagement/storegetgoods/storegetgoodslist', //要货单列表
-    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsList'], resolve)
+    path: '/store/management/getgoods/list', //要货单列表
+    component: resolve => require(['@/pages/store/management/getgoods/list'], resolve)
   },
   {
-    path: '/store/storemanagement/storegetgoods/creategetgoods', //要货单新增
-    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/CreateGetGoods'], resolve)
+    path: '/store/management/getgoods/create', //要货单新增
+    component: resolve => require(['@/pages/store/management/getgoods/create'], resolve)
   },
   {
-    path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', //要货单详情
-    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsDetail'], resolve)
+    path: '/store/management/getgoods/detail/:id', //要货单详情
+    component: resolve => require(['@/pages/store/management/getgoods/detail'], resolve)
   },
   {
-    path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', //要货单审核
-    component: resolve => require(['@/pages/store/storemanagement/storegetgoods/StoreGetGoodsExamine'], resolve)
+    path: '/store/management/getgoods/examine/:id', //要货单审核
+    component: resolve => require(['@/pages/store/management/getgoods/examine'], resolve)
   },
   {
-    path: '/store/storemanagement/storeinventory/storeinventorylist', //门店盘点
-    component: resolve => require(['@/pages/store/storemanagement/storeinventory/StoreInventoryList'], resolve)
+    path: '/store/management/inventory/list', //门店盘点
+    component: resolve => require(['@/pages/store/management/inventory/list'], resolve)
   },
   {
-    path: '/store/storemanagement/storestock/list', //门店库存
-    component: resolve => require(['@/pages/store/storemanagement/storestock/List'], resolve)
+    path: '/store/management/stock/list', //门店库存
+    component: resolve => require(['@/pages/store/management/stock/List'], resolve)
   },
   {
-    path: '/store/storemanagement/storeallocation/list', //门店调拨
-    component: resolve => require(['@/pages/store/storemanagement/storeallocation/List'], resolve)
+    path: '/store/management/allocation/list', //门店调拨
+    component: resolve => require(['@/pages/store/management/allocation/List'], resolve)
   },
   {
-    path: '/store/storemanagement/storeallocation/allocationadd', //门店调拨新增
-    component: resolve => require(['@/pages/store/storemanagement/storeallocation/AllocationAdd'], resolve)
+    path: '/store/management/allocation/add', //门店调拨新增
+    component: resolve => require(['@/pages/store/management/allocation/Add'], resolve)
   },
   {
-    path: '/store/storemanagement/storeallocation/detail', //门店调拨单详情
-    component: resolve => require(['@/pages/store/storemanagement/storeallocation/Detail'], resolve)
+    path: '/store/management/allocation/detail/:id', //门店调拨单详情
+    component: resolve => require(['@/pages/store/management/allocation/Detail'], resolve)
   },
   {
-    path: '/store/storemanagement/storeallocation/examine', //门店调拨单审核
-    component: resolve => require(['@/pages/store/storemanagement/storeallocation/Examine'], resolve)
+    path: '/store/management/allocation/examine/:id', //门店调拨单审核
+    component: resolve => require(['@/pages/store/management/allocation/Examine'], resolve)
   },
 ]

@@ -16,7 +16,7 @@
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="select">导入</el-button>
@@ -191,6 +191,7 @@
           },
         ],//订单标签
         advanceSearch: false,
+        searchType: 1
       }
     },
     created(){
@@ -203,7 +204,7 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       addOrder(){
         this.$router.push('/order/saleorder/add');
@@ -223,6 +224,7 @@
 
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.order.list(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
@@ -239,6 +241,7 @@
         self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.order.list(requestData, function (data) {
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
