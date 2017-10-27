@@ -88,6 +88,7 @@
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
+
       },
 //      getSupplierList() { //供应商管理列表
 //        let self = this

@@ -188,10 +188,10 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <el-dialog title="修改权限" :visible.sync="updateAuthorityDialog" size="tiny">
-        <el-form ref="form" :model="updateForm" label-width="90px">
+      <el-dialog title="修改权限" :visible.sync="updateAuthorityDialog" width="500px">
+        <el-form ref="form" :model="updateForm" label-width="90px" class="request-form">
           <el-form-item label="权限名称">
-            <el-input v-model="updateForm.name"></el-input>
+            <el-input v-model="updateForm.name" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="上级权限">
             <el-select v-model="updateForm.pid" disabled v-if="updateForm.pid!=0">
@@ -204,13 +204,13 @@
             <span v-else>无</span>
           </el-form-item>
           <el-form-item label="url">
-            <el-input v-model="updateForm.url"></el-input>
+            <el-input v-model="updateForm.url" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="图标">
-            <el-input v-model="updateForm.icon"></el-input>
+            <el-input v-model="updateForm.icon" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="排序">
-            <el-input v-model="updateForm.orders" type="number"></el-input>
+            <el-input v-model="updateForm.orders" type="number" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="类型">
             <el-select v-model="updateForm.type">
@@ -223,7 +223,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button @click="sureUpdateAuthority">确定</el-button>
+            <el-button @click="sureUpdateAuthority" type="primary">确定</el-button>
             <el-button @click="updateAuthorityDialog = false">取消</el-button>
           </el-form-item>
         </el-form>

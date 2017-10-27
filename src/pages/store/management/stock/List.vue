@@ -22,7 +22,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -93,13 +93,13 @@
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect"></brandselect>
             <!--<el-select-->
-              <!--placeholder="请选择商品品牌"-->
-              <!--v-model="form.brandName"-->
-              <!--value-key="name"-->
-              <!--filterable-->
-              <!--:loading="brandLoading"-->
-              <!--@visible-change="getBrand">-->
-              <!--<el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>-->
+            <!--placeholder="请选择商品品牌"-->
+            <!--v-model="form.brandName"-->
+            <!--value-key="name"-->
+            <!--filterable-->
+            <!--:loading="brandLoading"-->
+            <!--@visible-change="getBrand">-->
+            <!--<el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>-->
             <!--</el-select>-->
           </el-form-item>
           <el-form-item label="门店">
@@ -233,6 +233,7 @@
           console.log('list', response)
           let data = response.data;
           if (data.code === 10000) {
+
             self.tableData = data.data.list;
           }
         }).catch(function (error) {
@@ -253,19 +254,12 @@
           token: window.localStorage.getItem('token'),
           type: 2
         };
-        if (self.advanceSearch) {//高级搜索
-          requestData = Object.assign(requestData, self.shallowCopy(self.form))
-        }
-        self.$http.post('/ui/list', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          if (data.code == 10000) {
-            self.advanceSearch = false
-            self.tableData = data.data.list
-            self.totalPage = data.data.total
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
+        requestData = Object.assign(requestData, self.shallowCopy(self.form))
+        self.httpApi.stock.list(requestData,function (data) {
+          self.advanceSearch = false
+          self.tableData = data.data.list
+          self.totalPage = data.data.total
+        })
       },
       getCatList(val){
         let self = this;

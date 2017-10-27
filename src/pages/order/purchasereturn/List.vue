@@ -4,13 +4,12 @@
       <h3 class="page-title">采购退货单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
-          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
-            <el-option label="全部" :value="0"></el-option>
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
+          <el-select placeholder="全部订单" v-model="easyForm.orderStatus" multiple>
+            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="供应商">
-          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.supplier" class="long-input"></el-input>
+          <el-input placeholder="请输入供应商名称/退单号" v-model="easyForm.partnerName" class="long-input"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -25,13 +24,13 @@
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
         <el-form ref="form" :model="form" class="request-form" label-width="100px">
           <el-form-item label="退货单号">
-            <el-input placeholder="请输入退货单号" v-model="form.keyword" class="long-input">
+            <el-input placeholder="请输入退货单号" v-model="form.orderNumber" class="long-input">
 
             </el-input>
           </el-form-item>
           <el-form-item label="下单时间">
             <el-date-picker
-              v-model="form.orderTime"
+              v-model="form.createTime"
               type="datetime"
               placeholder="选择日期时间"
               align="right"
@@ -39,19 +38,10 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="供应商名称">
-            <el-input placeholder="请输入供应商名称/退单号" v-model="form.supplier" class="long-input"></el-input>
+            <el-input placeholder="请输入供应商名称/退单号" v-model="form.partnerName" class="long-input"></el-input>
           </el-form-item>
           <el-form-item label="退单状态">
-            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
-                               style="display: inline;margin-left: 30px">
-              <el-checkbox
-                v-for="t in totalOrderStatus"
-                :key="t.id"
-                :label="t.id">
-                {{t.name}}
-              </el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox @getCheckList="getCheckList" :dataList="totalOrderStatus"></getcheckbox>
           </el-form-item>
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -103,9 +93,15 @@
         tableData: [],
         checkAllOrderStatus: false,
         advanceSearch: false,
-        form: {},
+        searchType: 1,
+        form: {
+          orderNumber: '',
+          orderStatus: [],
+          partnerName: ''
+        },
         easyForm: {//简单查询
-
+          partnerName: '',
+          orderStatus: []
         },
         totalOrderStatus: [
           {
@@ -156,13 +152,17 @@
       let self = this;
     },
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'getcheckbox': require('../../../components/getcheckbox'),
     },
     methods: {
+      getCheckList(e){
+        this.form.orderStatus = e;
+      },
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       createPurchaseReturn(){//新增
         this.$router.push('/order/purchasereturn/add');
@@ -185,6 +185,7 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
@@ -199,6 +200,7 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });

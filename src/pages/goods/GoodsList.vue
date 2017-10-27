@@ -97,7 +97,7 @@
         </el-table-column>
       </el-table>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+        <el-form ref="form" :model="form" class="request-form">
           <el-form-item label="关键词">
             <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
 
@@ -107,21 +107,23 @@
             <catselect @getCatSelect="getFormCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
+            <brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>
           </el-form-item>
           <el-form-item label="所属供应商">
-            <supplierselect @getSupplierSelect="getSupplierSelect"></supplierselect>
-            <!--<el-input placeholder="请输入供应商名称" class="form-input" v-model="form.supplierName"></el-input>-->
+            <supplierselect @getSupplierSelect="getSupplierSelect" :outSupplier="form.supplier"
+                            :isClickFetch="false"></supplierselect>
           </el-form-item>
           <el-form-item label="商品标签">
-            <el-checkbox-group v-model="form.tags">
-              <el-checkbox :label="t.id" v-for="t in goodsTags" :key="t.id">{{t.name}}</el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox
+              @getCheckList="getTagsCheckList"
+              :dataList="goodsTags">
+            </getcheckbox>
           </el-form-item>
           <el-form-item label="所属仓库">
-            <el-checkbox-group v-model="form.addressList">
-              <el-checkbox :label="t" v-for="t in totalAddressList" :key="t.id">{{t.address}}</el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox
+              @getCheckList="getAddressCheckList"
+              :dataList="totalAddressList">
+            </getcheckbox>
           </el-form-item>
           <el-form-item label="库存状态">
             <el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>
@@ -129,12 +131,12 @@
             <el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>
           </el-form-item>
           <el-form-item label="商品状态">
-            <el-radio class="radio" v-model="form.type" :label="-1">全部</el-radio>
+            <el-radio class="radio" v-model="form.type" :label="''">全部</el-radio>
             <el-radio class="radio" v-model="form.type" :label="1">上架</el-radio>
             <el-radio class="radio" v-model="form.type" :label="0">下架</el-radio>
           </el-form-item>
           <el-form-item label="商品来源">
-            <el-radio class="radio" v-model="form.source" :label="-1">全部</el-radio>
+            <el-radio class="radio" v-model="form.source" :label="''">全部</el-radio>
             <el-radio class="radio" v-model="form.source" :label="0">手动新增</el-radio>
             <el-radio class="radio" v-model="form.source" :label="1">批量导入</el-radio>
           </el-form-item>
@@ -174,20 +176,22 @@
         tableData: [],
         advanceSearch: false,
         form: {
-          storeHouseAddress: '',//所属仓库
-          storeStatus: -1,
-          tagId: '',//商品标签
-          goodsStatus: '',//商品状态
+          //        storeHouseAddress: '',//所属仓库
+//          storeStatus: -1,
+//          tagId: '',//商品标签
+          //       goodsStatus: '',//商品状态
           keyword: '',//关键词
-          series: '',//商品分类
+          //       series: '',//商品分类
           cat: [],
           brand: '',
           brandName: '',
           brandId: '',
+          supplier: '',
           supplierName: '',//供应商名称
+          supplierId: '',//供应商名称
           tags: [],//标签
-          source: -1,//商品来源,全部是-1，手动新增0，批量导入1
-          type: -1,//商品状态
+          source: '',//商品来源,全部是-1，手动新增0，批量导入1
+          type: '',//1是上架，0是下架
           upLimit: 0,
           downLimit: 0,
           zero: 0,
@@ -203,15 +207,9 @@
         multipleSelection: [],
         selectionObj: {},
         dialogTableVisible: false,//设置标签表格是否可见
-        totalCategories: [],//分类列表
-        props: {
-          value: 'res',
-          children: 'children',
-          label: 'name'
-        },
         totalAddressList: [],
-        goodsTags: []
-
+        goodsTags: [],
+        searchType: 1//1是简单搜索，2是高级搜索
       }
     },
     created(){
@@ -220,14 +218,15 @@
         self.goodsTags = data;
       });//获取标签列表
       self.getAddressList(function (data) {
-        self.totalAddressList = data.data;
-        self.form.addressList = data.data;
+        self.totalAddressList = data;
       });
     },
     components: {
       'pagination': require('../../components/pagination'),
       'brandselect': require('../../components/getbrandselect'),
       'supplierselect': require('../../components/getsupplierlistselect'),
+      'catselect': require('../../components/getcatselect'),
+      'getcheckbox': require('../../components/getcheckbox')
     },
     methods: {
       getBrandSelect(e){
@@ -235,13 +234,21 @@
         this.form.brandName = e.brandName;
         this.form.brandId = e.brandId;
       },
+      getTagsCheckList(e){
+        this.form.tags = e;
+      },
+      getAddressCheckList(e){
+        this.form.addressList = e;
+      },
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       getSupplierSelect(e){
+        this.form.supplier = e.supplier;
         this.form.supplierName = e.supplierName;
+        this.form.supplierId = e.supplierId;
       },
       getCatSelect(e){
         this.easyForm.cat = e.cat;
@@ -265,6 +272,7 @@
         self.httpApi.goods.skuList(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
+          self.searchType = 1;
           if (data.temp !== "{}") {
             let list = JSON.parse(data.temp);
             self.$nextTick(function () {
@@ -283,6 +291,7 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
@@ -323,20 +332,20 @@
         let arr = [];
         for (let i in this.selectionObj) {
           for (let j = 0; j < this.selectionObj[i].length; j++) {
-            arr.push(this.selectionObj[i][j].id)
+            arr.push(this.selectionObj[i][j].id);
           }
         }
-        let self = this;
-        self.$http({
-          method: 'get',
-          url: 'ui/exportGoods?token=' + localStorage.getItem('token') + '&skuList=' + JSON.stringify(arr),
-          // data: {skuList: JSON.stringify(arr)},
-          responseType: 'stream'
-        })
-          .then(function (response) {
-            response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
-          });
-        // location.href = 'ui/exportGoods?skuList=' + JSON.stringify(arr);
+//        let self = this;
+//        self.$http({
+//          method: 'get',
+//          url: 'ui/exportGoods?token=' + localStorage.getItem('token') + '&skuList=' + JSON.stringify(arr),
+//          // data: {skuList: JSON.stringify(arr)},
+//          responseType: 'stream'
+//        })
+//          .then(function (response) {
+//            response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
+//          });
+        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(arr);
       },
       multipleInputGoods(){
         this.$router.push('/goods/multipleInputGoods');

@@ -48,7 +48,7 @@
           <el-button type="text" class="update-button">修改</el-button>
         </div>
       </div>
-      <el-dialog title="密码修改" :visible.sync="pwdModalVisible" size="tiny">
+      <el-dialog title="密码修改" :visible.sync="pwdModalVisible" width="400px">
         <el-form :model="pwdForm" :rules="pwdRules" ref="pwdForm" label-width="90px">
           <el-form-item label="输入旧密码" prop="oldPwd">
             <el-input type="password" v-model="pwdForm.oldPwd" auto-complete="off"></el-input>
@@ -65,16 +65,18 @@
           <el-button type="primary" @click="sureChangePwd('pwdForm')">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="新手机绑定" :visible.sync="phoneModalVisible" size="tiny">
-        <el-form :model="phoneForm" :rules="phoneRules" ref="phoneForm" label-width="100px">
+      <el-dialog title="新手机绑定" :visible.sync="phoneModalVisible" width="400px">
+        <el-form :model="phoneForm" :rules="phoneRules" ref="phoneForm" label-width="60px" class="request-form">
           <el-form-item prop="phone" label="手机">
-            <el-input v-model="phoneForm.phone" placeholder="输入手机号" style="width: 300px;"></el-input>
-            <el-button type="text" class="verify-code" @click="getVerifyCode" v-if="verifyText =='获取验证码'">获取验证码
+            <el-input type="number" v-model="phoneForm.phone" placeholder="输入手机号" class="form-input"></el-input>
+            <el-button style="margin-left: 20px" type="text" class="verify-code" @click="getVerifyCode"
+                       v-if="verifyText =='获取验证码'">获取验证码
             </el-button>
-            <el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
+            <el-button style="margin-left: 20px" type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发
+            </el-button>
           </el-form-item>
           <el-form-item prop="code" label="验证码">
-            <el-input v-model="phoneForm.code" placeholder="输入验证码"></el-input>
+            <el-input v-model="phoneForm.code" placeholder="输入验证码" class="form-input"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer">
@@ -82,21 +84,21 @@
           <el-button type="primary" @click="sureChangePhone">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="修改邮箱" :visible.sync="emailModalVisible" size="tiny">
-        <el-form :model="emailForm" :rules="emailRules" ref="emailForm" label-width="100px"
-                 v-if="!changeEmailVisible">
+      <el-dialog title="修改邮箱" :visible.sync="emailModalVisible" width="400px">
+        <el-form :model="emailForm" :rules="emailRules" ref="emailForm" label-width="60px"
+                 v-if="!changeEmailVisible" class="request-form">
           <el-form-item prop="phone" label="手机">
-            <el-input v-model="userInfo.cel" style="width: 300px;" disabled></el-input>
-            <el-button type="text" class="verify-code" @click="getEmailVerifyCode" v-if="verifyText =='获取验证码'">获取验证码
+            <el-input v-model="userInfo.cel" class="form-input" disabled></el-input>
+            <el-button style="margin-left: 20px" type="text" class="verify-code" @click="getEmailVerifyCode" v-if="verifyText =='获取验证码'">获取验证码
             </el-button>
-            <el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
+            <el-button style="margin-left: 20px" type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
           </el-form-item>
           <el-form-item prop="code" label="验证码">
-            <el-input v-model="emailForm.code" placeholder="输入验证码"></el-input>
+            <el-input v-model="emailForm.code" placeholder="输入验证码" class="form-input"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button @click="emailModalVisible = false">取 消</el-button>
             <el-button type="primary" @click="confirmEmailFirst">确 定</el-button>
+            <el-button @click="emailModalVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
         <el-form :model="changeEmailForm" ref="changeEmailForm" v-else label-width="100px">
@@ -109,8 +111,8 @@
             <el-input v-model="changeEmailForm.code" placeholder="输入验证码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button @click="emailModalVisible = false;changeEmailVisible = false">取 消</el-button>
             <el-button type="primary" @click="sureChangeEmail">确 定</el-button>
+            <el-button @click="emailModalVisible = false;changeEmailVisible = false">取 消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>

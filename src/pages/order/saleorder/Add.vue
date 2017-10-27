@@ -100,7 +100,7 @@
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
-      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
+      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible">
         <el-form :model="editDeliveryForm" label-width="70px">
           <el-form-item label="客户名称">
             <el-input v-model="editDeliveryForm.customer"></el-input>

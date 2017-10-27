@@ -21,7 +21,7 @@
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
-        <el-form-item class="storegoodslist-create">
+        <el-form-item>
           <el-button @click="createGoods">新增</el-button>
         </el-form-item>
       </el-form>
@@ -68,8 +68,7 @@
         </div>
       </el-dialog>
       <!--要货表格-->
-      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable"
-                class="storegetgoodstable">
+      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
         <el-table-column prop="tradeNumber" label="单据编号">
         </el-table-column>
         <el-table-column prop="createTime" label="要货时间">
@@ -103,7 +102,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
@@ -115,6 +114,7 @@
       return {
         tableData: [],
         advanceSearch: false,//高级搜索
+        searchType: 1,
         checkAll: false,//全选
         typeLists: cityOptions,//状态列表
         isIndeterminate: false,
@@ -199,10 +199,12 @@
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.typeLists.length;
       },
       getGoodsExamine(id) {//审核
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsexamine', query: {id: id}});
+        let url = '/store/management/getgoods/examine/' + id;
+        this.$router.push(url);
       },
       getGoodsNumberDetail(id) {//要货单详情
-        this.$router.push({path: '/store/storemanagement/storegetgoods/storegetgoodsdetail', query: {id: id}});
+        let url = '/store/management/getgoods/detail/' + id;
+        this.$router.push(url);
       },
       select(size, num) {//简单查询
         let self = this
@@ -213,6 +215,7 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.store.getGoodsRecordList(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         })
@@ -241,7 +244,8 @@
         self.form.endTime = self.form.dateRange[1]
         requestData = Object.assign(requestData, self.shallowCopy(self.form))
         self.httpApi.store.getGoodsRecordList(requestData, function (data) {
-          self.advanceSearch = false
+          self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list
           self.totalPage = data.data.total
         })
@@ -249,13 +253,14 @@
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
       createGoods() {//新增
-        this.$router.push('/store/storemanagement/storegetgoods/creategetgoods');
+        this.$router.push('/store/management/getgoods/create');
       },
       cancelGetGoods(row) { //作废
         let self = this;
@@ -273,7 +278,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.select(self.pageSize,self.pageNum)
+            self.select(self.pageSize, self.pageNum)
           });
         })
       },
