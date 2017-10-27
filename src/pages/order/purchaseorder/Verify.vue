@@ -108,9 +108,9 @@
     data(){
       return {
         activeName: 'first',
-        writeFailReason:false,//填写作废原因
-        reasonForm:{
-          reason:''
+        writeFailReason: false,//填写作废原因
+        reasonForm: {
+          reason: ''
         },
         form: {
           orderId: '',
@@ -178,7 +178,7 @@
           orderId: self.form.orderId,
           orderStatus: self.form.orderStatus,
           verifyType: type,
-          reason:self.reasonForm.reason
+          reason: self.reasonForm.reason
         };
         self.httpApi.order.verify(requestData, function (data) {
           self.$router.push('/order/purchaseorder/list');

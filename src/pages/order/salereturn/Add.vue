@@ -136,8 +136,8 @@
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="选择供应商" :visible.sync="supplierListVisible">
-        <el-table :data="supplierList" @row-click="selectSupplier">
+      <el-dialog title="选择客户" :visible.sync="vipListVisible">
+        <el-table :data="vipList" @row-click="selectVip">
           <el-table-column label="供应商名称" prop="name">
 
           </el-table-column>
@@ -199,8 +199,8 @@
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
-        supplierListVisible: false,//供应商modal
-        supplierList: [],
+        vipListVisible: false,//客户modal
+        vipList:[],
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
@@ -246,7 +246,7 @@
       }
     },
     methods: {
-      selectSupplier(row, event, column){
+      selectVip(row, event, column){
         this.form.partnerId = row.supplierId;
         this.form.partnerName = row.name;
         this.supplierListVisible = false;
