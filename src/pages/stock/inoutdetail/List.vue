@@ -29,7 +29,7 @@
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="seeDetail(scope.row.id)">查看明细</el-button>
+            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.id)">查看明细</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -93,16 +93,7 @@
           <el-form-item label="出入库类型">
             <el-select v-model="form.type">
               <el-option label="全部" :value="-1"></el-option>
-              <el-option label="其他入库" :value="1"></el-option>
-              <el-option label="采购入库" :value="2"></el-option>
-              <el-option label="销售退货" :value="3"></el-option>
-              <el-option label="调拨入库" :value="4"></el-option>
-              <el-option label="盘盈" :value="5"></el-option>
-              <el-option label="销售出库" :value="6"></el-option>
-              <el-option label="调拨出库" :value="7"></el-option>
-              <el-option label="盘亏" :value="8"></el-option>
-              <el-option label="采购退回" :value="9"></el-option>
-              <el-option label="其他出库" :value="10"></el-option>
+              <el-option v-for="t in typeList" :key="t.id" :value="t.id" :label="t.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="商品分类">
@@ -119,14 +110,10 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="所属仓库">
-            <el-checkbox-group v-model="form.addressName">
-              <el-checkbox v-for="t in totalStores" :label="t.address" :key="t.address"></el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox :dataList="totalStores" @getCheckList="getAddressCheckList"></getcheckbox>
           </el-form-item>
           <el-form-item label="商品标签">
-            <el-checkbox-group v-model="form.tags">
-              <el-checkbox :label="t.id" :key="t.id" v-for="t in totalSeries">{{t.name}}</el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox :dataList="goodsTags" @getCheckList="getTagCheckList"></getcheckbox>
           </el-form-item>
         </el-form>
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -147,7 +134,7 @@
           type: -1,
           goodsSeriesId: '',
           goodsBrandId: '',
-          dateRange: '',
+          dateRange: [null,null],
           addressName: [],
           tags: [],
           createTime: '',
@@ -156,24 +143,67 @@
         easyForm: {//简单查询
           addressName: [],//仓库名
           keyword: '',//关键词
-          dateRange: '',
+          dateRange: [null,null],
           createTime: '',
           endTime: ''
         },
         advanceSearch: false,//高级搜索
+        searchType: 1,
         totalStores: [],
         goodsTags: [],
         addressLoading: false,//仓库列表加载图片
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
+        typeList: [
+          {
+            id: 1,
+            name: '其他入库'
+          },
+          {
+            id: 2,
+            name: '采购入库'
+          },
+          {
+            id: 3,
+            name: '销售退货'
+          },
+          {
+            id: 4,
+            name: '调拨入库'
+          },
+          {
+            id: 5,
+            name: '盘盈'
+          },
+          {
+            id: 6,
+            name: '销售出库'
+          },
+          {
+            id: 7,
+            name: '调拨出库'
+          },
+          {
+            id: 8,
+            name: '盘亏'
+          },
+          {
+            id: 9,
+            name: '采购退回'
+          },
+          {
+            id: 10,
+            name: '其他出库'
+          },
+        ]
       }
     },
     created(){
       let self = this;
       self.select();
       self.getAddressList(function (data) {
-        self.totalAddressList = data.data;
+        self.totalStores = data;
       });
       self.getTagList(function (data) {
         self.goodsTags = data;
@@ -182,13 +212,20 @@
     components: {
       'pagination': require('../../../components/pagination'),
       'brandselect': require('../../../components/getbrandselect'),
-      'catselect':require('../../../components/getcatselect'),
+      'catselect': require('../../../components/getcatselect'),
+      'getcheckbox': require('../../../components/getcheckbox')
     },
     methods: {
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+      },
+      getAddressCheckList(e){
+        this.form.addressName = e;
+      },
+      getTagCheckList(e){
+        this.form.tags = e;
       },
       getCatSelect(e){
         this.form.goodsSeriesId = e.catId;
@@ -211,21 +248,21 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNum: num
+          pageNo: num
         };
         self.easyForm.createTime = self.easyForm.dateRange[0] === null ? '' : self.easyForm.dateRange[0];
         self.easyForm.endTime = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.stock.recordListBySku(requestData, function (data) {
-          self.tableData = data.data
+          self.tableData = data.data.list;
         });
       },
-      advanceSelect(){
+      advanceSelect(size, num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNum: num
+          pageNo: num
         };
 
         self.form.createTime = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
@@ -233,12 +270,23 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordListBySku(requestData, function (data) {
           self.advanceSearch = false;
-          self.tableData = data.data
+          self.tableData = data.data.list;
         });
       },
 
-      seeDetail(id){
-
+      seeDetail(type, id){
+        let inStore = [1, 2, 3, 5];
+        let outStore = [6, 8, 9, 10];
+        let allocationStore = [4, 7];
+        let url = '/error';
+        if (type.indexOf(inStore)) {
+          url = '/stock/goodsin/detail/' + id;
+        } else if (type.indexOf(outStore)) {
+          url = '/stock/goodsout/detail/' + id;
+        } else if (type.indexOf(allocationStore)) {
+          url = '/stock/stockallocation/detail/' + id;
+        }
+        this.$router.push(url);
       }
     }
   }

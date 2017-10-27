@@ -30,10 +30,10 @@
           {{form.tradeNumber}}
         </el-form-item>
         <el-form-item label="要货门店">
-          <el-input v-model="form.storeName" :disabled="true"></el-input>
+          {{form.storeName}}
         </el-form-item>
         <el-form-item label="要货人">
-          <el-input v-model="form.createUserName" :disabled="true"></el-input>
+          {{form.createUserName}}
         </el-form-item>
         <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
           <el-table-column type="selection" width="55" prop="supplierId">
