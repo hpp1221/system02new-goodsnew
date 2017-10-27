@@ -61,8 +61,8 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getGoodsNumberDetail(scope.row.id)">单据详情</el-dropdown-item>
-                <el-dropdown-item @click.native="getGoodsExamine(scope.row.id)">审核</el-dropdown-item>
-                <el-dropdown-item @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type != 0 && scope.row.type != 4 " @click.native="getGoodsExamine(scope.row)">审核</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type == 1 || scope.row.type == 2" @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -253,8 +253,8 @@
       storeAllocationAdd() {//新增
         this.$router.push('/store/management/allocation/add');
       },
-      getGoodsExamine(id) {//审核
-        let url = '/store/management/allocation/examine/' + id;
+      getGoodsExamine(row) {//审核
+        let url = '/store/management/allocation/examine/' + row.id;
         this.$router.push(url);
       },
       getGoodsNumberDetail(id) {//详情

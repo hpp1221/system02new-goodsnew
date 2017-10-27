@@ -17,7 +17,7 @@
         <el-table :data="form.getGoodsRecordDetails" border v-if="form.storeId">
           <el-table-column
             type="index"
-            width="70">
+            width="70" prop="storeHouseId">
           </el-table-column>
           <el-table-column width="70">
             <template slot-scope="scope">
@@ -226,7 +226,7 @@
           }
         }
         this.form.getGoodsRecordDetails[this.listIndex] = item
-        this.form.getGoodsRecordDetails[this.listIndex].storeHouseId = ''
+//        this.form.getGoodsRecordDetails[this.listIndex].storeHouseId = ''
       },
       handleClick(index) {//存商品index
         this.listIndex = index

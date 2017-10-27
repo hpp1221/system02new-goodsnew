@@ -3,21 +3,9 @@
     <div class="wrapper allocationwrapper">
       <h3 class="page-title">门店调拨单详情</h3>
       <div class="storegetgoodsdetail-title-right">
-        <el-button v-if="type == 4" style="display: none" type="text"
-                   class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
+        <el-button v-if="type != 4">导出
         </el-button>
-        <el-button v-else type="text" class="iconfont icon-erp-dayin storegetgoodsdetail-titleoperation">打印
-        </el-button>
-        <el-button v-if="type == 4" style="display: none" type="text"
-                   class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-        </el-button>
-        <el-button v-else type="text" class="iconfont icon-erp-daochu storegetgoodsdetail-titleoperation">导出
-        </el-button>
-        <el-button v-if="type == 4 || type == 0" type="text" style="display: none" @click="cancelGetGoods"
-                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
-        </el-button>
-        <el-button v-else type="text" @click="cancelGetGoods"
-                   class="iconfont icon-erp-yizuofeiicon storegetgoodsdetail-titleoperation">作废
+        <el-button v-if="type == 1 || type == 2" type="text" @click="cancelGetGoods">作废
         </el-button>
         <el-button v-model="type" v-if="item.value == form.type" @click="getGoodsExaminePass" v-for="item in typeLists"
                    :label="item.value" :key="item.value">
@@ -29,21 +17,19 @@
         <el-form-item label="调拨单号">
           {{form.tradeNo}}
         </el-form-item>
-        <el-form-item label="调入门店" v-model="form.inPutAddressId">
-          <el-input v-model="form.inPutAddress" :disabled="true"></el-input>
+        <el-form-item label="调入门店:" v-model="form.inPutAddressId">
+          {{form.inPutAddress}}
         </el-form-item>
-        <el-form-item label="调出门店" v-model="form.outPutAddressId">
-          <el-input v-model="form.outPutAddress" :disabled="true"></el-input>
+        <el-form-item label="调出门店:" v-model="form.outPutAddressId">
+          {{form.outPutAddress}}
         </el-form-item>
-        <el-form-item label="要货人">
-          <el-input v-model="form.createUserName" :disabled="true"></el-input>
+        <el-form-item label="要货人:">
+          {{form.createUserName}}
         </el-form-item>
         <el-table :data="getGoodsRecordDetails" ref="multipleTable" tooltip-effect="dark" style="width: 100%">
-          <el-table-column type="selection" width="55" prop="goodsSkuId">
-          </el-table-column>
           <el-table-column
             type="index"
-            width="70">
+            width="70" prop="goodsSkuId">
           </el-table-column>
           <el-table-column label="主图" width="80" props="img">
             <template slot-scope="scope">
@@ -117,7 +103,7 @@
           },
           {
             value: '0',
-            label: "已完成"
+            label: "返回"
           },
           {
             value: '3',
