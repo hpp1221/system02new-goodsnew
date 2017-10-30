@@ -22,10 +22,10 @@
       </el-form>
 
       <el-table :data="tableData">
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
+        <!--<el-table-column-->
+        <!--type="selection"-->
+        <!--width="55">-->
+        <!--</el-table-column>-->
         <el-table-column prop="orderNumber" label="采购订单号">
 
         </el-table-column>
@@ -123,8 +123,6 @@
     data(){
       return {
         tableData: [],
-        checkAllOrderStatus: false,
-        checkAllPayStatus: false,
         form: {
 //          payStatus: [],//付款状态
           orderNumber: '',//订单编号
@@ -141,20 +139,6 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        totalStores: [
-          {
-            name: '仓库1',
-            id: 1
-          },
-          {
-            name: '仓库2',
-            id: 2
-          },
-          {
-            name: '仓库3',
-            id: 3
-          }
-        ],
         totalOrderStatus: [
           {
             name: '待订单审核',
@@ -215,10 +199,8 @@
           },
         ],//订单标签
         advanceSearch: false,
+        searchType: 1
       }
-    },
-    created(){
-      this.getAddressList()
     },
     components: {
       'pagination': require('../../../components/pagination'),
@@ -253,30 +235,10 @@
         if (requestData.orderStatus === "[]") {
           requestData.orderStatus = null;
         }
-        console.log(requestData)
-//        axios({
-//          url: '/ui/order/list',
-//          method: 'post',
-//          data: self.easyForm,
-//          headers: {
-//            'Content-Type': 'application/x-www-form-urlencoded'
-//          }
-//        }).then(function(response) {
-//          console.log(response)
-//        });
-//        self.$http.post('/ui/order/list', {username:'123'}, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
-//          let data = response.data;
-//          console.log('order/create', response)
-//          if (data.code === 10000) {
-//            self.tableData = data.data.list;
-//            self.totalPage = data.data.total;
-//          }
-//        }).catch(function (error) {
-//          console.log(error);
-//        });
         self.httpApi.order.list(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
+          self.searchType = 1;
         });
       },
       advanceSelect(size, num){//高级搜索
@@ -292,45 +254,16 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.order.list(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
       },
-      getAddressList(){
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        self.httpApi.stock.addressList(requestData, function (data) {
 
-        });
-      },
       seeDetail(id){
         let url = '/order/purchaseorder/detail/' + id;
         this.$router.push(url);
       },
-      orderStatusAllChange(event){//订单checkbox全选按钮
-        this.form.orderStatus = [];
-        if (event) {
-          for (let i = 0; i < this.totalOrderStatus.length; i++) {
-            this.form.orderStatus.push(this.totalOrderStatus[i].id);
-          }
-        }
-      },
-      orderStatusChange(value){//订单checkbox单个按钮
-        let checkedCount = value.length;
-        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
-      },
-      payStatusAllChange(event){//支付checkbox全选按钮
-        this.form.payStatus = [];
-        if (event) {
-          for (let i = 0; i < this.totalPayStatus.length; i++) {
-            this.form.payStatus.push(this.totalPayStatus[i].id);
-          }
-        }
-      },
-      payStatusChange(value){//支付checkbox单个按钮
-        let checkedCount = value.length;
-        this.checkAllPayStatus = checkedCount === this.totalPayStatus.length;
-      }
     }
   }
 </script>

@@ -2,7 +2,7 @@
   <el-select :placeholder="placeholderString" v-model="unit" @click.native="selectClick"
              @change="getUnit" :disabled="disabled">
     <el-option label="全部" :value="''" v-if="selectAllVisible"></el-option>
-    <el-option :label="t.name" :value="t.name" :key="t.id" v-for="t in totalUnitList"></el-option>
+    <el-option :label="t.name" :value="t.name" :key="t.name" v-for="t in totalUnitList"></el-option>
   </el-select>
 </template>
 <script>

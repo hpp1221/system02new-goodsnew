@@ -146,12 +146,8 @@
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
-      let requestData = {
-        token: window.localStorage.getItem('token'),
-        bucketName: 'sass'
-      };
-      self.httpApi.aliyun.imgSignature(requestData, function (data) {
-        self.imgToken = data.data;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
       });
     },
     components: {
@@ -181,7 +177,11 @@
           reason: self.reasonForm.reason
         };
         self.httpApi.order.verify(requestData, function (data) {
-          self.$router.push('/order/purchaseorder/list');
+          self.writeFailReason = false;
+          self.$message.success('操作成功');
+          setTimeout(function () {
+            self.$router.push('/order/purchasereturn/list');
+          }, 500);
         });
       }
     }

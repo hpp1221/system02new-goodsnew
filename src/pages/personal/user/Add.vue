@@ -47,6 +47,7 @@
           <el-input type="password" placeholder="请输入确认密码" class="form-input" v-model="form.pwdAgain"></el-input>
         </el-form-item>
         <el-form-item label="密码强度">
+
         </el-form-item>
         <el-form-item label="部门">
           <el-select placeholder="请选择部门" class="form-input" v-model="form.department">
@@ -232,7 +233,7 @@
       });//获取图片token
     },
     components: {
-      'uploadoneimg': require('../../../components/uploadoneimg')
+      'uploadoneimg': require('../../../components/uploadoneimg'),
     },
     computed: {
       userinfo: function () {

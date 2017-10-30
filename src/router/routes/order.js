@@ -48,6 +48,10 @@ export default [
     path: '/order/saleorder/detail/:id', //销售订单详情
     component: resolve => require(['@/pages/order/saleorder/detail'], resolve)
   },
+  {
+    path: '/order/saleorder/verify/:id', //销售订单审批
+    component: resolve => require(['@/pages/order/saleorder/verify'], resolve)
+  },
 
   {
     path: '/order/salereturn/list', //销售退货单列表
@@ -60,6 +64,10 @@ export default [
   {
     path: '/order/salereturn/detail/:id', //销售退货单详情
     component: resolve => require(['@/pages/order/salereturn/detail'], resolve)
+  },
+  {
+    path: '/order/salereturn/verify/:id', //销售退货单审批
+    component: resolve => require(['@/pages/order/salereturn/verify'], resolve)
   },
 
   {

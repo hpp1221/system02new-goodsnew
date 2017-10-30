@@ -89,9 +89,11 @@
                  v-if="!changeEmailVisible" class="request-form">
           <el-form-item prop="phone" label="手机">
             <el-input v-model="userInfo.cel" class="form-input" disabled></el-input>
-            <el-button style="margin-left: 20px" type="text" class="verify-code" @click="getEmailVerifyCode" v-if="verifyText =='获取验证码'">获取验证码
+            <el-button style="margin-left: 20px" type="text" class="verify-code" @click="getEmailVerifyCode"
+                       v-if="verifyText =='获取验证码'">获取验证码
             </el-button>
-            <el-button style="margin-left: 20px" type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
+            <el-button style="margin-left: 20px" type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发
+            </el-button>
           </el-form-item>
           <el-form-item prop="code" label="验证码">
             <el-input v-model="emailForm.code" placeholder="输入验证码" class="form-input"></el-input>
@@ -216,7 +218,9 @@
               self.pwdModalVisible = false;
               self.$message.success('修改成功！');
               self.getUserInfo();
-              location.reload();
+              setTimeout(function () {
+                self.$router.go(0);
+              }, 500);
             });
           } else {
             console.log('error submit!!');

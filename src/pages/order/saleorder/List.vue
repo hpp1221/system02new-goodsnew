@@ -4,13 +4,12 @@
       <h3 class="page-title">销售订单列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="订单状态">
-          <el-select placeholder="全部订单" v-model="easyForm.orderStatus">
-            <el-option label="全部" :value="0"></el-option>
+          <el-select placeholder="全部订单" v-model="easyForm.orderStatus" multiple>
             <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="客户">
-          <el-input v-model="easyForm.client" placeholder="请输入客户名称"></el-input>
+          <el-input v-model="easyForm.contacts" placeholder="请输入客户名称"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -18,9 +17,9 @@
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="select">导入</el-button>
-        </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-button @click="select">导入</el-button>-->
+        <!--</el-form-item>-->
         <el-form-item>
           <el-button @click="addOrder">新增</el-button>
         </el-form-item>
@@ -39,11 +38,16 @@
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="contacts" label="客户名称">
+
+        </el-table-column>
         <el-table-column prop="payAmount" label="金额">
 
         </el-table-column>
         <el-table-column prop="createUserName" label="状态">
-
+          <template slot-scope="scope">
+            <span v-for="t in totalOrderStatus" v-if="scope.row.orderStatus == t.id">{{t.name}}</span>
+          </template>
         </el-table-column>
         <!--<el-table-column prop="createUserName" label="付款状态">-->
 
@@ -133,7 +137,8 @@
           endTime: ''
         },
         easyForm: {//简单查询
-          orderStatus: ''
+          orderStatus: [],
+          contacts:''
         },
         pageSize: 5,
         pageNum: 1,
@@ -141,24 +146,32 @@
         totalStores: [],
         totalOrderStatus: [
           {
-            name: '已作废',
+            name: '待订单审核',
             id: 1
           },
           {
-            name: '待确认审核',
+            name: '待财务审核',
             id: 2
           },
           {
-            name: '待收款确认',
+            name: '待出库审核',
             id: 3
           },
           {
-            name: '已完成',
+            name: '待发货确认',
             id: 4
           },
           {
-            name: '待出库确认',
+            name: '待收货确认',
             id: 5
+          },
+          {
+            name: '已完成',
+            id: 6
+          },
+          {
+            name: '已作废',
+            id: 7
           },
         ],//订单状态
         totalPayStatus: [

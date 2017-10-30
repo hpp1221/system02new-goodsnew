@@ -11,7 +11,7 @@
             <i slot="suffix" class="iconfont icon-more" @click="iconClick" style="cursor:pointer;line-height: 40px"></i>
           </el-input>
         </el-form-item>
-        <el-table :data="form.orderDetails">
+        <el-table :data="form.orderDetails" border :span-method="arraySpanMethod">
           <el-table-column
             type="index"
             width="70">
@@ -24,21 +24,24 @@
           </el-table-column>
           <el-table-column label="主图" width="80">
             <template slot-scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"
+                   v-if="scope.row.url"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称">
+          <el-table-column label="商品编码" width="80">
             <template slot-scope="scope">
               <el-autocomplete
-                @click.native="handleClick(scope.$index)"
+                v-on:click.native="handleClick(scope.$index)"
                 v-model="scope.row.combination"
                 :trigger-on-focus="false"
                 :fetch-suggestions="querySearchAsync"
                 @select="handleSelect"
-                :props="{value:'combination',label:'combination'}"
-                icon="el-icon-more">
+                :props="{value:'combination',label:'combination'}">
               </el-autocomplete>
             </template>
+          </el-table-column>
+          <el-table-column label="商品名称" width="80">
+
           </el-table-column>
 
           <el-table-column label="规格" prop="goodsSpec">
@@ -64,7 +67,7 @@
           </el-table-column>
           <el-table-column label="审批价">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.approvePrice"></el-input>
+              <el-input v-model="scope.row.approvePrice" type="number"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="备注">
@@ -81,7 +84,7 @@
           <!--</div>-->
           <div class="bottom">
             <p class="first-p">审批价格：</p>
-            <p class="second-p">86.40</p>
+            <p class="second-p">{{form.orderAmount}}</p>
           </div>
         </div>
         <el-form-item label="退款信息" style="margin-top: 20px;clear:both">
@@ -103,13 +106,12 @@
         <el-form-item label="备注说明">
           <el-input type="textarea" v-model="form.remark" class="form-input" autosize resize="none"></el-input>
         </el-form-item>
-        <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
+        <el-form-item label="附件信息" style="margin-top: 20px;clear:both">
+          <uploadfiles
+            :fileList="form.att"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadfiles>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit">确定</el-button>
@@ -178,12 +180,13 @@
           contacts: '',//联系人
           cel: '',//手机号
           address: '',//退货地址
-          depositBank: '',//开户行
-          depositBankName: '',//开户名称
-          depositBankAccount: '',//开户账号
-          postcode: '',//邮编
+          orderAmount: '',
+//          depositBank: '',//开户行
+//          depositBankName: '',//开户名称
+//          depositBankAccount: '',//开户账号
+//          postcode: '',//邮编
           remark: '',//备注
-          att: '',//附近
+          att: [],//附件
 //          deliveryInfo:''
         },
         editDeliveryForm: {
@@ -200,10 +203,11 @@
         goodsInfoList: [],
         editDeliveryVisible: false,
         vipListVisible: false,//客户modal
-        vipList:[],
+        vipList: [],
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
+        imgToken: '',
         invoiceTypes: [
           {
             id: 0,
@@ -223,56 +227,65 @@
     watch: {
       'form.orderDetails': {
         handler: function (val, oldVal) {
+          let amount = 0;
           for (let i = 0; i < val.length; i++) {
             this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
+            if(this.form.orderDetails[i].approvePrice){
+              amount += parseInt(this.form.orderDetails[i].approvePrice);
+            }
+
           }
+          this.form.orderAmount = amount;
         },
         // 深度观察
         deep: true
-      }
+      },
 
     },
-    components: {
-      'pagination': require('../../../components/pagination')
-    },
     created(){
-      if (window.localStorage.getItem('userinfo')) {
-        console.log('userinfo', JSON.parse(window.localStorage.getItem('userinfo')))
-        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.orderShipment.customer = userinfo.companyName;
-        this.form.orderShipment.userName = userinfo.name;
-        this.form.orderShipment.userPhone = userinfo.cel;
-        this.form.orderShipment.userAddress = userinfo.companyName;
-      }
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      })
+    },
+    components: {
+      'pagination': require('../../../components/pagination'),
+      'uploadfiles': require('../../../components/uploadfiles'),
     },
     methods: {
       selectVip(row, event, column){
-        this.form.partnerId = row.supplierId;
         this.form.partnerName = row.name;
-        this.supplierListVisible = false;
-        console.log(row)
+        this.form.partnerId = row.id;
+        this.form.contacts = row.name;
+        this.form.cel = row.mphone;
+        this.form.address = row.address;
+        this.vipListVisible = false;
       },
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.selectClient(page.size, page.num);
+      },
+      arraySpanMethod({row, column, rowIndex, columnIndex}) {
+        if (columnIndex === 3) {
+          return [1, 2];
+        } else if (columnIndex === 4) {
+          return [0, 0];
+        }
       },
       iconClick(){//输入框icon点击事件
-        this.supplierListVisible = true;
+        this.vipListVisible = true;
+      },
+      selectClient(size, num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum
+          pageSize: size,
+          pageNo: num
         };
-        self.httpApi.supplier.listByPage(requestData, function (data) {
-          self.supplierList = data.data;
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-          };
-          self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
-            self.totalPage = data.data;
-          });
+        self.httpApi.vip.vipterm(requestData, function (data) {
+          self.vipList = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       judgeNum(value, index){//判断数量是否为整数
@@ -323,8 +336,8 @@
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        let requestData = {token: window.localStorage.getItem('token'), saleReturnOrderVO: JSON.stringify(self.form)};
+        //requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
           self.$router.push('/order/purchasereturn/list');
         });

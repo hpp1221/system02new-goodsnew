@@ -29,7 +29,7 @@
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -162,6 +162,10 @@
           brandId: '',//商品品牌
         },
         advanceSearch: false,
+        searchType:1,
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
         easyForm: {
           keyword: '',
           addressId: -1,
@@ -169,9 +173,6 @@
           brandName: '',
         },
       }
-    },
-    created(){
-      this.select()
     },
     components: {
       'addressselect': require('../../../components/getaddressselect'),
@@ -190,6 +191,11 @@
         this.form.brandName = e.brandName;
         this.form.brandId = e.brandId;
       },
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+      },
       select(){//查询
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
@@ -200,7 +206,7 @@
           self.tableData = data.data.list;
         });
       },
-      advanceSelect(){//高级搜索
+      advanceSelect(size,num){//高级搜索
 
       }
     }

@@ -148,6 +148,7 @@
           customer: '',//客户名称
           contacts: '',//收货人
           cel: '',//联系方式
+          orderType:1,//1是采购订单，2是销售订单
           address: '',//收货地址
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
@@ -228,7 +229,6 @@
         }
       },
       judgeNum(value, index){//判断数量是否为整数
-
         this.form.orderDetails[index].num = value.replace(/\D/g, '');
       },
       getAtt(file){//附件

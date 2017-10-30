@@ -124,7 +124,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer">
-            <el-button @click="verifyOrder(2)" type="primary">确定</el-button>
+            <el-button @click="verifyOrder(-1)" type="primary">确定</el-button>
             <el-button @click="writeFailReason = false">取消</el-button>
           </div>
         </el-dialog>
@@ -168,6 +168,8 @@
           partnerId: '',
           partnerName: '',
           orderAmount: '',
+          orderStatus: '',
+          returnOrderId: '',
           att: []
         },
         operationLogVisible: false,
@@ -265,11 +267,19 @@
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          returnOrderId: id,
-          orderStatus: status
+          returnOrderId: self.form.returnOrderId,
+          orderStatus: self.form.orderStatus,
+          verifyType: status,
+          type:1,//采购退货1，销售退货2
+          reason: self.reasonForm.reason
         };
         self.httpApi.returnOrder.updateReturnOrderStatusById(requestData, function (data) {
-          self.$router.push('/order/purchasereturn/list');
+          self.writeFailReason = false;
+          self.$message.success('操作成功');
+          setTimeout(function () {
+            self.$router.push('/order/purchasereturn/list');
+          }, 500);
+
         });
       }
     }

@@ -3,14 +3,14 @@
     <div class="wrapper">
       <h3 class="page-title">商品列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item>
+        <el-form-item label="商品分类">
           <catselect @getCatSelect="getCatSelect"></catselect>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="商品状态">
           <el-select placeholder="商品状态" v-model="easyForm.type">
-            <el-option label="全部" value="-1"></el-option>
-            <el-option label="上架" value="1"></el-option>
-            <el-option label="下架" value="0"></el-option>
+            <el-option label="全部" :value="''"></el-option>
+            <el-option label="上架" :value="1"></el-option>
+            <el-option label="下架" :value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -335,17 +335,28 @@
             arr.push(this.selectionObj[i][j].id);
           }
         }
-//        let self = this;
-//        self.$http({
-//          method: 'get',
-//          url: 'ui/exportGoods?token=' + localStorage.getItem('token') + '&skuList=' + JSON.stringify(arr),
-//          // data: {skuList: JSON.stringify(arr)},
-//          responseType: 'stream'
-//        })
-//          .then(function (response) {
-//            response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
-//          });
-        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(arr);
+        let url = 'ui/exportGoods?token=' + localStorage.getItem('token');
+        let str = '';
+        if (arr.length === 0) {
+          if (this.searchType === 1) {
+            str = '&cat=' + JSON.stringify(this.easyForm.cat) + '&type=' + this.easyForm.type;
+          } else {
+            str = '&keyword=' + this.form.keyword +
+              '&cat=' + JSON.stringify(this.form.cat) +
+              '&brandName=' + this.form.brandName +
+              '&supplierName=' + this.form.supplierName +
+              '&tags' + JSON.stringify(this.form.goodsTags) +
+              '&addressList=' + JSON.stringify(this.form.addressList) +
+              '&upLimit=' + this.form.upLimit +
+              '&downLimit=' + this.form.downLimit +
+              '&zero=' + this.form.zero +
+              '&type' + this.form.type +
+              '&source' + this.form.source;
+          }
+          location.href = url + str;
+        } else {
+          location.href = url + '&skuList=' + JSON.stringify(arr);
+        }
       },
       multipleInputGoods(){
         this.$router.push('/goods/multipleInputGoods');
@@ -360,7 +371,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log('123')
           let requestData = {
             token: window.localStorage.getItem('token'),
             skuList: JSON.stringify(self.multipleSelection),

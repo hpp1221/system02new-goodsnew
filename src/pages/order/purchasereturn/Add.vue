@@ -406,15 +406,17 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.iconClick();
+        this.selectSupplier(page.size,page.num);
       },
       iconClick(){//输入框icon点击事件
         this.supplierListVisible = true;
+      },
+      selectSupplier(size,num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum
+          pageSize: size,
+          pageNo: num
         };
         self.httpApi.supplier.listByPage(requestData, function (data) {
           self.supplierList = data.data;
