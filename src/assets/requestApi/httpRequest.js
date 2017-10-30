@@ -42,8 +42,6 @@ Vue.prototype.httpGet = function (url, params, successCallback) {//get请求
     let data = response.data;
     if (data.code === successCode) {
       successCallback(data);
-    } else if (data.code === loginAgainCode) {
-      router.push('/login');
     } else {
       self.$message.error(data.message);
     }
@@ -58,8 +56,6 @@ Vue.prototype.httpPost = function (url, params, successCallback) {//post请求
     let data = response.data;
     if (data.code === successCode) {
       successCallback(data);
-    } else if (data.code === loginAgainCode) {
-      router.push('/login');
     } else {
       self.$message.error(data.message);
     }

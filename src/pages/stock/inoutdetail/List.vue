@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.id)">查看明细</el-button>
+            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.recordId)">查看明细</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -279,11 +279,11 @@
         let outStore = [6, 8, 9, 10];
         let allocationStore = [4, 7];
         let url = '/error';
-        if (type.indexOf(inStore)) {
+        if (inStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/goodsin/detail/' + id;
-        } else if (type.indexOf(outStore)) {
+        } else if (outStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/goodsout/detail/' + id;
-        } else if (type.indexOf(allocationStore)) {
+        } else if (allocationStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/stockallocation/detail/' + id;
         }
         this.$router.push(url);

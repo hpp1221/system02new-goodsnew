@@ -22,7 +22,7 @@
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
           <el-button @click="add">新增</el-button>
         </el-form-item>
       </el-form>
@@ -45,7 +45,7 @@
             <addressselect @getAddressSelect="getFormSelfAddressSelect"></addressselect>
           </el-form-item>
           <!--<el-form-item label="商品信息">-->
-            <!--<el-input placeholder="请输入商品信息" class="form-input" v-model="form.keyword"></el-input>-->
+          <!--<el-input placeholder="请输入商品信息" class="form-input" v-model="form.keyword"></el-input>-->
           <!--</el-form-item>-->
           <el-form-item>
             <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
@@ -114,6 +114,7 @@
 //          keyword: ''
         },
         advanceSearch: false,
+        searchType: 1,
       }
     },
     components: {
@@ -136,7 +137,7 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       select(size, num){//查询
 
@@ -150,6 +151,7 @@
         self.easyForm.endDate = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.allocationRecordList(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
@@ -164,6 +166,7 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.allocationRecordList(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });

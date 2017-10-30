@@ -54,11 +54,6 @@
           </el-table>
           <el-form-item label="退款信息" style="float: left;">
             <p>
-              <i class="el-icon-edit"
-                 @click="editDelivery(rindex)"
-                 style="cursor: pointer">
-
-              </i>
               <span v-if="r.contacts">联系人：{{r.contacts}}</span>
               <span v-if="r.cel">联系电话：{{r.cel}}</span>
               <span v-if="r.address">退货地址：{{r.address}}</span>
@@ -196,40 +191,9 @@
       }
     },
     created(){
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
-    },
-    watch: {
-      'orderDetailsDialog': {
-        handler: function (val, oldVal) {
-          for (let i = 0; i < val.length; i++) {
-            this.orderDetailsDialog[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
-          }
-        },
-        // 深度观察
-        deep: true
-      },
-      'form.returnOrderSupplierVOS': {
-        handler: function (val, oldVal) {
-          let amount = 0;
-          for (let i = 0; i < val.length; i++) {
-            for (let j = 0; j < val[i].orderDetails.length; j++) {
-              amount += parseInt(val[i].orderDetails[j].approvePrice);
-            }
-          }
-          this.form.orderAmount = amount;
-        },
-        // 深度观察
-        deep: true
-      }
-    },
-    created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
     components: {
-      'pagination': require('../../../components/pagination'),
       'uploadfiles': require('../../../components/uploadfiles'),
     },
     methods: {

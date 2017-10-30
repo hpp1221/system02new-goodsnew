@@ -12,7 +12,7 @@
           <el-input v-model="form.name" placeholder="请输入公司名"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData">
@@ -107,7 +107,10 @@
           };
           self.httpApi.user.updateUserStatus(requestData, function (data) {
             self.$message.success('操作成功');
-            self.$router.go(0);
+            setTimeout(function () {
+              self.$router.go(0);
+            }, 500);
+
           });
         }).catch(() => {
           this.$message({

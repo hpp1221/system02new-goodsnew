@@ -5,7 +5,7 @@
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="客户">
           <el-input
-            v-model="form.partnerName"
+            v-model="form.contacts"
             class="form-input"
             placeholder="请选择客户">
             <i slot="suffix" class="iconfont icon-more" @click="iconClick" style="cursor:pointer;line-height: 40px"></i>
@@ -89,6 +89,7 @@
           <el-date-picker
             v-model="form.deliveryTime"
             type="date"
+            :picker-options="pickerOptions"
             placeholder="选择日期">
           </el-date-picker>
         </el-form-item>
@@ -175,6 +176,7 @@
           customer: '',//客户名称
           contacts: '',//收货人
           cel: '',//联系方式
+          orderType:2,//1是采购订单，2是销售订单
           address: '',//收货地址
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
@@ -187,6 +189,11 @@
           contacts: '',
           cel: '',
           address: ''
+        },
+        pickerOptions: {
+          disabledDate(time) {
+            return time.getTime() < Date.now() - 8.64e7;
+          }
         },
         rules: {},
         vipListVisible: false,
@@ -231,13 +238,10 @@
       'pagination': require('../../../components/pagination'),
     },
     created(){
-      if (window.localStorage.getItem('userinfo')) {
-        let userinfo = JSON.parse(window.localStorage.getItem('userinfo'));
-        this.form.customer = userinfo.companyName;
-        this.form.contacts = userinfo.name;
-        this.form.cel = userinfo.cel;
-        this.form.address = userinfo.companyName;
-      }
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      })
     },
     methods: {
       judgeNum(value, index){//判断数量是否为整数
@@ -249,7 +253,7 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.iconClick();
+        this.selectClient(page.size, page.num);
       },
       arraySpanMethod({row, column, rowIndex, columnIndex}) {
         if (columnIndex === 3) {
@@ -260,21 +264,17 @@
       },
       iconClick(){//输入框icon点击事件
         this.vipListVisible = true;
+      },
+      selectClient(size, num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize: self.pageSize,
-          pageNo: self.pageNum
+          pageSize: size,
+          pageNo: num
         };
         self.httpApi.vip.vipterm(requestData, function (data) {
           self.vipList = data.data.list;
-
-//          let requestData = {
-//            token: window.localStorage.getItem('token'),
-//          };
-//          self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
-//            self.totalPage = data.data;
-//          });
+          self.totalPage = data.data.total;
         });
       },
       editDelivery(){//显示修改模态框
@@ -291,7 +291,7 @@
           token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
-        self.httpApi.stock.goodsInfo(requestData, function (data) {
+        self.httpApi.goods.orderGoodsInfo(requestData, function (data) {
           let list = data.data;
           for (let i = 0, listLength = list.length; i < listLength; i++) {
             list[i].combination = list[i].goodsNo + list[i].goodsName;
@@ -315,21 +315,41 @@
         this.form.orderDetails[this.listIndex] = item
       },
       handleClick(index){//存商品index
-        this.listIndex = index
+        this.listIndex = index;
       },
       selectVip(row, event, column){
-        this.form.partnerId = row.supplierId;
-        this.form.partnerName = row.name;
-        this.form.platform = row.platform;
+        this.form.customer = row.name;
+        this.form.contacts = row.name;
+        this.form.cel = row.mphone;
+        this.form.address = row.address;
         this.vipListVisible = false;
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.order.create(requestData, function (data) {
-          self.$router.push('/order/orderlist');
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        requestData = Object.assign(requestData, self.form);
+        requestData.att = JSON.stringify(requestData.att);
+        //self.form["token"] = window.localStorage.getItem('token')
+//        self.$http.post('/ui/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
+        self.$http.post('/ui/order/create', requestData).then(function (response) {
+          let data = response.data;
+          console.log('order/create', response)
+          if (data.code === 10000) {
+            self.$router.push('/order/saleorder/list');
+          }
+        }).catch(function (error) {
+          console.log(error);
         });
+//        let self = this;
+//        let requestData = {
+//            token: window.localStorage.getItem('token')
+//        };
+//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+//        self.httpApi.order.create(requestData, function (data) {
+//          self.$router.push('/order/orderlist');
+//        });
       },
       addLine(){//添加一行
         this.form.orderDetails.push({

@@ -7,46 +7,29 @@
           <el-form ref="form" :model="form" class="request-form" label-width="120px">
             <h4 class="item-title">基础信息</h4>
             <el-form-item label="商品名称">
-              <el-input v-model="form.name" class="form-input" disabled>
-              </el-input>
+              {{form.name}}
             </el-form-item>
             <el-form-item label="商品品牌">
-              <brandselect
-                :outBrand="form.brand"
-                :disabled="true"
-                v-if="form.name"
-                :isClickFetch="false">
-              </brandselect>
+              {{form.brandName}}
             </el-form-item>
             <el-form-item label="商品分类">
-              <catselect
-                :outCat="form.cat"
-                v-if="form.name"
-                :disabled="true">
-              </catselect>
-              <!--<el-cascader-->
-              <!--:options="totalCategories"-->
-              <!--v-model="form.cat"-->
-              <!--@active-item-change="getCatList"-->
-              <!--disabled-->
-              <!--:props="props">-->
-              <!--</el-cascader>-->
+              {{form.catName}}
             </el-form-item>
             <el-form-item label="计量单位">
-              <unitselect :outUnit="form.unit" :disabled="true" v-if="form.unit"></unitselect>
+              {{form.unit}}
             </el-form-item>
             <el-form-item label="关键字">
-              <el-input class="form-input" v-model="form.keyword" disabled></el-input>
+              {{form.keyword}}
             </el-form-item>
             <el-form-item label="所属供应商名称">
-              <el-input class="form-input" v-model="form.supplierName" disabled></el-input>
+              {{form.supplierName}}
             </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
 
             <el-form-item label="商品规格">
-              <div v-for="(s,sindex) in form.spec" style="margin-top: 10px;">
-                <el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName" disabled></el-input>
+              <div v-for="(s,sindex) in form.spec">
+                {{s.specName}}:
                 <el-tag
                   :key="v.name"
                   v-for="v in s.specValue"
@@ -147,13 +130,8 @@
 
             <h4 class="item-title">商品图片</h4>
             <el-form-item>
-              <uploadmultipleimg
-                :fileList="form.goodsExtend.imgs"
-                @getFileList="getFileList"
-                :disabled="true"
-                :token="imgToken"
-                v-if="imgToken">
-              </uploadmultipleimg>
+              <img v-lazy="f.url" v-for="f in form.goodsExtend.imgs"
+                   style="width: 160px;height: 160px;margin-left: 10px">
             </el-form-item>
             <h4 class="item-title">商品描述</h4>
             <el-form-item>
@@ -176,7 +154,7 @@
               </uploadfiles>
             </el-form-item>
             <el-form-item>
-              <el-button @click="updateSku('form')">保存</el-button>
+              <el-button @click="updateSku">保存</el-button>
               <el-button @click="cancel">取消</el-button>
             </el-form-item>
           </el-form>
@@ -202,7 +180,7 @@
                 @getCatSelect="getGoodsFormCatSelect"
                 :outCat="goodsForm.cat"
                 v-if="goodsForm.id"
-                >
+              >
               </catselect>
             </el-form-item>
             <el-form-item label="计量单位">
@@ -218,14 +196,14 @@
               <el-input placeholder="搜索关键字" class="form-input" v-model="goodsForm.keyword"></el-input>
             </el-form-item>
             <el-form-item label="所属供应商名称">
-              <el-input placeholder="请输入供应商名称" class="form-input" v-model="goodsForm.supplierName"></el-input>
+              {{goodsForm.supplierName}}
             </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
 
             <el-form-item label="商品规格">
-              <div v-for="(s,sindex) in goodsForm.spec" style="margin-top: 10px;">
-                <el-input class="form-input" placeholder="请输入规格名称" v-model="s.specName" disabled></el-input>
+              <div v-for="(s,sindex) in goodsForm.spec">
+                {{s.specName}}
                 <el-tag
                   :key="v.name"
                   v-for="v in s.specValue"
@@ -258,7 +236,6 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
-                  width="80"
                   v-for="s in goodsForm.spec"
                   :key="s.specName">
                   <template slot-scope="scope">
@@ -441,7 +418,7 @@
       'uploadoneimg': require('../../components/uploadoneimg'),
       'brandselect': require('../../components/getbrandselect'),
       'unitselect': require('../../components/getunitselect'),
-      'catselect': require('../../components/getcatselect')
+      'catselect': require('../../components/getcatselect'),
     },
     watch: {
       tabName: function (newVal, oldVal) {
@@ -464,6 +441,11 @@
       //获取分类列表
     },
     methods: {
+      getSupplierSelect(e){
+        this.goodsForm.supplier = e.supplier;
+        this.goodsForm.supplierName = e.supplierName;
+        this.goodsForm.supplierId = e.supplierId;
+      },
       getGoodsFormBrandSelect(e){//修改商品品牌select
         this.goodsForm.brand = e.brand;
         this.goodsForm.brandName = e.brandName;
@@ -531,7 +513,7 @@
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
           self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
-         // self.originCat = [JSON.parse(self.goodsForm.cat)];
+          // self.originCat = [JSON.parse(self.goodsForm.cat)];
 //          let cat = JSON.parse(self.goodsForm.cat);
 //
 //          cat.res = cat;
@@ -560,32 +542,15 @@
       cancel(){
         this.$router.push('/goods/goodslist');
       },
-      updateSku(formName){//修改sku
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            let self = this;
-            self.form.supplierId = self.form.supplier.supplierId;
-            self.form.supplierName = self.form.supplier.name;
-            let requestData = {token: window.localStorage.getItem('token'), skuInfo: JSON.stringify(self.form.skus)};
-            self.httpApi.goods.editSku(requestData, function (data) {
-              self.$router.push('/goods/goodslist');
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+      updateSku(){//修改sku
+        let self = this;
+        let requestData = {token: window.localStorage.getItem('token'), skuInfo: JSON.stringify(self.form.skus)};
+        self.httpApi.goods.editSku(requestData, function (data) {
+          self.$router.push('/goods/goodslist');
         });
-
       },
       updateGoods(){//修改商品
         let self = this;
-        if (self.getCat) {
-          self.goodsForm.cat = [self.goodsForm.cat[self.goodsForm.cat.length - 1]];
-        } else {
-          self.goodsForm.cat = self.originCat;
-        }
-        self.goodsForm.supplierId = self.goodsForm.supplier.supplierId;
-        self.goodsForm.supplierName = self.goodsForm.supplier.name;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');

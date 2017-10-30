@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">采购订单详情</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+      <el-form ref="form" :model="form" class="request-form" label-width="80px">
         <el-form-item label="订单状态">
           <span v-for="t in totalOrderStatus" v-if="form.orderStatus == t.id">{{t.name}}</span>
         </el-form-item>
@@ -59,8 +59,7 @@
                     </div>
                 </div>-->
         <el-form-item label="收货信息" style="margin-top: 20px;">
-          <p><i class="el-icon-edit" @click="editDelivery"
-                style="cursor: pointer"></i>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
+          <p>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}
           </p>
         </el-form-item>
         <el-form-item label="交货日期">
@@ -83,8 +82,8 @@
         <el-form-item label="操作日志">
           <el-switch
             v-model="operationLogVisible"
-            on-text=""
-            off-text="">
+            active-text=""
+            inactive-text="">
           </el-switch>
         </el-form-item>
         <el-table v-if="operationLogVisible" :data="operationList">
@@ -102,26 +101,6 @@
           </el-table-column>
         </el-table>
       </el-form>
-      <el-dialog title="修改收货信息" :visible.sync="editDeliveryVisible" size="tiny">
-        <el-form :model="editDeliveryForm" label-width="70px">
-          <el-form-item label="客户名称">
-            <el-input v-model="editDeliveryForm.customer"></el-input>
-          </el-form-item>
-          <el-form-item label="收货人">
-            <el-input v-model="editDeliveryForm.contacts"></el-input>
-          </el-form-item>
-          <el-form-item label="联系方式">
-            <el-input v-model="editDeliveryForm.cel"></el-input>
-          </el-form-item>
-          <el-form-item label="仓库地址">
-            <el-input v-model="editDeliveryForm.address"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer">
-          <el-button @click="sureEdit" type="primary">确定</el-button>
-          <el-button @click="editDeliveryVisible = false">取消</el-button>
-        </div>
-      </el-dialog>
     </div>
   </div>
 </template>
@@ -155,12 +134,7 @@
           att: []
 //          deliveryInfo:''
         },
-        editDeliveryForm: {
-          customer: '',
-          contacts: '',
-          cel: '',
-          address: ''
-        },
+
         totalOrderStatus: [
           {
             name: '待订单审核',
@@ -191,10 +165,6 @@
             id: 7
           },
         ],//订单状态
-        rules: {},
-        listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
-        editDeliveryVisible: false,
         operationLogVisible: false,
         invoiceTypes: [
           {
@@ -211,18 +181,15 @@
           }
         ],
         operationList: [],
+        imgToken: ''
       }
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
-      let requestData = {
-        token: window.localStorage.getItem('token'),
-        bucketName: 'sass'
-      };
-      self.httpApi.aliyun.imgSignature(requestData, function (data) {
-        self.imgToken = data.data;
-      });
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      })
     },
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
@@ -250,56 +217,9 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
-        }
+        };
         self.httpApi.order.log(requestData, function (data) {
           self.operationList = data.data;
-        });
-      },
-      editDelivery(){//显示修改模态框
-        this.editDeliveryVisible = true;
-        this.editDeliveryForm = this.formPass(this.editDeliveryForm, this.form.orderShipment);
-      },
-      sureEdit(){//确认修改
-        this.editDeliveryVisible = false;
-        this.form.orderShipment = this.formPass(this.form.orderShipment, this.editDeliveryForm);
-      },
-      querySearchAsync(queryString, cb){//商品关键字查询
-        let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-          keyword: queryString,
-        };
-        self.httpApi.stock.goodsInfo(requestData, function (data) {
-          let list = data.data;
-          for (let i = 0, listLength = list.length; i < listLength; i++) {
-            list[i].combination = list[i].goodsNo + list[i].goodsName;
-            list[i].subtotal = '';
-            list[i].num = '';
-          }
-          self.goodsInfoList = list;
-          // 调用 callback 返回建议列表的数据
-          cb(self.goodsInfoList);
-        });
-      },
-      handleSelect(item){//判断是否已选该商品
-        let list = this.form.orderDetails;
-        for (let i = 0; i < list.length; i++) {
-          if (item.goodsNo === list[i].goodsNo) {
-            this.$message.error('已有此类商品');
-            this.form.orderDetails[this.listIndex].combination = ''
-            return
-          }
-        }
-        this.form.orderDetails[this.listIndex] = item
-      },
-      handleClick(index){//存商品index
-        this.listIndex = index
-      },
-      submit(){//提交订单
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), order: JSON.stringify(self.form)};
-        self.httpApi.order.create(requestData, function (data) {
-          self.$router.push('/order/orderlist');
         });
       },
     }

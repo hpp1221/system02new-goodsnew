@@ -18,7 +18,7 @@
           <el-input v-model="form.companyName" placeholder="请输入公司"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button @click="select">查询</el-button>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="tableData">

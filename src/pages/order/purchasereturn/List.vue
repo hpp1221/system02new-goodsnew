@@ -76,7 +76,9 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="seeDetail(scope.row.returnOrderId)">退单详情</el-dropdown-item>
-                <el-dropdown-item @click.native="verify(scope.row.returnOrderId)">审核</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.orderStatus == 2 || scope.row.orderStatus == 3"
+                                  @click.native="verify(scope.row.returnOrderId)">审核
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -99,7 +101,7 @@
           orderNumber: '',
           orderStatus: [],
           partnerName: '',
-          dateRange: [null,null],
+          dateRange: [null, null],
           startTime: '',
           endTime: ''
         },
@@ -152,9 +154,6 @@
         pageNum: 1,
         totalPage: 10,
       }
-    },
-    created(){
-      let self = this;
     },
     components: {
       'pagination': require('../../../components/pagination'),
@@ -215,50 +214,6 @@
           self.totalPage = data.data.total;
         });
       },
-      orderStatusAllChange(event){//订单checkbox全选按钮
-        this.form.orderStatus = [];
-        if (event) {
-          for (let i = 0; i < this.totalOrderStatus.length; i++) {
-            this.form.orderStatus.push(this.totalOrderStatus[i].id);
-          }
-        }
-      },
-      orderStatusChange(value){//订单checkbox单个按钮
-        let checkedCount = value.length;
-        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
-      },
-      sureSetTags(){//确定设置标签
-
-      },
-      handleSelectionChange(val){
-        this.multipleSelection = val;
-        console.log('10101', val);
-      },
-      update(id, goodsId){//修改商品详情
-        this.$router.push({path: '/goods/updateGoods', query: {id: id, goodsId: goodsId}});
-      },
-      createGoods(){
-        this.$router.push('/goods/createGoods');
-      },
-      outputFile(){//导出
-        console.log(this.multipleSelection)
-        let skuList = [];
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          skuList.push(this.multipleSelection[i].id);
-        }
-
-        location.href = 'ui/exportGoods?skuList=' + JSON.stringify(skuList);
-      },
-      multipleInputGoods(){
-        this.$router.push('/goods/multipleInputGoods');
-      },
-      multipleInputImgs(){
-        this.$router.push('/goods/multipleInputImgs');
-      },
-      cancelSelect(){//取消选中
-        this.$refs.multipleTable.clearSelection();
-      }
-
     }
   }
 </script>

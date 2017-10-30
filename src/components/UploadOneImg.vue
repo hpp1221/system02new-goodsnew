@@ -17,37 +17,41 @@
   export default{
     data(){
       return {
-        key:{
-          token:'',
-          file:''
+        key: {
+          token: '',
+          file: ''
         },
       }
     },
-    props:{
-      fileList:{
-        type:String
+    props: {
+      fileList: {
+        type: String
       },
-      token:{
-        type:String
+      token: {
+        type: String
       },
-      disabled:{
-        type:Boolean,
-        default:false
+      disabled: {
+        type: Boolean,
+        default: false
       }
     },
     created(){
       this.key.token = this.token;
     },
-    methods:{
+    methods: {
       beforeUpload(file){
         let checkFormat = this.checkImg(file);
-        if(!checkFormat) return false;
-        if(!this.key.token) return false;
+        if (!checkFormat) return false;
+        if (!this.key.token) return false;
       },
       handleSuccess(response, file, fileList){
-        this.$emit('getFileList',{
-          name:file.name,
-          url:this.imgDomain + response.key
+        let suffix = '';
+        if (file.name.indexOf('.') > -1) {
+          suffix = file.name.substring(file.name.indexOf('.'));
+        }
+        this.$emit('getFileList', {
+          name: file.name,
+          url: this.imgDomain + response.key + suffix
         });
       },
       handleRemove(file, fileList){
@@ -65,9 +69,11 @@
     position: relative;
     overflow: hidden;
   }
+
   .avatar-uploader .el-upload:hover {
     border-color: #20a0ff;
   }
+
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -76,9 +82,11 @@
     line-height: 120px;
     text-align: center;
   }
-  .avatar-uploader-icon :before{
+
+  .avatar-uploader-icon :before {
     margin: 0;
   }
+
   .avatar {
     width: 120px;
     height: 120px;
