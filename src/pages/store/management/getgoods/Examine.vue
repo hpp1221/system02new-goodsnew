@@ -125,24 +125,24 @@
         getGoodsRecordDetails: [],
         typeLists: [//高级查询的单据状态
           {
-            value: '0',
+            value: '4',
             label: "返回"
           },
           {
             value: '1',
-            label: "待审核确认"
+            label: "审核"
           },
           {
             value: '2',
-            label: "待发货审核"
+            label: "确认发货"
+          },
+          {
+            value: '0',
+            label: "返回"
           },
           {
             value: '3',
-            label: "待收货确认"
-          },
-          {
-            value: '4',
-            label: "返回"
+            label: "确认收货"
           },
 
         ],

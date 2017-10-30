@@ -5,7 +5,7 @@
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="全部级别">
           <el-select v-model="easyForm.vip_level" placeholder="全部级别">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -72,21 +72,7 @@
   export default {
     data() {
       return {
-        options: [
-          {//全部级别
-            value: '',
-            label: '全部级别'
-          },
-          {
-            value: '0',
-            label: 'VIP1'
-          }, {
-            value: '1',
-            label: 'VIP2'
-          }, {
-            value: '2',
-            label: 'VIP3'
-          }],
+        options: [],
         easyForm: {//查询条件
           vip_level: '',
           condition: '',
@@ -96,7 +82,7 @@
         pageNum: 1,//当前页码
         totalPage: 10,//总数
         tableData: [],
-        multipleSelection:[],
+        multipleSelection: [],
         supplierString: [],
         selectionObj: {},
       }
@@ -104,7 +90,19 @@
     components: {
       'pagination': require('../../components/pagination')
     },
+    created() {
+      this.getClientLevelList()
+    },
     methods: {
+      getClientLevelList() {
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        self.httpApi.level.getCustomerLevelList(requestData, function (data) {
+          self.options = data.data.list
+        });
+      },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
@@ -118,12 +116,12 @@
           condition: self.easyForm.condition,
           pageNo: num,
           pageSize: size,
-          codes:self.selectionObj
+          codes: JSON.stringify(self.selectionObj)
         };
         self.httpApi.vip.vipterm(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
-          if (data.codes !== "{}") {
+          if (data.codes !== "{}" && data.codes !== undefined) {
             let list = JSON.parse(data.codes);
             self.$nextTick(function () {
               self.toggleSelection(list[num])
@@ -145,15 +143,15 @@
         }).then(() => {
           self.httpApi.vip.vipdelete(requestData, function (data) {
             self.$message.success('删除成功');
-            self.select(self.pageSize,self.pageNum)
+            self.select(self.pageSize, self.pageNum)
           });
         })
       },
       outputClient() { //导出客户
-        let list = this.selectionObj === '{}'?[]:this.selectionObj;
+        let list = this.selectionObj === '{}' ? [] : this.selectionObj;
         let arr = [];
-        for(let i in list){
-          for(let j = 0;j < list[i].length;j++){
+        for (let i in list) {
+          for (let j = 0; j < list[i].length; j++) {
             arr.push(list[i][j]);
           }
         }
@@ -161,9 +159,7 @@
         for (let i = 0; i < arr.length; i++) {
           supplierString += ',' + arr[i].id
         }
-        supplierString = supplierString.substring(1,supplierString.length)
-        console.log('supplierString',supplierString)
-        return
+        supplierString = supplierString.substring(1, supplierString.length)
         location.href = '/ui/exportVips?vipIds=' + supplierString + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
@@ -178,7 +174,7 @@
           let arr = [];
           for (let i = 0; i < this.tableData.length; i++) {
             for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].id == rows[j].id) {
+              if (this.tableData[i].id === rows[j].id) {
                 arr.push(this.tableData[i]);
               }
             }

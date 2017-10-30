@@ -22,8 +22,8 @@
           </el-select>
         </el-form-item>
         <!--<el-form-item>-->
-          <!--<el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">-->
-          <!--</el-input>-->
+        <!--<el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">-->
+        <!--</el-input>-->
         <!--</el-form-item>-->
 
         <el-form-item>
@@ -35,6 +35,15 @@
       </el-form>
 
       <el-table :data="tableData">
+        <el-table-column prop="img" label="商品图片">
+          <template slot-scope="scope">
+            <img v-lazy="scope.row.img" alt=""
+                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsNo" label="商品编码">
+
+        </el-table-column>
         <el-table-column prop="goodsName" label="商品名称">
 
         </el-table-column>
@@ -100,7 +109,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            <catselect @getCatSelect="getCatSelect" v-model="form.series"></catselect>
+            <catselect @getCatSelect="getCatSelectAdvance" v-model="form.series"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect"></brandselect>
@@ -143,8 +152,8 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         tableData: [],
         advanceSearch: false,
@@ -189,23 +198,23 @@
       'catselect': require('../../../../components/getcatselect'),
     },
     methods: {
-      getBrandSelect(e){
+      getBrandSelect(e) {
         this.form.brand = e.brand;
         this.form.brandName = e.brandName;
         this.form.brandId = e.brandId;
       },
-      getCatSelect(e){
-        this.form.series = e.catId;
-      },
-      getCatSelect(e){
+      getCatSelect(e) {
         this.easyForm.series = e.catId;
       },
-      pageChanged(page){
+      getCatSelectAdvance(e) {
+        this.form.series = e.catId;
+      },
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
-      getAddress(type){
+      getAddress(type) {
         if (type && this.totalStores.length === 0) {
           let self = this;
           self.addressLoading = true;
@@ -218,16 +227,17 @@
           })
         }
       },
-      seeDetail(id){
-
+      seeDetail(id) {
+        let url = '/store/management/stock/detail/' + id;
+        this.$router.push(url);
       },
-      getCat(){
+      getCat() {
         if (this.totalCategories.length === 0) {
           this.getCatList();//获取分类列表
         }
       },
 
-      startAdvanceSearch(){
+      startAdvanceSearch() {
         let self = this;
         self.advanceSearch = true;
         if (self.goodsTags.length === 0) {
@@ -246,7 +256,7 @@
         }
       },
 
-      select(size, num){//查询
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -261,7 +271,7 @@
         });
       },
 
-      advanceSelect(size, num){
+      advanceSelect(size, num) {
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -276,13 +286,13 @@
           self.totalPage = data.data.total;
         });
       },
-      update(id, upLimit, downLimit){
+      update(id, upLimit, downLimit) {
         this.updateVisible = true;
         this.updateForm.id = id;
         this.updateForm.upLimit = upLimit ? upLimit : '';
         this.updateForm.downLimit = downLimit ? downLimit : '';
       },
-      sureUpdate(){
+      sureUpdate() {
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),

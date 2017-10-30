@@ -37,7 +37,7 @@
 
         </el-table-column>
 
-        <el-table-column label="商品图片">
+        <el-table-column prop="img" label="商品图片">
           <template slot-scope="scope">
             <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
@@ -91,9 +91,6 @@
     },
     components: {
       'pagination': require('../../../components/pagination')
-    },
-    created() {
-      // this.getSupplierGoodsList()
     },
     methods: {
       pageChanged(page) {
@@ -149,10 +146,6 @@
         this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
-//        if (this.multipleSelection.length === 0) {
-//          this.$message.error('请选中要导出的项');
-//          return;
-//        }
         let list = this.selectionObj === '{}' ? [] : this.selectionObj;
         let arr = [];
         for (let i in list) {
@@ -160,18 +153,12 @@
             arr.push(list[i][j]);
           }
         }
-        let self = this;
-//        self.$http({
-//          method: 'get',
-//          url: '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token'),
-//          // data: {skuList: JSON.stringify(arr)},
-//          responseType: 'stream',
-//        })
-//          .then(function (response) {
-//              console.log('123',response.data.pipe)
-//            //response.data.pipe(fs.createWriteStream('ada_lovelace.jpg'))
-//          });
-        //location.href = '/ui/exportSupplierGoodsInfo?list=' + this.getGoodsList + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
+        let getGoodsList = []
+        for (let i = 0; i < arr.length; i++) {
+          getGoodsList.push(arr[i].id)
+        }
+        console.log('getGoods', getGoodsList)
+        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
         if (val.length > 0) {
