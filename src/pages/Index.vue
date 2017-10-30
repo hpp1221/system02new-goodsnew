@@ -30,7 +30,7 @@
             <el-dropdown trigger="click" v-if="userinfo">
               <img v-lazy="userinfo.avatar" alt=""/>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="personcenter">个人信息</el-dropdown-item>
+                <el-dropdown-item @click.native="personCenter">个人信息</el-dropdown-item>
                 <el-dropdown-item @click.native="logout">注销</el-dropdown-item>
                 <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
@@ -105,8 +105,8 @@
                   v-for="(r,index) in rightMenuList"
                   :id="'rightmenu' + r.permissionId"
                   :class="{'right-hover':index===rightHover}"
-                  @mouseenter="rightmousein(index)"
-                  @mouseleave="rightmouseout">
+                  @mouseenter="rightMouseIn(index)"
+                  @mouseleave="rightMouseOut">
                 <router-link :to="r.url" active-class="router-class">
                   {{r.name}}
                 </router-link>
@@ -206,10 +206,10 @@
           this.rightMenuList = children;
         }
       },
-      rightmousein(index){
+      rightMouseIn(index){
         this.rightHover = index;
       },
-      rightmouseout(){
+      rightMouseOut(){
         this.rightHover = '';
       },
       mousein(index){
@@ -221,7 +221,7 @@
       handleIconClick(){//头部搜索
 
       },
-      personcenter(){//跳转个人中心
+      personCenter(){//跳转个人中心
         this.$router.push('/personal/user/myinfo');
       },
       logout(){//注销

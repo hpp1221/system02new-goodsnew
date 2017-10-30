@@ -14,22 +14,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="2、商品库存数据下载">
-          <!--<el-select v-model="form.catId">-->
-          <!--<el-option v-for="tt in totalCategories"-->
-          <!--:key="tt.id"-->
-          <!--:value="tt.id"-->
-          <!--:label="tt.name">-->
-          <!--</el-option>-->
-          <!--</el-select>-->
-          <el-cascader
-            :options="totalCategories"
-            v-model="form.catId"
-            @active-item-change="getCatList"
-            placeholder="商品分类"
-            :props="props"
-            @click.native="getCat"
-            :show-all-levels="false">
-          </el-cascader>
+          <catselect @getCatSelect="getCatSelect">{{form.catId}}</catselect>
+          <!--<el-cascader-->
+          <!--:options="totalCategories"-->
+          <!--v-model="form.catId"-->
+          <!--@active-item-change="getCatList"-->
+          <!--placeholder="商品分类"-->
+          <!--:props="props"-->
+          <!--@click.native="getCat"-->
+          <!--:show-all-levels="false">-->
+          <!--</el-cascader>-->
           <el-button type="text" @click="getExcel">下载商品库存数据模板</el-button>
         </el-form-item>
         <el-form-item label="3、导入数据">
@@ -110,7 +104,7 @@
         catIds: '',
         form: {
           storeId: '',
-          catId: [],
+          catId: '',
           excelFile: []
         },
         excelResponse: [], //excel解析后的数据
@@ -138,13 +132,17 @@
       }
     },
     components: {
-      'download-excel': require('vue-json-excel')
+      'download-excel': require('vue-json-excel'),
+      'catselect': require('../../../../components/getcatselect')
     },
-    created(){
+    created() {
       this.getStoreList()
     },
     methods: {
-      getStoreList(){//门店列表
+      getCatSelect(e) {
+        this.form.catId = e.catId;
+      },
+      getStoreList() {//门店列表
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token')
@@ -153,53 +151,17 @@
           self.storeIds = data.data
         })
       },
-      getCat(){
+      getCat() {
         if (this.totalCategories.length === 0) {
           this.getCatList();//获取分类列表
-        }
-      },
-      getCatList(val){//商品分类
-
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          console.log(val[val.length - 1].id)
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
-            }
-          }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        })
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
         }
       },
       next() { //下一步
         this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
       },
-      getExcel(){//下载excelmodel
+      getExcel() {//下载excelmodel
         if (this.form.storeId && this.form.catId) {
-          location.href = '/ui/exportStore?addressId=' + this.form.storeId + '&catId=' + this.form.catId[this.form.catId.length - 1].id + '&token=' + window.localStorage.getItem('token')
+          location.href = '/ui/exportStore?addressId=' + this.form.storeId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
         }
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
@@ -226,8 +188,7 @@
       sureExport() { //确定导入
         this.active++;
         let string = encodeURI(JSON.stringify(this.excelResponse));
-        location.href = '/ui/checkStoreExcel?data=' + string + '&catId=' + this.form.catId[this.form.catId.length - 1].id + '&addressId=' + this.form.storeId
-
+        location.href = '/ui/checkStoreExcel?data=' + string + '&catId=' + this.form.catId + '&addressId=' + this.form.storeId + '&token=' + window.localStorage.getItem('token')
       }
     }
   }

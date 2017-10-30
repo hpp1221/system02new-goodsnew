@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">出入库明细</h3>
+      <h3 class="page-title">门店出入库明细</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item>
           <el-select
-            placeholder="全部仓库"
-            v-model="easyForm.addressName"
+            placeholder="全部门店"
+            v-model="easyForm.storeId"
             multiple
             filterable
             :loading="addressLoading"
             @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in storeIds"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -125,8 +125,8 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         tableData: [],
         form: {
@@ -134,7 +134,7 @@
           type: -1,
           goodsSeriesId: '',
           goodsBrandId: '',
-          dateRange: [null,null],
+          dateRange: [null, null],
           addressName: [],
           tags: [],
           createTime: '',
@@ -143,7 +143,7 @@
         easyForm: {//简单查询
           addressName: [],//仓库名
           keyword: '',//关键词
-          dateRange: [null,null],
+          dateRange: [null, null],
           createTime: '',
           endTime: ''
         },
@@ -199,8 +199,10 @@
         ]
       }
     },
-    created(){
+
+    created() {
       let self = this;
+      self.$route.params.id ? self.select(self.$route.params.id) : self.$router.push('/error');
       self.select();
       self.getAddressList(function (data) {
         self.totalStores = data;
@@ -210,30 +212,30 @@
       });//获取标签列表
     },
     components: {
-      'pagination': require('../../../components/pagination'),
-      'brandselect': require('../../../components/getbrandselect'),
-      'catselect': require('../../../components/getcatselect'),
-      'getcheckbox': require('../../../components/getcheckbox')
+      'pagination': require('../../../../components/pagination'),
+      'brandselect': require('../../../../components/getbrandselect'),
+      'catselect': require('../../../../components/getcatselect'),
+      'getcheckbox': require('../../../../components/getcheckbox')
     },
     methods: {
-      pageChanged(page){
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
-      getAddressCheckList(e){
+      getAddressCheckList(e) {
         this.form.addressName = e;
       },
-      getTagCheckList(e){
+      getTagCheckList(e) {
         this.form.tags = e;
       },
-      getCatSelect(e){
+      getCatSelect(e) {
         this.form.goodsSeriesId = e.catId;
       },
-      getBrandSelect(e){
+      getBrandSelect(e) {
         this.form.goodsBrandId = e.brandId;
       },
-      getAddress(type){
+      getAddress(type) {
         if (type && this.totalStores.length === 0) {
           this.addressLoading = true;
           let self = this;
@@ -243,7 +245,7 @@
           });
         }
       },
-      select(size, num){//查询
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -257,7 +259,7 @@
           self.tableData = data.data.list;
         });
       },
-      advanceSelect(size, num){
+      advanceSelect(size, num) {
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -274,7 +276,7 @@
         });
       },
 
-      seeDetail(type, id){
+      seeDetail(type, id) {
         let inStore = [1, 2, 3, 5];
         let outStore = [6, 8, 9, 10];
         let allocationStore = [4, 7];

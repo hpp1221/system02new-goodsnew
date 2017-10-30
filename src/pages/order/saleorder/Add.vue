@@ -4,11 +4,17 @@
       <h3 class="page-title">创建销售订单</h3>
       <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
         <el-form-item label="客户">
-          <el-select placeholder="请选择客户" v-model="form.client">
-            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in clients"></el-option>
-          </el-select>
+          <el-input
+            v-model="form.partnerName"
+            class="form-input"
+            placeholder="请选择客户">
+            <i slot="suffix" class="iconfont icon-more" @click="iconClick" style="cursor:pointer;line-height: 40px"></i>
+          </el-input>
+          <!--<el-select placeholder="请选择客户" v-model="form.client">-->
+          <!--<el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in clients"></el-option>-->
+          <!--</el-select>-->
         </el-form-item>
-        <el-table :data="form.orderDetails" border>
+        <el-table :data="form.orderDetails" border :span-method="arraySpanMethod">
           <el-table-column
             type="index"
             width="70">
@@ -25,13 +31,20 @@
                    v-if="scope.row.url"/>
             </template>
           </el-table-column>
-          <el-table-column label="商品编码  商品名称">
+          <el-table-column label="商品编码" width="80">
             <template slot-scope="scope">
-              <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
-                               :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                               :props="{value:'combination',label:'combination'}">
+              <el-autocomplete
+                v-on:click.native="handleClick(scope.$index)"
+                v-model="scope.row.combination"
+                :trigger-on-focus="false"
+                :fetch-suggestions="querySearchAsync"
+                @select="handleSelect"
+                :props="{value:'combination',label:'combination'}">
               </el-autocomplete>
             </template>
+          </el-table-column>
+          <el-table-column label="商品名称" width="80">
+
           </el-table-column>
 
           <el-table-column label="规格" prop="goodsSpec">
@@ -120,6 +133,23 @@
           <el-button @click="editDeliveryVisible = false">取消</el-button>
         </div>
       </el-dialog>
+      <el-dialog title="选择客户" :visible.sync="vipListVisible">
+        <el-table :data="vipList" @row-click="selectVip">
+          <el-table-column label="客户名称" prop="name">
+
+          </el-table-column>
+          <el-table-column label="客户编码" prop="num">
+
+          </el-table-column>
+          <el-table-column label="联系人" prop="number">
+
+          </el-table-column>
+          <el-table-column label="电话" prop="tel">
+
+          </el-table-column>
+        </el-table>
+        <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -159,6 +189,11 @@
           address: ''
         },
         rules: {},
+        vipListVisible: false,
+        vipList: [],
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
@@ -193,6 +228,7 @@
     },
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
+      'pagination': require('../../../components/pagination'),
     },
     created(){
       if (window.localStorage.getItem('userinfo')) {
@@ -209,6 +245,37 @@
       },
       getAtt(file){//附件
         this.form.att.push(file);
+      },
+      pageChanged(page){
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.iconClick();
+      },
+      arraySpanMethod({row, column, rowIndex, columnIndex}) {
+        if (columnIndex === 3) {
+          return [1, 2];
+        } else if (columnIndex === 4) {
+          return [0, 0];
+        }
+      },
+      iconClick(){//输入框icon点击事件
+        this.vipListVisible = true;
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          pageSize: self.pageSize,
+          pageNo: self.pageNum
+        };
+        self.httpApi.vip.vipterm(requestData, function (data) {
+          self.vipList = data.data.list;
+
+//          let requestData = {
+//            token: window.localStorage.getItem('token'),
+//          };
+//          self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+//            self.totalPage = data.data;
+//          });
+        });
       },
       editDelivery(){//显示修改模态框
         this.editDeliveryVisible = true;
@@ -249,6 +316,12 @@
       },
       handleClick(index){//存商品index
         this.listIndex = index
+      },
+      selectVip(row, event, column){
+        this.form.partnerId = row.supplierId;
+        this.form.partnerName = row.name;
+        this.form.platform = row.platform;
+        this.vipListVisible = false;
       },
       submit(){//提交订单
         let self = this;

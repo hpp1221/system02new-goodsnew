@@ -100,6 +100,7 @@
           selectedSupplierIds: JSON.stringify(self.selectionObj)
         };
         self.httpApi.supplier.listByPageAndQuery(requestData, function (data) {
+          console.log('supplier',data)
           self.tableData = data.data;
           if (data.selectedSupplierIds !== "{}") {
             let list = JSON.parse(data.selectedSupplierIds);
