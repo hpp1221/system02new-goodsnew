@@ -520,7 +520,7 @@
 //
 //          cat.res = cat;
 //          self.totalCategories = [cat];
-          //self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
+          self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
           self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
           self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
           self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
@@ -553,6 +553,9 @@
       },
       updateGoods(){//修改商品
         let self = this;
+        if (!(self.goodsForm.cat instanceof Array)) {
+          self.goodsForm.cat = [self.goodsForm.cat];
+        }
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');

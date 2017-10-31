@@ -91,10 +91,14 @@
 
           </el-table-column>
           <el-table-column label="时间" prop="operateTime">
-
+            <template slot-scope="scope">
+              {{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}
+            </template>
           </el-table-column>
           <el-table-column label="操作类别" prop="operateType">
-
+            <template slot-scope="scope">
+              <span v-for="t in totalOrderStatus" v-if="t.id==scope.row.operateType">{{t.name}}</span>
+            </template>
           </el-table-column>
           <el-table-column label="操作日志" prop="operateLog">
 
@@ -134,7 +138,6 @@
           att: []
 //          deliveryInfo:''
         },
-
         totalOrderStatus: [
           {
             name: '待订单审核',

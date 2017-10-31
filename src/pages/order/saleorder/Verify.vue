@@ -70,26 +70,35 @@
         <el-form-item label="操作日志" style="clear: both">
           <el-switch
             v-model="operationLogVisible"
-            on-text=""
-            off-text="">
+            active-text=""
+            inactive-text="">
           </el-switch>
         </el-form-item>
-        <el-table v-if="operationLogVisible" :data="operationList">
-          <el-table-column label="操作人" prop="operator">
+        <el-form-item>
+          <el-table v-if="operationLogVisible" :data="operationList">
+            <el-table-column label="操作人" prop="operator">
 
-          </el-table-column>
-          <el-table-column label="时间" prop="operateTime">
+            </el-table-column>
+            <el-table-column label="时间" prop="operateTime">
+              <template slot-scope="scope">
+                {{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作类别" prop="operateType">
+              <template slot-scope="scope">
+                <span v-for="t in totalOrderStatus" v-if="t.id==scope.row.operateType">{{t.name}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作日志" prop="operateLog">
 
-          </el-table-column>
-          <el-table-column label="操作类别" prop="operateType">
+            </el-table-column>
+          </el-table>
+        </el-form-item>
 
-          </el-table-column>
-          <el-table-column label="操作日志" prop="operateLog">
-
-          </el-table-column>
-        </el-table>
-        <el-button @click="verifyOrder(1)">通过</el-button>
-        <el-button @click="writeFailReason = true">作废</el-button>
+        <el-form-item>
+          <el-button @click="verifyOrder(1)">通过</el-button>
+          <el-button @click="writeFailReason = true">作废</el-button>
+        </el-form-item>
         <el-dialog title="提示" :visible.sync="writeFailReason" width="600px">
           <el-form :model="reasonForm" label-width="70px">
             <el-form-item label="作废原因">
@@ -144,6 +153,28 @@
         operationList: [],
         writeFailReason: false,
         imgToken: '',
+        totalOrderStatus: [
+          {
+            name: '作废',
+            id: 8
+          },
+          {
+            name: '待确认审核',
+            id: 9
+          },
+          {
+            name: '待收款确认',
+            id: 10
+          },
+          {
+            name: '待出库确认',
+            id: 11
+          },
+          {
+            name: '已完成',
+            id: 12
+          },
+        ],//订单状态
         invoiceTypes: [
           {
             id: 0,
@@ -163,6 +194,13 @@
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
     },
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
+          this.getOperationList();
+        }
+      }
+    },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       let self = this;
@@ -179,6 +217,16 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
+        });
+      },
+      getOperationList(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+        };
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
         });
       },
       verifyOrder(status){

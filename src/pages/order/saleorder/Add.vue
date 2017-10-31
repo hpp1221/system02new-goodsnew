@@ -142,10 +142,10 @@
           <el-table-column label="客户编码" prop="num">
 
           </el-table-column>
-          <el-table-column label="联系人" prop="number">
+          <el-table-column label="联系人" prop="name">
 
           </el-table-column>
-          <el-table-column label="电话" prop="tel">
+          <el-table-column label="电话" prop="tphone">
 
           </el-table-column>
         </el-table>

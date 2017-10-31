@@ -83,9 +83,19 @@
           </el-table-column>
         </el-table>
       </el-form>
-
       <el-button @click="verifyOrder(1)">通过</el-button>
-      <el-button @click="verifyOrder(2)">作废</el-button>
+      <el-button @click="writeFailReason = true">作废</el-button>
+      <el-dialog title="提示" :visible.sync="writeFailReason" width="600px">
+        <el-form :model="reasonForm" label-width="70px">
+          <el-form-item label="作废原因">
+            <el-input v-model="reasonForm.reason"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer">
+          <el-button @click="verifyOrder(2)" type="primary">确定</el-button>
+          <el-button @click="writeFailReason = false">取消</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -103,7 +113,12 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
+          orderStatus: ''
 //          deliveryInfo:''
+        },
+        writeFailReason: false,
+        reasonForm: {
+          reason: ''
         },
         invoiceTypes: [
           {
@@ -163,12 +178,16 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
-          orderStatus: this.$route.params.status,
-          verifyType: type
+          orderStatus: self.form.orderStatus,
+          verifyType: type,
+          reason: self.reasonForm.reason
         };
         self.httpApi.order.verify(requestData, function (data) {
-          self.form = self.formPass(self.form, data.data);
-          console.log(self.form)
+          self.writeFailReason = false;
+          self.$message.success('操作成功');
+          setTimeout(function () {
+            self.$router.push('/order/personalorder');
+          }, 500);
         });
       }
     }

@@ -101,10 +101,14 @@
 
           </el-table-column>
           <el-table-column label="时间" prop="operateTime">
-
+            <template slot-scope="scope">
+              {{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}
+            </template>
           </el-table-column>
           <el-table-column label="操作类别" prop="operateType">
-
+            <template slot-scope="scope">
+              <span v-for="t in totalOrderStatus" v-if="t.id==scope.row.operateType">{{t.name}}</span>
+            </template>
           </el-table-column>
           <el-table-column label="操作日志" prop="operateLog">
 
@@ -127,15 +131,41 @@
           orderAmount: '',
           att: []
         },
+        operationList: [],
         operationLogVisible: false,
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        imgToken: ''
+        imgToken: '',
+        totalOrderStatus: [
+          {
+            name: '已作废',
+            id: 1
+          },
+          {
+            name: '待退单审核',
+            id: 2
+          },
+          {
+            name: '待退款确认',
+            id: 3
+          },
+          {
+            name: '已完成',
+            id: 4
+          },
+        ],//订单状态
       }
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+    },
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
+          this.getOperationList();
+        }
+      }
     },
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
@@ -150,6 +180,16 @@
         self.httpApi.returnOrder.selectReturnOrderById(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
           self.form.att = JSON.parse(self.form.att);
+        });
+      },
+      getOperationList(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+        };
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
         });
       },
     }

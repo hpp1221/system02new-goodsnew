@@ -140,13 +140,16 @@
       </el-dialog>
       <el-dialog title="选择客户" :visible.sync="vipListVisible">
         <el-table :data="vipList" @row-click="selectVip">
-          <el-table-column label="供应商名称" prop="name">
+          <el-table-column label="客户名称" prop="name">
 
           </el-table-column>
-          <el-table-column label="供应商编码" prop="number">
+          <el-table-column label="客户编码" prop="num">
 
           </el-table-column>
-          <el-table-column label="电话" prop="tel">
+          <el-table-column label="联系人" prop="name">
+
+          </el-table-column>
+          <el-table-column label="电话" prop="tphone">
 
           </el-table-column>
         </el-table>
@@ -338,8 +341,8 @@
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), saleReturnOrderVO: JSON.stringify(self.form)};
         //requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
-          self.$router.push('/order/purchasereturn/list');
+        self.httpApi.returnOrder.insertSaleReturnOrder(requestData, function (data) {
+          self.$router.push('/order/salereturn/list');
         });
       },
       addLine(){//添加一行
