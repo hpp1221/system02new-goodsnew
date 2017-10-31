@@ -39,11 +39,6 @@
 
         </el-table-column>
         <el-table-column prop="vip_level" label="客户级别">
-          <template slot-scope="scope">
-            <span v-if="scope.row.vip_level == '0'">VIP1</span>
-            <span v-if="scope.row.vip_level == '1'">VIP2</span>
-            <span v-if="scope.row.vip_level == '2'">VIP3</span>
-          </template>
         </el-table-column>
         <el-table-column prop="create_time" label="创建时间">
           <template slot-scope="scope">

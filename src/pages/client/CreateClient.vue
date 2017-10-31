@@ -32,7 +32,7 @@
 				</el-form-item>
 				<el-form-item label="客户级别">
           <el-select v-model="ruleForm.vip_level" placeholder="全部级别">
-            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelId">
+            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelName">
             </el-option>
           </el-select>
 				</el-form-item>
@@ -81,8 +81,6 @@
 						};
 						requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
             self.httpApi.vip.insertvip(requestData, function (data) {
-              console.log('vipadd',data)
-              return
               self.$router.push('/client/clientmanagement');
             });
 			},

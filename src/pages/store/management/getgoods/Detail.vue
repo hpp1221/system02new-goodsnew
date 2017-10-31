@@ -202,7 +202,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+            self.$router.push('/store/management/getgoods/list');
           });
         })
       },

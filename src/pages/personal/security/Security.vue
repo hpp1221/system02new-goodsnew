@@ -13,7 +13,7 @@
         </div>
         <div class="user-security-repeat-div">
           <img src="../../../assets/images/success.png" alt="" class="status-img"/>
-          <p class="label-name">登陆密码</p>
+          <p class="label-name">登录密码</p>
           <div class="vertical-line"></div>
           <p class="label-warning">互联网账号存在被盗风险，建议您定期更改密码以保护账户安全。</p>
           <el-button type="text" class="update-button" @click="pwdModalVisible = true">修改</el-button>
