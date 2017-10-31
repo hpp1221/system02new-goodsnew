@@ -22,7 +22,7 @@
             <el-form-item label="商品分类">
               <catselect
                 @getCatSelect="getGoodsFormCatSelect"
-                :outCat="goodsForm.catName"
+                :outCat="goodsForm.cat"
                 v-if="goodsForm.id"
               >
               </catselect>
@@ -266,12 +266,11 @@
       getGoodsFormUnitSelect(e) {
         this.goodsForm.unit = e;
       },
-//      getGoodsFormCatSelect(e) {
-//        console.log('ee',e)
-//        this.goodsForm.cat = e.cat;
-//        this.goodsForm.catName = e.catName;
-//        this.goodsForm.catId = e.catId;
-//      },
+      getGoodsFormCatSelect(e) {
+        this.goodsForm.cat = e.cat;
+        this.goodsForm.catName = e.catName;
+        this.goodsForm.catId = e.catId;
+      },
       getFileList(file) {//sku，商品图片
         this.form.goodsExtend.imgs.push(file);
       },
