@@ -66,7 +66,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.upLimit,scope.row.downLimit)">修改
                 </el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
+                <!--<el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </template>

@@ -158,6 +158,13 @@ Vue.prototype.httpApi.stock.searchOrderDetail = function (params, successCallbac
       successCallback(data);
     })
 };
+//门店库存明细详情
+Vue.prototype.httpApi.stock.storeHouseDetailed = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/storeHouseDetailed', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //库存提醒
 Vue.prototype.httpApi.stock.storeHouseRemind = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/storeHouseRemind', params,

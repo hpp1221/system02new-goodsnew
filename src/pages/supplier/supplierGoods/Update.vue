@@ -22,7 +22,7 @@
             <el-form-item label="商品分类">
               <catselect
                 @getCatSelect="getGoodsFormCatSelect"
-                :outCat="goodsForm.cat"
+                :outCat="goodsForm.catName"
                 v-if="goodsForm.id"
               >
               </catselect>
@@ -241,15 +241,6 @@
       'unitselect': require('../../../components/getunitselect'),
       'catselect': require('../../../components/getcatselect'),
     },
-//    watch: {
-//      tabName: function (newVal, oldVal) {
-//        if (newVal === 'first') {
-//          this.select(this.$route.params.id);
-//        } else if (newVal === 'second') {
-//          this.selectGoods(this.$route.params.goodsId);
-//        }
-//      }
-//    },
     created() {
       let self = this;
       self.$route.params.id ? self.selectGoods(self.$route.params.id) : self.$router.push('/error');
@@ -275,11 +266,12 @@
       getGoodsFormUnitSelect(e) {
         this.goodsForm.unit = e;
       },
-      getGoodsFormCatSelect(e) {
-        this.goodsForm.cat = e.cat;
-        this.goodsForm.catName = e.catName;
-        this.goodsForm.catId = e.catId;
-      },
+//      getGoodsFormCatSelect(e) {
+//        console.log('ee',e)
+//        this.goodsForm.cat = e.cat;
+//        this.goodsForm.catName = e.catName;
+//        this.goodsForm.catId = e.catId;
+//      },
       getFileList(file) {//sku，商品图片
         this.form.goodsExtend.imgs.push(file);
       },
@@ -346,7 +338,7 @@
         let self = this;
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
-          self.$router.push('/supplier/suppliergoods/list');
+          self.$router.push('/supplier/suppliergoods/suppliergoodslist');
         });
       },
     }
