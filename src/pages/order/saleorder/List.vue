@@ -18,7 +18,7 @@
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
         <!--<el-form-item>-->
-          <!--<el-button @click="select">导入</el-button>-->
+        <!--<el-button @click="select">导入</el-button>-->
         <!--</el-form-item>-->
         <el-form-item>
           <el-button @click="addOrder">新增</el-button>
@@ -90,16 +90,10 @@
             </el-input>
           </el-form-item>
           <el-form-item label="订单状态">
-            <el-checkbox v-model="checkAllOrderStatus" @change="orderStatusAllChange">全选</el-checkbox>
-            <el-checkbox-group v-model="form.orderStatus" @change="orderStatusChange"
-                               style="display: inline;margin-left: 30px">
-              <el-checkbox
-                v-for="t in totalOrderStatus"
-                :key="t.id"
-                :label="t.id">
-                {{t.name}}
-              </el-checkbox>
-            </el-checkbox-group>
+            <getcheckbox
+              @getCheckList="getCheckList"
+              :dataList="totalOrderStatus">
+            </getcheckbox>
           </el-form-item>
           <!--<el-form-item label="付款状态">-->
           <!--<el-checkbox-group v-model="form.payType">-->
@@ -124,8 +118,6 @@
     data(){
       return {
         tableData: [],
-        checkAllOrderStatus: false,
-        checkAllPayStatus: false,
         form: {
           payStatus: [],//付款状态
           orderNumber: '',//订单编号
@@ -138,7 +130,7 @@
         },
         easyForm: {//简单查询
           orderStatus: [],
-          contacts:''
+          contacts: ''
         },
         pageSize: 5,
         pageNum: 1,
@@ -207,17 +199,18 @@
         searchType: 1
       }
     },
-    created(){
-      this.getAddressList()
-    },
     components: {
-      'pagination': require('../../../components/pagination')
+      'pagination': require('../../../components/pagination'),
+      'getcheckbox': require('../../../components/getcheckbox'),
     },
     methods: {
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+      },
+      getCheckList(e){
+        this.form.orderStatus = e;
       },
       addOrder(){
         this.$router.push('/order/saleorder/add');
@@ -259,41 +252,11 @@
           self.totalPage = data.data.total;
         });
       },
-      getAddressList(){
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        self.httpApi.stock.addressList(requestData, function (data) {
-        });
 
-      },
       seeDetail(id){
         let url = '/order/saleorder/detail/' + id;
         this.$router.push(url);
       },
-      orderStatusAllChange(event){//订单checkbox全选按钮
-        this.form.orderStatus = [];
-        if (event) {
-          for (let i = 0; i < this.totalOrderStatus.length; i++) {
-            this.form.orderStatus.push(this.totalOrderStatus[i].id);
-          }
-        }
-      },
-      orderStatusChange(value){//订单checkbox单个按钮
-        let checkedCount = value.length;
-        this.checkAllOrderStatus = checkedCount === this.totalOrderStatus.length;
-      },
-      payStatusAllChange(event){//支付checkbox全选按钮
-        this.form.payStatus = [];
-        if (event) {
-          for (let i = 0; i < this.totalPayStatus.length; i++) {
-            this.form.payStatus.push(this.totalPayStatus[i].id);
-          }
-        }
-      },
-      payStatusChange(value){//支付checkbox单个按钮
-        let checkedCount = value.length;
-        this.checkAllPayStatus = checkedCount === this.totalPayStatus.length;
-      }
     }
   }
 </script>

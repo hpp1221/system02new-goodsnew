@@ -72,9 +72,10 @@
           type: -1,
           addressId: '',
           status: 1,//1代表入库
-          dateRange: [null,null],
+          dateRange: [null, null],
           startDate: '',
-          endDate: ''
+          endDate: '',
+          storeType: 1//1是仓库，2是门店
         },
         pageSize: 5,
         pageNum: 1,

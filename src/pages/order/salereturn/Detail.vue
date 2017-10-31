@@ -141,7 +141,6 @@
         },
         operationLogVisible: false,
         operationList: [],
-        goodsInfoList: [],
         imgToken: '',
         invoiceTypes: [
           {

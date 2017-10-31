@@ -15,15 +15,6 @@
         </el-form-item>
         <el-form-item label="2、商品库存数据下载">
           <catselect @getCatSelect="getCatSelect">{{form.catId}}</catselect>
-          <!--<el-cascader-->
-          <!--:options="totalCategories"-->
-          <!--v-model="form.catId"-->
-          <!--@active-item-change="getCatList"-->
-          <!--placeholder="商品分类"-->
-          <!--:props="props"-->
-          <!--@click.native="getCat"-->
-          <!--:show-all-levels="false">-->
-          <!--</el-cascader>-->
           <el-button type="text" @click="getExcel">下载商品库存数据模板</el-button>
         </el-form-item>
         <el-form-item label="3、导入数据">

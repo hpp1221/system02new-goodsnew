@@ -260,7 +260,7 @@
             }
           }, 1000);
           let requestData = {phone: self.phoneForm.phone, type: 2};//1代表修改
-          self.httpApi.user.getMessage(requestData, function (data) {
+          self.httpApi.message.getMessage(requestData, function (data) {
             self.$message.success('已成功发送');
           });
         });
@@ -280,7 +280,7 @@
           phone: self.userInfo.cel,
           type: 3
         };//3代表修改邮箱
-        self.httpApi.user.getMessage(requestData, function (data) {
+        self.httpApi.message.getMessage(requestData, function (data) {
           self.$message.success('已成功发送');
         });
       },
@@ -292,7 +292,7 @@
           phone: self.userInfo.cel,
           code: self.emailForm.code
         };//3代表修改邮箱
-        self.httpApi.user.getMessage(requestData, function (data) {
+        self.httpApi.message.getMessage(requestData, function (data) {
           self.$message.success('验证身份通过');
           self.changeEmailVisible = true;
           self.verifyText = '获取验证码';
@@ -312,7 +312,7 @@
             }
           }, 1000);
           let requestData = {email: self.changeEmailForm.email, type: 1};//1修改邮箱
-          self.httpApi.user.getEmailMessage(requestData, function (data) {
+          self.httpApi.message.getEmailMessage(requestData, function (data) {
             self.$message.success('已成功发送');
           });
         });

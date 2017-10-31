@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">销售订单详情</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+      <h3 class="page-title">销售订单审批</h3>
+      <el-form ref="form" :model="form" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
@@ -133,7 +133,7 @@
           invoiceType: '',//发票信息
           remark: '',//备注
           orderStatus: '',
-          orderId:'',
+          orderId: '',
           att: [],//附件
 //          deliveryInfo:''
         },
@@ -143,16 +143,6 @@
         operationLogVisible: false,
         operationList: [],
         writeFailReason: false,
-        editDeliveryForm: {
-          customer: '',
-          userName: '',
-          userPhone: '',
-          userAddress: ''
-        },
-        rules: {},
-        listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
-        editDeliveryVisible: false,
         imgToken: '',
         invoiceTypes: [
           {
@@ -186,7 +176,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: id,
-        }
+        };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
         });
@@ -207,7 +197,6 @@
           setTimeout(function () {
             self.$router.push('/order/saleorder/list');
           }, 500);
-
         });
       }
     }

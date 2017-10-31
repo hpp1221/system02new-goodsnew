@@ -84,7 +84,9 @@
 
             </el-table-column>
             <el-table-column prop="orderStatus" label="状态">
-
+              <template slot-scope="scope">
+                <span v-for="t in totalOrderStatus" v-if="scope.row.orderStatus == t.id">{{t.name}}</span>
+              </template>
             </el-table-column>
             <el-table-column prop="createTime" label="下单日期">
 
@@ -142,6 +144,36 @@
         pageSize2: 5,//订单统计
         pageNum2: 1,
         totalPage2: 10,
+        totalOrderStatus: [
+          {
+            name: '待订单审核',
+            id: 1
+          },
+          {
+            name: '待财务审核',
+            id: 2
+          },
+          {
+            name: '待出库审核',
+            id: 3
+          },
+          {
+            name: '待发货确认',
+            id: 4
+          },
+          {
+            name: '待收货确认',
+            id: 5
+          },
+          {
+            name: '已完成',
+            id: 6
+          },
+          {
+            name: '已作废',
+            id: 7
+          },
+        ],//订单状态
         pickerOptions: {
           shortcuts: [{
             text: '最近一周',
