@@ -107,6 +107,7 @@
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
             self.httpApi.user.updateMyInfo(requestData, function (data) {
               self.$message.success('保存成功');
+              self.getUserInfo();
               setTimeout(function () {
                 self.$router.go(0)
               }, 500);

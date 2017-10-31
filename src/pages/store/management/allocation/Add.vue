@@ -41,7 +41,7 @@
             <template slot-scope="scope">
               <el-autocomplete v-on:click.native="handleClick(scope.$index)" v-model="scope.row.combination"
                                :trigger-on-focus="false" :fetch-suggestions="querySearchAsync" @select="handleSelect"
-                               :props="{value:'combination',label:'combination'}">
+                               value-key="combination">
               </el-autocomplete>
             </template>
           </el-table-column>

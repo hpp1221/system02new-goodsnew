@@ -18,7 +18,7 @@
                 :trigger-on-focus="false"
                 :fetch-suggestions="querySearchAsync"
                 @select="handleSelect"
-                :props="{value:'combination',label:'combination'}"
+                value-key="combination"
                 icon="el-icon-more"
                 popper-class="purchase-return-autocomplete">
               </el-autocomplete>
@@ -406,12 +406,12 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.selectSupplier(page.size,page.num);
+        this.selectSupplierList(page.size,page.num);
       },
       iconClick(){//输入框icon点击事件
         this.supplierListVisible = true;
       },
-      selectSupplier(size,num){
+      selectSupplierList(size,num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),

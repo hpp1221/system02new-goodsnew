@@ -39,7 +39,7 @@
                 :trigger-on-focus="false"
                 :fetch-suggestions="querySearchAsync"
                 @select="handleSelect"
-                :props="{value:'combination',label:'combination'}">
+                value-key="combination">
               </el-autocomplete>
             </template>
           </el-table-column>
