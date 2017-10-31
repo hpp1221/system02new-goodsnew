@@ -134,18 +134,20 @@
           type: -1,
           goodsSeriesId: '',
           goodsBrandId: '',
-          dateRange: [null,null],
+          dateRange: [null, null],
           addressName: [],
           tags: [],
           createTime: '',
-          endTime: ''
+          endTime: '',
+          storeType: 1,//1是仓库，2是门店
         },
         easyForm: {//简单查询
           addressName: [],//仓库名
           keyword: '',//关键词
-          dateRange: [null,null],
+          dateRange: [null, null],
           createTime: '',
-          endTime: ''
+          endTime: '',
+          storeType: 1,//1是仓库，2是门店
         },
         advanceSearch: false,//高级搜索
         searchType: 1,
@@ -254,7 +256,9 @@
         self.easyForm.endTime = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.stock.recordListBySku(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
       advanceSelect(size, num){
@@ -270,7 +274,9 @@
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordListBySku(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
 

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">采购退货单详情</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+      <el-form ref="form" :model="form" class="request-form" label-width="80px">
         <el-form-item label="供应商">
           {{form.partnerName}}
         </el-form-item>
@@ -120,32 +120,7 @@
     data(){
       return {
         form: {
-
-          returnOrderSupplierVOS: [
-//            {
-//              orderDetails: [
-//                {
-//                  goodsNo: '',//商品编号
-//                  goodsName: '',//商品名
-//                  goodsSpec: '',//规格
-//                  goodsUnit: '',
-//                  num: '',
-//                  subtotal: '',//小计
-//                  price: '',//价格
-//                  combination: '',//编号和名称组合
-//                  goodsSkuId: '',//规格id
-//                  approvePrice: '',//审批价格
-//                  remark: '',//备注
-//                }
-//              ],
-//              trackingNo: '',
-//              partnerId: '',
-//              partnerName: '',
-//              cel: '',
-//              contacts: '',
-//              address: ''
-//            }
-          ],
+          returnOrderSupplierVOS: [],
           type: 1,//1是采购退货，2是销售退货
           partnerId: '',
           partnerName: '',
@@ -153,37 +128,6 @@
           att: []
         },
         operationLogVisible: false,
-        editDeliveryForm: {
-          index: '',
-          contacts: '',//联系人
-          cel: '',//手机号
-          address: '',//地址
-//          depositBank:'',//开户行
-//          depositBankName:'',//开户名称
-//          depositBankAccount:'',//开户账号
-//          postcode:'',//邮编
-        },
-        rules: {},
-        goodsInfoList: [],
-        editDeliveryVisible: false,
-        supplierListVisible: false,//供应商modal
-        addGoodsVisible: false,
-        supplierList: [],
-        orderDetailsDialog: [{
-          goodsNo: '',//商品编号
-          goodsName: '',//商品名
-          goodsSpec: '',//规格
-          goodsUnit: '',
-          num: '',
-          subtotal: '',//小计
-          price: '',//价格
-          combination: '',//编号和名称组合
-          goodsSkuId: '',//规格id
-          approvePrice: '',//审批价格
-          remark: '',//备注
-          supplierId: '',
-          supplierName: ''
-        }],
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,

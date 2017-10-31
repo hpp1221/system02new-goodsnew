@@ -62,8 +62,8 @@
       return {
         bg: require('../../assets/images/login.jpg'),
         form: {
-          username: 'czkj-12345',
-          password: 'a123456',
+          username: '',
+          password: '',
           twoWeek: false,
         },
         rules: {
@@ -148,7 +148,7 @@
         let self = this;
         let requestData = {username: self.registerForm.username};
         self.httpApi.user.checkUserCount(requestData, function (data) {
-          self.$message.success('用户名可用');
+          //self.$message.success('用户名可用');
         });
       },
       forgetPwd(){//忘记密码跳转
@@ -174,7 +174,7 @@
             }
           }, 1000);
           let requestData = {phone: self.registerForm.phone, type: 1};//1代表修改
-          self.httpApi.user.getMessage(requestData, function (data) {
+          self.httpApi.message.getMessage(requestData, function (data) {
             self.$message.success('已成功发送');
           });
         });

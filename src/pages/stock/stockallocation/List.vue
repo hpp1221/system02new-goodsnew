@@ -101,7 +101,8 @@
           from: '',
           dateRange: [null, null],
           startDate: '',
-          endDate: ''
+          endDate: '',
+          storeType: 1//1是仓库，2是门店
         },
         pageSize: 5,
         pageNum: 1,
@@ -111,6 +112,7 @@
           createUserName: '',
           from: '',
           to: '',
+          storeType: 1//1是仓库，2是门店
 //          keyword: ''
         },
         advanceSearch: false,

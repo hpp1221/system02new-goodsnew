@@ -2,17 +2,17 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">公司信息</h3>
-      <el-form ref="form" :model="form" class="request-form" label-width="120px" style="width:700px">
+      <el-form ref="ruleForm" :model="form" :rules="rules" class="request-form" label-width="120px">
         <h4 class="item-title">基础信息</h4>
-        <el-form-item label="公司名称">
+        <el-form-item label="公司名称" prop="name">
           <el-input placeholder="请输入公司名称" v-model="form.name" class="form-input"></el-input>
         </el-form-item>
         <el-form-item label="区域">
           <el-input placeholder="请输入区域" v-model="form.area" class="form-input">
           </el-input>
         </el-form-item>
-        <el-form-item label="所属行业">
-          <el-radio-group @change="industryChanged" v-model="form.industryType" v-if="form.industryType">
+        <el-form-item label="所属行业" prop="industryType">
+          <el-radio-group @change="industryChanged" v-model="form.industryType" v-if="totalIndustryTypes.length > 0">
             <el-radio
               :key="t.value"
               :label="t.value"
@@ -58,8 +58,8 @@
           <el-input placeholder="请输入服务热线" class="form-input" v-model="form.hotline"></el-input>
         </el-form-item>
         <el-form-item label="对外联系人">
-          <el-button v-if="!form.externalContacts" @click="addLine">添加</el-button>
-          <el-table :data="form.externalContacts" v-else>
+          <el-button v-if="form.externalContacts.length == 0" @click="addLine">添加</el-button>
+          <el-table :data="form.externalContacts" v-else border style="width: 781px">
             <el-table-column
               type="index"
               width="70"
@@ -71,22 +71,22 @@
                 <i class="el-icon-minus" @click="deleteLine(scope.$index)"></i>
               </template>
             </el-table-column>
-            <el-table-column label="姓名">
+            <el-table-column label="姓名" width="120">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.name"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="手机">
+            <el-table-column label="手机" width="160">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.cel"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="QQ">
+            <el-table-column label="QQ" width="160">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.qq"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="邮箱">
+            <el-table-column label="邮箱" width="200">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.email"></el-input>
               </template>
@@ -117,7 +117,7 @@
           <el-input placeholder="请输入公司介绍" class="form-input" v-model="form.introduction"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button @click="submit('form')">保存</el-button>
+          <el-button @click="submit('ruleForm')">保存</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -154,6 +154,14 @@
           address: '',//公司地址
           introduction: '',//公司介绍
 
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入公司名称', trigger: 'change'},
+          ],
+          industryType: [
+            {required: true, message: '请选择所属行业', trigger: 'change'},
+          ],
         },
         imgToken: '',
         totalIndustryTypes: [],
@@ -196,6 +204,9 @@
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
             self.httpApi.company.addCompany(requestData, function (data) {
               self.$message.success('保存成功');
+              setTimeout(function () {
+                self.$router.go(0)
+              }, 500);
             });
           } else {
             console.log('error submit!!');
@@ -234,21 +245,16 @@
           qq: '',
           email: '',
         };
-        if (this.form.externalContacts === null) {
-          let arr = [];
-          arr.push(obj);
-          this.form.externalContacts = arr;
-        } else {
-          this.form.externalContacts.push(obj);
-        }
+        this.form.externalContacts.push(obj);
       },
       deleteLine(index){
-        if (this.form.externalContacts.length === 1) {
-          this.form.externalContacts = null;
-        } else {
           this.form.externalContacts.splice(index, 1);
-        }
       },
     }
   }
 </script>
+<style scoped>
+  i{
+    cursor: pointer;
+  }
+</style>
