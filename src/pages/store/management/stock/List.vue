@@ -265,8 +265,6 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.list(requestData, function (data) {
-          console.log('stock',data)
-          return
           self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
