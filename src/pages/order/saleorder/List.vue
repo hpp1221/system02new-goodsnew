@@ -138,32 +138,24 @@
         totalStores: [],
         totalOrderStatus: [
           {
-            name: '待订单审核',
-            id: 1
+            name: '作废',
+            id: 8
           },
           {
-            name: '待财务审核',
-            id: 2
+            name: '待确认审核',
+            id: 9
           },
           {
-            name: '待出库审核',
-            id: 3
+            name: '待收款确认',
+            id: 10
           },
           {
-            name: '待发货确认',
-            id: 4
-          },
-          {
-            name: '待收货确认',
-            id: 5
+            name: '待出库确认',
+            id: 11
           },
           {
             name: '已完成',
-            id: 6
-          },
-          {
-            name: '已作废',
-            id: 7
+            id: 12
           },
         ],//订单状态
         totalPayStatus: [

@@ -4,10 +4,12 @@
     v-model="cat"
     @active-item-change="getCatList"
     :show-all-levels="showAllLevels"
-    :props="props"
     @change="getCat"
+    @click.native="getCatListClick"
+    :props="props"
     :disabled="disabled">
   </el-cascader>
+
 </template>
 <script>
   export default{
@@ -23,15 +25,9 @@
       }
     },
     created(){
-      this.getCatList();
       if (this.outCat) {
-        this.totalCatList = [{id:1,name:2,res:3,children:[]}]
-        this.$nextTick(function () {
-          this.cat = [3];
-        })
-
-        console.log('1',this.totalCatList)
-        console.log('2',this.cat)
+        this.totalCatList = [{res: this.outCat, name: this.outCat.name}];
+        this.cat = [this.outCat];
       }
     },
     props: {
@@ -51,6 +47,9 @@
         self.getCatList(function (data) {
           self.totalCatList = data.list;
         });//获取品牌列表
+      },
+      getCatListClick(){
+        this.getCatList();
       },
       getCat(cat){
         let nowCat = cat[cat.length - 1];

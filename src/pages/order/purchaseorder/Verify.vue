@@ -68,17 +68,21 @@
                 off-text="">
               </el-switch>
             </el-form-item>
-            <el-table v-if="operationLogVisible">
-              <el-table-column label="操作人">
+            <el-table v-if="operationLogVisible" :data="operationList">
+              <el-table-column label="操作人" prop="operator">
 
               </el-table-column>
-              <el-table-column label="时间">
-
+              <el-table-column label="时间" prop="operateTime">
+                <template slot-scope="scope">
+                  {{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}
+                </template>
               </el-table-column>
-              <el-table-column label="操作类别">
-
+              <el-table-column label="操作类别" prop="operateType">
+                <template slot-scope="scope">
+                  <span v-for="t in totalOrderStatus" v-if="t.id==scope.row.operateType">{{t.name}}</span>
+                </template>
               </el-table-column>
-              <el-table-column label="操作日志">
+              <el-table-column label="操作日志" prop="operateLog">
 
               </el-table-column>
             </el-table>
@@ -139,7 +143,38 @@
             name: '普通发票'
           }
         ],
+        totalOrderStatus: [
+          {
+            name: '待订单审核',
+            id: 1
+          },
+          {
+            name: '待财务审核',
+            id: 2
+          },
+          {
+            name: '待出库审核',
+            id: 3
+          },
+          {
+            name: '待发货确认',
+            id: 4
+          },
+          {
+            name: '待收货确认',
+            id: 5
+          },
+          {
+            name: '已完成',
+            id: 6
+          },
+          {
+            name: '已作废',
+            id: 7
+          },
+        ],//订单状态
         operationLogVisible: false,
+        operationList: [],
         imgToken: ''
       }
     },
@@ -149,6 +184,13 @@
       self.getImgAccess(function (data) {
         self.imgToken = data;
       });
+    },
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
+          this.getOperationList();
+        }
+      }
     },
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
@@ -166,6 +208,16 @@
       },
       tabClick(){
 
+      },
+      getOperationList(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+        };
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
+        });
       },
       verifyOrder(type){//通过还是作废
         let self = this;

@@ -86,22 +86,31 @@
             off-text="">
           </el-switch>
         </el-form-item>
-        <el-table v-if="operationLogVisible" :data="operationList">
-          <el-table-column label="操作人" prop="operator">
+        <el-form-item>
+          <el-table v-if="operationLogVisible" :data="operationList">
+            <el-table-column label="操作人" prop="operator">
 
-          </el-table-column>
-          <el-table-column label="时间" prop="operateTime">
+            </el-table-column>
+            <el-table-column label="时间" prop="operateTime">
+              <template slot-scope="scope">
+                {{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作类别" prop="operateType">
+              <template slot-scope="scope">
+                <span v-for="t in totalOrderStatus" v-if="t.id==scope.row.operateType">{{t.name}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作日志" prop="operateLog">
 
-          </el-table-column>
-          <el-table-column label="操作类别" prop="operateType">
+            </el-table-column>
+          </el-table>
+        </el-form-item>
 
-          </el-table-column>
-          <el-table-column label="操作日志" prop="operateLog">
-
-          </el-table-column>
-        </el-table>
-        <el-button @click="verifyOrder(1)">通过</el-button>
-        <el-button @click="writeFailReason = true">作废</el-button>
+        <el-form-item>
+          <el-button @click="verifyOrder(1)">通过</el-button>
+          <el-button @click="writeFailReason = true">作废</el-button>
+        </el-form-item>
         <el-dialog title="提示" :visible.sync="writeFailReason" width="600px">
           <el-form :model="reasonForm" label-width="70px">
             <el-form-item label="作废原因">
@@ -161,6 +170,24 @@
         operationList: [],
         writeFailReason: false,
         imgToken: '',
+        totalOrderStatus: [
+          {
+            name: '已作废',
+            id: 1
+          },
+          {
+            name: '待退单审核',
+            id: 2
+          },
+          {
+            name: '待退款确认',
+            id: 3
+          },
+          {
+            name: '已完成',
+            id: 4
+          },
+        ],//订单状态
         invoiceTypes: [
           {
             id: 0,
@@ -184,6 +211,13 @@
         self.imgToken = data;
       })
     },
+    watch: {
+      operationLogVisible: function (newVal, oldVal) {
+        if (newVal && this.operationList.length === 0) {
+          this.getOperationList();
+        }
+      }
+    },
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
     },
@@ -197,6 +231,16 @@
         self.httpApi.returnOrder.selectSaleReturnOrderById(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
           self.form.att = JSON.parse(self.form.att);
+        });
+      },
+      getOperationList(){
+        let self = this;
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+          orderId: this.$route.params.id,
+        };
+        self.httpApi.order.log(requestData, function (data) {
+          self.operationList = data.data;
         });
       },
       verifyOrder(status){
