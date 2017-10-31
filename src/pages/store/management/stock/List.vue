@@ -188,7 +188,7 @@
         addressLoading: false,//仓库列表加载图片
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10,
+        totalPage: 0,
         searchType: 1
       }
     },
@@ -265,6 +265,8 @@
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.list(requestData, function (data) {
+          console.log('stock',data)
+          return
           self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
