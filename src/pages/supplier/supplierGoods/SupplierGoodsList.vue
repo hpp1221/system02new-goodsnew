@@ -86,7 +86,7 @@
         supplierIdVal: [],
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10
+        totalPage: 0
       }
     },
     components: {
@@ -133,7 +133,7 @@
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
 
-          if (data.selectedSupplierGoodsList !== "{}") {
+          if (data.selectedSupplierGoodsList != "{}" && data.selectedSupplierGoodsList != undefined) {
             let list = JSON.parse(data.selectedSupplierGoodsList);
             self.$nextTick(function () {
               self.toggleSelection(list[num])
