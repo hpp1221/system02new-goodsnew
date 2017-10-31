@@ -176,7 +176,7 @@
         addressLoading: false,//仓库列表加载图片
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10,
+        totalPage: 0,
         searchType: 1
       }
     },

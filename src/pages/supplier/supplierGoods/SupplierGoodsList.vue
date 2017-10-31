@@ -57,14 +57,14 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <!--<el-dropdown-item @click.native="updateSupplier(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>-->
-                <el-dropdown-item @click.native="seeDetail(scope.row.id,scope.row.goodsId)">明细</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right">
+      <pagination @setChanged="pageChanged" :totalPage="totalPage">
       </pagination>
     </div>
   </div>
@@ -141,8 +141,8 @@
           }
         })
       },
-      updateSupplier(supplierId) { //修改供应商商品详情
-        let url = '/goods/updategoods/' + supplierId;
+      update(id){//修改商品详情
+        let url = '/supplier/suppliergoods/update/' + id;
         this.$router.push(url);
       },
       outputSupplier() { //导出供应商商品
@@ -157,7 +157,6 @@
         for (let i = 0; i < arr.length; i++) {
           getGoodsList.push(arr[i].id)
         }
-        console.log('getGoods', getGoodsList)
         location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
@@ -184,8 +183,9 @@
       createSupplier() { //新增供应商商品
         this.$router.push('/supplier/suppliergoods/suppliergoodscreate');
       },
-      seeDetail() {//明细
-
+      seeDetail(id){//明细
+        let url = '/goods/goodsDetail/' + id;
+        this.$router.push(url);
       },
       multipleInputGoods() { //批量导入供应商商品
         this.$router.push('/goods/multipleInputGoods');

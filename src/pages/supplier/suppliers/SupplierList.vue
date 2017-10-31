@@ -56,7 +56,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right">
+      <pagination @setChanged="pageChanged" :totalPage="totalPage">
       </pagination>
     </div>
   </div>
@@ -74,7 +74,7 @@
         selectionObj: {},
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10,
+        totalPage: 0,
         form: {
           query: ''
         }
@@ -88,7 +88,6 @@
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
-
       },
       select(size, num) { //查询
         let self = this;
@@ -100,7 +99,6 @@
           selectedSupplierIds: JSON.stringify(self.selectionObj)
         };
         self.httpApi.supplier.listByPageAndQuery(requestData, function (data) {
-          console.log('supplier',data)
           self.tableData = data.data;
           if (data.selectedSupplierIds !== "{}") {
             let list = JSON.parse(data.selectedSupplierIds);
@@ -110,6 +108,7 @@
           }
         });
         self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
+          console.log('supplier',data)
           self.totalPage = data.data;
         });
 

@@ -168,7 +168,7 @@
       },
       getGoodsExaminePass() {//通过
         let self = this;
-        if (self.type === 0 || self.type === 4) {
+        if (self.type == 0 || self.type == 4) {
           self.$router.push('/store/management/getgoods/list');
         } else {
           let requestData = {
@@ -203,7 +203,7 @@
               type: 'success',
               message: '已成功作废!'
             });
-            self.$router.push('/store/storemanagement/storegetgoods/storegetgoodslist');
+            self.$router.push('/store/management/getgoods/list');
           });
         })
       },

@@ -26,4 +26,8 @@ export default [
     path: '/supplier/suppliergoods/suppliergoodscreate', //供应商商品新增
     component: resolve => require(['@/pages/supplier/supplierGoods/SupplierGoodsCreate'], resolve)
   },
+  {
+    path: '/supplier/suppliergoods/update/:id', //供应商商品修改
+    component: resolve => require(['@/pages/supplier/supplierGoods/Update'], resolve)
+  },
 ]

@@ -208,7 +208,7 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status: 2,
+          status: 2,//门店调拨
           pageSize: size,
           pageNo: num
         }
@@ -224,7 +224,7 @@
         let self = this
         let requestData = {
           token: window.localStorage.getItem('token'),
-          status: 2,
+          status: 2,//门店调拨
           pageSize: size,
           pageNo: num
         };
