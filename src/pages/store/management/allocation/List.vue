@@ -114,7 +114,7 @@
           <el-button @click="resetGetGoodsForm">清空</el-button>
         </div>
       </el-dialog>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>
