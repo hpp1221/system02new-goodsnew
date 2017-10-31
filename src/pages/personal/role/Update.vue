@@ -26,7 +26,7 @@
             check-strictly
             @check-change="checkChange"
             :default-checked-keys="defaultPermission"
-            v-if="defaultPermission.length > 0"
+            v-if="permissionComplete"
             :props="defaultProps" style="float:left;width:200px;border:none">
           </el-tree>
         </el-form-item>
@@ -53,7 +53,8 @@
         defaultProps: {
           children: 'children',
           label: 'name'
-        }
+        },
+        permissionComplete: false,//权限请求完毕
       }
     },
     created(){
@@ -70,6 +71,7 @@
         self.httpApi.role.selectRoleInfoById(requestData, function (data) {
           self.defaultPermission = data.data.permissionIds;
           self.addForm = self.formPass(self.addForm, data.data);
+          self.permissionComplete = true;
         });
       },
       checkChange(obj, isChecked, other){

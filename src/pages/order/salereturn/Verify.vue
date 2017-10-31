@@ -160,7 +160,6 @@
         operationLogVisible: false,
         operationList: [],
         writeFailReason: false,
-        goodsInfoList: [],
         imgToken: '',
         invoiceTypes: [
           {
@@ -216,7 +215,6 @@
           setTimeout(function () {
             self.$router.push('/order/salereturn/list');
           }, 500);
-
         });
       }
     }

@@ -238,7 +238,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNum: num
+          pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.list(requestData, function (data) {
@@ -253,7 +253,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: size,
-          pageNum: num
+          pageNo: num
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.list(requestData, function (data) {

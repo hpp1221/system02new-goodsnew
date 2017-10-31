@@ -478,6 +478,8 @@
         this.goodsForm.goodsExtend.annex.splice(file, 1);
       },
       getSkuImg(file){//sku,sku图片
+        console.log(this.form.skus[this.skuImgIndex].img)
+        console.log(file.url)
         this.form.skus[this.skuImgIndex].img = file.url;
       },
       getSkuImg2(file){//商品,sku图片

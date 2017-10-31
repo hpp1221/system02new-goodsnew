@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">订单审核</h3>
+      <h3 class="page-title">采购订单审核</h3>
       <el-tabs v-model="activeName" @tab-click="tabClick">
         <el-tab-pane label="订单详情" name="first">
           <el-form ref="form" :model="form" class="request-form" label-width="80px">
@@ -180,7 +180,7 @@
           self.writeFailReason = false;
           self.$message.success('操作成功');
           setTimeout(function () {
-            self.$router.push('/order/purchasereturn/list');
+            self.$router.push('/order/purchaseorder/list');
           }, 500);
         });
       }

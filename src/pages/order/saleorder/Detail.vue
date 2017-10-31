@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">销售订单详情</h3>
-      <el-form ref="form" :model="form" :rules="rules" class="request-form" label-width="80px">
+      <el-form ref="form" :model="form" class="request-form" label-width="80px">
         <el-table :data="form.orderDetails" border>
           <el-table-column
             type="index"
@@ -101,16 +101,6 @@
           att: [],//附件
 //          deliveryInfo:''
         },
-        editDeliveryForm: {
-          customer: '',
-          userName: '',
-          userPhone: '',
-          userAddress: ''
-        },
-        rules: {},
-        listIndex: '',//现在正在添加的某个list的下标
-        goodsInfoList: [],
-        editDeliveryVisible: false,
         imgToken: '',
         invoiceTypes: [
           {
@@ -144,7 +134,7 @@
         let requestData = {
           token: window.localStorage.getItem('token'),
           orderId: id,
-        }
+        };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
         });

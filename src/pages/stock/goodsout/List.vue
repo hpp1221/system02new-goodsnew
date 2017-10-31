@@ -72,7 +72,8 @@
           status: -1,//-1代表出库
           dateRange: [null, null],
           startDate: '',
-          endDate: ''
+          endDate: '',
+          storeType: 1//1是仓库，2是门店
         },
         pageSize: 5,
         pageNum: 1,

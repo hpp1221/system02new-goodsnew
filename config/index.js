@@ -23,20 +23,20 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8093,
+    port: 8098,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/ui': {
          //target: 'http://47.94.241.192:8083',
-         //  target: 'http://192.168.41.78:8083',
+           target: 'http://192.168.41.78:8080',
          //  target: 'http://192.168.41.191:8081',
+        // target: 'http://192.168.41.216:8080',
+        //  target: 'http://192.168.41.93:8081',
+       // target: 'http://192.168.41.218:8081',
         // target: 'http://192.168.41.216:8081',
-         target: 'http://192.168.41.93:8093',
-        // target: 'http://192.168.41.218:8081',
-        // target: 'http://192.168.41.216:8100',
-        // target: 'http://192.168.41.97:8080',
+        // target: 'http://192.168.41.97:8083',
         changeOrigin: true,
         pathRewrite: {
           '^/ui': '/ui'
