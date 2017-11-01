@@ -10,7 +10,7 @@
       <el-form v-if="active == 1" label-width="150px">
         <el-form-item label="1、选择盘点仓库">
           <!--<el-select v-model="form.storeId">-->
-            <!--<el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
+          <!--<el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
           <!--</el-select>-->
           <addressselect @getAddressSelect="getAddressSelect">{{form.addressId}}</addressselect>
         </el-form-item>

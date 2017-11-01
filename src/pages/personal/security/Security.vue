@@ -292,7 +292,7 @@
           phone: self.userInfo.cel,
           code: self.emailForm.code
         };//3代表修改邮箱
-        self.httpApi.message.getMessage(requestData, function (data) {
+        self.httpApi.user.checkMsg(requestData, function (data) {
           self.$message.success('验证身份通过');
           self.changeEmailVisible = true;
           self.verifyText = '获取验证码';

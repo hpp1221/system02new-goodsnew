@@ -92,9 +92,7 @@
         <el-form-item label="附件信息">
           <uploadfiles
             :fileList="form.att"
-            @getFileList="getAtt"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getAtt">
           </uploadfiles>
         </el-form-item>
         <el-form-item>
@@ -171,7 +169,6 @@
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
-        imgToken: '',
         invoiceTypes: [
           {
             id: 0,
@@ -211,14 +208,6 @@
         this.form.cel = userinfo.cel;
         this.form.address = userinfo.address;
       }
-      let self = this;
-      let requestData = {
-        token: window.localStorage.getItem('token'),
-        bucketName: 'sass'
-      };
-      self.httpApi.aliyun.imgSignature(requestData, function (data) {
-        self.imgToken = data.data;
-      });
     },
     methods: {
       arraySpanMethod({ row, column, rowIndex, columnIndex }) {

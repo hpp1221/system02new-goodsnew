@@ -61,10 +61,8 @@
         </el-form-item>
         <el-form-item label="附件信息">
           <uploadfiles
-            :fileList="form.annex"
-            :disabled="true"
-            :token="imgToken"
-            v-if="imgToken">
+            :fileList="form.att"
+            :disabled="true">
           </uploadfiles>
         </el-form-item>
         <el-form-item label="操作日志" style="clear: both">
@@ -152,7 +150,6 @@
         operationLogVisible: false,
         operationList: [],
         writeFailReason: false,
-        imgToken: '',
         totalOrderStatus: [
           {
             name: '作废',
@@ -203,10 +200,6 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
     },
     methods: {
       select(id){
@@ -217,6 +210,7 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
+          self.form.att = JSON.parse(self.form.att);
         });
       },
       getOperationList(){

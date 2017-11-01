@@ -36,7 +36,8 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">订单详情</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.orderId,scope.row.orderStatus)">订单详情
+                </el-dropdown-item>
                 <el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -142,9 +143,6 @@
         totalPage: 10,
       }
     },
-    created(){
-      this.getAddressList()
-    },
     components: {
       'pagination': require('../../components/pagination')
     },
@@ -166,16 +164,14 @@
           self.totalPage = data.data.total;
         });
       },
-      getAddressList(){
-        let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
-        self.httpApi.stock.addressList(requestData, function (data) {
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-        });
-      },
-      seeDetail(id){
-        this.$router.push({path: '/order/orderdetail', query: {id: id}})
+      seeDetail(id, status){
+        let url = '';
+        if (status === 1) {
+          url = '/order/purchaseorder/detail/' + id;
+        } else {
+          url = '/order/saleorder/detail/' + id;
+        }
+        this.$router.push(url);
       },
       verify(id){
         let url = '/order/verifypersonalorder/' + id;

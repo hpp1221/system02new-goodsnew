@@ -170,9 +170,8 @@
 
         <el-form-item label="附件信息" style="margin-top: 20px;clear:both" v-if="form.orderAmount">
           <uploadfiles
-            :fileList="form.att"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getFileList"
+            :fileList="form.att">
           </uploadfiles>
         </el-form-item>
         <el-form-item v-if="form.orderAmount">
@@ -288,14 +287,7 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        imgToken: ''
       }
-    },
-    created(){
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
     },
     watch: {
       'orderDetailsDialog': {
@@ -323,9 +315,12 @@
     },
     components: {
       'pagination': require('../../../components/pagination'),
-      'uploadfiles':require('../../../components/uploadfiles'),
+      'uploadfiles': require('../../../components/uploadfiles'),
     },
     methods: {
+      getFileList(e){
+        this.form.att.push(e);
+      },
       openGoodsDialog(){//打开添加退货商品model
         if (!this.form.partnerId) {
           this.$message.error('请先选择供应商');
@@ -406,12 +401,12 @@
       pageChanged(page){
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.selectSupplierList(page.size,page.num);
+        this.selectSupplierList(page.size, page.num);
       },
       iconClick(){//输入框icon点击事件
         this.supplierListVisible = true;
       },
-      selectSupplierList(size,num){
+      selectSupplierList(size, num){
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
@@ -479,8 +474,8 @@
 
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'),returnOrderVO:JSON.stringify(self.form)};
-       //requestData = Object.assign(requestData, self.shallowCopy(self.form));
+        let requestData = {token: window.localStorage.getItem('token'), returnOrderVO: JSON.stringify(self.form)};
+        //requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
           self.$router.push('/order/purchasereturn/list');
         });

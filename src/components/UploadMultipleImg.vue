@@ -7,8 +7,9 @@
     :before-upload="beforeUpload"
     :on-success="handleSuccess"
     :on-remove="handleRemove"
+    v-if="key.token"
     :disabled="disabled">
-    <i class="el-icon-plus"></i>
+    <i class="el-icon-plus" v-if="!disabled"></i>
   </el-upload>
 </template>
 
@@ -26,16 +27,20 @@
       fileList: {
         type: Array
       },
-      token: {
-        type: String
-      },
       disabled: {
         type: Boolean,
         default: false
       }
     },
     created(){
-      this.key.token = this.token;
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.key.token = data.data;
+      });
     },
     methods: {
       beforeUpload(file){
@@ -49,7 +54,7 @@
           suffix = file.name.substring(file.name.indexOf('.'));
         }
         this.$emit('getFileList', {
-          name: file.name + suffix,
+          name: file.name,
           url: this.imgDomain + response.key
         });
       },
@@ -62,6 +67,3 @@
     }
   }
 </script>
-
-<style>
-</style>

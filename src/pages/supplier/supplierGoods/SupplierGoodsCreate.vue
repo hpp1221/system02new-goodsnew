@@ -91,10 +91,7 @@
                     <uploadoneimg
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg"
-                      @click.native="rememberIndex(scope)"
-                      :token="imgToken"
-                      v-if="imgToken"
-                    >
+                      @click.native="rememberIndex(scope)">
                     </uploadoneimg>
                   </template>
                 </el-table-column>
@@ -170,9 +167,7 @@
             <el-form-item>
               <uploadmultipleimg
                 :fileList="form.goodsExtend.imgs"
-                @getFileList="getFileList"
-                :token="imgToken"
-                v-if="imgToken">
+                @getFileList="getFileList">
               </uploadmultipleimg>
             </el-form-item>
             <h4 class="item-title">商品描述</h4>
@@ -188,9 +183,7 @@
             <el-form-item>
               <uploadfiles
                 :fileList="form.goodsExtend.annex"
-                @getFileList="getAnnex"
-                :token="imgToken"
-                v-if="imgToken">
+                @getFileList="getAnnex">
               </uploadfiles>
             </el-form-item>
             <el-form-item>
@@ -245,7 +238,6 @@
         exportGoodsList: [],
         activeName: 'first',
         skuImgIndex: 0,
-        imgToken: '',
         originCat: ''
       }
     },
@@ -273,9 +265,6 @@
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
       self.getUnitList(function (data) {
         self.totalUnitList = data.list;
       });
