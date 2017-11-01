@@ -35,7 +35,7 @@ export default [
     component: resolve => require(['@/pages/store/management/stock/List'], resolve)
   },
   {
-    path: '/store/management/stock/detail/:id', //门店库存明细
+    path: '/store/management/stock/detail/:goodsSkuId', //门店库存明细
     component: resolve => require(['@/pages/store/management/stock/Detail'], resolve)
   },
   {

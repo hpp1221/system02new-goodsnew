@@ -6,10 +6,10 @@
         <el-form-item>
           <el-select
             placeholder="全部门店"
-            v-model="easyForm.storeId"
+            v-model="easyForm.addressName"
             multiple
             filterable>
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in storeIds"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.id)">查看明细</el-button>
+            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.recordId)">查看明细</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -108,13 +108,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="所属门店">
-            <el-select
-              placeholder="全部门店"
-              v-model="easyForm.storeId"
-              multiple
-              filterable>
-              <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in storeIds"></el-option>
-            </el-select>
+            <getcheckbox :dataList="totalStores" @getCheckList="getAddressCheckList"></getcheckbox>
           </el-form-item>
           <el-form-item label="商品标签">
             <getcheckbox :dataList="goodsTags" @getCheckList="getTagCheckList"></getcheckbox>
@@ -133,24 +127,25 @@
     data() {
       return {
         tableData: [],
-        storeIds:[],
         form: {
           keyword: '',
           type: -1,
           goodsSeriesId: '',
           goodsBrandId: '',
           dateRange: [null, null],
-          addressName: [],
+          addressName: '',
           tags: [],
           createTime: '',
-          endTime: ''
+          endTime: '',
+          storeType: 2,//1是仓库，2是门店
         },
         easyForm: {//简单查询
-          addressName: [],//仓库名
+          addressName: '',//仓库名
           keyword: '',//关键词
           dateRange: [null, null],
           createTime: '',
-          endTime: ''
+          endTime: '',
+          storeType: 2,//1是仓库，2是门店
         },
         advanceSearch: false,//高级搜索
         searchType: 1,
@@ -159,7 +154,7 @@
         addressLoading: false,//仓库列表加载图片
         pageSize: 5,
         pageNum: 1,
-        totalPage: 0,
+        totalPage: 10,
         typeList: [
           {
             id: 1,
@@ -204,11 +199,10 @@
         ]
       }
     },
-
     created() {
       let self = this;
-      self.$route.params.id ? self.select(self.$route.params.id) : self.$router.push('/error');
-      self.getStoreList();
+      self.$route.params.goodsSkuId ? self.select(self.$route.params.goodsSkuId) : self.$router.push('/error');
+      self.getStoreList()
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
@@ -220,20 +214,14 @@
       'getcheckbox': require('../../../../components/getcheckbox')
     },
     methods: {
-      getStoreList() {//要货门店
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        }
-        self.httpApi.store.storeList(requestData,function (data) {
-          self.storeIds = data.data
-        })
-      },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+//        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
+//      getAddressCheckList(e) {
+//        this.form.addressName = e;
+//      },
       getTagCheckList(e) {
         this.form.tags = e;
       },
@@ -243,36 +231,49 @@
       getBrandSelect(e) {
         this.form.goodsBrandId = e.brandId;
       },
-      select(id) {//查询
-        console.log('ids',id)
+      getStoreList() {
+          let self = this;
+          let requestData = {
+            token: window.localStorage.getItem('token'),
+          }
+          self.httpApi.store.storeList(requestData, function (data) {
+            self.totalStores = data.data
+          })
+
+      },
+      select(goodsSkuId) {//查询
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum,
-          skuId:id
+          goodsSkuId: goodsSkuId
         };
         self.easyForm.createTime = self.easyForm.dateRange[0] === null ? '' : self.easyForm.dateRange[0];
         self.easyForm.endTime = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
-        self.httpApi.stock.storeHouseDetailed(requestData, function (data) {
+        self.httpApi.stock.recordListBySku(requestData, function (data) {
+          self.searchType = 1;
           self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
-      advanceSelect(size, num) {
+      advanceSelect(goodsSkuId) {
         let self = this;
         let requestData = {
           token: window.localStorage.getItem('token'),
-          pageSize: size,
-          pageNo: num
+          pageSize: self.pageSize,
+          pageNo: self.pageNum
         };
 
         self.form.createTime = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
         self.form.endTime = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.stock.storeHouseDetailed(requestData, function (data) {
+        self.httpApi.stock.recordListBySku(requestData, function (data) {
           self.advanceSearch = false;
+          self.searchType = 2;
           self.tableData = data.data.list;
+          self.totalPage = data.data.total;
         });
       },
 
@@ -281,11 +282,11 @@
         let outStore = [6, 8, 9, 10];
         let allocationStore = [4, 7];
         let url = '/error';
-        if (type.indexOf(inStore)) {
+        if (inStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/goodsin/detail/' + id;
-        } else if (type.indexOf(outStore)) {
+        } else if (outStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/goodsout/detail/' + id;
-        } else if (type.indexOf(allocationStore)) {
+        } else if (allocationStore.indexOf(parseInt(type)) > -1) {
           url = '/stock/stockallocation/detail/' + id;
         }
         this.$router.push(url);
