@@ -117,7 +117,7 @@
         this.createForm = {data: {name: '', number: '', address: ''}};
       },
       storeIntenance() {
-        this.$router.push('/')
+        this.$router.push('/store/maintenance/intenance');
       },
       createStoreHouseSure() {//新增确定
         let self = this

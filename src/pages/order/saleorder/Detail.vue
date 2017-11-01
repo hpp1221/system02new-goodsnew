@@ -61,7 +61,7 @@
         </el-form-item>
         <el-form-item label="附件信息">
           <uploadfiles
-            :fileList="form.annex"
+            :fileList="form.att"
             :disabled="true"
             :token="imgToken"
             v-if="imgToken">
@@ -194,6 +194,7 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
+          self.form.att = JSON.parse(self.form.att);
         });
       },
       getOperationList(){

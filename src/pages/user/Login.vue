@@ -101,10 +101,12 @@
       }
     },
     created(){
-      window.localStorage.getItem('twoWeek') === 'true' ? this.form.twoWeek = true : this.form.twoWeek = false;
-      if (this.form.twoWeek) {
-        this.checkCookies();
-      }
+      let self = this;
+      let requestData = {token: localStorage.getItem('token')};
+      self.httpGet('/ui/user/checkToken.do', requestData, function (data) {
+        self.$router.push('/index');
+      }, function (data) {
+      })
     },
     methods: {
       submitForm(formName) {//登录
@@ -121,7 +123,7 @@
               let requestData = {token: data.data.token};
               self.httpApi.user.getMyInfo(requestData, function (data) {
                 window.localStorage.setItem('userinfo', JSON.stringify(data.data));
-                self.$router.push('/');
+                self.$router.push('/index');
               })
             });
           } else {
@@ -137,6 +139,7 @@
             let requestData = self.shallowCopy(self.registerForm);
             self.httpApi.user.register(requestData, function (data) {
               self.$message.success('注册成功');
+              self.tabName = 'login';
             });
           } else {
             console.log('error submit!!');

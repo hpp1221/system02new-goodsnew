@@ -49,7 +49,7 @@
           suffix = file.name.substring(file.name.indexOf('.'));
         }
         this.$emit('getFileList', {
-          name: file.name + suffix,
+          name: file.name,
           url: this.imgDomain + response.key
         });
       },

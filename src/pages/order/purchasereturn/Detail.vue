@@ -78,7 +78,7 @@
           <!--</div>-->
           <div class="bottom">
             <p class="first-p">审批价格：</p>
-            <p class="second-p">{{form.orderAmount}}</p>
+            <p class="second-p">{{form.payAmount}}</p>
           </div>
         </div>
         <el-form-item label="附件信息" style="margin-top: 20px;clear:both" v-if="form.att.length > 0">
@@ -129,7 +129,8 @@
           partnerId: '',
           partnerName: '',
           orderAmount: '',
-          att: []
+          att: [],
+          payAmount:''
         },
         operationList: [],
         operationLogVisible: false,
@@ -159,6 +160,10 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      });
     },
     watch: {
       operationLogVisible: function (newVal, oldVal) {

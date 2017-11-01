@@ -37,7 +37,7 @@
         }, 1000);
       },
       goToIndex(){
-        this.$router.push('/');
+        this.$router.push('/index');
       }
     }
   }

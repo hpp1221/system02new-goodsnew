@@ -10,7 +10,7 @@
       <el-form v-if="active == 1" label-width="150px">
         <el-form-item label="1、选择盘点门店">
           <!--<el-select v-model="form.storeId">-->
-            <!--<el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
+          <!--<el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
           <!--</el-select>-->
           <addressselect @getAddressSelect="getAddressSelect">{{form.addressId}}</addressselect>
         </el-form-item>
@@ -142,11 +142,11 @@
     },
     methods: {
       getAddressSelect(e) {
-        console.log('eaddressid',e)
+        console.log('eaddressid', e)
         this.form.addressId = e.addressId;
       },
       getCatSelect(e) {
-        console.log('eclass',e)
+        console.log('eclass', e)
         this.form.catId = e.catId;
       },
       getCat() {
@@ -160,6 +160,8 @@
       getExcel() {//下载excelmodel
         if (this.form.addressId && this.form.catId) {
           location.href = '/ui/export?addressId=' + this.form.storeId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
+        } else {
+          this.$message.error('请选择后再导出模板');
         }
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调

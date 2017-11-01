@@ -20,7 +20,7 @@ export default new Router({
     {
       path: '/',
       component: require('@/pages/Index'),
-      redirect: '/index',
+      redirect: '/login',
       children: [
         {
           path: '/index',
