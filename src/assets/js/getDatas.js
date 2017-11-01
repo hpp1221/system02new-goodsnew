@@ -38,17 +38,7 @@ Vue.prototype.getUnitList = function(callback){//获取单位列表
 Vue.prototype.getSupplierList = function(callback){//获取供应商列表
   let self = this;
   let requestData = {token: window.localStorage.getItem('token')};
-  self.httpApi.supplier.list(requestData,function (data) {
-    return callback(data.data);
-  });
-};
-Vue.prototype.getImgAccess = function(callback){//获取图片token
-  let self = this;
-  let requestData = {
-    token: window.localStorage.getItem('token'),
-    bucketName: 'sass'
-  };
-  self.httpApi.aliyun.imgSignature(requestData,function (data) {
+  self.httpApi.supplier.supplierListNoPlatform(requestData,function (data) {
     return callback(data.data);
   });
 };

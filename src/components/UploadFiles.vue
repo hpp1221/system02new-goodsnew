@@ -1,6 +1,5 @@
 <template>
   <el-upload
-    class="upload-demo"
     action="http://upload.qiniu.com/"
     :data="key"
     :on-success="handleSuccess"
@@ -8,9 +7,10 @@
     :file-list="fileList"
     :on-preview="downloadFile"
     :disabled="disabled"
+    v-if="key.token"
     style="width: 500px;">
-    <el-button size="small" type="primary">点击上传</el-button>
-    <div slot="tip" class="el-upload__tip">附件最大20M，仅支持PDF、word、txt、excel、jpg、png、bmp、gif、rar、zip格式</div>
+    <el-button size="small" type="primary" v-if="!disabled">点击上传</el-button>
+    <div slot="tip" class="el-upload__tip" v-if="!disabled">附件最大20M，仅支持PDF、word、txt、excel、jpg、png、bmp、gif、rar、zip格式</div>
   </el-upload>
 </template>
 
@@ -28,16 +28,20 @@
       fileList: {
         type: Array
       },
-      token: {
-        type: String
-      },
       disabled: {
         type: Boolean,
         default: false
       }
     },
     created(){
-      this.key.token = this.token;
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.key.token = data.data;
+      });
     },
     methods: {
       beforeUpload(file){
@@ -65,6 +69,3 @@
     }
   }
 </script>
-
-<style>
-</style>

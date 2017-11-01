@@ -203,7 +203,6 @@
     },
     created(){
       let self = this;
-      self.select();
       self.getAddressList(function (data) {
         self.totalStores = data;
       });

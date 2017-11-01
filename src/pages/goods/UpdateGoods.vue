@@ -55,8 +55,7 @@
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg"
                       @click.native="rememberIndex(scope)"
-                      :token="imgToken"
-                      v-if="imgToken">
+>
                     </uploadoneimg>
                   </template>
                 </el-table-column>
@@ -148,9 +147,7 @@
               <uploadfiles
                 :fileList="form.goodsExtend.annex"
                 @getFileList="getAnnex"
-                :disabled="true"
-                :token="imgToken"
-                v-if="imgToken">
+                :disabled="true">
               </uploadfiles>
             </el-form-item>
             <el-form-item>
@@ -228,9 +225,7 @@
                     <uploadoneimg
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg2"
-                      @click.native="rememberIndex(scope)"
-                      :token="imgToken"
-                      v-if="imgToken">
+                      @click.native="rememberIndex(scope)">
                     </uploadoneimg>
                   </template>
                 </el-table-column>
@@ -306,9 +301,7 @@
               <uploadmultipleimg
                 :fileList="goodsForm.goodsExtend.imgs"
                 @getFileList="getFileList2"
-                @removeFile="removeFileList"
-                :token="imgToken"
-                v-if="imgToken">
+                @removeFile="removeFileList">
               </uploadmultipleimg>
             </el-form-item>
             <h4 class="item-title">商品描述</h4>
@@ -326,9 +319,7 @@
               <uploadfiles
                 :fileList="goodsForm.goodsExtend.annex"
                 @getFileList="getAnnex2"
-                @removeFile="removeAnnex"
-                :token="imgToken"
-                v-if="imgToken">
+                @removeFile="removeAnnex">
               </uploadfiles>
             </el-form-item>
             <el-form-item>
@@ -435,9 +426,6 @@
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
       //获取分类列表
     },
     methods: {

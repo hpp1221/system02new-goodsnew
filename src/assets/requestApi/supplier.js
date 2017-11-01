@@ -98,9 +98,23 @@ Vue.prototype.httpApi.supplier.searchSuppliersByName = function (params, success
       successCallback(data);
     })
 };
+//根据name列表查询供应商
+Vue.prototype.httpApi.supplier.selectSupplierByNameList = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/supplier/selectSupplierByNameList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //供应商商品列表查询
 Vue.prototype.httpApi.supplier.supplierGoodslistByPageAndQuery = function (params, successCallback) {
   Vue.prototype.httpPost('/ui/supplier/supplierGoodslistByPageAndQuery', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//不包含平台供应商列表
+Vue.prototype.httpApi.supplier.supplierListNoPlatform = function (params, successCallback) {
+  Vue.prototype.httpPost('/ui/supplier/supplierListNoPlatform', params,
     function (data) {
       successCallback(data);
     })

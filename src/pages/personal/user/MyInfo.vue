@@ -18,9 +18,7 @@
         <el-form-item label="头像">
           <uploadoneimg
             :fileList="form.avatar"
-            @getFileList="getLogo"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getLogo">
           </uploadoneimg>
         </el-form-item>
         <el-form-item label="手机">
@@ -68,7 +66,6 @@
           position: '',
           email: ''
         },
-        imgToken: '',
         totalDepartmentList: [],
       }
     },
@@ -77,9 +74,6 @@
 
       self.userInfoToForm();//把userinfo放入form
       self.getDepartmentList();
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
     },
     components: {
       'uploadoneimg': require('../../../components/uploadoneimg')

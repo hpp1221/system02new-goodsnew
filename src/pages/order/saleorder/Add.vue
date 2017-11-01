@@ -104,9 +104,7 @@
         <el-form-item label="附件信息">
           <uploadfiles
             :fileList="form.att"
-            @getFileList="getAtt"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getAtt">
           </uploadfiles>
         </el-form-item>
         <el-form-item>
@@ -204,7 +202,6 @@
         listIndex: '',//现在正在添加的某个list的下标
         goodsInfoList: [],
         editDeliveryVisible: false,
-        imgToken: '',
         invoiceTypes: [
           {
             id: 0,
@@ -236,12 +233,6 @@
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
       'pagination': require('../../../components/pagination'),
-    },
-    created(){
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
     },
     methods: {
       judgeNum(value, index){//判断数量是否为整数

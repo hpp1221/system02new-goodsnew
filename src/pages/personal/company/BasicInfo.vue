@@ -96,9 +96,7 @@
         <el-form-item label="公司logo">
           <uploadoneimg
             :fileList="form.logo"
-            @getFileList="getLogo"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getLogo">
           </uploadoneimg>
         </el-form-item>
         <el-form-item label="详细地址">
@@ -163,7 +161,6 @@
             {required: true, message: '请选择所属行业', trigger: 'change'},
           ],
         },
-        imgToken: '',
         totalIndustryTypes: [],
         type: false,//false是添加true是修改
       }
@@ -171,9 +168,6 @@
     created(){
       let self = this;
       self.selectCompanyById();//查询公司信息
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
       self.getIndustry();
     },
     components: {
