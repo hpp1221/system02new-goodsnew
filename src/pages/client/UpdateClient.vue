@@ -32,9 +32,8 @@
 				</el-form-item>
 				<el-form-item label="客户级别">
 					<el-select v-model="ruleForm.vip_level">
-						<el-option label="VIP1" value="0"></el-option>
-						<el-option label="VIP2" value="1"></el-option>
-						<el-option label="VIP3" value="2"></el-option>
+            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelName">
+            </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item>
@@ -50,6 +49,7 @@
 	export default {
 		data() {
 			return {
+        options:[],
 				ruleForm: {
 					name: '',
 					tphone: '',
@@ -118,9 +118,19 @@
 			};
 		},
 		created() {
+		  this.getClientLevelList()
 			this.$route.params.id ? 　this.select(this.$route.params.id) : this.$router.push('/error')//判断是否接收到要修改的记录的id
 		},
 		methods: {
+      getClientLevelList() {
+        let self = this
+        let requestData = {
+          token: window.localStorage.getItem('token'),
+        };
+        self.httpApi.level.getCustomerLevelList(requestData, function (data) {
+          self.options = data.data.list
+        });
+      },
 			select(id) {
 				let self = this
 				let requestData = {

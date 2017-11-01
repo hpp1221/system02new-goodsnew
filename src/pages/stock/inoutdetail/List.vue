@@ -11,7 +11,7 @@
             filterable
             :loading="addressLoading"
             @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalStores"></el-option>
+            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalStores"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>

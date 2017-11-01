@@ -11,18 +11,20 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="brandId">
-                <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
-              </el-select>
+              <brandselect @getBrandSelect="getBrandSelect" :selectAllVisible="false"></brandselect>
+              <!--<el-select placeholder="请选择商品品牌" v-model="form.brand" value-key="brandId">-->
+                <!--<el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>-->
+              <!--</el-select>-->
             </el-form-item>
             <el-form-item label="商品分类">
-              <el-cascader
-                :options="totalCategories"
-                v-model="form.cat"
-                @active-item-change="getCatList"
-                :show-all-levels="false"
-                :props="props">
-              </el-cascader>
+              <catselect @getCatSelect="getCatSelect"></catselect>
+              <!--<el-cascader-->
+                <!--:options="totalCategories"-->
+                <!--v-model="form.cat"-->
+                <!--@active-item-change="getCatList"-->
+                <!--:show-all-levels="false"-->
+                <!--:props="props">-->
+              <!--</el-cascader>-->
               <!--<el-select v-model="form.cat" placeholder="请选择商品分类" value-key="id">
                                 <el-option v-for="t in totalCategories"
                                     :key="t.id"
@@ -32,21 +34,23 @@
                             </el-select>-->
             </el-form-item>
             <el-form-item label="计量单位">
-              <el-select v-model="form.unit">
-                <el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">
+              <unitselect @getUnitSelect="getUnitSelect" :selectAllVisible="false"></unitselect>
+              <!--<el-select v-model="form.unit">-->
+                <!--<el-option v-for="u in totalUnitList" :key="u.id" :label="u.name" :value="u.name">-->
 
-                </el-option>
-              </el-select>
+                <!--</el-option>-->
+              <!--</el-select>-->
             </el-form-item>
             <el-form-item label="关键字">
               <el-input placeholder="搜索关键字" class="form-input" v-model="form.keyword"></el-input>
             </el-form-item>
             <el-form-item label="所属供应商名称">
-              <el-select v-model="form.supplier" value-key="supplierId">
-                <el-option v-for="u in totalSupplierList" :key="u.supplierId" :label="u.name" :value="u">
+              <supplierselect @getSupplierSelect="getSupplierSelect" :selectAllVisible="false"></supplierselect>
+              <!--<el-select v-model="form.supplier" value-key="supplierId">-->
+                <!--<el-option v-for="u in totalSupplierList" :key="u.supplierId" :label="u.name" :value="u">-->
 
-                </el-option>
-              </el-select>
+                <!--</el-option>-->
+              <!--</el-select>-->
             </el-form-item>
 
 
@@ -204,7 +208,11 @@
         form: {
           name: '',
           brand: '',
+          brandName: '',
+          brandId: '',
           cat: [],
+          catId:'',
+          catName:'',
           unit: '',
           keyword: '',
           supplier: '',
@@ -255,28 +263,40 @@
       'uploadmultipleimg': require('../../../components/uploadmultipleimg'),
       'uploadfiles': require('../../../components/uploadfiles'),
       'uploadoneimg': require('../../../components/uploadoneimg'),
+      'brandselect': require('../../../components/getbrandselect'),
+      'unitselect': require('../../../components/getunitselect'),
+      'catselect': require('../../../components/getcatselect'),
+      'supplierselect': require('../../../components/getsupplierlistselect')
     },
     created(){
       let self = this;
-      self.getBrandList(function (data) {
-        console.log('brand', data)
-        self.totalBrandList = data.list;
-      });//获取品牌列表
+
       self.getTagList(function (data) {
         self.goodsTags = data;
       });//获取标签列表
-      self.getUnitList(function (data) {
-        self.totalUnitList = data.list;
-      });
-      self.getSupplierList(function (data) {
-        console.log('supplier', data)
-        self.totalSupplierList = data;
-      });
-      this.getCatList();//获取分类列表
+
     },
     methods: {
       getFileList(file){//商品图片
         this.form.goodsExtend.imgs.push(file);
+      },
+      getBrandSelect(e){//创建商品品牌获取
+        this.form.brand = e.brand;
+        this.form.brandName = e.brandName;
+        this.form.brandId = e.brandId;
+      },
+      getUnitSelect(e){//创建商品单位获取
+        this.form.unit = e;
+      },
+      getCatSelect(e){
+        this.form.cat = e.cat;
+        this.form.catName = e.catName;
+        this.form.catId = e.catId;
+      },
+      getSupplierSelect(e){
+        this.form.supplier = e.supplier;
+        this.form.supplierName = e.supplierName;
+        this.form.supplierId = e.supplierId;
       },
       getAnnex(file){//附件
         this.form.goodsExtend.annex.push(file);
@@ -305,40 +325,7 @@
           this.form.goodsExtend.content = editorInstance.getContent()
         });
       },
-      getCatList(val){
-        let self = this;
-        var requestData;
-        if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
-        } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
-            }
-          }
-          if (val === undefined) {
-            self.totalCategories = data.data;
-          } else {
-            self.insertCat(self.totalCategories, val, data.data, 0);
-          }
-        });
-      },
-      insertCat(arr, val, data, level){//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
+
       submit(){
         let self = this;
         self.form.cat = [self.form.cat[self.form.cat.length - 1]];
