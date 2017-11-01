@@ -89,8 +89,6 @@
         <el-form-item label="附件信息" style="margin-top: 20px;clear:both" v-if="form.att.length > 0">
           <uploadfiles
             :fileList="form.att"
-            :token="imgToken"
-            v-if="imgToken"
             :disabled="true">
           </uploadfiles>
         </el-form-item>
@@ -163,7 +161,6 @@
         reasonForm: {
           reason: ''
         },
-        imgToken: '',
         totalOrderStatus: [
           {
             name: '已作废',
@@ -186,10 +183,6 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });
     },
     watch: {
       operationLogVisible: function (newVal, oldVal) {

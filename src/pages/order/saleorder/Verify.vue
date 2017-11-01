@@ -62,9 +62,7 @@
         <el-form-item label="附件信息">
           <uploadfiles
             :fileList="form.att"
-            :disabled="true"
-            :token="imgToken"
-            v-if="imgToken">
+            :disabled="true">
           </uploadfiles>
         </el-form-item>
         <el-form-item label="操作日志" style="clear: both">
@@ -152,7 +150,6 @@
         operationLogVisible: false,
         operationList: [],
         writeFailReason: false,
-        imgToken: '',
         totalOrderStatus: [
           {
             name: '作废',
@@ -203,10 +200,6 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
     },
     methods: {
       select(id){

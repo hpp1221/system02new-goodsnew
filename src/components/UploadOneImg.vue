@@ -7,6 +7,7 @@
     :on-success="handleSuccess"
     :before-upload="beforeUpload"
     :disabled="disabled"
+    v-if="key.token"
     style="margin: 10px;width: 120px;height: 120px;">
     <img v-if="fileList" :src="fileList" class="avatar">
     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -27,16 +28,20 @@
       fileList: {
         type: String
       },
-      token: {
-        type: String
-      },
       disabled: {
         type: Boolean,
         default: false
       }
     },
     created(){
-      this.key.token = this.token;
+      let self = this;
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'sass'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.key.token = data.data;
+      });
     },
     methods: {
       beforeUpload(file){

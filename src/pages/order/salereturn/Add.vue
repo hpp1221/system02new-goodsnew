@@ -109,9 +109,7 @@
         <el-form-item label="附件信息" style="margin-top: 20px;clear:both">
           <uploadfiles
             @getFileList="getFileList"
-            :fileList="form.att"
-            :token="imgToken"
-            v-if="imgToken">
+            :fileList="form.att">
           </uploadfiles>
         </el-form-item>
         <el-form-item>
@@ -211,7 +209,6 @@
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
-        imgToken: '',
         invoiceTypes: [
           {
             id: 0,
@@ -245,12 +242,6 @@
         deep: true
       },
 
-    },
-    created(){
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      })
     },
     components: {
       'pagination': require('../../../components/pagination'),

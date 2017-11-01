@@ -19,9 +19,7 @@
         <el-form-item label="头像">
           <uploadoneimg
             :fileList="form.avatar"
-            @getFileList="getLogo"
-            :token="imgToken"
-            v-if="imgToken">
+            @getFileList="getLogo">
           </uploadoneimg>
         </el-form-item>
         <el-form-item label="昵称">
@@ -186,7 +184,6 @@
 //				},
         rules: {},
         companySuffix: '',//公司loginId前缀
-        imgToken: '',
         totalRoleList: [],
         totalDepartmentList: [],
         type: false,//false是添加true是修改
@@ -197,10 +194,6 @@
       this.getPrimaryUserLoginId();
       this.getRoleList();
       this.getDepartmentList();
-      let self = this;
-      self.getImgAccess(function (data) {
-        self.imgToken = data;
-      });//获取图片token
     },
     components: {
       'uploadoneimg': require('../../../components/uploadoneimg')
