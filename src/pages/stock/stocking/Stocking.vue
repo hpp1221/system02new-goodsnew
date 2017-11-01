@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">门店盘点</h3>
+      <h3 class="page-title">库存盘点</h3>
       <el-steps :active="active">
         <el-step title="上传导入文件"></el-step>
         <el-step title="预览数据"></el-step>
         <el-step title="导入完成"></el-step>
       </el-steps>
       <el-form v-if="active == 1" label-width="150px">
-        <el-form-item label="1、选择盘点门店">
+        <el-form-item label="1、选择盘点仓库">
           <!--<el-select v-model="form.storeId">-->
             <!--<el-option v-for="item in storeIds" :key="item.id" :label="item.name" :value="item.id"></el-option>-->
           <!--</el-select>-->
@@ -50,7 +50,7 @@
             <el-table-column label="规格" prop="sku">
 
             </el-table-column>
-            <el-table-column label="条形码">
+            <el-table-column label="条形码" prop="barCode">
 
             </el-table-column>
             <el-table-column label="商品状态" prop="status">
@@ -142,11 +142,9 @@
     },
     methods: {
       getAddressSelect(e) {
-        console.log('eaddressid',e)
         this.form.addressId = e.addressId;
       },
       getCatSelect(e) {
-        console.log('eclass',e)
         this.form.catId = e.catId;
       },
       getCat() {
@@ -159,11 +157,10 @@
       },
       getExcel() {//下载excelmodel
         if (this.form.addressId && this.form.catId) {
-          location.href = '/ui/export?addressId=' + this.form.storeId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
+          location.href = '/ui/export?addressId=' + this.form.addressId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
         }
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
-        console.log(file);
         this.excelAnalysisStatus = true;
         this.form.excelFile = [file]
         if (response.data.length > 0) {
@@ -186,7 +183,7 @@
       sureExport() { //确定导入
         this.active++;
         let string = encodeURI(JSON.stringify(this.excelResponse));
-        location.href = '/ui/checkExcel?data=' + string + '&catId=' + this.form.catId + '&addressId=' + this.form.storeId + '&token=' + window.localStorage.getItem('token')
+        location.href = '/ui/checkExcel?data=' + string + '&catId=' + this.form.catId + '&addressId=' + this.form.addressId + '&token=' + window.localStorage.getItem('token')
       }
     }
   }

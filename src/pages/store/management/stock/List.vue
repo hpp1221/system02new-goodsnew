@@ -78,7 +78,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.upLimit,scope.row.downLimit)">修改
                 </el-dropdown-item>
-                <!--<el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>-->
+                <!--<el-dropdown-item @click.native="seeDetail(scope.row.goodsSkuId)">明细</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -227,10 +227,10 @@
           })
         }
       },
-      seeDetail(id) {
-        let url = '/store/management/stock/detail/' + id;
-        this.$router.push(url);
-      },
+//      seeDetail(goodsSkuId) {//明细
+//        let url = '/store/management/stock/detail/' + goodsSkuId;
+//        this.$router.push(url);
+//      },
       getCat() {
         if (this.totalCategories.length === 0) {
           this.getCatList();//获取分类列表

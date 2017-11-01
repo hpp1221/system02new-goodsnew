@@ -266,7 +266,7 @@
       getGoodsFormUnitSelect(e) {
         this.goodsForm.unit = e;
       },
-      getGoodsFormCatSelect(e) {
+      getGoodsFormCatSelect(e){
         this.goodsForm.cat = e.cat;
         this.goodsForm.catName = e.catName;
         this.goodsForm.catId = e.catId;
@@ -315,7 +315,7 @@
 //
 //          cat.res = cat;
 //          self.totalCategories = [cat];
-          //self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
+          self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
           self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
           self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
           self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
