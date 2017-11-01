@@ -5,7 +5,7 @@
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="全部级别">
           <el-select v-model="easyForm.vip_level" placeholder="全部级别">
-            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelId">
+            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelName">
             </el-option>
           </el-select>
         </el-form-item>
