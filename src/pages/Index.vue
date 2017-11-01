@@ -27,7 +27,7 @@
         </div>
         <div class="header-right-avatar-div">
           <div class="avater-div">
-            <el-dropdown trigger="click" v-if="userinfo">
+            <el-dropdown trigger="click" v-if="userinfo" style="width: 100%;height: 100%">
               <img v-lazy="userinfo.avatar" alt=""/>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="personCenter">个人信息</el-dropdown-item>
