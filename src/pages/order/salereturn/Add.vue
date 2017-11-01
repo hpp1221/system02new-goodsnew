@@ -231,7 +231,7 @@
           let amount = 0;
           for (let i = 0; i < val.length; i++) {
             this.form.orderDetails[i].subtotal = this.accMul(parseInt(val[i].num), val[i].price);
-            if(this.form.orderDetails[i].approvePrice){
+            if (this.form.orderDetails[i].approvePrice) {
               amount += parseInt(this.form.orderDetails[i].approvePrice);
             }
 
@@ -252,11 +252,8 @@
         this.form.att.push(e);
       },
       selectVip(row, event, column){
-        this.form.partnerName = row.name;
-        this.form.partnerId = row.id;
-        this.form.contacts = row.name;
-        this.form.cel = row.mphone;
-        this.form.address = row.address;
+        let form = this.form;
+        [form.partnerName, form.partnerId, form.contacts, form.cel, form.address] = [row.name, row.id, row.name, row.mphone, row.address];
         this.vipListVisible = false;
       },
       pageChanged(page){
@@ -295,9 +292,9 @@
       },
       sureEdit(){//确认修改
         this.editDeliveryVisible = false;
-        this.form.contacts = this.editDeliveryForm.contacts;
-        this.form.cel = this.editDeliveryForm.cel;
-        this.form.address = this.editDeliveryForm.address;
+        let form = this.form;
+        let editDeliveryForm = this.editDeliveryForm;
+        [form.contacts,form.cel,form.address] = [editDeliveryForm.contacts,editDeliveryForm.cel,editDeliveryForm.address];
       },
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;

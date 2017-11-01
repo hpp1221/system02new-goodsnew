@@ -3,7 +3,8 @@
        :style="{backgroundImage: 'url(' +bg + ')'}">
     <div class="login-box">
       <div class="login-ivis-div">
-        <img src="../../assets/images/ivis.jpg" alt=""/>
+        <h1>觇智云</h1>
+        <!--<img src="../../assets/images/ivis.jpg" alt=""/>-->
       </div>
       <el-tabs v-model="tabName">
         <el-tab-pane label="登录" name="login">
