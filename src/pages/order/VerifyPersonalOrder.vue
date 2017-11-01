@@ -54,12 +54,12 @@
           {{form.remark}}
         </el-form-item>
         <el-form-item label="附件信息">
-          <!--<uploadfiles-->
-          <!--:fileList="form.annex"-->
-          <!--:disabled="true"-->
-          <!--:token="imgToken"-->
-          <!--v-if="imgToken">-->
-          <!--</uploadfiles>-->
+          <uploadfiles
+            :fileList="form.att"
+            :disabled="true"
+            :token="imgToken"
+            v-if="imgToken">
+          </uploadfiles>
         </el-form-item>
         <el-form-item label="操作日志">
           <el-switch
@@ -113,7 +113,8 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
-          orderStatus: ''
+          orderStatus: '',
+          att: []
 //          deliveryInfo:''
         },
         writeFailReason: false,
@@ -140,6 +141,10 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      let self = this;
+      self.getImgAccess(function (data) {
+        self.imgToken = data;
+      });
     },
     watch: {
       operationLogVisible: function (newVal, oldVal) {
@@ -157,7 +162,7 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
-          console.log(self.form)
+          self.form.att = JSON.parse(self.form.att);
         });
       },
       getOperationList(){

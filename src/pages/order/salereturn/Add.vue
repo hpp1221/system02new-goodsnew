@@ -108,6 +108,7 @@
         </el-form-item>
         <el-form-item label="附件信息" style="margin-top: 20px;clear:both">
           <uploadfiles
+            @getFileList="getFileList"
             :fileList="form.att"
             :token="imgToken"
             v-if="imgToken">
@@ -256,6 +257,9 @@
       'uploadfiles': require('../../../components/uploadfiles'),
     },
     methods: {
+      getFileList(e){
+        this.form.att.push(e);
+      },
       selectVip(row, event, column){
         this.form.partnerName = row.name;
         this.form.partnerId = row.id;

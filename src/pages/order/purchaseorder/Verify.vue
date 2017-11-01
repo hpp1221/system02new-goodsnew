@@ -12,7 +12,7 @@
               </el-table-column>
               <el-table-column label="主图" width="80">
                 <template slot-scope="scope">
-                  <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+                  <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
                 </template>
               </el-table-column>
               <el-table-column label="商品编码" prop="goodsNo">
@@ -127,6 +127,7 @@
           deliveryTime: '',//交货日期
           invoiceType: '',//发票信息
           remark: '',//备注
+          att:[]
 //          deliveryInfo:''
         },
         invoiceTypes: [
@@ -204,6 +205,7 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
+          self.form.att = JSON.parse(self.form.att);
         });
       },
       tabClick(){

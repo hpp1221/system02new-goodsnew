@@ -19,7 +19,7 @@
           </el-table-column>
           <el-table-column label="主图" width="80">
             <template slot-scope="scope">
-              <img :src="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
+              <img v-lazy="scope.row.url" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>
             </template>
           </el-table-column>
           <el-table-column label="商品编码" prop="goodsNo">
@@ -73,7 +73,7 @@
         </el-form-item>
         <el-form-item label="附件信息">
           <uploadfiles
-            :fileList="form.annex"
+            :fileList="form.att"
             :disabled="true"
             :token="imgToken"
             v-if="imgToken">
@@ -213,6 +213,7 @@
         };
         self.httpApi.order.detail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
+          self.form.att = JSON.parse(self.form.att);
         });
       },
       getOperationList(){
