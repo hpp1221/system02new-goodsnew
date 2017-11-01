@@ -3,7 +3,7 @@
        :style="{backgroundImage: 'url(' +bg + ')'}">
     <div class="login-box">
       <div class="login-ivis-div">
-        <h1>觇智云</h1>
+        <h1 style="color:darkgray">觇智云</h1>
         <!--<img src="../../assets/images/ivis.jpg" alt=""/>-->
       </div>
       <el-tabs v-model="tabName">
@@ -25,7 +25,7 @@
               <el-button type="primary" @click="submitForm('form')" class="login-btn">登录</el-button>
             </el-form-item>
           </el-form>
-          <el-button type="text" @click="forgetPwd" class="forget-btn">忘记密码</el-button>
+          <!--<el-button type="text" @click="forgetPwd" class="forget-btn">忘记密码</el-button>-->
         </el-tab-pane>
         <el-tab-pane label="注册" name="register">
           <el-form :model="registerForm" :rules="registerRules" ref="registerForm" class="demo-ruleForm">
