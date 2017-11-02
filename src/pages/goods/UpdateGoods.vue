@@ -55,7 +55,7 @@
                       :fileList="scope.row.img"
                       @getFileList="getSkuImg"
                       @click.native="rememberIndex(scope)"
->
+                    >
                     </uploadoneimg>
                   </template>
                 </el-table-column>
@@ -488,6 +488,7 @@
           self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
           self.form.skus = JSON.parse(self.form.skus);
           self.form.skus[0].sku = JSON.parse(self.form.skus[0].sku);
+          self.form.skus[0].img = self.form.skus[0].img || '';
           console.log(self.form)
         });
       },

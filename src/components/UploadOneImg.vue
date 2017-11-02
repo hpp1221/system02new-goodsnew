@@ -9,7 +9,7 @@
     :disabled="disabled"
     v-if="key.token"
     style="margin: 10px;width: 120px;height: 120px;">
-    <img v-if="fileList" :src="fileList" class="avatar">
+    <img v-if="key.file" :src="key.file" class="avatar">
     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
   </el-upload>
 </template>
@@ -34,6 +34,7 @@
       }
     },
     created(){
+      this.key.file = this.fileList || '';
       let self = this;
       let requestData = {
         token: window.localStorage.getItem('token'),
@@ -54,10 +55,12 @@
         if (file.name.indexOf('.') > -1) {
           suffix = file.name.substring(file.name.indexOf('.'));
         }
+        this.key.file = this.imgDomain + response.key;
         this.$emit('getFileList', {
           name: file.name,
           url: this.imgDomain + response.key
         });
+
       },
       handleRemove(file, fileList){
 
