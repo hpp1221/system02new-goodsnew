@@ -13,10 +13,15 @@ Vue.use(Router)
 
 export default new Router({
   //mode: 'history',
-  routes: [{
-    path: '/login',
-    component: require('@/pages/user/Login')
-  },
+  routes: [
+    {
+      path: '*',
+      component: require('@/pages/Error')
+    },
+    {
+      path: '/login',
+      component: require('@/pages/user/Login')
+    },
     {
       path: '/',
       component: require('@/pages/Index'),
