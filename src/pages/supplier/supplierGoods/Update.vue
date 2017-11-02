@@ -325,6 +325,9 @@
       },
       updateGoods() {//修改商品
         let self = this;
+        if (!(self.goodsForm.cat instanceof Array)) {
+          self.goodsForm.cat = [self.goodsForm.cat];
+        }
         let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/supplier/suppliergoods/suppliergoodslist');

@@ -23,7 +23,7 @@
           </li>
         </ul>
       </div>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right;margin-top: 110px;">
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="margin-top: 110px;">
       </pagination>
     </div>
   </div>
