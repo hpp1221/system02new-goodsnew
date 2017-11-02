@@ -61,8 +61,12 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getGoodsNumberDetail(scope.row.id)">单据详情</el-dropdown-item>
-                <el-dropdown-item v-if="scope.row.type != 0 && scope.row.type != 4 " @click.native="getGoodsExamine(scope.row)">审核</el-dropdown-item>
-                <el-dropdown-item v-if="scope.row.type == 1 || scope.row.type == 2" @click.native="cancelGetGoods(scope.row)">作废</el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type != 0 && scope.row.type != 4 "
+                                  @click.native="getGoodsExamine(scope.row)">审核
+                </el-dropdown-item>
+                <el-dropdown-item v-if="scope.row.type == 1 || scope.row.type == 2"
+                                  @click.native="cancelGetGoods(scope.row)">作废
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -134,8 +138,8 @@
         },
         form: {
           tradeNo: '',//调拨单号
-          outputDateRange: ["", ""],
-          inputDateRange: ["", ""],
+          outputDateRange: [null, null],
+          inputDateRange: [null, null],
           outPutStartDate: '',
           outPutEndDate: '',
           inPutStartDate: '',
@@ -228,10 +232,10 @@
           pageSize: size,
           pageNo: num
         };
-        self.form.outPutStartDate = self.form.outputDateRange[0]
-        self.form.outPutEndDate = self.form.outputDateRange[1]
-        self.form.inPutStartDate = self.form.inputDateRange[0]
-        self.form.inPutEndDate = self.form.inputDateRange[1]
+        self.form.outPutStartDate = self.form.outputDateRange[0] === null ? '' : self.form.outputDateRange[0];
+        self.form.outPutEndDate = self.form.outputDateRange[1] === null ? '' : self.form.outputDateRange[1];
+        self.form.inPutStartDate = self.form.inputDateRange[0] === null ? '' : self.form.inputDateRange[0];
+        self.form.inPutEndDate = self.form.inputDateRange[1] === null ? '' : self.form.inputDateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
           self.advanceSearch = false

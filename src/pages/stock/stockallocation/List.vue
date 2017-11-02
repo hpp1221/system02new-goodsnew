@@ -99,7 +99,7 @@
         easyForm: {//简单查询
           to: '',
           from: '',
-          dateRange: [null, null],
+          dateRange: null,
           startDate: '',
           endDate: '',
           storeType: 1//1是仓库，2是门店
@@ -149,8 +149,8 @@
           pageSize: size,
           pageNo: num
         };
-        self.easyForm.startDate = self.easyForm.dateRange[0] === null ? '' : self.easyForm.dateRange[0];
-        self.easyForm.endDate = self.easyForm.dateRange[1] === null ? '' : self.easyForm.dateRange[1];
+        self.easyForm.startDate = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[0];
+        self.easyForm.endDate = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.stock.allocationRecordList(requestData, function (data) {
           self.searchType = 1;

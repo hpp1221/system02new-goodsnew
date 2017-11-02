@@ -101,7 +101,7 @@
           orderNumber: '',
           orderStatus: [],
           partnerName: '',
-          dateRange: [null, null],
+          dateRange: null,
           startTime: '',
           endTime: ''
         },
@@ -204,8 +204,8 @@
           pageNo: num,
           type: 2//1是采购退货，2是销售退货
         };
-        self.form.startTime = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
-        self.form.endTime = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
+        self.form.startTime = self.form.dateRange === null ? '' : self.form.dateRange[0];
+        self.form.endTime = self.form.dateRange === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.selectReturnOrderListPage(requestData, function (data) {
           self.searchType = 2;

@@ -70,7 +70,7 @@
           type: -1,
           addressId: '',
           status: -1,//-1代表出库
-          dateRange: [null, null],
+          dateRange: null,
           startDate: '',
           endDate: '',
           storeType: 1//1是仓库，2是门店
@@ -102,8 +102,8 @@
           pageSize: size,
           pageNo: num
         };
-        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
-        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
+        self.form.startDate = self.form.dateRange === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordList(requestData, function (data) {
           self.tableData = data.data.list;

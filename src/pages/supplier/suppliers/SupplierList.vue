@@ -63,7 +63,6 @@
 </template>
 
 <script>
-  let self = this;
   export default {
     data() {
       return {
@@ -125,7 +124,7 @@
           let arr = [];
           for (let i = 0; i < this.tableData.length; i++) {
             for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].supplierId == rows[j].supplierId) {
+              if (this.tableData[i].supplierId === rows[j].supplierId) {
                 arr.push(this.tableData[i]);
               }
             }
