@@ -53,7 +53,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
     </div>
   </div>
 </template>

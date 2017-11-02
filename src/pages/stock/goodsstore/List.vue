@@ -20,9 +20,9 @@
           <el-input placeholder="按商品名称/编码/规格/条形码/关键字搜索" icon="search" v-model="easyForm.keyword" class="long-input">
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>
-        </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>-->
+        <!--</el-form-item>-->
         <el-form-item>
           <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
         </el-form-item>

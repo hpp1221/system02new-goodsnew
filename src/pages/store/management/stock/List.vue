@@ -3,9 +3,9 @@
     <div class="wrapper">
       <h3 class="page-title">门店库存</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item>
-          <el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>
-        </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>-->
+        <!--</el-form-item>-->
         <el-form-item label="商品分类">
           <catselect @getCatSelect="getCatSelect" v-model="easyForm.series"></catselect>
         </el-form-item>
