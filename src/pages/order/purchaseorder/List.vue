@@ -127,7 +127,7 @@
 //          payStatus: [],//付款状态
           orderNumber: '',//订单编号
           orderStatus: [],//订单状态
-          dateRange: [null, null],
+          dateRange: null,
           deliveryInfo: '',//收货信息
           goodsInfo: '',//商品信息
           startTime: '',
@@ -249,8 +249,8 @@
           pageNo: num,
           orderType: 1
         };
-        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
-        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
+        self.form.startTime = self.form.dateRange === null ? '' : self.form.dateRange[0];
+        self.form.endTime = self.form.dateRange === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.order.list(requestData, function (data) {
           self.advanceSearch = false;

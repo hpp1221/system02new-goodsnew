@@ -156,13 +156,15 @@
         form: {
           type: -1,
           addressId: '',
-          dateRange: [null, null],
+          dateRange: null,
           brand: '',
           brandName: '',
           brandId: '',//商品品牌
+          startDate: '',
+          endDate: ''
         },
         advanceSearch: false,
-        searchType:1,
+        searchType: 1,
         pageSize: 5,
         pageNum: 1,
         totalPage: 10,
@@ -176,7 +178,7 @@
     },
     components: {
       'addressselect': require('../../../components/getaddressselect'),
-      'catselect':require('../../../components/getcatselect'),
+      'catselect': require('../../../components/getcatselect'),
       'brandselect': require('../../../components/getbrandselect'),
     },
     methods: {
@@ -199,14 +201,14 @@
       select(){//查询
         let self = this;
         let requestData = {token: window.localStorage.getItem('token')};
-        self.form.startDate = self.form.dateRange[0] === null ? '' : self.form.dateRange[0];
-        self.form.endDate = self.form.dateRange[1] === null ? '' : self.form.dateRange[1];
+        self.form.startDate = self.form.dateRange === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.stock.recordList(requestData, function (data) {
           self.tableData = data.data.list;
         });
       },
-      advanceSelect(size,num){//高级搜索
+      advanceSelect(size, num){//高级搜索
 
       }
     }
