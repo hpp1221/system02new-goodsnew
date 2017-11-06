@@ -148,10 +148,8 @@
         }
       },
       getTradeNumber() {//调拨单号
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        }
+        let self = this;
+        let requestData = {};
         self.httpApi.store.createAllocationRecordNumber(requestData, function (data) {
           let list = data.data;
           self.form.tradeNo = list.tradeNo;
@@ -161,7 +159,6 @@
       getGoodsSubmit() {//提交门店调拨单
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           inPutAddress: self.form.inPutAddress,
           outPutAddress: self.form.outPutAddress
         };
@@ -171,10 +168,8 @@
         })
       },
       getStoreList() {//要货门店
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        }
+        let self = this;
+        let requestData = {};
         self.httpApi.store.storeList(requestData,function (data) {
           self.storeIds = data.data
         })
@@ -194,11 +189,10 @@
       querySearchAsync(queryString, cb) {//商品关键字查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           keyword: queryString,
           inPutAddressId: self.form.inPutAddress.id,
           outPutAddressId: self.form.outPutAddress.id
-        }
+        };
         self.httpApi.store.selectStoreGoodsInfo(requestData, function (data) {
           let list = data.data;
 //          if(list){

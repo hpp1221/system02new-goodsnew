@@ -91,7 +91,6 @@
       select(supplierId) {
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           supplierId: supplierId
         };
         self.httpApi.supplier.getById(requestData, function (data) {
@@ -102,9 +101,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = {
-              token: window.localStorage.getItem('token')
-            };
+            let requestData = {};
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
             self.httpApi.supplier.modifySupplier(requestData, function (data) {
               self.$router.push('/supplier/suppliers/supplierlist');

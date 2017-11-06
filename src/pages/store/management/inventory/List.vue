@@ -135,9 +135,7 @@
       },
       getStoreList() {//门店列表
         let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        };
+        let requestData = {};
         self.httpApi.store.storeList(requestData, function (data) {
           self.storeIds = data.data
         })

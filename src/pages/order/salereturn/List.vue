@@ -182,7 +182,6 @@
       select(size, num){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           type: 2,//1是采购退货，2是销售退货
@@ -199,7 +198,6 @@
       advanceSelect(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           type: 2//1是采购退货，2是销售退货

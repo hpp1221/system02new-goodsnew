@@ -177,7 +177,6 @@
       selectCompanyById(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.company.selectCompanyById(requestData, function (data) {
@@ -192,7 +191,6 @@
           if (valid) {
             let self = this;
             let requestData = {
-              token: window.localStorage.getItem('token'),
               companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
             };
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
@@ -216,7 +214,7 @@
       },
       getIndustry(){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), type: 'industry'};
+        let requestData = {type: 'industry'};
         self.httpApi.dict.selectDictByType(requestData, function (data) {
           self.totalIndustryTypes = data.data;
         });
@@ -242,13 +240,13 @@
         this.form.externalContacts.push(obj);
       },
       deleteLine(index){
-          this.form.externalContacts.splice(index, 1);
+        this.form.externalContacts.splice(index, 1);
       },
     }
   }
 </script>
 <style scoped>
-  i{
+  i {
     cursor: pointer;
   }
 </style>

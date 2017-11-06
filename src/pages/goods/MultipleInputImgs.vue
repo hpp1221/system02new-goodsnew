@@ -123,9 +123,7 @@
         console.log('successnum', this.successNum)
         if (this.successNum === this.fileNum) {
           let self = this;
-          console.log(self.successFiles)
           let requestData = {
-            token: window.localStorage.getItem('token'),
             picList: JSON.stringify(self.successFiles),
             companyId: 1
           };
@@ -136,7 +134,6 @@
       getImgAccess(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           bucketName: 'sass'
         };
         self.httpApi.aliyun.imgSignature(requestData, function (data) {

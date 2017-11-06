@@ -59,7 +59,6 @@
       getRoleList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
         self.httpApi.dict.selectDictByType(requestData, function (data) {
@@ -69,7 +68,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           customerId: id
         };
         self.httpApi.customer.selectCustomerById(requestData, function (data) {
@@ -78,9 +76,7 @@
       },
       sureUpdateClient(){
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
         self.httpApi.customer.updateCustomerById(requestData, function (data) {
           self.$router.push('/client/platform/list');

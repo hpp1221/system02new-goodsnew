@@ -98,7 +98,6 @@
         let self = this;
         self.loading = true;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };

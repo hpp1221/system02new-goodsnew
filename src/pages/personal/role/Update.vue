@@ -65,7 +65,6 @@
       select(id){//查询该角色的权限
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           roleId: id,
         };
         self.httpApi.role.selectRoleInfoById(requestData, function (data) {
@@ -90,9 +89,7 @@
       },
       selectPermissionList(){//查询权限树
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.permission.selectPermissionList(requestData, function (data) {
           self.data = data.data;
         });
@@ -105,7 +102,6 @@
         }
         str = str.substring(0, str.length - 1);
         let requestData = {
-          token: window.localStorage.getItem('token'),
           permissionIdStr: str,
           roleId: self.$route.params.id
         };

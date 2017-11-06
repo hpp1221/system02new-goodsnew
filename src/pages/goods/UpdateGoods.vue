@@ -398,7 +398,6 @@
         totalCategories: [],
         tabName: 'first',//当前选中的tab
         skuImgIndex: 0,
-        imgToken: '',
         getCat: false,//是否获取过cat数据
         originCat: ''
       }
@@ -478,7 +477,7 @@
       },
       select(skuId){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), skuId: skuId};
+        let requestData = {skuId: skuId};
         self.httpApi.goods.goodsDetail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
           self.form.spec = JSON.parse(self.form.spec);
@@ -499,7 +498,7 @@
       },
       selectGoods(goodsId){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), goodsId: goodsId};
+        let requestData = {goodsId: goodsId};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
@@ -535,7 +534,7 @@
       },
       updateSku(){//修改sku
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), skuInfo: JSON.stringify(self.form.skus)};
+        let requestData = {skuInfo: JSON.stringify(self.form.skus)};
         self.httpApi.goods.editSku(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });
@@ -545,7 +544,7 @@
         if (!(self.goodsForm.cat instanceof Array)) {
           self.goodsForm.cat = [self.goodsForm.cat];
         }
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
+        let requestData = {goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });

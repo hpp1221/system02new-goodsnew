@@ -205,7 +205,6 @@
       selectDepartment(){//查询部门列表
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.organization.selectOrganizationListByCompanyId(requestData, function (data) {
@@ -219,7 +218,6 @@
         self.addDepartmentDialog = true;
         if (id !== 0) {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             organizationId: id
           };
           self.httpApi.organization.selectOrganizationById(requestData, function (data) {
@@ -231,7 +229,6 @@
       sureAddDepartment(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
@@ -246,7 +243,6 @@
       sureUpdateDepartment(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId,
           organizationId: id
         };
@@ -267,7 +263,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             organizationId: id
           };
           self.httpApi.organization.deleteOrganizationById(requestData, function (data) {
@@ -288,7 +283,6 @@
         self.updateDepartmentDialog = true;
 
         let requestData = {
-          token: window.localStorage.getItem('token'),
           organizationId: id
         };
         self.httpApi.organization.selectOrganizationById(requestData, function (data) {

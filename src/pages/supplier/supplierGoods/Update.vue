@@ -295,7 +295,7 @@
       },
       selectGoods(goodsId) {
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), goodsId: goodsId};
+        let requestData = {goodsId: goodsId};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
@@ -328,7 +328,7 @@
         if (!(self.goodsForm.cat instanceof Array)) {
           self.goodsForm.cat = [self.goodsForm.cat];
         }
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.goodsForm)};
+        let requestData = {goodsInfo: JSON.stringify(self.goodsForm)};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/supplier/suppliergoods/suppliergoodslist');
         });

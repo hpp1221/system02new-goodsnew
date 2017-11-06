@@ -210,7 +210,6 @@
           if (valid) {
             let self = this;
             let requestData = {
-              token: window.localStorage.getItem('token'),
               oldPwd: self.pwdForm.oldPwd,
               pwd: self.pwdForm.pwd,
             };
@@ -231,7 +230,6 @@
       sureChangePhone(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           phone: self.phoneForm.phone,
           code: self.phoneForm.code,
         };
@@ -247,7 +245,6 @@
       getVerifyCode(){//获取短信验证码
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           phone: self.phoneForm.phone
         };
         self.httpApi.user.checkUserCelCount(requestData, function (data) {
@@ -276,7 +273,6 @@
           }
         }, 1000);
         let requestData = {
-          token: window.localStorage.getItem('token'),
           phone: self.userInfo.cel,
           type: 3
         };//3代表修改邮箱
@@ -288,7 +284,6 @@
         let self = this;
 
         let requestData = {
-          token: window.localStorage.getItem('token'),
           phone: self.userInfo.cel,
           code: self.emailForm.code
         };//3代表修改邮箱
@@ -301,7 +296,7 @@
       },
       sendEmail(){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), email: self.changeEmailForm.email};
+        let requestData = {email: self.changeEmailForm.email};
         self.httpApi.user.selectUserCountByEmail(requestData, function (data) {
           self.verifyText = 60;
           self.messageCount = setInterval(function () {
@@ -320,7 +315,6 @@
       sureChangeEmail(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           email: self.changeEmailForm.email,
           code: self.changeEmailForm.code
         };//1修改邮箱

@@ -225,7 +225,6 @@
       select(size, num){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           orderType: 1
@@ -244,7 +243,6 @@
       advanceSelect(size, num){//高级搜索
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           orderType: 1

@@ -48,9 +48,7 @@
     methods: {
       selectShopList(){//门店列表
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.store.storeListSpecial(requestData, function (data) {
           self.shopList = data.data;
 //            for(let i = 0;i < self.shopList.length;i++){
@@ -62,7 +60,6 @@
       selectStoreList(){//仓库列表
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           storeHouseId: self.storeHouse.id
         };
         self.httpApi.store.storeHouseListSpecial(requestData, function (data) {
@@ -97,7 +94,6 @@
       saveChange(value, direction, movedKeys){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           storeHouse: JSON.stringify(self.storeHouse),
           userStoreHouseAddressList: JSON.stringify(value)
         };

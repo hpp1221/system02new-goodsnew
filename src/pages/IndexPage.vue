@@ -131,7 +131,6 @@
       getStockRemind(){//首页库存信息
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           ratio: 30
         };
         self.httpApi.stock.storeHouseRemind(requestData, function (data) {
@@ -140,9 +139,7 @@
       },
       getPendingTask(){//首页待处理任务信息
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.order.pendingTask(requestData, function (data) {
           console.log(data)
           self.pendingTaskList = data.data;
@@ -152,7 +149,6 @@
       getShortCut(){//获取快捷菜单
 //				let self = this
 //				let requestData = {
-//					token: window.localStorage.getItem('token')
 //				}
 //				self.$http.get('/ui/user.js/shortcut',requestData).then(function (response) {
 //				    let data = response.data;

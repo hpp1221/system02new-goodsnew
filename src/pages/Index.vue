@@ -183,7 +183,7 @@
       },
       getMenu(callback){//获取菜单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.index.menus(requestData, function (data) {
           callback(data.data);
         });
@@ -226,8 +226,9 @@
       },
       logout(){//注销
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.user.logout(requestData, function (data) {
+          localStorage.removeItem('token');
           self.$router.push('/login');
         });
       }

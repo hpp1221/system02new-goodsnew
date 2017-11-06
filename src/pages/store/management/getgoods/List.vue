@@ -206,7 +206,6 @@
       select(size, num) {//简单查询
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
         };
@@ -215,7 +214,7 @@
           self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
-        })
+        });
         self.httpApi.store.storeList(requestData, function (data) {
           self.storeIds = data.data
         })
@@ -233,7 +232,6 @@
       advanceSelect(size, num) {//高级查询
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -262,7 +260,6 @@
       cancelGetGoods(row) { //作废
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           id: row.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {

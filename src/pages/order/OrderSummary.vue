@@ -238,7 +238,6 @@
           self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
-          token: window.localStorage.getItem('token'),
           startTime: self.startTime,
           endTime: self.endTime,
         };
@@ -255,7 +254,6 @@
           self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
-          token: window.localStorage.getItem('token'),
           startTime: self.startTime,
           endTime: self.endTime,
           pageSize: size,
@@ -273,7 +271,6 @@
           self.endTime = self.dateRange[1].pattern('yyyy-MM-dd HH:mm:ss');
         }
         let requestData = {
-          token: window.localStorage.getItem('token'),
           startTime: self.startTime,
           endTime: self.endTime,
           pageSize: size,

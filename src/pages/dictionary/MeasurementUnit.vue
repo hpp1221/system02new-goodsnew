@@ -56,7 +56,6 @@
       getUnitList(size, num) {//单位列表
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -73,7 +72,6 @@
         let self = this
         let requestData = {
           name: self.form.name,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.goodsCat.createUnit(requestData, function (data) {
           self.dictionaryUnitCreate = false

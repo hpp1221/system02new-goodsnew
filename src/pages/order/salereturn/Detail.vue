@@ -194,7 +194,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           returnOrderId: id,
         };
         self.httpApi.returnOrder.selectSaleReturnOrderById(requestData, function (data) {
@@ -205,7 +204,6 @@
       getOperationList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
         };
         self.httpApi.order.log(requestData, function (data) {

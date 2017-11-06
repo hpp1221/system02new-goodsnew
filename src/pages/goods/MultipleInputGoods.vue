@@ -226,7 +226,6 @@
         let self = this;
         self.active++;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           goodsList:JSON.stringify(self.excelResponse)
         };
         self.httpApi.goods.inputGoods(requestData, function (data) {

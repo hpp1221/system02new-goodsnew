@@ -193,7 +193,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: id,
         };
         self.httpApi.order.detail(requestData, function (data) {
@@ -207,7 +206,6 @@
       getOperationList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
         };
         self.httpApi.order.log(requestData, function (data) {
@@ -217,7 +215,6 @@
       verifyOrder(type){//通过还是作废
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: self.form.orderId,
           orderStatus: self.form.orderStatus,
           verifyType: type,

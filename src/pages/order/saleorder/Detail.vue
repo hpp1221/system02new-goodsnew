@@ -182,7 +182,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: id,
         };
         self.httpApi.order.detail(requestData, function (data) {
@@ -193,7 +192,6 @@
       getOperationList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           orderId: this.$route.params.id,
         };
         self.httpApi.order.log(requestData, function (data) {

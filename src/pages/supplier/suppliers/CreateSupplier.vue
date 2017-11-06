@@ -54,9 +54,7 @@
     methods: {
       submit() { //保存
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.supplier.createSupplier(requestData, function (data) {
           self.$router.push('/supplier/suppliers/supplierlist');

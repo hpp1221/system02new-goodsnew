@@ -310,7 +310,7 @@
       exportGoods(){//引入商品
         let self = this;
         self.exportGoodsVisible = true;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.goods.showGoodsList(requestData, function (data) {
           self.exportGoodsList = data.data;
         });
@@ -334,7 +334,7 @@
         }
         self.form.supplierId = self.form.supplier.supplierId;
         self.form.supplierName = self.form.supplier.name;
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
+        let requestData = {goodsInfo: JSON.stringify(self.form)};
         self.httpApi.goods.addGoods(requestData, function (data) {
           self.$router.push('/supplier/suppliergoods/suppliergoodslist');
         });

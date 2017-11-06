@@ -102,7 +102,6 @@
 //      getSupplierGoodsList() { //供应商商品管理列表
 //        let self = this
 //        let requestData = {
-//          token: window.localStorage.getItem('token'),
 //          supplierName: self.form.supplierName,
 //          supplierId: self.form.supplierId,
 //          rows: self.pageSize,
@@ -123,7 +122,6 @@
       select(size, num) { //查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           supplierName: self.form.supplierName,
           query: self.form.query,
           pageNo: num,

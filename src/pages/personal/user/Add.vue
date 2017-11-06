@@ -239,7 +239,7 @@
       },
       getPrimaryUserLoginId(){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.user.selectPrimaryUserLoginId(requestData, function (data) {
           self.companySuffix = data.data;
         });
@@ -248,9 +248,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = {
-              token: window.localStorage.getItem('token'),
-            };
+            let requestData = {};
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
             //requestData.roleIds = JSON.parse(requestData.roleIds);
             self.httpApi.user.addUser(requestData, function (data) {
@@ -265,7 +263,7 @@
       },
       getRoleList(){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.role.selectRoleList(requestData, function (data) {
           self.totalRoleList = data.data;
         });
@@ -273,7 +271,6 @@
       getDepartmentList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.organization.selectOrganizationList(requestData, function (data) {

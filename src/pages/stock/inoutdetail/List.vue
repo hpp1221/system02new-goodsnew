@@ -247,7 +247,6 @@
       select(size, num){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -263,7 +262,6 @@
       advanceSelect(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };

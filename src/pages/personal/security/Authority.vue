@@ -277,9 +277,7 @@
     methods: {
       selectAuthority(){//查询权限列表
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.permission.selectPermissionList(requestData, function (data) {
           self.tableData = data.data;
         });
@@ -290,7 +288,6 @@
         self.addForm.pname = name;
         if (id !== 0) {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             permissionId: id
           };
           self.httpApi.permission.selectPermissionById(requestData, function (data) {
@@ -301,9 +298,7 @@
       },
       sureAddAuthority(){
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         if (self.addForm.orders === '') {
           self.addForm.orders = 0;
         }
@@ -319,7 +314,6 @@
       sureUpdateAuthority(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId,
           permissionId: id
         };
@@ -343,7 +337,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             permissionId: id
           };
           self.httpApi.permission.deletePermission(requestData, function (data) {
@@ -365,7 +358,6 @@
         self.updateAuthorityDialog = true;
 
         let requestData = {
-          token: window.localStorage.getItem('token'),
           permissionId: id
         };
         self.httpApi.permission.selectPermissionById(requestData, function (data) {

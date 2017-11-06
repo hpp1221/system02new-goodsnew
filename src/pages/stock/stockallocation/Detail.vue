@@ -83,7 +83,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           id: id
         };
         self.httpApi.stock.getAllocationRecordDetail(requestData, function (data) {

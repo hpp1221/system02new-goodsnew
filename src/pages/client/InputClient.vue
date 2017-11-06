@@ -62,15 +62,12 @@
     data() {
       return {
         active: 1,
-        uploadData: {
-          token: window.localStorage.getItem('token')
-        },
+        uploadData: {},
         form: {
           addressId: '',
           catId: -1,
           excelFile: []
         },
-        local: window.localStorage.getItem('token'),
         excelResponse: [], //excel解析后的数据
         excelAnalysisStatus: false, //excelResponse默认是数组，不传数据也可以直接下一步，所以要先false
         json_fields: {

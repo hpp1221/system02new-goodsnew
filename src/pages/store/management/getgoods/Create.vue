@@ -149,39 +149,32 @@
     methods: {
       getGoodsSubmit() {//提交门店要货单
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.store.addGetGoodsRecord(requestData,function (data) {
           self.$router.push('/store/management/getgoods/list');
         })
       },
       getStoreList() {//要货门店
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        }
+        let self = this;
+        let requestData = {};
         self.httpApi.store.storeList(requestData, function (data) {
           self.storeIds = data.data
         })
       },
       getTradeNumber() {//单据编码
-        let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        }
+        let self = this;
+        let requestData = {};
         self.httpApi.store.createGetGoodsNumber(requestData, function (data) {
           let list = data.data;
           self.form.tradeNumber = list;
         })
       },
       getStoreHouse() {//仓库接口
-        let self = this
+        let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           type: 1
-        }
+        };
         self.httpApi.stock.addressList(requestData, function (data) {
           self.storeHouseIds = data.data;
         })
@@ -201,10 +194,9 @@
       querySearchAsync(queryString, cb) {//商品关键字查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           keyword: queryString,
           storeId: self.form.storeId
-        }
+        };
         self.httpApi.store.storeGoodsInfo(requestData, function (data) {
           let list = data.data;
           for (let i = 0, listLength = list.length; i < listLength; i++) {

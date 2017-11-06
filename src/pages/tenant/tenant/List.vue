@@ -94,7 +94,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             userId: id
           };
           self.httpApi.user.initUserPwd(requestData, function (data) {
@@ -118,7 +117,6 @@
       select(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -142,7 +140,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             userId: id,
             status: status
           };

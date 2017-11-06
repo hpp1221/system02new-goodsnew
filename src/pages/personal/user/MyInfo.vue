@@ -81,7 +81,7 @@
     methods: {
       userInfoToForm(){//查询公司信息
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.user.getMyInfo(requestData,function (data) {
           window.localStorage.setItem('userinfo', JSON.stringify(data.data));
           self.formPass(self.form, data.data);
@@ -95,9 +95,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = {
-              token: window.localStorage.getItem('token'),
-            };
+            let requestData = {};
             requestData = Object.assign(requestData, self.shallowCopy(self.form));
             self.httpApi.user.updateMyInfo(requestData, function (data) {
               self.$message.success('保存成功');
@@ -115,7 +113,6 @@
       getDepartmentList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.organization.selectOrganizationList(requestData, function (data) {

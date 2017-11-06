@@ -117,7 +117,6 @@
         this.active++;
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           supplierList: JSON.stringify(self.excelResponse)
         };
         self.httpApi.supplier.insertSupplierList(requestData, function (data) {

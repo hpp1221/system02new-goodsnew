@@ -218,9 +218,7 @@
         if (type && this.totalStores.length === 0) {
           let self = this;
           self.addressLoading = true;
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-          }
+          let requestData = {};
           self.httpApi.store.storeList(requestData, function (data) {
             self.totalStores = data.data
             self.addressLoading = false;
@@ -246,9 +244,7 @@
           });//获取标签列表
         }
         if (self.totalStores.length === 0) {
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-          }
+          let requestData = {};
           self.httpApi.store.storeList(requestData, function (data) {
             self.totalStores = data.data
             self.addressLoading = false;
@@ -259,7 +255,6 @@
       select(size, num) {//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -274,7 +269,6 @@
       advanceSelect(size, num) {
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -294,9 +288,7 @@
       },
       sureUpdate() {
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
         self.httpApi.stock.editStoreHouseLimit(requestData, function (data) {
           self.updateVisible = false;

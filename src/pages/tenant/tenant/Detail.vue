@@ -73,7 +73,6 @@
       select(id){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           userId: id
         };
         self.httpApi.user.selectUserById(requestData, function (data) {
@@ -83,7 +82,6 @@
       getDepartmentList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.organization.selectOrganizationList(requestData, function (data) {

@@ -32,7 +32,6 @@
         yearTimeArr = Array.reverse(yearTimeArr);
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           startTime: yearTimeArr[0],
           endTime: yearTimeArr[yearTimeArr.length - 1]
         };

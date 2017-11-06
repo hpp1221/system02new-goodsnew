@@ -54,7 +54,6 @@
       getRoleList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
         self.httpApi.dict.selectDictByType(requestData, function (data) {
@@ -64,9 +63,7 @@
 
       sureAddClient(){
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
         self.httpApi.customer.insertCustomer(requestData, function (data) {
           self.$router.push('/client/platform/list');

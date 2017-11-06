@@ -340,7 +340,6 @@
         }
         let self = this;
         let requestData = {
-          token: localStorage.getItem('token'),
           supplierId: this.orderDetailsDialog[0].supplierId
         };
         self.httpApi.supplier.getPlatformAndChannelSupplierById(requestData, function (data) {
@@ -409,15 +408,12 @@
       selectSupplierList(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
         self.httpApi.supplier.listByPage(requestData, function (data) {
           self.supplierList = data.data;
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-          };
+          let requestData = {};
           self.httpApi.supplier.getSupplierCountByQuery(requestData, function (data) {
             self.totalPage = data.data;
           });
@@ -440,7 +436,6 @@
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           supplierId: self.form.partnerId,
           keyword: queryString,
           type: self.form.platform
@@ -474,7 +469,7 @@
 
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), returnOrderVO: JSON.stringify(self.form)};
+        let requestData = {returnOrderVO: JSON.stringify(self.form)};
         //requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.insertReturnOrder(requestData, function (data) {
           self.$router.push('/order/purchasereturn/list');

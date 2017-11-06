@@ -201,7 +201,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = {token: window.localStorage.getItem('token')};
+            let requestData = {};
             for (let i = 0; i < self.form.data.length; i++) {
               self.$delete(self.form.data[i], 'combination');
             }
@@ -223,7 +223,6 @@
       querySearchAsync(queryString, cb){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
         self.httpApi.stock.goodsInfo(requestData, function (data) {

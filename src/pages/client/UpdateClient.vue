@@ -124,9 +124,7 @@
 		methods: {
       getClientLevelList() {
         let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.level.getCustomerLevelList(requestData, function (data) {
           self.options = data.data.list
         });
@@ -134,7 +132,6 @@
 			select(id) {
 				let self = this
 				let requestData = {
-					token: window.localStorage.getItem('token'),
 					id: id
 				};
 				requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
@@ -146,9 +143,7 @@
 				this.$refs[formName].validate((valid) => {
 					if(valid) {
 						let self = this;
-						let requestData = {
-							token: window.localStorage.getItem('token')
-						};
+						let requestData = {};
 						requestData = Object.assign(requestData, self.shallowCopy(self.ruleForm));
             self.httpApi.vip.upuser(requestData, function (data) {
               self.$router.push('/client/clientmanagement');

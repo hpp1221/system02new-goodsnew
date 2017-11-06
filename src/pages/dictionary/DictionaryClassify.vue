@@ -3,17 +3,17 @@
     <div class="wrapper" style="overflow: hidden">
       <h3 class="page-title">商品分类</h3>
       <el-button @click="openFirstModal" style="float: right">新增一级类目</el-button>
-        <el-tree
-          :data="totalCategories"
-          :props="defaultProps"
-          accordion
-          node-key="id"
-          @node-click="handleNodeClick"
-          @node-expand="handleNodeClick"
-          :default-expanded-keys="defaultExpandedKeys"
-          :render-content="renderContent"
-          v-if="totalCategories.length > 0" style="margin-top: 75px">
-        </el-tree>
+      <el-tree
+        :data="totalCategories"
+        :props="defaultProps"
+        accordion
+        node-key="id"
+        @node-click="handleNodeClick"
+        @node-expand="handleNodeClick"
+        :default-expanded-keys="defaultExpandedKeys"
+        :render-content="renderContent"
+        v-if="totalCategories.length > 0" style="margin-top: 75px">
+      </el-tree>
       <!--新增弹框-->
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
         <el-form :model="childForm">
@@ -63,7 +63,7 @@
         updateDictionaryClassify: false,//修改
         updateForm: {
           name: '',
-          oldName:'',
+          oldName: '',
           parent: {}
         },
         childForm: {
@@ -80,11 +80,9 @@
     methods: {
       getCatChild(val) {//商品分类
         let self = this;
-        let requestData;
-        if (val === undefined) {
-          requestData =  {token: window.localStorage.getItem('token')};
-        } else {
-          requestData =  {token: window.localStorage.getItem('token'), catId: val.id};
+        let requestData = {};
+        if (val !== undefined) {
+          requestData = {catId: val.id};
         }
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {
@@ -120,19 +118,20 @@
           <span>{node.label}</span>
         </span>
         <span>
-          <el-button style="font-size: 12px;" type="text" on-click={ () => this.openCreateModal(node, data) }>新增</el-button>
+        <el-button style="font-size: 12px;" type="text" on-click={ () => this.openCreateModal(node, data) }>新增</el-button>
         <el-button style="font-size: 12px;" type="text" on-click={ () => this.updateModal(node, data) }>修改</el-button>
         <el-button style="font-size: 12px;" type="text" on-click={ () => this.deleteNode(node, data) }>删除</el-button>
         </span>
         </span>);
       },
+
       handleNodeClick(data) {//树形控件
         let self = this
         let parentArr = data.parentIds.split('/')
         self.getCatChild({parent: parentArr, id: data.id})
       },
       openCreateModal(parent, now) {
-        console.log('now',now)
+        console.log('now', now)
         event.stopPropagation()
         this.createChildDependent = true;
         this.childForm.parent = parent.data;
@@ -141,10 +140,10 @@
         this.createChildDependent = true;
         this.childForm.parent = {data: {name: ''}};
       },
-      updateModal(parent,now){//修改弹窗
+      updateModal(parent, now){//修改弹窗
         event.stopPropagation()
-        console.log('parent',parent)
-        console.log('parentdata',parent.data)
+        console.log('parent', parent)
+        console.log('parentdata', parent.data)
         this.updateDictionaryClassify = true;
         this.updateForm.parent = parent.data;
         this.updateForm.oldName = parent.parent.data.name
@@ -157,7 +156,6 @@
           name: self.updateForm.parent.name,
           parentIds: self.updateForm.parent.parentIds,
           hasChild: self.updateForm.parent.hasChild,
-          token: window.localStorage.getItem('token'),
           oldParentId: self.updateForm.parent.parentId,
         };
         self.httpApi.goodsCat.editCategory(requestData, function (data) {
@@ -178,7 +176,6 @@
           name: node.data.name,
           parentIds: node.data.parentIds,
           hasChild: node.data.hasChild,
-          token: window.localStorage.getItem('token'),
         };
         this.$confirm('此操作不可恢复, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -207,7 +204,6 @@
           name: self.childForm.parent.name,
           parentIds: self.childForm.parent.parentIds,
           hasChild: self.childForm.parent.hasChild,
-          token: window.localStorage.getItem('token'),
           newCatName: self.childForm.name
         };
 

@@ -274,7 +274,6 @@
       selectClient(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -299,7 +298,6 @@
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
         self.httpApi.stock.goodsInfo(requestData, function (data) {
@@ -331,7 +329,7 @@
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), saleReturnOrderVO: JSON.stringify(self.form)};
+        let requestData = {saleReturnOrderVO: JSON.stringify(self.form)};
         //requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.returnOrder.insertSaleReturnOrder(requestData, function (data) {
           self.$router.push('/order/salereturn/list');

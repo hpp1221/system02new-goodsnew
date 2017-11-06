@@ -82,7 +82,6 @@
         let requestData = {
           id: self.updateForm.id,
           name: self.updateForm.name,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.goodsCat.editTag(requestData, function (data) {
           self.updateStoreLabel = false;
@@ -103,7 +102,6 @@
       handleAdd() {//添加
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           tagName: self.dialogForm.name
         };
         self.httpApi.goodsCat.addTag(requestData, function (data) {
@@ -114,9 +112,7 @@
       },
       getStoreLabel() {//标签列表
         let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token')
-        };
+        let requestData = {};
         self.httpApi.goods.tagList(requestData, function (data) {
           self.dynamicTags = data.data
         });

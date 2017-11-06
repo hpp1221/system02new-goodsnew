@@ -96,7 +96,6 @@
       select(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -118,7 +117,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             roleId: id
           };
           self.$http.post('/ui/role/deleteRole', self.qs.stringify(requestData)).then(function (response) {

@@ -88,7 +88,7 @@
     methods: {
       select(skuId){
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token'), skuId: skuId};
+        let requestData = {skuId: skuId};
         self.httpApi.goods.goodsDetail(requestData, function (data) {
           self.goodsDetail = data.data;
 

@@ -233,9 +233,7 @@
       },
       getStoreList() {
           let self = this;
-          let requestData = {
-            token: window.localStorage.getItem('token'),
-          }
+          let requestData = {};
           self.httpApi.store.storeList(requestData, function (data) {
             self.totalStores = data.data
           })
@@ -244,7 +242,6 @@
       select(goodsSkuId) {//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum,
           goodsSkuId: goodsSkuId
@@ -261,7 +258,6 @@
       advanceSelect(goodsSkuId) {
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: self.pageSize,
           pageNo: self.pageNum
         };

@@ -102,7 +102,6 @@
       getStoreHouseList(size, num) {//门店列表
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           type: 2
@@ -126,7 +125,6 @@
           name: self.createForm.name,
           number: self.createForm.number,
           address: self.createForm.address,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.stock.createStoreHouse(requestData,function (data) {
           self.createStore = false
@@ -145,7 +143,6 @@
           name: self.updateForm.name,
           number: self.updateForm.number,
           address: self.updateForm.address,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.stock.editStoreHouse(requestData,function (data) {
           self.updateStore = false

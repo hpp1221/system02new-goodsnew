@@ -91,9 +91,7 @@
     methods: {
       getClientLevelList() {
         let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         self.httpApi.level.getCustomerLevelList(requestData, function (data) {
           self.options = data.data.list
         });
@@ -106,7 +104,6 @@
       select(size, num) { //查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           vip_level: self.easyForm.vip_level,
           condition: self.easyForm.condition,
           pageNo: num,

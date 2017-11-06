@@ -119,7 +119,6 @@
       select(id) {//详情列表
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           allocationId: id,
         }
         self.httpApi.store.storeAllocationInfo(requestData, function (data) {
@@ -131,7 +130,6 @@
       getGoodsExaminePass() {//通过
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           status: 2,
           allocationRecordId: self.form.id
         }
@@ -174,7 +172,6 @@
       cancelGetGoods() { //作废
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           allocationRecordId: self.form.id,
           status: self.form.type,
           tradeNo: self.form.tradeNo

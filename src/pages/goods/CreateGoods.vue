@@ -495,7 +495,7 @@
       exportGoods(){//引入商品
         let self = this;
         self.exportGoodsVisible = true;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.httpApi.goods.showGoodsList(requestData, function (data) {
           self.exportGoodsList = data.data;
         });
@@ -507,7 +507,7 @@
       sureExport(id){//确定引入
         let self = this;
         self.exportGoodsVisible = false;
-        let requestData = {token: window.localStorage.getItem('token'), goodsId: id};
+        let requestData = {goodsId: id};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.exportForm = self.formPass(self.exportForm, data.data);
           self.exportForm.spec = JSON.parse(self.exportForm.spec);
@@ -541,7 +541,7 @@
         for (let i = 0; i < self.form.spec.length; i++) {
           self.$delete(self.form.spec[i], 'inputVisible');
         }
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.form)};
+        let requestData = {goodsInfo: JSON.stringify(self.form)};
         self.httpApi.goods.addGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });
@@ -549,7 +549,7 @@
       submitExportGoods(){//提交引入的商品
         let self = this;
         self.exportForm.isPlatForm = 0;
-        let requestData = {token: window.localStorage.getItem('token'), goodsInfo: JSON.stringify(self.exportForm)};
+        let requestData = {goodsInfo: JSON.stringify(self.exportForm)};
         self.httpApi.goods.addGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });

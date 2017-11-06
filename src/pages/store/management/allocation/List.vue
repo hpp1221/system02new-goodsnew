@@ -201,9 +201,7 @@
       },
       getStoreList() {//要货门店
         let self = this
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        }
+        let requestData = {};
         self.httpApi.store.storeList(requestData, function (data) {
           self.totalStores = data.data
         })
@@ -211,11 +209,10 @@
       select(size, num) {//查询
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           status: 2,//门店调拨
           pageSize: size,
           pageNo: num
-        }
+        };
         requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.store.storeAllocationList(requestData, function (data) {
           console.log('storeAllocationList', data)
@@ -227,7 +224,6 @@
       advanceSelect(size, num) {//高级查询
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           status: 2,//门店调拨
           pageSize: size,
           pageNo: num
@@ -270,7 +266,6 @@
         let self = this;
         if (row.type == "1" || row.type == "2") {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             allocationRecordId: row.id,
             status: row.status,
             tradeNo: row.tradeNo

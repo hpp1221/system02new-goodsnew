@@ -80,7 +80,6 @@
       getUnitList(size,num) {//商品品牌列表
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNum: num,
         };
@@ -99,7 +98,6 @@
           brandId:self.form.brandId,
           brandName: self.form.brandName,
           companyId:self.updateForm.companyId,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.brand.createBrand(requestData, function (data) {
           self.dictionaryUnitCreate = false
@@ -117,7 +115,6 @@
           brandId:self.updateForm.brandId,
           brandName: self.updateForm.brandName,
           companyId:self.updateForm.companyId,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.brand.updateBrandByBrandId(requestData, function (data) {
           self.updateStore = false;
@@ -134,7 +131,6 @@
         let self = this;
         console.log('brandid',item)
         let requestData = {
-          token: window.localStorage.getItem('token'),
           brandId: item.brandId
         };
         self.$confirm('请确认是否删除？', '提示', {
@@ -154,7 +150,6 @@
       setTop(item){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           brandId: item.brandId
         };
         self.$confirm('请确认是否置顶？', '提示', {

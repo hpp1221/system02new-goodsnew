@@ -21,7 +21,7 @@
           </el-input>
         </el-form-item>
         <!--<el-form-item>-->
-          <!--<el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>-->
+        <!--<el-checkbox :true-label="1" :false-label="0" v-model="easyForm.merge">按商品合并</el-checkbox>-->
         <!--</el-form-item>-->
         <el-form-item>
           <el-button type="text" @click="startAdvanceSearch">高级搜索</el-button>
@@ -236,7 +236,6 @@
       select(size, num){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -251,7 +250,6 @@
       advanceSelect(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -271,9 +269,7 @@
       },
       sureUpdate(){
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.shallowCopy(self.updateForm));
         self.httpApi.stock.editStoreHouseLimit(requestData, function (data) {
           self.updateVisible = false;

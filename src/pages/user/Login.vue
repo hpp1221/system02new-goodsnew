@@ -103,7 +103,7 @@
     },
     created(){
       let self = this;
-      let requestData = {token: localStorage.getItem('token')};
+      let requestData = {};
       self.httpGet('/ui/user/checkToken.do', requestData, function (data) {
         self.$router.push('/index');
       }, function (data) {
@@ -121,11 +121,11 @@
             };
             self.httpApi.user.login(requestData, function (data) {
               window.localStorage.setItem('token', data.data.token);
-              let requestData = {token: data.data.token};
+              let requestData = {};
               self.httpApi.user.getMyInfo(requestData, function (data) {
                 window.localStorage.setItem('userinfo', JSON.stringify(data.data));
                 self.$router.push('/index');
-              })
+              });
             });
           } else {
             console.log('error submit!!');
@@ -137,7 +137,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let self = this;
-            let requestData = self.shallowCopy(self.registerForm);
+            let requestData = self.registerForm ;
             self.httpApi.user.register(requestData, function (data) {
               self.$message.success('注册成功');
               self.tabName = 'login';

@@ -91,7 +91,6 @@
       select(size, num) { //查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageNo: num,
           pageSize: size,
           query: self.form.query,

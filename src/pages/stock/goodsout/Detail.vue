@@ -49,7 +49,6 @@
       select(id){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           id: id
         };
         self.httpApi.stock.getRecord(requestData, function (data) {

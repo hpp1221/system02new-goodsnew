@@ -263,7 +263,6 @@
       select(size, num){//查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num,
           temp: JSON.stringify(self.selectionObj)
@@ -284,7 +283,6 @@
       advanceSelect(size, num){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -372,7 +370,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             skuList: JSON.stringify(self.multipleSelection),
             type: 1
           };
@@ -397,7 +394,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             skuList: JSON.stringify(self.multipleSelection),
             type: 0
           };

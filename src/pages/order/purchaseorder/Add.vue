@@ -234,7 +234,6 @@
       querySearchAsync(queryString, cb){//商品关键字查询
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           keyword: queryString,
         };
         self.httpApi.goods.orderGoodsInfo(requestData, function (data) {
@@ -266,12 +265,9 @@
       },
       submit(){//提交订单
         let self = this;
-        let requestData = {
-          token: window.localStorage.getItem('token'),
-        };
+        let requestData = {};
         requestData = Object.assign(requestData, self.form);
         requestData.att = JSON.stringify(requestData.att);
-        //self.form["token"] = window.localStorage.getItem('token')
 //        self.$http.post('/ui/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
         self.$http.post('/ui/order/create', requestData).then(function (response) {
           let data = response.data;

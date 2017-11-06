@@ -155,7 +155,6 @@
       select(id) {//详情列表
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           id: id,
         };
         self.httpApi.store.getGoodsRecordDetail(requestData, function (data) {
@@ -171,7 +170,6 @@
           self.$router.push('/store/management/getgoods/list');
         } else {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             type: self.type,
             tradeId: self.getGoodsRecordDetails[0].getGoodsRecordId
           };
@@ -189,7 +187,6 @@
       cancelGetGoods() { //作废
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           id: self.form.id
         };
         self.$confirm('确认将此门店要货单作废？', '提示', {

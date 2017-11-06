@@ -114,7 +114,6 @@
       getRoleList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           type: 'customer-role'
         };
         self.httpApi.dict.selectDictByType(requestData, function (data) {
@@ -134,7 +133,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             customerId: id,
           };
           self.httpApi.customer.deleteCustomerById(requestData, function (data) {
@@ -154,7 +152,6 @@
 
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNo: num
         };
@@ -182,7 +179,6 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            token: window.localStorage.getItem('token'),
             userId: id,
             status: status
           };

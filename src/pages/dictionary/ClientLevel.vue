@@ -92,7 +92,6 @@
       getClientLevel(size, num) {//客户级别列表
         let self = this
         let requestData = {
-          token: window.localStorage.getItem('token'),
           pageSize: size,
           pageNum: num
         };
@@ -110,7 +109,6 @@
         let requestData = {
           discount: self.createForm.discount,
           levelName: self.createForm.levelName,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.level.insertCustomerLevel(requestData, function (data) {
           console.log('levelcreate', data)
@@ -129,7 +127,6 @@
           discount: self.updateForm.discount,
           levelName: self.updateForm.levelName,
           levelId: self.updateForm.levelId,
-          token: window.localStorage.getItem('token')
         };
         self.httpApi.level.updateCustomerLevelById(requestData, function (data) {
           self.updateClientLevelModel = false;
@@ -146,7 +143,6 @@
         let self = this
         let requestData = {
           customerLevel:row.levelId,
-          token: window.localStorage.getItem('token')
         };
         self.$confirm('请确认是否置顶？', '提示', {
           confirmButtonText: '确定',

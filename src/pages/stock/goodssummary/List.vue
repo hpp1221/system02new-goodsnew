@@ -200,7 +200,7 @@
       },
       select(){//查询
         let self = this;
-        let requestData = {token: window.localStorage.getItem('token')};
+        let requestData = {};
         self.form.startDate = self.form.dateRange === null ? '' : self.form.dateRange[0];
         self.form.endDate = self.form.dateRange === null ? '' : self.form.dateRange[1];
         requestData = Object.assign(requestData, self.shallowCopy(self.form));

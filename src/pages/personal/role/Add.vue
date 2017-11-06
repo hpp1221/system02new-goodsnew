@@ -62,7 +62,6 @@
       selectPermissionList(){
         let self = this;
         let requestData = {
-          token: window.localStorage.getItem('token'),
           companyId: JSON.parse(window.localStorage.getItem('userinfo')).companyId
         };
         self.httpApi.permission.selectPermissionListByCompanyId(requestData, function (data) {
@@ -92,7 +91,6 @@
         }
         str = str.substring(0, str.length - 1);
         let requestData = {
-          token: window.localStorage.getItem('token'),
           permissionIdStr: str
         };
         requestData = Object.assign(requestData, self.shallowCopy(self.addForm));
