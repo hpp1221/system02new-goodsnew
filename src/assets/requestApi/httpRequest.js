@@ -3,6 +3,8 @@ const axios = require('axios');
 const qs = require('qs');
 import {Loading, Message, MessageBox} from 'element-ui';
 import router from '../../router/index';
+Vue.prototype.$http = axios;
+Vue.prototype.qs = qs;
 const successCode = 10000;
 const loginAgainCode = 30000;
 var loadingInstance;
@@ -44,7 +46,10 @@ Vue.prototype.httpGet = function (url, params, successCallback, failCallback, er
         break;
       default:
         failCallback ? failCallback(data) :
-          self.$message.error(data.message);
+          self.$message({
+            dangerouslyUseHTMLString: true,
+            message: data.message
+          });
         break;
     }
   }).catch(function (error) {
@@ -72,7 +77,10 @@ Vue.prototype.httpPost = function (url, params, successCallback, failCallback, e
         break;
       default:
         failCallback ? failCallback(data) :
-          self.$message.error(data.message);
+          self.$message({
+            dangerouslyUseHTMLString: true,
+            message: data.message
+          });
         break;
     }
   }).catch(function (error) {

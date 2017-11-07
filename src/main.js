@@ -19,18 +19,9 @@ import errorImg from './assets/images/error.jpg'
 import loadingImg from './assets/images/loading.gif'
 import store from './vuex/store';
 Vue.config.productionTip = false
-
 Vue.component('VueEditor',VueEditor)
-
-var qs = require('qs')
-Vue.prototype.qs = qs
-
-
-var axios = require('axios')
-Vue.prototype.$http = axios
-
-var moment = require('moment')
-Vue.prototype.moment = moment
+var moment = require('moment');
+Vue.prototype.moment = moment;
 Vue.use(ElementUI)
 Vue.use(Vuex);
 Vue.use(VueLazyLoad, {
@@ -38,9 +29,7 @@ Vue.use(VueLazyLoad, {
   error: errorImg,
   loading: loadingImg,
   attempt: 1
-})
-
-
+});
 
 /* eslint-disable no-new */
 new Vue({
