@@ -152,7 +152,7 @@
           supplierString += ',' + arr[i].id
         }
         supplierString = supplierString.substring(1, supplierString.length)
-        location.href = '/ui/exportVips?vipIds=' + supplierString + '&token=' + window.localStorage.getItem('token');
+        location.href = '/admin/exportVips?vipIds=' + supplierString + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {//选择要导出的记录的回调
         if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {

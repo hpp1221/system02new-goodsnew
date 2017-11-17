@@ -15,16 +15,9 @@
         </div>
       </div>
       <div class="header-right-div">
-        <div class="header-right-search-div">
-          <i class="el-icon-search"></i>
-          <span>搜索</span>
-        </div>
-        <div class="header-right-message-div">
-          <i class="iconfont icon-remind" style="font-size: 20px;"></i>
-        </div>
-        <div class="header-right-help-div">
-          <i class="iconfont icon-feedback" style="font-size: 20px;"></i>
-        </div>
+        <!--<div class="header-right-help-div">-->
+          <!--<i class="iconfont icon-feedback" style="font-size: 20px;"></i>-->
+        <!--</div>-->
         <div class="header-right-avatar-div">
           <div class="avater-div">
             <el-dropdown trigger="click" v-if="userinfo" style="width: 100%;height: 100%">

@@ -150,7 +150,7 @@
 //				let self = this
 //				let requestData = {
 //				}
-//				self.$http.get('/ui/user.js/shortcut',requestData).then(function (response) {
+//				self.$http.get('/admin/user.js/shortcut',requestData).then(function (response) {
 //				    let data = response.data;
 //				    console.log('shortcut',response)
 //					if(data.code == 10000){

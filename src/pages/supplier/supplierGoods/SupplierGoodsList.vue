@@ -156,7 +156,7 @@
         for (let i = 0; i < arr.length; i++) {
           getGoodsList.push(arr[i].id)
         }
-        location.href = '/ui/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
+        location.href = '/admin/exportSupplierGoodsInfo?list=' + JSON.stringify(getGoodsList) + '&supplierName=' + this.form.supplierName + '&supplierId=' + this.form.supplierId + '&token=' + window.localStorage.getItem('token');
       },
       handleSelectionChange(val) {
         if (val.length > 0) {

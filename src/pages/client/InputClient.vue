@@ -94,7 +94,7 @@
         this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
       },
       getExcel() { //下载excelmodel
-        location.href = '/ui/downVip?token=' + window.localStorage.getItem('token')
+        location.href = '/admin/downVip?token=' + window.localStorage.getItem('token')
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
         this.excelAnalysisStatus = true;

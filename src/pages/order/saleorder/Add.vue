@@ -318,8 +318,8 @@
         let requestData = {};
         requestData = Object.assign(requestData, self.form);
         requestData.att = JSON.stringify(requestData.att);
-//        self.$http.post('/ui/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
-        self.$http.post('/ui/order/create', requestData).then(function (response) {
+//        self.$http.post('/admin/order/create', self.form, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(function (response) {
+        self.$http.post('/admin/order/create', requestData).then(function (response) {
           let data = response.data;
           console.log('order/create', response)
           if (data.code === 10000) {

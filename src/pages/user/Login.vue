@@ -104,7 +104,7 @@
     created(){
       let self = this;
       let requestData = {};
-      self.httpGet('/ui/user/checkToken.do', requestData, function (data) {
+      self.httpGet('/admin/user/checkToken.do', requestData, function (data) {
         self.$router.push('/index');
       }, function (data) {
       })

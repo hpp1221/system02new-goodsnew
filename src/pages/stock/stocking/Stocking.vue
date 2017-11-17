@@ -157,7 +157,7 @@
       },
       getExcel() {//下载excelmodel
         if (this.form.addressId && this.form.catId) {
-          location.href = '/ui/export?addressId=' + this.form.addressId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
+          location.href = '/admin/export?addressId=' + this.form.addressId + '&catId=' + this.form.catId + '&token=' + window.localStorage.getItem('token')
         }
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
@@ -183,7 +183,7 @@
       sureExport() { //确定导入
         this.active++;
         let string = encodeURI(JSON.stringify(this.excelResponse));
-        location.href = '/ui/checkExcel?data=' + string + '&catId=' + this.form.catId + '&addressId=' + this.form.addressId + '&token=' + window.localStorage.getItem('token')
+        location.href = '/admin/checkExcel?data=' + string + '&catId=' + this.form.catId + '&addressId=' + this.form.addressId + '&token=' + window.localStorage.getItem('token')
       }
     }
   }

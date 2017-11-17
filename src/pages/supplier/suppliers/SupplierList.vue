@@ -146,7 +146,7 @@
           supplierString += ',' + arr[i].supplierId
         }
         supplierString = supplierString.substring(1,supplierString.length)
-        location.href = '/ui/supplier/exportSupplierGoods?supplierIds=' + supplierString + '&token=' + window.localStorage.getItem('token') + '&query=' + this.form.query;
+        location.href = '/admin/supplier/exportSupplierGoods?supplierIds=' + supplierString + '&token=' + window.localStorage.getItem('token') + '&query=' + this.form.query;
       },
       updateSupplier(supplierId) { //修改供应商详情
         this.$router.push({path: '/supplier/suppliers/updatesupplier', query: {supplierId: supplierId}});

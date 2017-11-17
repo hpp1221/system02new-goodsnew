@@ -78,7 +78,7 @@
 //		        } else {
 //		          	let self = this;
 //		          	let requestData = {phone:value};
-//		          	self.$http.post('/ui/user.js/checkUserCelCount',self.qs.stringify(requestData)).then(function (response) {
+//		          	self.$http.post('/admin/user.js/checkUserCelCount',self.qs.stringify(requestData)).then(function (response) {
 //					    let data = response.data;
 //					    console.log('checkUserCelCount',response)
 //						if(data.code == 10000){
@@ -98,7 +98,7 @@
 //		        } else {
 //		          	let self = this;
 //		          	let requestData = {email:value};
-//		          	self.$http.post('/ui/user.js/selectUserCountByEmail',self.qs.stringify(requestData)).then(function (response) {
+//		          	self.$http.post('/admin/user.js/selectUserCountByEmail',self.qs.stringify(requestData)).then(function (response) {
 //					    let data = response.data;
 //					    console.log('selectUserCountByEmail',response)
 //						if(data.code == 10000){

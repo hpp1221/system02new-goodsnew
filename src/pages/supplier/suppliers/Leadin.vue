@@ -89,8 +89,8 @@
         this.excelAnalysisStatus ? this.active++ : this.$message.error('请添加模板数据');
       },
       getExcel() { //下载excelmodel
-        //window.open('/ui/supplier/exportSupplierGoodsDemo')
-        location.href = '/ui/supplier/exportSupplierGoodsDemo'
+        //window.open('/admin/supplier/exportSupplierGoodsDemo')
+        location.href = '/admin/supplier/exportSupplierGoodsDemo'
       },
       uploadSuccess(response, file, fileList) { //成功上传的回调
         this.excelAnalysisStatus = true;

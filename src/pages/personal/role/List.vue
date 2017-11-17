@@ -119,7 +119,7 @@
           let requestData = {
             roleId: id
           };
-          self.$http.post('/ui/role/deleteRole', self.qs.stringify(requestData)).then(function (response) {
+          self.$http.post('/admin/role/deleteRole', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             if (data.code == 10000) {
               self.$message.success('删除成功');

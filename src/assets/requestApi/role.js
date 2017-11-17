@@ -3,7 +3,7 @@ import '../js'
 
 //添加角色
 Vue.prototype.httpApi.role.addRole = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/addRole', params,
+  Vue.prototype.httpPost('/admin/role/addRole', params,
     function (data) {
       successCallback(data);
     })
@@ -11,35 +11,35 @@ Vue.prototype.httpApi.role.addRole = function (params, successCallback) {
 
 //删除角色
 Vue.prototype.httpApi.role.deleteRole = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/deleteRole', params,
+  Vue.prototype.httpPost('/admin/role/deleteRole', params,
     function (data) {
       successCallback(data);
     })
 };
 //根据id查询角色
 Vue.prototype.httpApi.role.selectRoleInfoById = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/selectRoleInfoById', params,
+  Vue.prototype.httpPost('/admin/role/selectRoleInfoById', params,
     function (data) {
       successCallback(data);
     })
 };
 //条件查询角色列表
 Vue.prototype.httpApi.role.selectRoleList = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/selectRoleList', params,
+  Vue.prototype.httpPost('/admin/role/selectRoleList', params,
     function (data) {
       successCallback(data);
     })
 };
 //分页条件查询角色列表
 Vue.prototype.httpApi.role.selectRoleListPage = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/selectRoleListPage', params,
+  Vue.prototype.httpPost('/admin/role/selectRoleListPage', params,
     function (data) {
       successCallback(data);
     })
 };
 //更新角色
 Vue.prototype.httpApi.role.updateRole = function (params, successCallback) {
-  Vue.prototype.httpPost('/ui/role/updateRole', params,
+  Vue.prototype.httpPost('/admin/role/updateRole', params,
     function (data) {
       successCallback(data);
     })

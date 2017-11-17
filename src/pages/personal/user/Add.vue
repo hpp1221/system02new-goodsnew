@@ -87,7 +87,7 @@
           let requestData = {
             username: JSON.parse(window.localStorage.getItem('userinfo')).loginId + '-' + value
           };
-          self.$http.post('/ui/user/checkUserCount', self.qs.stringify(requestData)).then(function (response) {
+          self.$http.post('/admin/user/checkUserCount', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log('checkUserCount', response)
             if (data.code === 10000) {
@@ -107,7 +107,7 @@
         } else {
           let self = this;
           let requestData = {phone: value};
-          self.$http.post('/ui/user/checkUserCelCount', self.qs.stringify(requestData)).then(function (response) {
+          self.$http.post('/admin/user/checkUserCelCount', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log('checkUserCelCount', response)
             if (data.code === 10000) {
@@ -128,7 +128,7 @@
           let self = this;
           let requestData = {email: value};
 
-          self.$http.post('/ui/user/selectUserCountByEmail', self.qs.stringify(requestData)).then(function (response) {
+          self.$http.post('/admin/user/selectUserCountByEmail', self.qs.stringify(requestData)).then(function (response) {
             let data = response.data;
             console.log('selectUserCountByEmail', response)
             if (data.code === 10000) {

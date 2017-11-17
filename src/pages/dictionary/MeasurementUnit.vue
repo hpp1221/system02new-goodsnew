@@ -66,12 +66,12 @@
       },
       createUnit() {//新增单元
         this.dictionaryUnitCreate = true;
-        this.form = {data: {name: ''}};
+        this.form = {name: ''};
       },
       createSure() {//新增确定
         let self = this
         let requestData = {
-          name: self.form.name,
+          goodsUnit:self.form
         };
         self.httpApi.goodsCat.createUnit(requestData, function (data) {
           self.dictionaryUnitCreate = false

@@ -18,10 +18,19 @@
       <el-dialog title="新增商品分类" :visible.sync="createChildDependent">
         <el-form :model="childForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
-            <el-input v-model="childForm.name"></el-input>
+            <el-input v-model="childForm.newCatName"></el-input>
           </el-form-item>
-          <el-form-item label="上级分类" :label-width="formLabelWidth" v-if="childForm.parent.name">
-            <el-input :disabled="true" v-model="childForm.parent.name"></el-input>
+          <el-form-item label="权重" :label-width="formLabelWidth">
+            <el-input v-model="childForm.weight" placeholder=" 10  （类目排序的标准:权重越大，排名越靠前）"></el-input>
+          </el-form-item>
+          <el-form-item label="商品图片" :label-width="formLabelWidth">
+            <uploadoneimg
+              :fileList="childForm.img"
+              @getFileList="getFileList">
+            </uploadoneimg>
+          </el-form-item>
+          <el-form-item label="上级分类" :label-width="formLabelWidth" v-if="childForm.parentNode.name">
+            <el-input :disabled="true" v-model="childForm.parentNode.name"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -35,12 +44,21 @@
           <el-form-item label="分类名称" :label-width="formLabelWidth">
             <el-input v-model="updateForm.parent.name"></el-input>
           </el-form-item>
-          <el-form-item label="上级分类" :label-width="formLabelWidth">
+          <el-form-item label="权重" :label-width="formLabelWidth">
+            <el-input v-model="updateForm.parent.weight" placeholder=" 10  （类目排序的标准:权重越大，排名越靠前）"></el-input>
+          </el-form-item>
+          <el-form-item label="商品图片" :label-width="formLabelWidth">
+            <uploadoneimg
+              :fileList="updateForm.parent.img"
+              @getFileList="getFileList">
+            </uploadoneimg>
+          </el-form-item>
+          <el-form-item label="上级分类" :label-width="formLabelWidth" v-if="updateForm.parentId == -1">
             <el-input :disabled="true" v-model="updateForm.oldName"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="updateDictionaryClassify = false">取 消</el-button>
+          <el-button @click="updateSureCancel">取 消</el-button>
           <el-button type="primary" @click="updateSure">确 定</el-button>
         </div>
       </el-dialog>
@@ -62,13 +80,15 @@
         createChildDependent: false,//新增子部门
         updateDictionaryClassify: false,//修改
         updateForm: {
-          name: '',
           oldName: '',
-          parent: {}
+          parent: {},
+          parentId:''
         },
         childForm: {
-          name: '',
-          parent: {}
+          newCatName: '',
+          weight:'',
+          img:'',
+          parentNode: {}
         },
         formLabelWidth: '80px',
         defaultExpandedKeys: []
@@ -77,21 +97,28 @@
     created() {
       this.getCatChild()
     },
+    components: {
+      'uploadoneimg': require('../../components/uploadoneimg'),
+    },
     methods: {
       getCatChild(val) {//商品分类
         let self = this;
-        let requestData = {};
-        if (val !== undefined) {
-          requestData = {catId: val.id};
+        let requestData = {
+          catId:-1
+        };
+        if (val != undefined) {
+          requestData = {
+            catId: val.id
+          };
         }
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
+//            data.data[i].res = JSON.parse(data.data[i].res);
             if (parseInt(data.data[i].hasChild) > 0) {
               data.data[i].children = [{}];
             }
           }
-          if (val === undefined) {
+          if (val == undefined) {
             self.totalCategories = data.data;
           } else {
             self.insertCat(self.totalCategories, val, data.data, 0);
@@ -101,8 +128,8 @@
       },
       insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
-          if (arr[i].name === val.parent[level]) {
-            if (val.parent.length === level + 1) {
+          if (arr[i].name === val.parentNode[level]) {
+            if (val.parentNode.length === level + 1) {
               arr[i].children = data;
             } else {
               level++;
@@ -128,22 +155,35 @@
       handleNodeClick(data) {//树形控件
         let self = this
         let parentArr = data.parentIds.split('/')
-        self.getCatChild({parent: parentArr, id: data.id})
+        self.getCatChild({parentNode: parentArr, id: data.id})
       },
-      openCreateModal(parent, now) {
-        console.log('now', now)
+      openCreateModal(parentNode, now) {
         event.stopPropagation()
         this.createChildDependent = true;
-        this.childForm.parent = parent.data;
+        this.childForm.parentNode = parentNode.data;
       },
       openFirstModal() {
         this.createChildDependent = true;
-        this.childForm.parent = {data: {name: ''}};
+        this.childForm.parentNode = {data: {newCatName: '',weight:'',img:'',parentNode:{}}};
+      },
+      createSure() {//新增确定
+        let self = this
+        self.httpApi.goodsCat.createCategory(this.childForm, function (data) {
+          self.createChildDependent = false
+          self.$message.success('添加成功')
+          self.totalCategories = []
+          self.getCatChild()
+          self.childForm.newCatName = ''
+          self.childForm.parentNode = {}
+        })
+      },
+      getFileList(file){//商品图片
+        console.log(file)
+        this.childForm.img=file.url;
       },
       updateModal(parent, now){//修改弹窗
         event.stopPropagation()
-        console.log('parent', parent)
-        console.log('parentdata', parent.data)
+        console.log('parent',parent.data)
         this.updateDictionaryClassify = true;
         this.updateForm.parent = parent.data;
         this.updateForm.oldName = parent.parent.data.name
@@ -151,31 +191,31 @@
       updateSure(){//修改确定
         let self = this
         let requestData = {
-          id: self.updateForm.parent.id,
-          parentId: self.updateForm.parent.parentId,
-          name: self.updateForm.parent.name,
-          parentIds: self.updateForm.parent.parentIds,
-          hasChild: self.updateForm.parent.hasChild,
-          oldParentId: self.updateForm.parent.parentId,
+          goodsCat:self.updateForm.parent,
+          oldParentId:self.updateForm.parent.id,
+          parentId:self.updateForm.parent.parentId
         };
         self.httpApi.goodsCat.editCategory(requestData, function (data) {
           self.updateDictionaryClassify = false
           self.$message.success('修改成功')
           self.totalCategories = []
           self.getCatChild()
-          self.childForm.name = ''
-          self.childForm.parent = {}
+          self.childForm.name = '',
+          self.childForm.weight='',
+          self.childForm.img='',
+          self.childForm.parentNode = {}
         });
       },
-      deleteNode(node, now) {
+      updateSureCancel(){
+        this.updateDictionaryClassify = false;
+        this.getCatChild();
+      },
+      deleteNode(node, now) {//删除
+        console.log('node',node)
         event.stopPropagation()//阻止冒泡
         let self = this
         let requestData = {
-          id: node.data.id,
-          parentId: node.data.parentId,
-          name: node.data.name,
-          parentIds: node.data.parentIds,
-          hasChild: node.data.hasChild,
+          goodsCat:node.data
         };
         this.$confirm('此操作不可恢复, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -196,32 +236,7 @@
 
 
       },
-      createSure() {//新增确定
-        let self = this
-        let requestData = {
-          id: self.childForm.parent.id,
-          parentId: self.childForm.parent.parentId,
-          name: self.childForm.parent.name,
-          parentIds: self.childForm.parent.parentIds,
-          hasChild: self.childForm.parent.hasChild,
-          newCatName: self.childForm.name
-        };
 
-        self.$http.post('/ui/createCategory', self.qs.stringify(requestData)).then(function (response) {
-          let data = response.data;
-          console.log('createChild', response)
-          if (data.code == 10000) {
-            self.createChildDependent = false
-            self.$message.success('添加成功')
-            self.totalCategories = []
-            self.getCatChild()
-            self.childForm.name = ''
-            self.childForm.parent = {}
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
     }
   }
   ;
