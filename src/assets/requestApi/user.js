@@ -43,8 +43,8 @@ Vue.prototype.httpApi.user.initUserPwd = function (params, successCallback) {
     })
 };
 //登录
-Vue.prototype.httpApi.user.login = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/user/login.do', params,
+Vue.prototype.httpApi.user.doLogin = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/login/doLogin', params,
     function (data) {
       successCallback(data);
     })

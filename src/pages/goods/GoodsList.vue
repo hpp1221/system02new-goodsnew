@@ -77,10 +77,7 @@
         <el-table-column prop="brandName" label="品牌">
 
         </el-table-column>
-        <el-table-column prop="inStoreHouse" label="库存数量">
-
-        </el-table-column>
-        <el-table-column prop="supplierName" label="所属供应商">
+        <el-table-column prop="count" label="库存数量">
 
         </el-table-column>
         <el-table-column label="操作">
@@ -108,22 +105,6 @@
           </el-form-item>
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>
-          </el-form-item>
-          <el-form-item label="所属供应商">
-            <supplierselect @getSupplierSelect="getSupplierSelect" :outSupplier="form.supplier"
-                            :isClickFetch="false"></supplierselect>
-          </el-form-item>
-          <el-form-item label="商品标签">
-            <getcheckbox
-              @getCheckList="getTagsCheckList"
-              :dataList="goodsTags">
-            </getcheckbox>
-          </el-form-item>
-          <el-form-item label="所属仓库">
-            <getcheckbox
-              @getCheckList="getAddressCheckList"
-              :dataList="totalAddressList">
-            </getcheckbox>
           </el-form-item>
           <el-form-item label="库存状态">
             <el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>
@@ -170,8 +151,8 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         tableData: [],
         advanceSearch: false,
@@ -183,22 +164,21 @@
           keyword: '',//关键词
           //       series: '',//商品分类
           cat: [],
+          catId: '',
+          catName: '',
           brand: '',
           brandName: '',
           brandId: '',
-          supplier: '',
-          supplierName: '',//供应商名称
-          supplierId: '',//供应商名称
-          tags: [],//标签
           source: '',//商品来源,全部是-1，手动新增0，批量导入1
           type: '',//1是上架，0是下架
           upLimit: 0,
           downLimit: 0,
           zero: 0,
-          addressList: [],//所属仓库
         },
         easyForm: {//简单查询
           cat: [],//所属仓库
+          catId: '',
+          catName: '',
           type: '',//1是上架，0是下架
         },
         pageSize: 5,
@@ -207,67 +187,53 @@
         multipleSelection: [],
         selectionObj: {},
         dialogTableVisible: false,//设置标签表格是否可见
-        totalAddressList: [],
-        goodsTags: [],
         searchType: 1//1是简单搜索，2是高级搜索
       }
     },
-    created(){
-      let self = this;
-      self.getTagList(function (data) {
-        self.goodsTags = data;
-      });//获取标签列表
-      self.getAddressList(function (data) {
-        self.totalAddressList = data;
-      });
+    created() {
+//      this.select()
     },
     components: {
       'pagination': require('../../components/pagination'),
       'brandselect': require('../../components/getbrandselect'),
-      'supplierselect': require('../../components/getsupplierlistselect'),
       'catselect': require('../../components/getcatselect'),
       'getcheckbox': require('../../components/getcheckbox')
     },
     methods: {
-      getBrandSelect(e){
+      getBrandSelect(e) {
         this.form.brand = e.brand;
         this.form.brandName = e.brandName;
         this.form.brandId = e.brandId;
       },
-      getTagsCheckList(e){
-        this.form.tags = e;
-      },
-      getAddressCheckList(e){
-        this.form.addressList = e;
-      },
-      pageChanged(page){
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
-      getSupplierSelect(e){
-        this.form.supplier = e.supplier;
-        this.form.supplierName = e.supplierName;
-        this.form.supplierId = e.supplierId;
-      },
-      getCatSelect(e){
+      getCatSelect(e) {
+        console.log('ee',e)
         this.easyForm.cat = e.cat;
+        this.easyForm.catId = e.catId,
+        this.easyForm.catName = e.catName
       },
-      getFormCatSelect(e){
+      getFormCatSelect(e) {
         this.form.cat = e.cat;
+        this.form.catId = e.catId,
+          this.form.catName = e.catName
       },
-      seeDetail(id){
+      seeDetail(id) {
         let url = '/goods/goodsDetail/' + id;
         this.$router.push(url);
       },
-      select(size, num){//查询
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           pageSize: size,
           pageNo: num,
-          temp: JSON.stringify(self.selectionObj)
+          temp: JSON.stringify(self.selectionObj),
+          goodsSkuRequest: self.easyForm
         };
-        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
+//        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
@@ -280,13 +246,14 @@
           }
         });
       },
-      advanceSelect(size, num){
+      advanceSelect(size, num) {
         let self = this;
         let requestData = {
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          goodsSkuRequest: self.form
         };
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
+//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.advanceSearch = false;
           self.searchType = 2;
@@ -309,23 +276,23 @@
           });
         }
       },
-      sureSetTags(){//确定设置标签
+      sureSetTags() {//确定设置标签
 
       },
-      handleSelectionChange(val){
+      handleSelectionChange(val) {
         if (val.length > 0) {
           this.multipleSelection = val;
           this.selectionObj[this.pageNum] = val;
         }
       },
-      update(id, goodsId){//修改商品详情
+      update(id, goodsId) {//修改商品详情
         let url = '/goods/updateGoods/' + id + '/' + goodsId;
         this.$router.push(url);
       },
-      createGoods(){
+      createGoods() {
         this.$router.push('/goods/createGoods');
       },
-      outputFile(){//导出
+      outputFile() {//导出
 
         let arr = [];
         for (let i in this.selectionObj) {
@@ -356,13 +323,13 @@
           location.href = url + '&skuList=' + JSON.stringify(arr);
         }
       },
-      multipleInputGoods(){
+      multipleInputGoods() {
         this.$router.push('/goods/multipleInputGoods');
       },
-      multipleInputImgs(){
+      multipleInputImgs() {
         this.$router.push('/goods/multipleInputImgs');
       },
-      putOnSale(){//上架
+      putOnSale() {//上架
         let self = this;
         self.$confirm('请确认是否批量上架？', '提示', {
           confirmButtonText: '确定',
@@ -386,7 +353,7 @@
           });
         });
       },
-      downSale(){//下架
+      downSale() {//下架
         let self = this;
         self.$confirm('请确认是否批量下架？', '提示', {
           confirmButtonText: '确定',
@@ -410,7 +377,7 @@
           });
         });
       },
-      deleteGoods(){//删除商品
+      deleteGoods() {//删除商品
         this.$confirm('请确认是否批量删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -427,10 +394,10 @@
           });
         });
       },
-      setTags(){//设置标签
+      setTags() {//设置标签
         this.dialogTableVisible = true;
       },
-      cancelSelect(){//取消选中
+      cancelSelect() {//取消选中
         this.$refs.multipleTable.clearSelection();
       }
 

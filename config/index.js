@@ -23,16 +23,16 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8081,
+    port: 8080,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/admin': {
          //target: 'http://47.94.241.192:8083',
-         //   target: 'http://192.168.41.78:8080',
+           target: 'http://192.168.41.78:9002',
          //  target: 'http://192.168.41.191:8081',
-        target: 'http://192.168.41.216:9002',
+        // target: 'http://192.168.41.216:9002',
         //  target: 'http://192.168.41.93:8085',
        // target: 'http://192.168.41.218:8081',
        //  target: 'http://116.62.161.87:8080',

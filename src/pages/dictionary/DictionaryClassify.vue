@@ -39,7 +39,7 @@
         </div>
       </el-dialog>
       <!--修改弹框-->
-      <el-dialog title="修改商品分类信息" :visible.sync="updateDictionaryClassify">
+      <el-dialog title="修改商品分类信息" :visible.sync="updateDictionaryClassify" v-if="updateDictionaryClassify">
         <el-form :model="updateForm">
           <el-form-item label="分类名称" :label-width="formLabelWidth">
             <el-input v-model="updateForm.parent.name"></el-input>
@@ -50,7 +50,7 @@
           <el-form-item label="商品图片" :label-width="formLabelWidth">
             <uploadoneimg
               :fileList="updateForm.parent.img"
-              @getFileList="getFileList">
+              @getFileList="getFileListUpdate">
             </uploadoneimg>
           </el-form-item>
           <el-form-item label="上级分类" :label-width="formLabelWidth" v-if="updateForm.parentId == -1">
@@ -82,7 +82,7 @@
         updateForm: {
           oldName: '',
           parent: {},
-          parentId:''
+          parentId:'',
         },
         childForm: {
           newCatName: '',
@@ -178,12 +178,13 @@
         })
       },
       getFileList(file){//商品图片
-        console.log(file)
         this.childForm.img=file.url;
+      },
+      getFileListUpdate(file){
+        this.updateForm.parent.img = file.url
       },
       updateModal(parent, now){//修改弹窗
         event.stopPropagation()
-        console.log('parent',parent.data)
         this.updateDictionaryClassify = true;
         this.updateForm.parent = parent.data;
         this.updateForm.oldName = parent.parent.data.name
@@ -193,7 +194,8 @@
         let requestData = {
           goodsCat:self.updateForm.parent,
           oldParentId:self.updateForm.parent.id,
-          parentId:self.updateForm.parent.parentId
+          parentId:self.updateForm.parent.parentId,
+
         };
         self.httpApi.goodsCat.editCategory(requestData, function (data) {
           self.updateDictionaryClassify = false

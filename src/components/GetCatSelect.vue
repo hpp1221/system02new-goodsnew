@@ -59,9 +59,9 @@
         let self = this;
         var requestData;
         if (val === undefined) {
-          requestData = {token: window.localStorage.getItem('token')};
+          requestData = {catId:-1};
         } else {
-          requestData = {token: window.localStorage.getItem('token'), catId: val[val.length - 1].id};
+          requestData = {catId: val[val.length - 1].id};
         }
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {

@@ -21,9 +21,6 @@
             <el-form-item label="关键字">
               {{form.keyword}}
             </el-form-item>
-            <el-form-item label="所属供应商名称">
-              {{form.supplierName}}
-            </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
 
@@ -115,15 +112,6 @@
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="商品标签"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.tagList" value-key="id" multiple>
-                      <el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
-                    </el-select>
-                  </template>
-                </el-table-column>
               </el-table>
             </el-form-item>
 
@@ -192,10 +180,6 @@
             <el-form-item label="关键字">
               <el-input placeholder="搜索关键字" class="form-input" v-model="goodsForm.keyword"></el-input>
             </el-form-item>
-            <el-form-item label="所属供应商名称">
-              {{goodsForm.supplierName}}
-            </el-form-item>
-
             <h4 class="item-title">商品规格</h4>
 
             <el-form-item label="商品规格">
@@ -284,15 +268,6 @@
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="商品标签"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-select v-model="scope.row.tagList" value-key="id" multiple>
-                      <el-option :label="t.name" v-for="t in goodsTags" :key="t.id" :value="t"></el-option>
-                    </el-select>
-                  </template>
-                </el-table-column>
               </el-table>
             </el-form-item>
 
@@ -348,9 +323,6 @@
           catName: '',
           unit: '',
           skus: [],
-          supplier: '',
-          supplierName: '',
-          supplierId: '',
           keyword: '',
           goodsSkuList: [],
           tags: [],
@@ -372,9 +344,6 @@
           catName: '',
           unit: '',
           skus: [],
-          supplier: '',
-          supplierName: '',
-          supplierId: '',
           keyword: '',
           goodsSkuList: [],
           tags: [],
@@ -428,11 +397,6 @@
       //获取分类列表
     },
     methods: {
-      getSupplierSelect(e){
-        this.goodsForm.supplier = e.supplier;
-        this.goodsForm.supplierName = e.supplierName;
-        this.goodsForm.supplierId = e.supplierId;
-      },
       getGoodsFormBrandSelect(e){//修改商品品牌select
         this.goodsForm.brand = e.brand;
         this.goodsForm.brandName = e.brandName;
@@ -534,7 +498,7 @@
       },
       updateSku(){//修改sku
         let self = this;
-        let requestData = {skuInfo: JSON.stringify(self.form.skus)};
+        let requestData = {skuInfo: self.form.skus};
         self.httpApi.goods.editSku(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });

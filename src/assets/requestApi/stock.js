@@ -14,20 +14,6 @@ Vue.prototype.httpApi.stock.addRecord = function (params, successCallback) {
       successCallback(data);
     })
 };
-//库地址列表不分页
-Vue.prototype.httpApi.stock.addressList = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/addressList', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//库地址列表分页
-Vue.prototype.httpApi.stock.addressListLimit = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/addressListLimit', params,
-    function (data) {
-      successCallback(data);
-    })
-};
 //查询调拨列表
 Vue.prototype.httpApi.stock.allocationRecordList = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/allocationRecordList', params,
@@ -45,34 +31,6 @@ Vue.prototype.httpApi.stock.analysisCheckStoreExcel = function (params, successC
 //解析当前excel
 Vue.prototype.httpApi.stock.analysisExcel = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/analysisExcel', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//库存盘点
-Vue.prototype.httpApi.stock.checkExcel = function (params, successCallback) {
-  Vue.prototype.httpGet('/admin/checkExcel', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//库存盘点(门店)
-Vue.prototype.httpApi.stock.checkStoreExcel = function (params, successCallback) {
-  Vue.prototype.httpGet('/admin/checkStoreExcel', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//新增仓库地址
-Vue.prototype.httpApi.stock.createStoreHouse = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/createStoreHouse', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//修改仓库地址
-Vue.prototype.httpApi.stock.editStoreHouse = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/editStoreHouse', params,
     function (data) {
       successCallback(data);
     })
@@ -144,9 +102,51 @@ Vue.prototype.httpApi.stock.recordList = function (params, successCallback) {
     })
 };
 
-//出入库列表
+//品牌商列表
 Vue.prototype.httpApi.stock.recordListBySku = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/recordListBySku', params,
+  Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商新增
+Vue.prototype.httpApi.stock.addBrandDealer = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/addBrandDealer', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商新增中获取凭证数据字典表
+Vue.prototype.httpApi.stock.selectDictByType = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/dict/selectDictByType', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商列表
+Vue.prototype.httpApi.stock.recordListBySku = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商详情
+Vue.prototype.httpApi.stock.selectBrandDealerById = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerById', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商修改
+Vue.prototype.httpApi.stock.updateBrandDealerById = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/updateBrandDealerById', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//品牌商删除
+Vue.prototype.httpApi.stock.deleteBrandDealerById = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/deleteBrandDealerById', params,
     function (data) {
       successCallback(data);
     })

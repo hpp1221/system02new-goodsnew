@@ -1,294 +1,178 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">出入库明细</h3>
+      <h3 class="page-title">品牌商</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
-        <el-form-item>
-          <el-select
-            placeholder="全部仓库"
-            v-model="easyForm.addressName"
-            multiple
-            filterable
-            :loading="addressLoading"
-            @visible-change="getAddress">
-            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalStores"></el-option>
-          </el-select>
+        <el-form-item label="请输入品牌商名称 : ">
+          <el-input icon="search" v-model="easyForm.name">
+          </el-input>
         </el-form-item>
-        <el-form-item>
+
+        <el-form-item label="品牌商收款账号 : ">
+          <el-input icon="search" v-model="easyForm.bankAccount">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="品牌商联系人 : ">
+          <el-input icon="search" v-model="easyForm.contacts">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="创建时间">
           <el-date-picker
             type="daterange"
             placeholder="选择日期范围"
             v-model="easyForm.dateRange">
           </el-date-picker>
         </el-form-item>
-        <el-form-item>
-          <el-input placeholder="输入关键字" icon="search" v-model="easyForm.keyword" class="form-input">
-          </el-input>
+        <el-form-item label="品牌商地址 : ">
+          <el-select v-model="easyForm.address" placeholder="请选择">
+            <el-option-group
+              v-for="group in options3"
+              :key="group.label"
+              :label="group.label">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-option-group>
+          </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item style="float: right">
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
+          <el-button @click="brandAdd">新增</el-button>
+        </el-form-item>
+        <el-form-item>
+          <!--<el-button @click="brandAdd">新增</el-button>-->
         </el-form-item>
       </el-form>
-
-      <el-table :data="tableData">
-        <el-table-column prop="number" label="编码">
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column prop="name" label="品牌商名称">
 
         </el-table-column>
-        <el-table-column prop="goodsName" label="商品名称">
+        <el-table-column prop="memberName" label="联系人">
 
         </el-table-column>
-        <el-table-column prop="sku" label="规格">
+        <el-table-column prop="mobile" label="联系电话">
 
         </el-table-column>
-        <el-table-column prop="unit" label="单位">
-
-        </el-table-column>
-        <el-table-column prop="addressName" label="所属仓库">
-
-        </el-table-column>
-        <el-table-column label="类型">
+        <el-table-column prop="createTime" label="创建时间">
           <template slot-scope="scope">
-            <span v-if="scope.row.type == 1">其他入库</span>
-            <span v-if="scope.row.type == 2">采购入库</span>
-            <span v-if="scope.row.type == 3">销售退货</span>
-            <span v-if="scope.row.type == 4">调拨入库</span>
-            <span v-if="scope.row.type == 5">盘盈</span>
-            <span v-if="scope.row.type == 6">销售出库</span>
-            <span v-if="scope.row.type == 7">调拨出库</span>
-            <span v-if="scope.row.type == 8">盘亏</span>
-            <span v-if="scope.row.type == 9">采购退回</span>
-            <span v-if="scope.row.type == 10">其他出库</span>
+            {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
-        <el-table-column prop="tradeNo" label="单号">
+        <el-table-column prop="address" label="地址">
 
         </el-table-column>
-        <el-table-column prop="createTime" label="出入库日期" width="200">
+        <el-table-column>
           <template slot-scope="scope">
-            <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="count" label="出入库数量">
-
-        </el-table-column>
-        <el-table-column prop="currentInventory" label="库存量">
-
-        </el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button type="text" @click="seeDetail(scope.row.type,scope.row.recordId)">查看明细</el-button>
+            <el-dropdown trigger="click">
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="update(scope.row)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id)">详情</el-dropdown-item>
+                <!--<el-dropdown-item>删除</el-dropdown-item>-->
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" label-width="100px">
-          <el-form-item label="商品信息">
-            <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
-
-            </el-input>
-          </el-form-item>
-          <el-form-item label="出入库类型">
-            <el-select v-model="form.type">
-              <el-option label="全部" :value="-1"></el-option>
-              <el-option v-for="t in typeList" :key="t.id" :value="t.id" :label="t.name"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="商品分类">
-            <catselect @getCatSelect="getCatSelect"></catselect>
-          </el-form-item>
-          <el-form-item label="商品品牌">
-            <brandselect @getBrandSelect="getBrandSelect"></brandselect>
-          </el-form-item>
-          <el-form-item label="出入库时间">
-            <el-date-picker
-              type="daterange"
-              placeholder="选择日期范围"
-              v-model="form.dateRange">
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item label="所属仓库">
-            <getcheckbox :dataList="totalStores" @getCheckList="getAddressCheckList"></getcheckbox>
-          </el-form-item>
-          <el-form-item label="商品标签">
-            <getcheckbox :dataList="goodsTags" @getCheckList="getTagCheckList"></getcheckbox>
-          </el-form-item>
-        </el-form>
-        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
-        <el-button @click="advanceSearch = false">取消</el-button>
-      </el-dialog>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
     </div>
   </div>
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
+
         tableData: [],
-        form: {
-          keyword: '',
-          type: -1,
-          goodsSeriesId: '',
-          goodsBrandId: '',
-          dateRange: null,
-          addressName: [],
-          tags: [],
-          createTime: '',
-          endTime: '',
-          storeType: 1,//1是仓库，2是门店
-        },
+        options3: [{
+          label: '热门城市',
+          options: [{
+            value: 'Shanghai',
+            label: '上海'
+          }, {
+            value: 'Beijing',
+            label: '北京'
+          }]
+        }, {
+          label: '城市名',
+          options: [{
+            value: 'Chengdu',
+            label: '成都'
+          }, {
+            value: 'Shenzhen',
+            label: '深圳'
+          }, {
+            value: 'Guangzhou',
+            label: '广州'
+          }, {
+            value: 'Dalian',
+            label: '大连'
+          }]
+        }],
         easyForm: {//简单查询
-          addressName: [],//仓库名
-          keyword: '',//关键词
-          dateRange: null,
+          bankAccount: '',//收款账号,
+          name: '',//品牌商名称,
+          address: '',//品牌商地址,
+          contacts: '',//品牌商联系人
+          dateRange: null,//创建时间
           createTime: '',
           endTime: '',
-          storeType: 1,//1是仓库，2是门店
         },
-        advanceSearch: false,//高级搜索
-        searchType: 1,
-        totalStores: [],
-        goodsTags: [],
-        addressLoading: false,//仓库列表加载图片
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10,
-        typeList: [
-          {
-            id: 1,
-            name: '其他入库'
-          },
-          {
-            id: 2,
-            name: '采购入库'
-          },
-          {
-            id: 3,
-            name: '销售退货'
-          },
-          {
-            id: 4,
-            name: '调拨入库'
-          },
-          {
-            id: 5,
-            name: '盘盈'
-          },
-          {
-            id: 6,
-            name: '销售出库'
-          },
-          {
-            id: 7,
-            name: '调拨出库'
-          },
-          {
-            id: 8,
-            name: '盘亏'
-          },
-          {
-            id: 9,
-            name: '采购退回'
-          },
-          {
-            id: 10,
-            name: '其他出库'
-          },
-        ]
+        totalPage: 10
       }
     },
-    created(){
-      let self = this;
-      self.getAddressList(function (data) {
-        self.totalStores = data;
-      });
-      self.getTagList(function (data) {
-        self.goodsTags = data;
-      });//获取标签列表
+    created() {
+
     },
     components: {
       'pagination': require('../../../components/pagination'),
-      'brandselect': require('../../../components/getbrandselect'),
-      'catselect': require('../../../components/getcatselect'),
-      'getcheckbox': require('../../../components/getcheckbox')
     },
     methods: {
-      pageChanged(page){
+      brandAdd() {//品牌商新增
+        this.$router.push('/stock/inoutdetail/add');
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+        this.select(page.size, page.num)
       },
-      getAddressCheckList(e){
-        this.form.addressName = e;
-      },
-      getTagCheckList(e){
-        this.form.tags = e;
-      },
-      getCatSelect(e){
-        this.form.goodsSeriesId = e.catId;
-      },
-      getBrandSelect(e){
-        this.form.goodsBrandId = e.brandId;
-      },
-      getAddress(type){
-        if (type && this.totalStores.length === 0) {
-          this.addressLoading = true;
-          let self = this;
-          self.getAddressList(function (data) {
-            self.totalStores = data;
-            self.addressLoading = false;
-          });
-        }
-      },
-      select(size, num){//查询
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           pageSize: size,
-          pageNo: num
+          pageNo: num,
+          address: self.easyForm.address,
+          name: self.easyForm.name,
+          contacts: self.easyForm.contacts,
+          bankAccount: self.easyForm.bankAccount
         };
         self.easyForm.createTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[0];
         self.easyForm.endTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[1];
-        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
+//        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.stock.recordListBySku(requestData, function (data) {
-          self.searchType = 1;
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
+          self.tableData = data.data.pageInfo.list;
+          self.totalPage = data.data.pageInfo.total;
         });
       },
-      advanceSelect(size, num){
-        let self = this;
-        let requestData = {
-          pageSize: size,
-          pageNo: num
-        };
-
-        self.form.createTime = self.form.dateRange === null ? '' : self.form.dateRange[0];
-        self.form.endTime = self.form.dateRange === null ? '' : self.form.dateRange[1];
-        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.stock.recordListBySku(requestData, function (data) {
-          self.advanceSearch = false;
-          self.searchType = 2;
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-        });
-      },
-
-      seeDetail(type, id){
-        let inStore = [1, 2, 3, 5];
-        let outStore = [6, 8, 9, 10];
-        let allocationStore = [4, 7];
-        let url = '/error';
-        if (inStore.indexOf(parseInt(type)) > -1) {
-          url = '/stock/goodsin/detail/' + id;
-        } else if (outStore.indexOf(parseInt(type)) > -1) {
-          url = '/stock/goodsout/detail/' + id;
-        } else if (allocationStore.indexOf(parseInt(type)) > -1) {
-          url = '/stock/stockallocation/detail/' + id;
-        }
+      seeDetail(id) {
         this.$router.push(url);
       }
     }

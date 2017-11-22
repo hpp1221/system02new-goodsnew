@@ -48,8 +48,20 @@ export default [
     component: resolve => require(['@/pages/stock/stocking/stocking'], resolve)
   },
   {
-    path: '/stock/inoutdetail/list', //出入库明细
+    path: '/stock/inoutdetail/list', //品牌商列表
     component: resolve => require(['@/pages/stock/inoutdetail/List'], resolve)
+  },
+  {
+    path: '/stock/inoutdetail/add', //品牌商新增
+    component: resolve => require(['@/pages/stock/inoutdetail/BrandAdd'], resolve)
+  },
+  {
+    path: '/stock/inoutdetail/detail', //品牌商详情
+    component: resolve => require(['@/pages/stock/inoutdetail/Detail'], resolve)
+  },
+  {
+    path: '/stock/inoutdetail/update', //品牌商修改
+    component: resolve => require(['@/pages/stock/inoutdetail/Update'], resolve)
   },
   {
     path: '/stock/goodssummary/list', //商品收发汇总

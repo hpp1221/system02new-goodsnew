@@ -102,12 +102,12 @@
       }
     },
     created(){
-      let self = this;
-      let requestData = {};
-      self.httpGet('/admin/user/checkToken.do', requestData, function (data) {
-        self.$router.push('/index');
-      }, function (data) {
-      })
+//      let self = this;
+//      let requestData = {};
+//      self.httpGet('/admin/user/checkToken.do', requestData, function (data) {
+//        self.$router.push('/index');
+//      }, function (data) {
+//      })
     },
     methods: {
       submitForm(formName) {//登录
@@ -116,16 +116,13 @@
             let self = this;
             let form = self.form;
             let requestData = {
-              username: form.username,
-              password: form.password
+              loginId: form.username,
+              pwd: form.password
             };
-            self.httpApi.user.login(requestData, function (data) {
+            self.httpApi.user.doLogin(requestData, function (data) {
               window.localStorage.setItem('token', data.data.token);
-              let requestData = {};
-              self.httpApi.user.getMyInfo(requestData, function (data) {
-                window.localStorage.setItem('userinfo', JSON.stringify(data.data));
-                self.$router.push('/index');
-              });
+              window.localStorage.setItem('memberId',data.data.memberId);
+              self.$router.push('/index');
             });
           } else {
             console.log('error submit!!');
