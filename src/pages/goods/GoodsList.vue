@@ -43,7 +43,7 @@
         <el-button icon="check" @click="putOnSale">上架</el-button>
         <el-button icon="close" @click="downSale">下架</el-button>
         <!--<el-button icon="delete" @click="deleteGoods">删除</el-button>-->
-        <el-button icon="setting" @click="setTags">设置标签</el-button>
+        <!--<el-button icon="setting" @click="setTags">设置标签</el-button>-->
       </div>
       <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
         <el-table-column
@@ -125,27 +125,27 @@
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
       </el-dialog>
-      <el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">
-        <el-table :data="multipleSelection">
-          <el-table-column label="商品编码" prop="barCode">
+      <!--<el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">-->
+        <!--<el-table :data="multipleSelection">-->
+          <!--<el-table-column label="商品编码" prop="barCode">-->
 
-          </el-table-column>
-          <el-table-column label="商品名称" prop="name">
+          <!--</el-table-column>-->
+          <!--<el-table-column label="商品名称" prop="name">-->
 
-          </el-table-column>
-          <el-table-column label="规格" prop="sku">
+          <!--</el-table-column>-->
+          <!--<el-table-column label="规格" prop="sku">-->
 
-          </el-table-column>
-          <el-table-column label="商品上架">
-            <template slot-scope="scope">
-              <el-checkbox>新品上架</el-checkbox>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-button @click="sureSetTags">确定</el-button>
-        <el-button @click="dialogTableVisible = false">取消</el-button>
-      </el-dialog>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+          <!--</el-table-column>-->
+          <!--<el-table-column label="商品上架">-->
+            <!--<template slot-scope="scope">-->
+              <!--<el-checkbox>新品上架</el-checkbox>-->
+            <!--</template>-->
+          <!--</el-table-column>-->
+        <!--</el-table>-->
+        <!--<el-button @click="sureSetTags">确定</el-button>-->
+        <!--<el-button @click="dialogTableVisible = false">取消</el-button>-->
+      <!--</el-dialog>-->
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: "></pagination>
     </div>
   </div>
 </template>
@@ -186,7 +186,6 @@
         totalPage: 10,
         multipleSelection: [],
         selectionObj: {},
-        dialogTableVisible: false,//设置标签表格是否可见
         searchType: 1//1是简单搜索，2是高级搜索
       }
     },

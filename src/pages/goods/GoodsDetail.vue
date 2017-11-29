@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <div class="goods-detail-top-right">
+        <div class="goods-detail-top-right" style="margin-left: 5px">
           <p class="goods-detail-p">
             <span>{{goodsDetail.name}}</span>
           </p>
@@ -28,12 +28,8 @@
           </p>
           <p class="goods-detail-p">
             <span>计量单位:{{goodsDetail.unit}}</span>
-            <span>库存:{{goodsDetail.skus[0].price}}</span>
-            <span>预购:{{goodsDetail.skus[0].price}}</span>
-          </p>
-          <p class="goods-detail-p">
-            <span>商品标签:</span>
-            <span v-for="t in goodsDetail.tags">{{t.name}}</span>
+            <span>库存:{{goodsDetail.skus[0].count}}</span>
+            <!--<span>预购:{{goodsDetail.skus[0].price}}</span>-->
           </p>
         </div>
       </div>
@@ -67,7 +63,8 @@
               barCode: '',
               number: '',
               price: '',
-              marketPrice: ''
+              marketPrice: '',
+              count:''
             }
           ],
           goodsExtend: {
@@ -77,7 +74,6 @@
               }
             ]
           },
-          tags: []
         },
         activeName: 'first'
       }

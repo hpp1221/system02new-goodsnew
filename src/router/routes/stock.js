@@ -56,11 +56,11 @@ export default [
     component: resolve => require(['@/pages/stock/inoutdetail/BrandAdd'], resolve)
   },
   {
-    path: '/stock/inoutdetail/detail', //品牌商详情
+    path: '/stock/inoutdetail/detail/:id', //品牌商详情
     component: resolve => require(['@/pages/stock/inoutdetail/Detail'], resolve)
   },
   {
-    path: '/stock/inoutdetail/update', //品牌商修改
+    path: '/stock/inoutdetail/update/:id', //品牌商修改
     component: resolve => require(['@/pages/stock/inoutdetail/Update'], resolve)
   },
   {

@@ -18,9 +18,6 @@
             <el-form-item label="计量单位">
               {{form.unit}}
             </el-form-item>
-            <el-form-item label="关键字">
-              {{form.keyword}}
-            </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
 
@@ -86,7 +83,15 @@
                     </el-input>
                   </template>
                 </el-table-column>
+                <el-table-column
+                  label="关键字"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.title">
 
+                    </el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   label="市场价格"
                   width="180">
@@ -101,6 +106,15 @@
                   width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="库存数量"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.count">
 
                     </el-input>
                   </template>
@@ -130,13 +144,10 @@
                 v-if="form.name">
               </VueEditor>
             </el-form-item>
-            <h4 class="item-title">添加附件</h4>
-            <el-form-item>
-              <uploadfiles
-                :fileList="form.goodsExtend.annex"
-                @getFileList="getAnnex"
-                :disabled="true">
-              </uploadfiles>
+            <h4 class="item-title">扩展属性</h4>
+            <el-form-item v-for="item in form.goodsExtend.annex">
+              属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
+              属性值 : <el-input v-model="item.value" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="updateSku">保存</el-button>
@@ -176,9 +187,6 @@
                 v-if="goodsForm.id"
                 :selectAllVisible="false">
               </unitselect>
-            </el-form-item>
-            <el-form-item label="关键字">
-              <el-input placeholder="搜索关键字" class="form-input" v-model="goodsForm.keyword"></el-input>
             </el-form-item>
             <h4 class="item-title">商品规格</h4>
 
@@ -242,7 +250,15 @@
                     </el-input>
                   </template>
                 </el-table-column>
+                <el-table-column
+                  label="关键字"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.title">
 
+                    </el-input>
+                  </template>
+                </el-table-column>
                 <el-table-column
                   label="市场价格"
                   width="180">
@@ -257,6 +273,15 @@
                   width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="库存数量"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.count">
 
                     </el-input>
                   </template>
@@ -289,13 +314,10 @@
                 v-if="goodsForm.name">
               </VueEditor>
             </el-form-item>
-            <h4 class="item-title">添加附件</h4>
-            <el-form-item>
-              <uploadfiles
-                :fileList="goodsForm.goodsExtend.annex"
-                @getFileList="getAnnex2"
-                @removeFile="removeAnnex">
-              </uploadfiles>
+            <h4 class="item-title">扩展属性</h4>
+            <el-form-item v-for="item in goodsForm.goodsExtend.annex">
+              属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px"></el-input>
+            属性值 : <el-input v-model="item.value" class="form-input" style="padding:0px 10px"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="updateGoods">创建</el-button>
@@ -323,7 +345,6 @@
           catName: '',
           unit: '',
           skus: [],
-          keyword: '',
           goodsSkuList: [],
           tags: [],
           goodsExtend: {
@@ -390,10 +411,10 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      let self = this;
-      self.getTagList(function (data) {
-        self.goodsTags = data;
-      });//获取标签列表
+//      let self = this;
+//      self.getTagList(function (data) {
+//        self.goodsTags = data;
+//      });//获取标签列表
       //获取分类列表
     },
     methods: {
@@ -419,18 +440,8 @@
       removeFileList(file){//商品移除某商品图片
         this.goodsForm.goodsExtend.imgs.splice(file, 1);
       },
-      getAnnex(file){//sku，附件
-        this.form.goodsExtend.annex.push(file);
-      },
-      getAnnex2(file){//商品，附件
-        this.goodsForm.goodsExtend.annex.push(file);
-      },
-      removeAnnex(file){//商品移除某附件
-        this.goodsForm.goodsExtend.annex.splice(file, 1);
-      },
       getSkuImg(file){//sku,sku图片
         console.log(this.form.skus[this.skuImgIndex].img)
-        console.log(file.url)
         this.form.skus[this.skuImgIndex].img = file.url;
       },
       getSkuImg2(file){//商品,sku图片
@@ -464,6 +475,7 @@
         let self = this;
         let requestData = {goodsId: goodsId};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
+          console.log('goodsid',data)
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
           self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
@@ -498,17 +510,29 @@
       },
       updateSku(){//修改sku
         let self = this;
-        let requestData = {skuInfo: self.form.skus};
-        self.httpApi.goods.editSku(requestData, function (data) {
+//        let requestData = {
+//          self.form.skus
+//        };
+        self.form.skus[0].sku= JSON.stringify(self.form.skus[0].sku);
+        self.httpApi.goods.editSku(self.form.skus, function (data) {
           self.$router.push('/goods/goodslist');
         });
       },
       updateGoods(){//修改商品
         let self = this;
-        if (!(self.goodsForm.cat instanceof Array)) {
-          self.goodsForm.cat = [self.goodsForm.cat];
-        }
-        let requestData = {goodsInfo: JSON.stringify(self.goodsForm)};
+//        if (!(self.goodsForm.cat instanceof Array)) {
+//          self.goodsForm.cat = [self.goodsForm.cat];
+//        }
+        self.goodsForm.cat = JSON.stringify(self.goodsForm.cat)
+        self.goodsForm.spec = JSON.stringify(self.goodsForm.spec)
+        self.goodsForm.skus = JSON.stringify(self.goodsForm.skus)
+        self.goodsForm.goodsExtend.annex = JSON.stringify(self.goodsForm.goodsExtend.annex)
+        self.goodsForm.goodsExtend.imgs = JSON.stringify(self.goodsForm.goodsExtend.imgs)
+        self.goodsForm.brandId = "12345623"
+        self.goodsForm.brandName = "大夫人"
+        self.goodsForm.brand = [{brandId:'12345623',brandName:'大夫人'}]
+        self.goodsForm.brand = JSON.stringify(self.goodsForm.brand)
+        let requestData = {goodsInfo: self.goodsForm};
         self.httpApi.goods.editGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
         });

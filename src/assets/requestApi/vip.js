@@ -56,9 +56,9 @@ Vue.prototype.httpApi.vip.vipdelete = function (params, successCallback) {
       successCallback(data);
     })
 };
-//会员列表
-Vue.prototype.httpApi.vip.viplist = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/viplist', params,
+//客户列表
+Vue.prototype.httpApi.vip.selectStoreMemberList = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/sysMember/selectStoreMemberList', params,
     function (data) {
       successCallback(data);
     })

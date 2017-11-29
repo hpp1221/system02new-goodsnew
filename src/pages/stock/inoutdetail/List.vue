@@ -19,24 +19,23 @@
         <el-form-item label="创建时间">
           <el-date-picker
             type="daterange"
-            placeholder="选择日期范围"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
             v-model="easyForm.dateRange">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="品牌商地址 : ">
-          <el-select v-model="easyForm.address" placeholder="请选择">
-            <el-option-group
-              v-for="group in options3"
-              :key="group.label"
-              :label="group.label">
-              <el-option
-                v-for="item in group.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-option-group>
-          </el-select>
+          <el-cascader
+            :options="addressData"
+            v-model="selectedOptions2"
+            :change-on-select="true"
+            @change="handleChange">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item>
+          <el-input icon="search" v-model="easyForm.address" placeholder="请输入详细地址">
+          </el-input>
         </el-form-item>
         <el-form-item style="float: right">
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
@@ -59,7 +58,7 @@
         <el-table-column prop="name" label="品牌商名称">
 
         </el-table-column>
-        <el-table-column prop="memberName" label="联系人">
+        <el-table-column prop="contacts" label="联系人">
 
         </el-table-column>
         <el-table-column prop="mobile" label="联系电话">
@@ -70,16 +69,19 @@
             {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="地址">
-
+        <el-table-column  label="地址">
+          <template slot-scope="scope">
+            <span>{{scope.row.addressName + scope.row.address}}</span>
+            <!--<AddressAll v-if="regionList.length > 0"  :cityId ="scope.row.cityId" :provinceId="scope.row.provinceId" :streetId="scope.row.streetId" :areaId="scope.row.areaId" :address="scope.row.address" :data="regionList" ></AddressAll>-->
+          </template>
         </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id)">详情</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.brandDealerId)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.brandDealerId)">详情</el-dropdown-item>
                 <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
@@ -95,84 +97,91 @@
   export default {
     data() {
       return {
-
+        regionList:[],
         tableData: [],
-        options3: [{
-          label: '热门城市',
-          options: [{
-            value: 'Shanghai',
-            label: '上海'
-          }, {
-            value: 'Beijing',
-            label: '北京'
-          }]
-        }, {
-          label: '城市名',
-          options: [{
-            value: 'Chengdu',
-            label: '成都'
-          }, {
-            value: 'Shenzhen',
-            label: '深圳'
-          }, {
-            value: 'Guangzhou',
-            label: '广州'
-          }, {
-            value: 'Dalian',
-            label: '大连'
-          }]
-        }],
+        selectedOptions2: [],
+        addressData: [],
         easyForm: {//简单查询
           bankAccount: '',//收款账号,
           name: '',//品牌商名称,
           address: '',//品牌商地址,
           contacts: '',//品牌商联系人
-          dateRange: null,//创建时间
-          createTime: '',
-          endTime: '',
+          dateRange: null,
+          startTime: '',//开始日期
+          endTime: '',//结束日期,
+          provinceId: '',//省id
+          cityId: '',//市id
+          areaId: '',//地域id
         },
+        province:'',
+        city:'',
+        area:'',
+        address:'',
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10
+        totalPage: 10,
+        valueBrand: [],
+
       }
     },
     created() {
-
+      this.getPrivence()//所有省市区
     },
     components: {
       'pagination': require('../../../components/pagination'),
     },
     methods: {
+      addressName(provinceId,cityId,areaId,streetId) {//列表中地址显示
+        return this.getAddressName(provinceId,cityId,areaId,streetId);
+      },
+      getPrivence() {//所有省市区
+        let self = this
+        let requestData = {}
+        self.httpApi.stock.selectRegionTree(requestData, function (data) {
+          self.addressData = data.data.regionTrees;
+      })
+      },
+      handleChange(value) {//三级联动选择框点击函数
+        this.easyForm.provinceId = value[0]
+        this.easyForm.cityId = value[1]
+        this.easyForm.areaId = value[2]
+      },
       brandAdd() {//品牌商新增
         this.$router.push('/stock/inoutdetail/add');
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },
-      pageChanged(page) {
+      pageChanged(page) {//页码
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num)
       },
       select(size, num) {//查询
         let self = this;
+        self.easyForm.startTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[0];
+        self.easyForm.endTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[1];
         let requestData = {
           pageSize: size,
           pageNo: num,
-          address: self.easyForm.address,
-          name: self.easyForm.name,
-          contacts: self.easyForm.contacts,
-          bankAccount: self.easyForm.bankAccount
         };
-        self.easyForm.createTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[0];
-        self.easyForm.endTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[1];
-//        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
+        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm))
         self.httpApi.stock.recordListBySku(requestData, function (data) {
+          console.log('stock',data)
           self.tableData = data.data.pageInfo.list;
+          console.log('rrr',self.tableData)
           self.totalPage = data.data.pageInfo.total;
+          for(let i = 0;i < self.tableData.length;i++){
+            self.tableData[i].addressName = self.getAddressName(self.tableData[i].provinceId,self.tableData[i].cityId,self.tableData[i].areaId,self.tableData[i].streetId)
+          }
         });
       },
       seeDetail(id) {
+        let url = '/stock/inoutdetail/detail/' + id;
+        this.$router.push(url);
+      },
+      update(id){
+        let url = '/stock/inoutdetail/update/' + id;
         this.$router.push(url);
       }
     }

@@ -2,63 +2,97 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">客户列表</h3>
-      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item label="全部级别">
-          <el-select v-model="easyForm.vip_level" placeholder="全部级别">
-            <el-option v-for="item in options" :key="item.levelId" :label="item.levelName" :value="item.levelName">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-input placeholder="请输入客户名称/联系电话/手机/编码" v-model="easyForm.condition" class="long-input">
+      <el-form ref="easyForm" :model="easyForm" inline>
+        <el-form-item label="请输入客户姓名 : ">
+          <el-input icon="search" v-model="easyForm.memberName">
           </el-input>
         </el-form-item>
+
+        <el-form-item label="请输入客户账号 : ">
+          <el-input icon="search" v-model="easyForm.loginId">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="请输入门店名称 : ">
+          <el-input icon="search" v-model="easyForm.storeName">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="入驻时间">
+          <el-date-picker
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            v-model="easyForm.dateRange">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="客户地址 : ">
+          <el-cascader
+            :options="addressData"
+            v-model="selectedOptions2"
+            :change-on-select="true"
+            @change="handleChange">
+          </el-cascader>
+        </el-form-item>
         <el-form-item>
+          <el-input icon="search" v-model="easyForm.address" placeholder="请输入详细地址">
+          </el-input>
+        </el-form-item>
+        <el-form-item style="float: right">
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
-          <el-button @click="leadInClient">导入</el-button>
-          <el-button @click="outputClient">导出</el-button>
-          <el-button @click="createClient">新增</el-button>
+          <!--<el-button @click="brandAdd">新增</el-button>-->
+        </el-form-item>
+        <el-form-item>
+          <!--<el-button @click="brandAdd">新增</el-button>-->
         </el-form-item>
       </el-form>
-      <el-table :data="tableData" @selection-change="handleSelectionChange" ref="multipleTable">
-        <el-table-column type="selection" width="55">
+      <el-table
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
         </el-table-column>
-        <el-table-column prop="name" label="客户名称" class="hpp">
+        <el-table-column prop="memberName" label="客户姓名">
 
         </el-table-column>
-        <el-table-column prop="num" label="客户编码">
+        <el-table-column prop="mobile" label="手机">
 
         </el-table-column>
-        <el-table-column prop="tphone" label="联系电话">
+
+        <el-table-column prop="loginId" label="账号">
 
         </el-table-column>
-        <el-table-column prop="address" label="地址">
-
-        </el-table-column>
-        <el-table-column prop="mphone" label="手机" style="width:130px;">
-
-        </el-table-column>
-        <el-table-column prop="vip_level" label="客户级别">
-        </el-table-column>
-        <el-table-column prop="create_time" label="创建时间">
+        <el-table-column prop="createTime" label="创建时间">
           <template slot-scope="scope">
-            <span>{{moment(scope.row.create_time).format('YYYY-MM-DD  HH:mm:ss')}}</span>
+            {{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column prop="storeName" label="门店名称">
+
+        </el-table-column>
+        <el-table-column  label="收货地址">
+          <template slot-scope="scope">
+            <span>{{scope.row.addressName + scope.row.address}}</span>
+            <!--<AddressAll v-if="regionList.length > 0"  :cityId ="scope.row.cityId" :provinceId="scope.row.provinceId" :streetId="scope.row.streetId" :areaId="scope.row.areaId" :address="scope.row.address" :data="regionList" ></AddressAll>-->
+          </template>
+        </el-table-column>
+        <el-table-column>
           <template slot-scope="scope">
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="updateClient(scope.row.id)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="deleteClient(scope.row)">删除</el-dropdown-item>
+                <!--<el-dropdown-item @click.native="update(scope.row.brandDealerId)">修改</el-dropdown-item>-->
+                <el-dropdown-item @click.native="seeDetail(scope.row.brandDealerId)">详情</el-dropdown-item>
+                <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage">
-      </pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
     </div>
   </div>
 </template>
@@ -67,120 +101,91 @@
   export default {
     data() {
       return {
-        options: [],
-        easyForm: {//查询条件
-          vip_level: '',
-          condition: '',
-        },
-        value: '',
-        pageSize: 5,//每页条数
-        pageNum: 1,//当前页码
-        totalPage: 10,//总数
+        regionList:[],
         tableData: [],
-        multipleSelection: [],
-        supplierString: [],
-        selectionObj: {},
+        selectedOptions2: [],
+        addressData: [],
+        easyForm: {//简单查询
+          loginId: '',//客户账号,
+          memberName: '',//客户名称,
+          address: '',//客户地址,
+          storeName: '',//门店名称
+          dateRange: null,
+          startTime: '',//开始日期
+          endTime: '',//结束日期,
+          provinceId: '',//省id
+          cityId: '',//市id
+          areaId: '',//地域id
+        },
+        province:'',
+        city:'',
+        area:'',
+        address:'',
+        pageSize: 5,
+        pageNum: 1,
+        totalPage: 10,
+        valueBrand: [],
+
       }
     },
-    components: {
-      'pagination': require('../../components/pagination')
-    },
     created() {
-      this.getClientLevelList()
+      this.getPrivence()//所有省市区
+    },
+    components: {
+      'pagination': require('../../components/pagination'),
     },
     methods: {
-      getClientLevelList() {
+      addressName(provinceId,cityId,areaId,streetId) {//列表中地址显示
+        return this.getAddressName(provinceId,cityId,areaId,streetId);
+      },
+      getPrivence() {//所有省市区
         let self = this
-        let requestData = {};
-        self.httpApi.level.getCustomerLevelList(requestData, function (data) {
-          self.options = data.data.list
-        });
-      },
-      pageChanged(page) {
-        this.pageSize = page.size;
-        this.pageNum = page.num;
-        this.select(page.size, page.num);
-      },
-      select(size, num) { //查询
-        let self = this;
-        let requestData = {
-          vip_level: self.easyForm.vip_level,
-          condition: self.easyForm.condition,
-          pageNo: num,
-          pageSize: size,
-          codes: JSON.stringify(self.selectionObj)
-        };
-        self.httpApi.vip.vipterm(requestData, function (data) {
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-          if (data.codes !== "{}" && data.codes !== undefined) {
-            let list = JSON.parse(data.codes);
-            self.$nextTick(function () {
-              self.toggleSelection(list[num])
-            })
-          }
-        });
-      },
-      updateClient(id) { //修改客户详情
-        let url = '/client/updateclient/' + id;
-        this.$router.push(url);
-      },
-      deleteClient(row) { //删除单个客户详情
-        let self = this;
-        let requestData = {id: row.id};
-        self.$confirm('请确认是否删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(() => {
-          self.httpApi.vip.vipdelete(requestData, function (data) {
-            self.$message.success('删除成功');
-            self.select(self.pageSize, self.pageNum)
-          });
+        let requestData = {}
+        self.httpApi.stock.selectRegionTree(requestData, function (data) {
+          self.addressData = data.data.regionTrees;
         })
       },
-      outputClient() { //导出客户
-        let list = this.selectionObj === '{}' ? [] : this.selectionObj;
-        let arr = [];
-        for (let i in list) {
-          for (let j = 0; j < list[i].length; j++) {
-            arr.push(list[i][j]);
+      handleChange(value) {//三级联动选择框点击函数
+        this.easyForm.provinceId = value[0]
+        this.easyForm.cityId = value[1]
+        this.easyForm.areaId = value[2]
+      },
+      brandAdd() {//品牌商新增
+        this.$router.push('/stock/inoutdetail/add');
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
+      pageChanged(page) {//页码
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        this.select(page.size, page.num)
+      },
+      select(size, num) {//查询
+        let self = this;
+        self.easyForm.startTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[0];
+        self.easyForm.endTime = self.easyForm.dateRange === null ? '' : self.easyForm.dateRange[1];
+        let requestData = {
+          pageSize: size,
+          pageNo: num,
+        };
+        self.httpApi.vip.selectStoreMemberList(self.easyForm, function (data) {
+          console.log('stock',data)
+          self.tableData = data.data.pageInfo.list;
+          console.log('rrr',self.tableData)
+          self.totalPage = data.data.pageInfo.total;
+          for(let i = 0;i < self.tableData.length;i++){
+            self.tableData[i].addressName = self.getAddressName(self.tableData[i].provinceId,self.tableData[i].cityId,self.tableData[i].areaId,self.tableData[i].streetId)
           }
-        }
-        let supplierString = ''
-        for (let i = 0; i < arr.length; i++) {
-          supplierString += ',' + arr[i].id
-        }
-        supplierString = supplierString.substring(1, supplierString.length)
-        location.href = '/admin/exportVips?vipIds=' + supplierString + '&token=' + window.localStorage.getItem('token');
+        });
       },
-      handleSelectionChange(val) {//选择要导出的记录的回调
-        if (this.selectionObj[this.pageNum] !== undefined && val.length === 0) {
-        } else {
-          this.multipleSelection = val
-          this.selectionObj[this.pageNum] = val;
-        }
+      seeDetail(id) {
+        let url = '/stock/inoutdetail/detail/' + id;
+        this.$router.push(url);
       },
-      toggleSelection(rows) {
-        if (rows) {
-          let arr = [];
-          for (let i = 0; i < this.tableData.length; i++) {
-            for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].id === rows[j].id) {
-                arr.push(this.tableData[i]);
-              }
-            }
-          }
-          arr.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        }
-      },
-      createClient() { //新增客户
-        this.$router.push('/client/createclient');
-      },
-      leadInClient() { //导入客户
-        this.$router.push('/client/inputclient');
+      update(id){
+        let url = '/stock/inoutdetail/update/' + id;
+        this.$router.push(url);
       }
     }
   }

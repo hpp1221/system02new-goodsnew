@@ -11,7 +11,14 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌">
-              <brandselect @getBrandSelect="getBrandSelect" :selectAllVisible="false"></brandselect>
+              <el-select v-model="form.brandNameSelect" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in brandNameSelectData"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="商品分类">
               <catselect @getCatSelect="getCatSelect"></catselect>
@@ -183,30 +190,17 @@
           </el-form>
         </el-tab-pane>
       </el-tabs>
-      <!--<el-dialog title="新增扩展属性" :visible.sync="dictionaryUnitCreate">-->
-      <!--<el-form :model="form.goodsExtend.annex">-->
-      <!--<el-form-item label="属性名称" :label-width="formLabelWidth" >-->
-      <!--<el-input v-model="form.goodsExtend.annex.name"></el-input>-->
-      <!--</el-form-item>-->
-      <!--<el-form-item label="属性值" :label-width="formLabelWidth">-->
-      <!--<el-input v-model="form.goodsExtend.annex.value"></el-input>-->
-      <!--</el-form-item>-->
-      <!--</el-form>-->
-      <!--<div slot="footer" class="dialog-footer">-->
-      <!--<el-button type="primary" @click="createSure">确 定</el-button>-->
-      <!--<el-button @click="dictionaryUnitCreate = false">取 消</el-button>-->
-      <!--</div>-->
-      <!--</el-dialog>-->
     </div>
   </div>
 </template>
 
 <script>
-  //  import ElInput from "../../../node_modules/element-ui/packages/input/src/input.vue";
   export default{
     data(){
       return {
+        brandNameSelectData:[],
         form: {
+          brandNameSelect:'',//品牌商下拉框
           name: '',
           brand: '',
           brandName: '',
@@ -255,31 +249,29 @@
     components: {
       'uploadmultipleimg': require('../../components/uploadmultipleimg'),
       'uploadoneimg': require('../../components/uploadoneimg'),
-      'brandselect': require('../../components/getbrandselect'),
       'unitselect': require('../../components/getunitselect'),
       'catselect': require('../../components/getcatselect'),
     },
     created(){
+      this.getBrandSelect()
     },
     methods: {
-      button2(){
+      getBrandSelect(){
+        let self = this
+        let requestData = {
+
+        }
+        self.httpApi.stock.selectBrandDealerAllList(requestData,function (data) {
+          console.log('stock',data)
+          self.brandNameSelectData = data.data.pageInfo.list;
+        });
+      },
+      button2(){//扩展属性
         this.form.goodsExtend.annex.check1 = false;
         this.form.goodsExtend.annex.check2 = true
       },
-      button1(){
+      button1(){//扩展属性
         this.form.goodsExtend.annex.push({name: '',value:'',check1:false,check2:true});
-      },
-//      add(){
-//        this.dictionaryUnitCreate = true;
-//        this.form.goodsExtend.annex.push({name: '',value:''});
-//      },
-//      createSure(){
-//        this.dictionaryUnitCreate = false
-//      },
-      getBrandSelect(e){//创建商品品牌获取
-        this.form.brand = e.brand;
-        this.form.brandName = e.brandName;
-        this.form.brandId = e.brandId;
       },
       getUnitSelect(e){//创建商品单位获取
         this.form.unit = e;

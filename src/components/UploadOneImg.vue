@@ -43,6 +43,7 @@
       self.httpApi.aliyun.imgSignature(requestData, function (data) {
         self.key.token = data.data;
       });
+
     },
     methods: {
       beforeUpload(file){
@@ -60,7 +61,6 @@
           name: file.name,
           url: this.imgDomain + response.key
         });
-
       },
       handleRemove(file, fileList){
 

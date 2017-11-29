@@ -1,4 +1,5 @@
 import Vue from 'vue';
+
 Vue.prototype.shallowCopy = function (obj) {//将对象中的数据迭代出来
   let newObj = {};
   for (let o in obj) {
@@ -17,6 +18,40 @@ Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form�
   }
   return myForm;
 };
+
+Vue.prototype.getAddressName = function (provinceId, cityId, areaId, streetId) {
+  let data = JSON.parse(localStorage.getItem('addressData')) || '';
+  if (!data) {
+    this.httpApi.stock.selectRegionList({}, function (data) {
+      localStorage.setItem('addressData', JSON.stringify(data.data.list));
+    })
+  }
+  let province = '';
+  let city = '';
+  let area = '';
+  let street = '';
+  console.log(data)
+  console.log(provinceId)
+  console.log(cityId)
+  console.log(areaId)
+  console.log(streetId)
+  for (let index in data) {
+    if (data[index].value == provinceId) {
+      province = data[index].name;
+    }
+    if (data[index].value == cityId) {
+      city = data[index].name;
+    }
+    if (data[index].value == areaId) {
+      area = data[index].name;
+    }
+    if (data[index].value == streetId) {
+      street = data[index].name;
+    }
+  }
+  let str = province + city + area + street;
+  return str;
+}
 
 
 Vue.prototype.accAdd = function (arg1, arg2) {//精确计算加法

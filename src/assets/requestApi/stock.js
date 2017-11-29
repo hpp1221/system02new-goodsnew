@@ -1,107 +1,5 @@
 import Vue from 'vue'
 import '../js'
-//添加库存调拨
-Vue.prototype.httpApi.stock.addAllocationRecord = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/addAllocationRecord', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//添加入库
-Vue.prototype.httpApi.stock.addRecord = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/addRecord', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//查询调拨列表
-Vue.prototype.httpApi.stock.allocationRecordList = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/allocationRecordList', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//解析当前excel
-Vue.prototype.httpApi.stock.analysisCheckStoreExcel = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/analysisCheckStoreExcel', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//解析当前excel
-Vue.prototype.httpApi.stock.analysisExcel = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/analysisExcel', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//修改库存上下限
-Vue.prototype.httpApi.stock.editStoreHouseLimit = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/editStoreHouseLimit', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//导出当前库存表格
-Vue.prototype.httpApi.stock.export = function (params, successCallback) {
-  Vue.prototype.httpGet('/admin/export', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//导出门店库存表格
-Vue.prototype.httpApi.stock.exportStore = function (params, successCallback) {
-  Vue.prototype.httpGet('/admin/exportStore', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//查询调拨详情
-Vue.prototype.httpApi.stock.getAllocationRecordDetail = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/getAllocationRecordDetail', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//查询库存详情
-Vue.prototype.httpApi.stock.getRecord = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/getRecord', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-
-//查询库存商品
-Vue.prototype.httpApi.stock.goodsInfo = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/goodsInfo', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//商品库存列表
-Vue.prototype.httpApi.stock.list = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/list', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-//查询库存商品
-Vue.prototype.httpApi.stock.outPutGoodsInfo = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/outPutGoodsInfo', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-
-
-//查询库存列表
-Vue.prototype.httpApi.stock.recordList = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/recordList', params,
-    function (data) {
-      successCallback(data);
-    })
-};
-
 //品牌商列表
 Vue.prototype.httpApi.stock.recordListBySku = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerList', params,
@@ -123,6 +21,13 @@ Vue.prototype.httpApi.stock.selectDictByType = function (params, successCallback
       successCallback(data);
     })
 };
+//品牌商列表不分页
+Vue.prototype.httpApi.stock.selectBrandDealerAllList = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerAllList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //品牌商列表
 Vue.prototype.httpApi.stock.recordListBySku = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerList', params,
@@ -132,7 +37,7 @@ Vue.prototype.httpApi.stock.recordListBySku = function (params, successCallback)
 };
 //品牌商详情
 Vue.prototype.httpApi.stock.selectBrandDealerById = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/brandDealer/selectBrandDealerById', params,
+  Vue.prototype.httpGet('/admin/brandDealer/selectBrandDealerById', params,
     function (data) {
       successCallback(data);
     })
@@ -151,28 +56,41 @@ Vue.prototype.httpApi.stock.deleteBrandDealerById = function (params, successCal
       successCallback(data);
     })
 };
-//获取已出库商品
-Vue.prototype.httpApi.stock.searchOrderDetail = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/searchOrderDetail', params,
+//地区数据字典---省
+Vue.prototype.httpApi.stock.getProvince = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/region/getProvince', params,
     function (data) {
       successCallback(data);
     })
 };
-//门店库存明细详情
-Vue.prototype.httpApi.stock.storeHouseDetailed = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/storeHouseDetailed', params,
+//地区数据字典---市
+Vue.prototype.httpApi.stock.getCityByProvinceId = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/region/getCityByProvinceId', params,
     function (data) {
       successCallback(data);
     })
 };
-//库存提醒
-Vue.prototype.httpApi.stock.storeHouseRemind = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/storeHouseRemind', params,
+//地区数据字典---区
+Vue.prototype.httpApi.stock.getAreaByCityId = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/region/getAreaByCityId', params,
     function (data) {
       successCallback(data);
     })
 };
-
+//地区数据字典---省市区
+Vue.prototype.httpApi.stock.selectRegionTree = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/region/selectRegionTree', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//获取所有地区数据，以列表形式展现
+Vue.prototype.httpApi.stock.selectRegionList = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/region/selectRegionList',params,
+    function (data) {
+      successCallback(data);
+    })
+};
 
 
 

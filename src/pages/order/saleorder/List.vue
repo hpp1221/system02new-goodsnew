@@ -1,15 +1,15 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">销售订单列表</h3>
+      <h3 class="page-title">正向订单</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
-        <el-form-item label="订单状态">
-          <el-select placeholder="全部订单" v-model="easyForm.orderStatus" multiple>
+        <el-form-item label="状态">
+          <el-select placeholder="全部状态" v-model="easyForm.orderStatus" multiple>
             <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="客户">
-          <el-input v-model="easyForm.contacts" placeholder="请输入客户名称"></el-input>
+          <el-input v-model="easyForm.contacts" placeholder="请输入订单号/客户名称"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -20,9 +20,9 @@
         <!--<el-form-item>-->
         <!--<el-button @click="select">导入</el-button>-->
         <!--</el-form-item>-->
-        <el-form-item>
-          <el-button @click="addOrder">新增</el-button>
-        </el-form-item>
+        <!--<el-form-item>-->
+          <!--<el-button @click="addOrder">新增</el-button>-->
+        <!--</el-form-item>-->
       </el-form>
 
       <el-table :data="tableData">
@@ -30,7 +30,13 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column prop="orderNumber" label="销售订单号">
+        <el-table-column prop="orderNumber" label="订单号">
+
+        </el-table-column>
+        <el-table-column prop="contacts" label="客户名称">
+
+        </el-table-column>
+        <el-table-column prop="payAmount" label="订单金额">
 
         </el-table-column>
         <el-table-column label="下单时间" sortable>
@@ -38,12 +44,7 @@
             <span>{{moment(scope.row.createTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="contacts" label="客户名称">
 
-        </el-table-column>
-        <el-table-column prop="payAmount" label="金额">
-
-        </el-table-column>
         <el-table-column prop="createUserName" label="状态">
           <template slot-scope="scope">
             <span v-for="t in totalOrderStatus" v-if="scope.row.orderStatus == t.id">{{t.name}}</span>
@@ -66,35 +67,43 @@
       </el-table>
       <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form">
+        <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" inline>
+          <el-form-item label="订单状态">
+            <el-select placeholder="全部状态" v-model="easyForm.orderStatus" multiple>
+              <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="订单号">
-            <el-input placeholder="请输入订单号" v-model="form.orderNumber" class="long-input">
+            <el-input placeholder="请输入订单号 " v-model="form.orderNumber" class="long-input">
 
             </el-input>
           </el-form-item>
-          <el-form-item label="下单时间">
+
+          <el-form-item label="客户名称">
+            <el-input placeholder="输入客户名称" v-model="form.deliveryInfo" class="form-input">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="品牌名称">
+            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input" style="width: 320px;">
+
+            </el-input>
+          </el-form-item>
+          <el-form-item label="日期">
             <el-date-picker
               v-model="form.dateRange"
               type="datetimerange"
-              placeholder="选择时间范围">
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="收货信息">
-            <el-input placeholder="收货人/收货电话/经销商" v-model="form.deliveryInfo" class="form-input">
-
-            </el-input>
-          </el-form-item>
-          <el-form-item label="商品信息">
-            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input">
-
-            </el-input>
-          </el-form-item>
-          <el-form-item label="订单状态">
-            <getcheckbox
-              @getCheckList="getCheckList"
-              :dataList="totalOrderStatus">
-            </getcheckbox>
-          </el-form-item>
+          <!--<el-form-item label="订单状态">-->
+            <!--<getcheckbox-->
+              <!--@getCheckList="getCheckList"-->
+              <!--:dataList="totalOrderStatus">-->
+            <!--</getcheckbox>-->
+          <!--</el-form-item>-->
           <!--<el-form-item label="付款状态">-->
           <!--<el-checkbox-group v-model="form.payType">-->
           <!--<el-checkbox v-for="t in totalPaymentStatus" :key="t.name" :label="t.name"></el-checkbox>-->
@@ -108,6 +117,7 @@
         </el-form>
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
+        <el-button @click="advanceSearch = false">清空</el-button>
       </el-dialog>
     </div>
   </div>
@@ -204,9 +214,9 @@
       getCheckList(e){
         this.form.orderStatus = e;
       },
-      addOrder(){
-        this.$router.push('/order/saleorder/add');
-      },
+//      addOrder(){
+//        this.$router.push('/order/saleorder/add');
+//      },
       verify(id){
         let url = '/order/saleorder/verify/' + id;
         this.$router.push(url);
