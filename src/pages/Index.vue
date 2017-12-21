@@ -1,5 +1,6 @@
 <template>
   <el-container style="height: 100%">
+    <!--header-->
     <el-header>
       <div class="header-left-div">
         <div class="header-left-logo-div">
@@ -15,67 +16,152 @@
         </div>
       </div>
       <div class="header-right-div">
-        <!--<div class="header-right-help-div">-->
-          <!--<i class="iconfont icon-feedback" style="font-size: 20px;"></i>-->
-        <!--</div>-->
-        <div class="header-right-avatar-div">
-          <div class="avater-div">
-            <el-dropdown trigger="click" v-if="userinfo" style="width: 100%;height: 100%">
-              <img v-lazy="userinfo.avatar" alt=""/>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="personCenter">个人信息</el-dropdown-item>
-                <el-dropdown-item @click.native="logout">注销</el-dropdown-item>
-                <!--<el-dropdown-item>删除</el-dropdown-item>-->
-              </el-dropdown-menu>
-            </el-dropdown>
-
-          </div>
+        <div class="avater-div">
+          <el-button type="text" @click.native="logout" style="color: #fff;width: 60px;">注销</el-button>
+          <!--<el-dropdown>-->
+         <!--<span class="el-dropdown-link">-->
+  <!--<i class="el-icon-circle-check" style="width: 50px;"></i>-->
+  <!--</span>-->
+            <!--<el-dropdown-menu slot="dropdown">-->
+              <!--&lt;!&ndash;<el-dropdown-item>个人信息</el-dropdown-item>&ndash;&gt;-->
+              <!--<el-dropdown-item @click.native="logout">注销</el-dropdown-item>-->
+            <!--</el-dropdown-menu>-->
+          <!--</el-dropdown>-->
         </div>
+
+        <!--<div class="header-right-help-div">-->
+        <!--<i class="iconfont icon-feedback" style="font-size: 20px;"></i>-->
+        <!--</div>-->
+        <!--<div class="header-right-avatar-div">-->
+        <!--<div class="avater-div">-->
+        <!--<el-dropdown style="width: 100%;height: 100%">-->
+        <!--&lt;!&ndash;<img v-lazy="userinfo.avatar" alt=""/>&ndash;&gt;-->
+        <!--<el-dropdown-menu slot="dropdown">-->
+        <!--<el-dropdown-item @click.native="personCenter">个人信息</el-dropdown-item>-->
+        <!--<el-dropdown-item @click.native="logout">注销</el-dropdown-item>-->
+        <!--&lt;!&ndash;<el-dropdown-item>删除</el-dropdown-item>&ndash;&gt;-->
+        <!--</el-dropdown-menu>-->
+        <!--</el-dropdown>-->
+
+        <!--</div>-->
+        <!--</div>-->
       </div>
     </el-header>
+
+
+    <!--nav and content-->
     <el-container style="height: 100%">
+
+      <!--收缩时的菜单-->
       <el-aside width="50px" class="left-aside" v-if="isCollapse">
         <i class="iconfont icon-enter"
            v-if="!rightMenuVisible && leftClick"
            @click="changeRightMenuVisible"
            id="icon-left">
         </i>
+
         <div class="index-left-small-menu">
           <div class="index-logo" @click="collapseMenu">
             <i class="iconfont icon-other" style="font-size:26px;line-height: 30px;"></i>
           </div>
           <div class="menu-item-div">
-            <div v-for="(l,index) in menuList"
-                 @click="clickMenu('leftsmallmenu'+l.permissionId,l.children,l.name)"
-                 :id="'leftsmallmenu'+l.permissionId"
-                 :class="{'left-hover':index===leftHover}"
-                 @mouseenter="mousein(index)"
-                 @mouseleave="mouseout">
-              <i :class="l.icon" v-if="l.pid == 0"></i>
-            </div>
+            <el-menu
+              default-active="2"
+              class="el-menu-vertical-demo"
+              @select="handleOpen"
+              background-color="#333745"
+              text-color="#fff"
+              active-text-color="#ffd04b">
+              <el-menu-item index="1" style="padding:0;">
+                <i class="iconfont icon-order"></i>
+              </el-menu-item>
+              <el-menu-item index="2" style="padding:0;">
+                <i class="iconfont icon-shangpin"></i>
+              </el-menu-item>
+              <el-menu-item index="3" style="padding:0;">
+                <i class="iconfont icon-dynamic" @click="iconClick"></i>
+              </el-menu-item>
+
+              <el-menu-item index="4" style="padding:0;">
+                <i class="iconfont icon-addressbook"></i>
+                <!--<span slot="title" style="margin-left: 3px;">品牌商管理</span>-->
+              </el-menu-item>
+              <el-menu-item index="5" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
+              </el-menu-item>
+            </el-menu>
+            <!--<div v-for="(l,index) in menuList"-->
+            <!--@click="clickMenu('leftsmallmenu'+l.permissionId,l.children,l.name)"-->
+            <!--:id="'leftsmallmenu'+l.permissionId"-->
+            <!--:class="{'left-hover':index===leftHover}"-->
+            <!--@mouseenter="mousein(index)"-->
+            <!--@mouseleave="mouseout">-->
+            <!--<i :class="l.icon" v-if="l.pid == 0"></i>-->
+            <!--</div>-->
           </div>
         </div>
       </el-aside>
+
+
+      <!--展开时的菜单-->
       <el-aside width="160px" class="left-aside" v-if="!isCollapse">
         <i class="iconfont icon-enter"
            v-if="!rightMenuVisible && leftClick"
            @click="changeRightMenuVisible"
            id="icon-left">
         </i>
+
+
         <div class="index-left-menu">
           <div class="index-logo" @click="collapseMenu">
             <i class="iconfont icon-other" style="font-size:26px;line-height: 30px;"></i>
           </div>
           <div class="menu-item-div">
-            <div v-for="(l,index) in menuList"
-                 @click="clickMenu('leftbigmenu'+l.permissionId,l.children,l.name)"
-                 :id="'leftbigmenu'+l.permissionId"
-                 :class="{'left-hover':index===leftHover}"
-                 @mouseenter="mousein(index)"
-                 @mouseleave="mouseout">
-              <i :class="l.icon" v-if="l.pid == 0" style="margin-right: 10px"></i>
-              <span class="menu-name">{{l.name}}</span>
-            </div>
+            <el-menu
+              default-active="2"
+              class="el-menu-vertical-demo"
+              @select="handleOpen"
+              background-color="#333745"
+              text-color="#fff"
+              active-text-color="#ffd04b">
+              <el-menu-item index="1" style="padding:0;">
+                <i class="iconfont icon-order"></i>
+                <span slot="title" style="margin-left: 3px;">订单管理</span>
+              </el-menu-item>
+              <el-menu-item index="2" style="padding:0;">
+                <i class="iconfont icon-shangpin"></i>
+                <span slot="title" style="margin-left: 3px;">商品管理</span>
+              </el-menu-item>
+
+              <el-submenu index="3">
+                <template slot="title">
+                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
+                  <span slot="title" style="margin-left: 3px">业务表维护</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="3-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
+                  </el-menu-item>
+                  <el-menu-item index="3-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">计量单位
+                  </el-menu-item>
+                  <el-menu-item index="3-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">为你推荐
+                  </el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
+
+              <el-menu-item index="4" style="padding:0;">
+                <i class="iconfont icon-addressbook"></i>
+                <span slot="title" style="margin-left: 3px;">品牌商管理</span>
+              </el-menu-item>
+              <el-menu-item index="5" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">客户管理</span>
+              </el-menu-item>
+              <el-menu-item index="6" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">用户意见反馈</span>
+              </el-menu-item>
+            </el-menu>
           </div>
         </div>
       </el-aside>
@@ -89,6 +175,7 @@
              @click="changeRightMenuVisible"
              id="icon-right">
           </i>
+
           <div class="index-right-menu">
             <div class="right-menu-title">
               {{rightMenuTitle}}
@@ -115,8 +202,10 @@
   </el-container>
 </template>
 <script>
-  export default{
-    data(){
+  import ElButton from "../../node_modules/element-ui/packages/button/src/button.vue";
+
+  export default {
+    data() {
       return {
         menuList: [],
         itemNumber: '',
@@ -130,105 +219,158 @@
       }
     },
     computed: {
-      'userinfo': function () {
-        return JSON.parse(localStorage.getItem('userinfo'));
-      }
+//      'userinfo'
+//        :
+//        function () {
+//          return JSON.parse(localStorage.getItem('userinfo'));
+//        }
     },
-
-    mounted(){
-      let self = this;
-      self.getMenu(function (data) {
-        self.menuList = data;
-        localStorage.setItem('menu', JSON.stringify(data));
-        let collapseStatus = localStorage.getItem('collapseStatus');
-        let rightMenuVisible = localStorage.getItem('rightMenuVisible');
-        if (collapseStatus === 'true') {
-          self.isCollapse = true;
-        }
-        for (let i = 0; i < data.length; i++) {
-          for (let j = 0; j < data[i].children.length; j++) {
-            if (data[i].children[j].url === self.$router.currentRoute.path) {
-              let parentId = data[i].permissionId;
-              let selfId = data[i].children[j].permissionId;
-              let leftMenus = document.getElementsByClassName('menu-item-div')[0].childNodes;
-              for (let t = 0; t < leftMenus.length; t++) {
-                leftMenus[t].style.backgroundColor = "#333745";
-              }
-              self.$nextTick(function () {
-                if (document.getElementById('leftbigmenu' + parentId)) {
-                  document.getElementById('leftbigmenu' + parentId).style.backgroundColor = "#00c1e1";
-                } else {
-                  document.getElementById('leftsmallmenu' + parentId).style.backgroundColor = "#00c1e1";
-                }
-              })
-            }
-          }
-        }
-      });
-    },
+    mounted() {
+//
+//      let self = this;
+//      self.getMenu(function (data) {
+//        self.menuList = data;
+//        localStorage.setItem('menu', JSON.stringify(data));
+//        let collapseStatus = localStorage.getItem('collapseStatus');
+//        let rightMenuVisible = localStorage.getItem('rightMenuVisible');
+//        if (collapseStatus === 'true') {
+//          self.isCollapse = true;
+//        }
+//        for (let i = 0; i < data.length; i++) {
+//          for (let j = 0; j < data[i].children.length; j++) {
+//            if (data[i].children[j].url === self.$router.currentRoute.path) {
+//              let parentId = data[i].permissionId;
+//              let selfId = data[i].children[j].permissionId;
+//              let leftMenus = document.getElementsByClassName('menu-item-div')[0].childNodes;
+//              for (let t = 0; t < leftMenus.length; t++) {
+//                leftMenus[t].style.backgroundColor = "#333745";
+//              }
+//              self.$nextTick(function () {
+//                if (document.getElementById('leftbigmenu' + parentId)) {
+//                  document.getElementById('leftbigmenu' + parentId).style.backgroundColor = "#00c1e1";
+//                } else {
+//                  document.getElementById('leftsmallmenu' + parentId).style.backgroundColor = "#00c1e1";
+//                }
+//              })
+//            }
+//          }
+//        }
+//      });
+    }
+    ,
     components: {
-      'menu-tree': require('../components/Menu')
-    },
+      ElButton,
+//      'menu-tree'
+//        :
+//        require('../components/Menu')
+    }
+    ,
     methods: {
-      collapseMenu(){
+      iconClick() {
+        this.isCollapse = false;
+      },
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+        switch (key) {
+          case '1':
+            this.$router.push('/order/saleorder/list');
+            break;
+          case '2':
+            this.$router.push('/goods/goodslist');
+            break;
+          case '3-1':
+            this.$router.push('/dictionary/dictionaryclassify');
+            break;
+          case '3-2':
+            this.$router.push('/dictionary/measurementunit');
+            break;
+          case '3-3':
+            this.$router.push('/dictionary/recommended');
+            break;
+          case '4':
+            this.$router.push('/brand/list');
+            break;
+          case '5':
+            this.$router.push('/client/clientmanagement');
+            break;
+          case '6':
+            this.$router.push('/feedback/list');
+            break;
+        }
+      },
+      collapseMenu() {
         this.isCollapse = !this.isCollapse;
         localStorage.setItem('collapseStatus', this.isCollapse)
-      },
-      getMenu(callback){//获取菜单
+      }
+      ,
+      getMenu(callback) {//获取菜单
         let self = this;
         let requestData = {};
         self.httpApi.index.menus(requestData, function (data) {
           callback(data.data);
         });
-      },
-      changeRightMenuVisible(){
+      }
+      ,
+      changeRightMenuVisible() {
         this.rightMenuVisible = !this.rightMenuVisible;
         localStorage.setItem('rightMenuVisible', this.rightMenuVisible)
       },
-      clickMenu(id, children, name){//点击菜单
-        if (children) {
-          this.leftClick = id;
-          //localStorage.setItem('leftClick',JSON.stringify({id:id,children:children,name:name}));
-          let leftMenus = document.getElementsByClassName('menu-item-div')[0].childNodes;
-          for (let i = 0; i < leftMenus.length; i++) {
-            leftMenus[i].style.backgroundColor = "#333745";
-          }
-          document.getElementById(id).style.backgroundColor = "#00c1e1";
-          this.rightMenuVisible = true;
-          this.rightMenuTitle = name;
-          this.rightMenuList = children;
-        }
-      },
-      rightMouseIn(index){
+//      clickMenu(id, children, name)
+//      {//点击菜单
+//        if (children) {
+//          this.leftClick = id;
+//          //localStorage.setItem('leftClick',JSON.stringify({id:id,children:children,name:name}));
+//          let leftMenus = document.getElementsByClassName('menu-item-div')[0].childNodes;
+//          for (let i = 0; i < leftMenus.length; i++) {
+//            leftMenus[i].style.backgroundColor = "#333745";
+//          }
+//          document.getElementById(id).style.backgroundColor = "#00c1e1";
+//          this.rightMenuVisible = true;
+//          this.rightMenuTitle = name;
+//          this.rightMenuList = children;
+//        }
+//      }
+//      ,
+      rightMouseIn(index) {
         this.rightHover = index;
-      },
-      rightMouseOut(){
+      }
+      ,
+      rightMouseOut() {
         this.rightHover = '';
-      },
-      mousein(index){
+      }
+      ,
+      mousein(index) {
         this.leftHover = index;
-      },
-      mouseout(){
+      }
+      ,
+      mouseout() {
         this.leftHover = '';
-      },
-      handleIconClick(){//头部搜索
+      }
+      ,
+      handleIconClick() {//头部搜索
 
-      },
-      personCenter(){//跳转个人中心
+      }
+      ,
+      personCenter() {//跳转个人中心
         this.$router.push('/personal/user/myinfo');
-      },
-      logout(){//注销
+      }
+      ,
+      logout() {//注销
         let self = this;
-        let requestData = {};
-        self.httpApi.user.logout(requestData, function (data) {
+//        let requestData = {};
+//        self.httpApi.user.logout(requestData, function (data) {
           localStorage.removeItem('token');
           self.$router.push('/login');
-        });
+//        });
       }
     }
   }
 </script>
 <style scoped>
+  .el-menu-item-group__title {
+    padding: 0px;
+  }
+
   .el-header, .el-footer {
     background-color: #373d41;
     color: white;

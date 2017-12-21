@@ -10,4 +10,8 @@ export default [
     path: '/dictionary/measurementunit', //计量单位
     component: resolve => require(['@/pages/dictionary/MeasurementUnit'], resolve)
   },
+  {
+    path: '/dictionary/recommended', //为你推荐
+    component: resolve => require(['@/pages/dictionary/Recommended'], resolve)
+  },
 ]

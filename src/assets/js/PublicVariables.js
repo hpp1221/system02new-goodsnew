@@ -21,4 +21,6 @@ Vue.prototype.httpApi = {
   user:{},
   vip:{},
   level:{},
+  feedback:{},
+  mail:{},
 };

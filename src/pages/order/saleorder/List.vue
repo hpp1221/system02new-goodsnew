@@ -4,12 +4,15 @@
       <h3 class="page-title">正向订单</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="状态">
-          <el-select placeholder="全部状态" v-model="easyForm.orderStatus" multiple>
-            <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
+          <el-select placeholder="全部状态" v-model="easyForm.orderStatus">
+            <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalOrderStatus"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户">
-          <el-input v-model="easyForm.contacts" placeholder="请输入订单号/客户名称"></el-input>
+        <el-form-item>
+          <el-input v-model="easyForm.orderNumber" placeholder="请输入订单号"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="easyForm.memberName" placeholder="请输入客户名称"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
@@ -21,7 +24,7 @@
         <!--<el-button @click="select">导入</el-button>-->
         <!--</el-form-item>-->
         <!--<el-form-item>-->
-          <!--<el-button @click="addOrder">新增</el-button>-->
+        <!--<el-button @click="addOrder">新增</el-button>-->
         <!--</el-form-item>-->
       </el-form>
 
@@ -33,10 +36,10 @@
         <el-table-column prop="orderNumber" label="订单号">
 
         </el-table-column>
-        <el-table-column prop="contacts" label="客户名称">
+        <el-table-column prop="memberName" label="客户名称">
 
         </el-table-column>
-        <el-table-column prop="payAmount" label="订单金额">
+        <el-table-column prop="paymentPrice" label="订单金额">
 
         </el-table-column>
         <el-table-column label="下单时间" sortable>
@@ -59,19 +62,20 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">订单详情</el-dropdown-item>
-                <el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>
+                <!--<el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <pagination @setChanged="pageChanged" :totalPage="totalPage"></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
         <el-form ref="form" :model="form" v-if="advanceSearch" class="request-form" inline>
           <el-form-item label="订单状态">
-            <el-select placeholder="全部状态" v-model="easyForm.orderStatus" multiple>
-              <el-option :label="t.name" :key="t.id" :value="t.name" v-for="t in totalOrderStatus"></el-option>
+            <el-select placeholder="全部状态" v-model="form.orderStatus">
+              <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in totalOrderStatus"></el-option>
             </el-select>
+
           </el-form-item>
           <el-form-item label="订单号">
             <el-input placeholder="请输入订单号 " v-model="form.orderNumber" class="long-input">
@@ -80,29 +84,30 @@
           </el-form-item>
 
           <el-form-item label="客户名称">
-            <el-input placeholder="输入客户名称" v-model="form.deliveryInfo" class="form-input">
+            <el-input placeholder="输入客户名称" v-model="form.memberName" class="form-input">
 
             </el-input>
           </el-form-item>
-          <el-form-item label="品牌名称">
-            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsInfo" class="form-input" style="width: 320px;">
+          <el-form-item label="商品信息">
+            <el-input placeholder="输入商品名称/编码/条形码/关键字" v-model="form.goodsQueryInfo" class="form-input"
+                      style="width: 320px;">
 
             </el-input>
           </el-form-item>
           <el-form-item label="日期">
             <el-date-picker
               v-model="form.dateRange"
-              type="datetimerange"
+              type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
           <!--<el-form-item label="订单状态">-->
-            <!--<getcheckbox-->
-              <!--@getCheckList="getCheckList"-->
-              <!--:dataList="totalOrderStatus">-->
-            <!--</getcheckbox>-->
+          <!--<getcheckbox-->
+          <!--@getCheckList="getCheckList"-->
+          <!--:dataList="totalOrderStatus">-->
+          <!--</getcheckbox>-->
           <!--</el-form-item>-->
           <!--<el-form-item label="付款状态">-->
           <!--<el-checkbox-group v-model="form.payType">-->
@@ -117,30 +122,30 @@
         </el-form>
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
-        <el-button @click="advanceSearch = false">清空</el-button>
+        <el-button @click="clearOrder">清空</el-button>
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         tableData: [],
         form: {
-          payStatus: [],//付款状态
           orderNumber: '',//订单编号
-          orderStatus: [],//订单状态
+          orderStatus: '',//订单状态
           dateRange: null,
-          deliveryInfo: '',//收货信息
-          goodsInfo: '',//商品信息
-          startTime: '',
-          endTime: ''
+          memberName: '',//客户名称
+          goodsQueryInfo: '',//商品信息
+          beginDate: '',//开始日期
+          endDate: '',//结束日期
         },
         easyForm: {//简单查询
-          orderStatus: [],
-          contacts: ''
+          orderStatus: '',
+          orderNumber: '',
+          memberName: ''
         },
         pageSize: 5,
         pageNum: 1,
@@ -148,55 +153,34 @@
         totalStores: [],
         totalOrderStatus: [
           {
-            name: '作废',
-            id: 8
+            name: '全部状态',
+//            id:1
           },
           {
-            name: '待确认审核',
-            id: 9
-          },
-          {
-            name: '待收款确认',
-            id: 10
-          },
-          {
-            name: '待出库确认',
-            id: 11
-          },
-          {
-            name: '已完成',
-            id: 12
-          },
-        ],//订单状态
-        totalPayStatus: [
-          {
-            name: '未付款',
+            name: '待付款订单',
             id: 1
           },
           {
-            name: '付款待审核',
+            name: '待确认收货订单',
             id: 2
           },
           {
-            name: '部分付款',
+            name: '待发货订单',
             id: 3
           },
           {
-            name: '已付款',
+            name: '待评价订单',
             id: 4
           },
-        ],//付款状态
-        totalOrderTags: [
           {
-            name: '特价单'
+            name: '已完成',
+            id: 5
           },
           {
-            name: '非特价单'
+            name: '取消订单',
+            id: 6
           },
-          {
-            name: '秒杀订单'
-          },
-        ],//订单标签
+        ],//订单状态
         advanceSearch: false,
         searchType: 1
       }
@@ -206,54 +190,74 @@
       'getcheckbox': require('../../../components/getcheckbox'),
     },
     methods: {
-      pageChanged(page){
+      clearOrder() {
+        let self = this
+        self.form.orderNumber = '',//订单编号
+          self.form.orderStatus = '',//订单状态
+          self.form.dateRange = null,
+          self.form.memberName = '',//客户名称
+          self.form.goodsQueryInfo = '',//商品信息
+          self.form.beginDate = '',//开始日期
+          self.form.endDate = ''
+      },
+      pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
-      getCheckList(e){
+      getCheckList(e) {
         this.form.orderStatus = e;
       },
 //      addOrder(){
 //        this.$router.push('/order/saleorder/add');
 //      },
-      verify(id){
-        let url = '/order/saleorder/verify/' + id;
-        this.$router.push(url);
-      },
-      select(size, num){//查询
+//      verify(id){//审核
+//        let url = '/order/saleorder/verify/' + id;
+//        this.$router.push(url);
+//      },
+      select(size, num) {//查询
         let self = this;
         let requestData = {
           pageSize: size,
-          pageNo: num,
-          orderType: 2
+          pageNum: num,
+          orderType: 2,
+          orderNumber: self.easyForm.orderNumber,
+          orderStatus: self.easyForm.orderStatus,
+          memberName: self.easyForm.memberName
         };
-
-        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        self.httpApi.order.list(requestData, function (data) {
+        self.httpApi.order.viewOrderListByQuery(requestData, function (data) {
           self.searchType = 1;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
       },
-      advanceSelect(size, num){
+      advanceSelect(size, num) {
         let self = this;
+        self.form.beginDate = self.form.dateRange === null ? '' : self.form.dateRange[0];
+        self.form.endDate = self.form.dateRange === null ? '' : self.form.dateRange[1];
         let requestData = {
           pageSize: size,
-          pageNo: num,
-          orderType: 2
+          pageNum: num,
+          orderType: 2,
+//          orderNumber: self.form.orderNumber,//订单编号
+//          orderStatus: self.form.orderStatus,//订单状态
+//          dateRange: self.form.dateRange,
+//          memberName: self.form.memberName,//客户名称
+//          goodsQueryInfo: self.form.goodsQueryInfo,//商品信息
+//          beginDate: self.form.beginDate,//开始日期
+//          endDate: self.form.endDate
         };
-        self.form.startTime = self.form.dateRange === null ? '' : self.form.dateRange[0];
-        self.form.endTime = self.form.dateRange === null ? '' : self.form.dateRange[1];
+
         requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.order.list(requestData, function (data) {
+        self.httpApi.order.viewOrderListByQuery(requestData, function (data) {
+          self.advanceSearch = false;
           self.searchType = 2;
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
         });
       },
 
-      seeDetail(id){
+      seeDetail(id) {
         let url = '/order/saleorder/detail/' + id;
         this.$router.push(url);
       },

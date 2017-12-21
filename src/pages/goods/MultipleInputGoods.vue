@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item label="2、导入数据">
           <el-upload
-            action="/ui/analysisGoodsExcel"
+            action="/admin/goods/analysisGoodsExcel"
             :on-success="uploadSuccess"
             :on-remove="removeExcel"
             :file-list="form.excelFile"
@@ -50,7 +50,6 @@
 
             </el-table-column>
             <el-table-column label="商品介绍" prop="content">
-
             </el-table-column>
             <el-table-column label="计量单位" prop="unit">
 
@@ -58,7 +57,7 @@
             <el-table-column label="条形码" prop="goodsBarCode">
 
             </el-table-column>
-            <el-table-column label="关键词" prop="keyword">
+            <el-table-column label="关键词" prop="title">
 
             </el-table-column>
             <el-table-column label="状态" prop="relNum">
@@ -71,9 +70,6 @@
 
             </el-table-column>
             <el-table-column label="市场价(元)" prop="marketPrice">
-
-            </el-table-column>
-            <el-table-column label="供应商名称" prop="supplierName">
 
             </el-table-column>
           </el-table>
@@ -103,62 +99,62 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
-        active:1,
-        form:{
-          addressId:'',
-          catId:-1,
-          excelFile:[]
+        active: 1,
+        form: {
+          addressId: '',
+          catId: -1,
+          excelFile: []
         },
-        totalStores:[//所有盘点仓库
+        totalStores: [//所有盘点仓库
           {
-            name:'仓库1',
-            id:1
+            name: '仓库1',
+            id: 1
           },
           {
-            name:'仓库2',
-            id:2
+            name: '仓库2',
+            id: 2
           },
           {
-            name:'仓库3',
-            id:3
+            name: '仓库3',
+            id: 3
           }
         ],
-        totalTypes:[//所有分类
+        totalTypes: [//所有分类
           {
-            name:'全部',
-            id:-1
+            name: '全部',
+            id: -1
           },
           {
-            name:'日常用品',
-            id:1
+            name: '日常用品',
+            id: 1
           },
           {
-            name:'儿童玩具',
-            id:2
+            name: '儿童玩具',
+            id: 2
           },
           {
-            name:'妈妈用品',
-            id:3
+            name: '妈妈用品',
+            id: 3
           },
           {
-            name:'儿童车床',
-            id:4
+            name: '儿童车床',
+            id: 4
           },
           {
-            name:'纸质用品',
-            id:5
+            name: '纸质用品',
+            id: 5
           },
           {
-            name:'其他用品',
-            id:6
+            name: '其他用品',
+            id: 6
           }
         ],
-        excelResponse:[],//excel解析后的数据
-        excelAnalysisStatus:false,
-        json_fields : {
+        excelResponse: [],//excel解析后的数据
+        excelAnalysisStatus: false,
+        json_fields: {
           "商品编码": "String",
           "商品名称": "String",
           "商品品牌": "String",
@@ -183,53 +179,53 @@
             "value": "utf-8"
           }]
         ],
-        exportResult:{
-          success:'',
-          fail:''
+        exportResult: {
+          success: '',
+          fail: ''
         }
       }
     },
-    components:{
-      'download-excel':require('vue-json-excel')
+    components: {
+      'download-excel': require('vue-json-excel')
     },
-    methods:{
-      next(){//下一步
-        this.excelAnalysisStatus? this.active++ : this.$message.error('请传入商品excel');
+    methods: {
+      next() {//下一步
+        this.excelAnalysisStatus ? this.active++ : this.$message.error('请传入商品excel');
       },
-      getExcel(){//下载excelmodel
-        location.href = '/admin/exportGoodsDemo';
+      getExcel() {//下载excelmodel
+        location.href = '/admin/goods/exportGoodsDemo';
       },
-      uploadSuccess(response, file, fileList){//成功上传的回调
-        if(response.code == 10000){
+      uploadSuccess(response, file, fileList) {//成功上传的回调
+        if (response.code == 10000) {
           this.excelAnalysisStatus = true;
           fileList = [file];
           this.form.excelFile = [file];
-          if(response.data.length > 0){
-            for(let i = 0;i < response.data.length;i++){
+          if (response.data.length > 0) {
+            for (let i = 0; i < response.data.length; i++) {
               this.excelResponse = response.data;
             }
           }
-        }else{
+        } else {
           this.form.excelFile = [];
           this.$message.error(response.message);
         }
 
       },
-      removeExcel(){//清空文件
+      removeExcel() {//清空文件
         this.form.excelFile = [];
         this.excelAnalysisStatus = false;
       },
-      goBack(){//返回上一步
+      goBack() {//返回上一步
         this.active--;
       },
-      sureExport(){//确定导入
+      sureExport() {//确定导入
         let self = this;
         self.active++;
         let requestData = {
-          goodsList:JSON.stringify(self.excelResponse)
+          goodsList: JSON.stringify(self.excelResponse)
         };
         self.httpApi.goods.inputGoods(requestData, function (data) {
-          self.exportResult = {success:data.success,fail:data.fail};
+          self.exportResult = {success: data.success, fail: data.fail};
         });
       }
     }

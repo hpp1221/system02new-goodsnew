@@ -32,8 +32,9 @@
 
 <script>
   var JSZip = require('jszip');
-  export default{
-    data(){
+  var Base64 = require('js-base64').Base64;
+  export default {
+    data() {
       return {
         files: [],
         explainVisible: false,
@@ -47,12 +48,12 @@
         successNum: 0
       }
     },
-    created(){
+    created() {
       //this.getBaseData();
       this.getImgAccess();
     },
     methods: {
-      upload(){
+      upload() {
 //				let url = 'http://upload.qiniu.com/';
 //				let formData = new FormData();
 //				formData.append('token',this.key.token);
@@ -69,7 +70,8 @@
 //			    	console.log(error);
 //			    });
       },
-      beforeUpload(file){
+
+      beforeUpload(file) {
         let self = this;
         self.fileNum = 0;
         self.successNum = 0;
@@ -77,8 +79,10 @@
         let url = 'http://upload.qiniu.com/';
         let config = {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+//            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type':'multipart/form-data'
           }
+          ,
         };
         var promise = new Promise(function (resolve, reject) {
           Zip.loadAsync(file).then(function (zip) {
@@ -97,13 +101,18 @@
           for (let z in zip.files) {
             if (!zip.files[z].dir) {
               Zip.file(zip.files[z].name).async("base64").then(function (result) {
+                console.log('result', result)
                 let uploadFile = 'data:image/' + zip.files[z].name.substring(zip.files[z].name.length - 3, zip.files[z].name.length) + ';base64,' + result;
+                uploadFile = Base64.decode(uploadFile);
                 let formData = new FormData();
                 formData.append('token', self.key.token);
                 formData.append('file', uploadFile);
+//                formData.append('file', Base64.decode(uploadFile));
+//                console.log(Base64.decode(uploadFile))
                 self.$http.post(url, formData, config).then(function (response) {
-                  console.log(response)
+                  console.log('response', response)
                   self.uploadSuccess(self.imgDomain + response.data.key, zip.files[z].name);
+                  console.log('imgggg', response.data.key)
                 }).catch(function (error) {
                   console.log(error);
                 });
@@ -117,7 +126,9 @@
         });
         return promise;
       },
-      uploadSuccess(url, fileName){
+      uploadSuccess(url, fileName) {
+        console.log('url', url);
+        console.log('fileName', fileName)
         this.successFiles.push({fileName: fileName, url: url});
         this.successNum++;
         console.log('successnum', this.successNum)
@@ -131,7 +142,7 @@
           });
         }
       },
-      getImgAccess(){
+      getImgAccess() {
         let self = this;
         let requestData = {
           bucketName: 'sass'
@@ -140,10 +151,10 @@
           self.key.token = data.data;
         });
       },
-      removeFile(){
+      removeFile() {
 
       },
-      showExplain(){
+      showExplain() {
         this.explainVisible = !this.explainVisible;
       }
     }

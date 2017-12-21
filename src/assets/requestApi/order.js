@@ -9,14 +9,34 @@ Vue.prototype.httpApi.order.create = function (params, successCallback) {
       successCallback(data);
     })
 };
-//订单详情
-Vue.prototype.httpApi.order.detail = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/order/detail', params,
+//正向订单详情
+Vue.prototype.httpApi.order.viewOrderInfo = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/order/viewOrderInfo', params,
     function (data) {
       successCallback(data);
     })
 };
-
+//正向订单添加物流信息
+Vue.prototype.httpApi.order.addDeliveryInfo = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/order/addDeliveryInfo', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//正向订单添加物流信息的回调列表
+Vue.prototype.httpApi.order.viewDeliveryInfoList = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/order/viewDeliveryInfoList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//正向订单日志列表
+Vue.prototype.httpApi.order.viewOrderLogList = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/order/viewOrderLogList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //订单明细
 Vue.prototype.httpApi.order.details = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/order/details', params,
@@ -57,9 +77,9 @@ Vue.prototype.httpApi.order.import = function (params, successCallback) {
     })
 };
 
-//订单列表
-Vue.prototype.httpApi.order.list = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/order/list', params,
+//正向订单列表
+Vue.prototype.httpApi.order.viewOrderListByQuery = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/order/viewOrderListByQuery', params,
     function (data) {
       successCallback(data);
     })
@@ -82,12 +102,12 @@ Vue.prototype.httpApi.order.log = function (params, successCallback) {
 };
 
 //待处理任务(首页)
-Vue.prototype.httpApi.order.pendingTask = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/order/pendingTask', params,
-    function (data) {
-      successCallback(data);
-    })
-};
+// Vue.prototype.httpApi.order.pendingTask = function (params, successCallback) {
+//   Vue.prototype.httpPost('/admin/order/pendingTask', params,
+//     function (data) {
+//       successCallback(data);
+//     })
+// };
 
 //品类销售汇总
 Vue.prototype.httpApi.order.salesSummary = function (params, successCallback) {

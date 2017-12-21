@@ -22,7 +22,7 @@ Vue.prototype.formPass = function (myForm, responseForm) {//将服务器的form�
 Vue.prototype.getAddressName = function (provinceId, cityId, areaId, streetId) {
   let data = JSON.parse(localStorage.getItem('addressData')) || '';
   if (!data) {
-    this.httpApi.stock.selectRegionList({}, function (data) {
+    this.httpApi.dict.selectRegionList({}, function (data) {
       localStorage.setItem('addressData', JSON.stringify(data.data.list));
     })
   }
@@ -30,11 +30,6 @@ Vue.prototype.getAddressName = function (provinceId, cityId, areaId, streetId) {
   let city = '';
   let area = '';
   let street = '';
-  console.log(data)
-  console.log(provinceId)
-  console.log(cityId)
-  console.log(areaId)
-  console.log(streetId)
   for (let index in data) {
     if (data[index].value == provinceId) {
       province = data[index].name;

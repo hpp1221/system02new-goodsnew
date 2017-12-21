@@ -57,3 +57,17 @@ Vue.prototype.httpApi.goodsCat.unitList = function (params, successCallback) {
       successCallback(data);
     })
 };
+//为你推荐新增
+Vue.prototype.httpApi.goodsCat.addRecommendedForYouGoods = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/goods/addRecommendedForYouGoods', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//为你推荐列表
+Vue.prototype.httpApi.goodsCat.recommendedForYou = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/goods/recommendedForYou', params,
+    function (data) {
+      successCallback(data);
+    })
+};

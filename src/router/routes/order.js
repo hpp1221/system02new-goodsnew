@@ -37,7 +37,7 @@ export default [
   },
 
   {
-    path: '/order/saleorder/list', //销售订单列表
+    path: '/order/saleorder/list', //正向订单列表
     component: resolve => require(['@/pages/order/saleorder/list'], resolve)
   },
   {

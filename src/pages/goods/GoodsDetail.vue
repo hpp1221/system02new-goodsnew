@@ -5,14 +5,16 @@
       <div class="goods-detail-top">
         <div class="goods-detail-top-left">
           <div class="goods-detail-big-img">
-            <img v-lazy="bigImg.url">
+            <img v-if="bigImg == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
+            <img v-else v-lazy="bigImg.url">
           </div>
           <div class="goods-detail-small-img">
-            <img v-lazy="g.url" v-for="g in goodsDetail.goodsExtend.imgs" @click="clickSmallImg(g)">
+            <img v-if="bigImg == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
+            <img v-else v-lazy="g.url" v-for="g in goodsDetail.goodsExtend.imgs">
           </div>
         </div>
 
-        <div class="goods-detail-top-right" style="margin-left: 5px">
+        <div class="goods-detail-top-right">
           <p class="goods-detail-p">
             <span>{{goodsDetail.name}}</span>
           </p>
@@ -54,6 +56,7 @@
     data(){
       return {
         bigImg: '',
+//        bigImgNull:'/static/img/error.dff75d4.jpg',
         goodsDetail: {
           brandName: '',
           catName: '',
@@ -86,6 +89,7 @@
         let self = this;
         let requestData = {skuId: skuId};
         self.httpApi.goods.goodsDetail(requestData, function (data) {
+          console.log('detail',data)
           self.goodsDetail = data.data;
 
 //          self.form = self.formPass(self.form, data.data);
@@ -103,9 +107,9 @@
           console.log(self.goodsDetail)
         });
       },
-      clickSmallImg(img){
-        this.bigImg = img;
-      }
+//      clickSmallImg(img){
+//        this.bigImg = img;
+//      }
     }
   }
 </script>
@@ -113,7 +117,7 @@
 <style>
   .goods-detail-top {
     overflow: hidden;
-    width: 1000px;
+    /*width: 1000px;*/
   }
 
   .goods-detail-top-left {
@@ -121,8 +125,8 @@
   }
 
   .goods-detail-top-right {
-    float: left;
-    margin-left: 30px;
+    /*float: left;*/
+    /*margin: 30px;*/
   }
 
   .goods-detail-p {

@@ -18,12 +18,14 @@ import './assets/requestApi'
 import errorImg from './assets/images/error.jpg'
 import loadingImg from './assets/images/loading.gif'
 import store from './vuex/store';
+import Crypto from 'crypto';
 Vue.config.productionTip = false
 Vue.component('VueEditor',VueEditor)
 var moment = require('moment');
 Vue.prototype.moment = moment;
 Vue.use(ElementUI)
 Vue.use(Vuex);
+Vue.use(Crypto);
 Vue.use(VueLazyLoad, {
   preLoad: 1.3,
   error: errorImg,

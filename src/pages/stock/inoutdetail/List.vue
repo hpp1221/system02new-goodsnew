@@ -147,7 +147,7 @@
         this.easyForm.areaId = value[2]
       },
       brandAdd() {//品牌商新增
-        this.$router.push('/stock/inoutdetail/add');
+        this.$router.push('/stock/brand/add');
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -177,11 +177,11 @@
         });
       },
       seeDetail(id) {
-        let url = '/stock/inoutdetail/detail/' + id;
+        let url = '/stock/brand/detail/' + id;
         this.$router.push(url);
       },
       update(id){
-        let url = '/stock/inoutdetail/update/' + id;
+        let url = '/stock/brand/update/' + id;
         this.$router.push(url);
       }
     }

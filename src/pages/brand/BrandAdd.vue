@@ -58,8 +58,8 @@
   </div>
 </template>
 <script>
-  import ElButton from "../../../../node_modules/element-ui/packages/button/src/button.vue";
-  import ElInput from "../../../../node_modules/element-ui/packages/input/src/input.vue";
+  import ElButton from "../../../node_modules/element-ui/packages/button/src/button.vue";
+  import ElInput from "../../../node_modules/element-ui/packages/input/src/input.vue";
 
   export default {
     data() {
@@ -89,13 +89,13 @@
     components: {
       ElInput,
       ElButton,
-      'uploadoneimg': require('../../../components/uploadoneimg'),
+      'uploadoneimg': require('../../components/uploadoneimg'),
     },
     methods: {
       getPrivence() {//所有省市区
         let self = this
         let requestData = {}
-        self.httpApi.stock.selectRegionTree(requestData, function (data) {
+        self.httpApi.dict.selectRegionTree(requestData, function (data) {
           self.addressData = data.data.regionTrees;
         })
       },
@@ -106,7 +106,7 @@
       },
       getImgUploadType(){//凭证上传
         let self = this;
-        self.httpApi.stock.selectDictByType({type: 'brand_dealer_voucher'}, function (data) {
+        self.httpApi.dict.selectDictByType({type: 'brand_dealer_voucher'}, function (data) {
           let types = data.data.list;
           for (let i = 0; i < types.length; i++) {
             self.form.brandDealerVoucherList.push({type: types[i].value, url: '', name: types[i].name});
@@ -122,12 +122,12 @@
 
       onSubmit() {//新增接口
         let self = this
-        self.httpApi.stock.addBrandDealer(self.form, function (data) {
-          self.$router.push('/stock/brand/list')
+        self.httpApi.brand.addBrandDealer(self.form, function (data) {
+          self.$router.push('/brand/list')
         });
       },
       BrandAddCancel(){
-        this.$router.push('/stock/brand/list')
+        this.$router.push('/brand/list')
       }
     }
   }

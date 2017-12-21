@@ -20,3 +20,6 @@ import './supplier'
 import './user'
 import './vip'
 import  './level'
+import  './feedback'
+import  './mail'
+

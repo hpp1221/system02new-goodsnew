@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <div class="index-top-icon-div">
-        <p class="icon-p">
-          <i class="el-icon-question"></i>
-          <span>帮助</span>
-        </p>
-        <p class="icon-p">
-          <i class="el-icon-menu"></i>
-          <span>配置</span>
-        </p>
-      </div>
-      <el-row :gutter="10" style="width: 100%">
+      <!--<div class="index-top-icon-div">-->
+        <!--<p class="icon-p">-->
+          <!--<i class="el-icon-question"></i>-->
+          <!--<span>帮助</span>-->
+        <!--</p>-->
+        <!--<p class="icon-p">-->
+          <!--<i class="el-icon-menu"></i>-->
+          <!--<span>配置</span>-->
+        <!--</p>-->
+      <!--</div>-->
+      <el-row :gutter="10" style="width: 100%;margin-top: 50px">
         <el-col :span="8">
           <el-card class="card-body">
             <div slot="header">
@@ -120,31 +120,31 @@
       }
     },
     created(){
-      this.getStockRemind();
-      this.getPendingTask();
+//      this.getStockRemind();
+//      this.getPendingTask();
 
     },
     components: {
       'chart': require('../components/indexcharts')
     },
     methods: {
-      getStockRemind(){//首页库存信息
-        let self = this;
-        let requestData = {
-          ratio: 30
-        };
-        self.httpApi.stock.storeHouseRemind(requestData, function (data) {
-          self.stockRemindList = data.data;
-        })
-      },
-      getPendingTask(){//首页待处理任务信息
-        let self = this;
-        let requestData = {};
-        self.httpApi.order.pendingTask(requestData, function (data) {
-          console.log(data)
-          self.pendingTaskList = data.data;
-        })
-      },
+//      getStockRemind(){//首页库存信息
+//        let self = this;
+//        let requestData = {
+//          ratio: 30
+//        };
+//        self.httpApi.stock.storeHouseRemind(requestData, function (data) {
+//          self.stockRemindList = data.data;
+//        })
+//      },
+//      getPendingTask(){//首页待处理任务信息
+//        let self = this;
+//        let requestData = {};
+//        self.httpApi.order.pendingTask(requestData, function (data) {
+//          console.log(data)
+//          self.pendingTaskList = data.data;
+//        })
+//      },
 
       getShortCut(){//获取快捷菜单
 //				let self = this

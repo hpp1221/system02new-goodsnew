@@ -104,13 +104,21 @@
             <catselect @getCatSelect="getFormCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
-            <brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>
+            <!--<brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>-->
+            <el-select v-model="form.brandId" filterable placeholder="请选择">
+              <el-option
+                v-for="item in brandNameSelectData"
+                :key="item.brandDealerId"
+                :label="item.name"
+                :value="item.brandDealerId">
+              </el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="库存状态">
-            <el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>
-            <el-checkbox v-model="form.downLimit" label="低于库存下限值" :true-label="1" :false-label="0"></el-checkbox>
-            <el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>
-          </el-form-item>
+          <!--<el-form-item label="库存状态">-->
+            <!--<el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>-->
+            <!--<el-checkbox v-model="form.downLimit" label="低于库存下限值" :true-label="1" :false-label="0"></el-checkbox>-->
+            <!--<el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>-->
+          <!--</el-form-item>-->
           <el-form-item label="商品状态">
             <el-radio class="radio" v-model="form.type" :label="''">全部</el-radio>
             <el-radio class="radio" v-model="form.type" :label="1">上架</el-radio>
@@ -145,7 +153,7 @@
         <!--<el-button @click="sureSetTags">确定</el-button>-->
         <!--<el-button @click="dialogTableVisible = false">取消</el-button>-->
       <!--</el-dialog>-->
-      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: "></pagination>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float:right"></pagination>
     </div>
   </div>
 </template>
@@ -155,6 +163,7 @@
     data() {
       return {
         tableData: [],
+        brandNameSelectData:[],//商品品牌
         advanceSearch: false,
         form: {
           //        storeHouseAddress: '',//所属仓库
@@ -185,24 +194,28 @@
         pageNum: 1,
         totalPage: 10,
         multipleSelection: [],
+        upOrDownIds:[],//上下架ids
         selectionObj: {},
         searchType: 1//1是简单搜索，2是高级搜索
       }
     },
     created() {
-//      this.select()
+      this.getBrandSelect()
     },
     components: {
       'pagination': require('../../components/pagination'),
-      'brandselect': require('../../components/getbrandselect'),
       'catselect': require('../../components/getcatselect'),
       'getcheckbox': require('../../components/getcheckbox')
     },
     methods: {
-      getBrandSelect(e) {
-        this.form.brand = e.brand;
-        this.form.brandName = e.brandName;
-        this.form.brandId = e.brandId;
+      getBrandSelect() {
+        let self = this
+        let requestData = {
+          name: self.form.brandName
+        }
+        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
+          self.brandNameSelectData = data.data.list;
+        });
       },
       pageChanged(page) {
         this.pageSize = page.size;
@@ -230,7 +243,7 @@
           pageSize: size,
           pageNo: num,
           temp: JSON.stringify(self.selectionObj),
-          goodsSkuRequest: self.easyForm
+          goodsSkuRequest: self.easyForm,
         };
 //        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
         self.httpApi.goods.skuList(requestData, function (data) {
@@ -279,9 +292,21 @@
 
       },
       handleSelectionChange(val) {
+        let self = this;
+        for(let i = 0 ; i < val.length;i++){
+          if(self.upOrDownIds.indexOf(self.upOrDownIds[i]) == -1){
+            self.upOrDownIds.push(val[i].id);
+          }
+
+        }
+        console.log('ids',self.upOrDownIds)
+
+        console.log('vall',val)
         if (val.length > 0) {
-          this.multipleSelection = val;
-          this.selectionObj[this.pageNum] = val;
+
+          self.multipleSelection = val;
+          self.selectionObj[self.pageNum] = val;
+
         }
       },
       update(id, goodsId) {//修改商品详情
@@ -292,34 +317,66 @@
         this.$router.push('/goods/createGoods');
       },
       outputFile() {//导出
-
         let arr = [];
         for (let i in this.selectionObj) {
           for (let j = 0; j < this.selectionObj[i].length; j++) {
             arr.push(this.selectionObj[i][j].id);
           }
         }
-        let url = 'ui/exportGoods?token=' + localStorage.getItem('token');
+        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
         let str = '';
         if (arr.length === 0) {
           if (this.searchType === 1) {
-            str = '&cat=' + JSON.stringify(this.easyForm.cat) + '&type=' + this.easyForm.type;
+            str = '&catId=' + JSON.stringify(this.easyForm.catId) + '&type=' + this.easyForm.type;
           } else {
             str = '&keyword=' + this.form.keyword +
-              '&cat=' + JSON.stringify(this.form.cat) +
-              '&brandName=' + this.form.brandName +
-              '&supplierName=' + this.form.supplierName +
-              '&tags' + JSON.stringify(this.form.goodsTags) +
-              '&addressList=' + JSON.stringify(this.form.addressList) +
+              '&catId=' + JSON.stringify(this.form.catId) +
+              '&brandId=' + this.form.brandId +
+              //              '&supplierName=' + this.form.supplierName +
+              //              '&tags' + JSON.stringify(this.form.goodsTags) +
+              //              '&addressList=' + JSON.stringify(this.form.addressList) +
               '&upLimit=' + this.form.upLimit +
               '&downLimit=' + this.form.downLimit +
               '&zero=' + this.form.zero +
               '&type' + this.form.type +
               '&source' + this.form.source;
           }
-          location.href = url + str;
+          this.$confirm('此操作将导出全部数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            location.href = url + str;
+            this.$message({
+
+              type: 'success',
+              message: '导出成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消导出'
+            });
+          });
+
         } else {
-          location.href = url + '&skuList=' + JSON.stringify(arr);
+          this.$confirm('此操作将导出已选数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            location.href = url + '&skuList=' + JSON.stringify(arr);
+            this.$message({
+              type: 'success',
+              message: '导出成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消导出'
+            });
+          });
+
         }
       },
       multipleInputGoods() {
@@ -336,7 +393,7 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            skuList: JSON.stringify(self.multipleSelection),
+            skuList: JSON.stringify(self.upOrDownIds),
             type: 1
           };
           self.httpApi.goods.upOrDownGoods(requestData, function (data) {
@@ -360,7 +417,7 @@
           type: 'warning'
         }).then(() => {
           let requestData = {
-            skuList: JSON.stringify(self.multipleSelection),
+            skuList: JSON.stringify(self.upOrDownIds),
             type: 0
           };
           self.httpApi.goods.upOrDownGoods(requestData, function (data) {

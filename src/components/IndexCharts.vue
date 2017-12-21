@@ -44,26 +44,33 @@
           title: {
             text: '品类销售汇总TOP3'
           },
-          tooltip: {},
+          tooltip: {
+            trigger:'axis',
+          },
           legend: {
             data: ['品类A', '品类B', '品类C']
           },
           xAxis: {
+            type: 'category',
+            boundaryGap:false,
             data: timeArr,
 
           },
           yAxis: {
+            name:'数量',
+            type:'value',
             splitLine: {
               lineStyle: {
-                type: 'dashed'
+                type: '',
+
               }
             },
           },
           series: [
             {
               name: '品类A',
-              type: 'bar',
-              data: [5, 90, 36, 10, 10, 20, 60]
+              type: 'line',
+              data: [300, 700, 700, 500, 800, 800, 800]
             },
 //          {
 //            name: '品类A',
@@ -72,8 +79,8 @@
 //          },
             {
               name: '品类B',
-              type: 'bar',
-              data: [26, 41, 40, 20, 30, 40, 30]
+              type: 'line',
+              data: [100, 200, 300, 400, 500, 600, 700]
             },
 //          {
 //            name: '品类B',
@@ -82,8 +89,8 @@
 //          },
             {
               name: '品类C',
-              type: 'bar',
-              data: [51, 21, 49, 15, 19, 27, 100]
+              type: 'line',
+              data: [600, 600, 600, 600, 600, 600, 600]
             },
 //          {
 //            name: '品类C',

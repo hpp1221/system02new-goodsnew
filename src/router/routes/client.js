@@ -19,21 +19,26 @@ export default [
     component: resolve => require(['@/pages/client/platform/update'], resolve)
   },
   {
-    path: '/client/clientmanagement', //客户管理
+    path: '/client/clientmanagement', //客户列表
     component: resolve => require(['@/pages/client/ClientManagement'], resolve)
   },
   {
-    path: '/client/inputclient', //客户导入
-    component: resolve => require(['@/pages/client/InputClient'], resolve)
+    path: '/client/clientmanagement', //客户列表
+    component: resolve => require(['@/pages/client/ClientManagement'], resolve)
   },
   {
-    path: '/client/updateclient/:id', //修改客户详情
-    component: resolve => require(['@/pages/client/UpdateClient'], resolve)
+    path: '/client/detail/:id', //客户详情
+    component: resolve => require(['@/pages/client/Detail'], resolve)
   },
   {
-    path: '/client/createclient', //新增客户
-    component: resolve => require(['@/pages/client/CreateClient'], resolve)
+    path: '/client/examine/:id', //客户审核
+    component: resolve => require(['@/pages/client/Examine'], resolve)
   },
+  {
+    path: '/client/update/:id', //修改客户详情
+    component: resolve => require(['@/pages/client/Update'], resolve)
+  },
+
 
 
 ]

@@ -7,6 +7,7 @@
     :show-all-levels="showAllLevels"
     @change="getCat"
     :props="props"
+    @click.native="getCatListClick"
     :disabled="disabled">
   </el-cascader>
   <!--@click.native="getCatListClick"-->
@@ -30,7 +31,7 @@
         this.totalCatList = [{res: this.outCat, name: this.outCat.name}];
         this.cat = [this.outCat];
       }
-      this.getCatList();
+//      this.getCatList();
     },
     props: {
       showAllLevels: {

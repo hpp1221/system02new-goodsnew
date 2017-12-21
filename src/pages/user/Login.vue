@@ -2,63 +2,71 @@
   <div class="login-container"
        :style="{backgroundImage: 'url(' +bg + ')'}">
     <div class="login-box">
-      <div class="login-ivis-div">
-        <p style="color:darkgray;font-size:32px">觇智云</p>
-        <!--<img src="../../assets/images/ivis.jpg" alt=""/>-->
-      </div>
-      <el-tabs v-model="tabName">
-        <el-tab-pane label="登录" name="login">
-          <el-form :model="form" :rules="rules" ref="form" class="demo-ruleForm">
+      <!--<div class="login-ivis-div">-->
+        <!--<p style="color:darkgray;font-size:32px">觇智云</p>-->
+        <!--&lt;!&ndash;<img src="../../assets/images/ivis.jpg" alt=""/>&ndash;&gt;-->
+      <!--</div>-->
+      <!--<el-tabs v-model="tabName">-->
+        <!--<el-tab-pane label="登录" name="login">-->
+          <el-form :model="form" :rules="rules" ref="form" class="demo-ruleForm" style="margin-top: 80px">
             <el-form-item prop="username">
               <input type="text" style="display:none;">
-              <el-input v-model="form.username" placeholder="用户名称" auto-complete="off" autofocus
+              <el-input v-model="form.username" placeholder="请输入账号" auto-complete="off" autofocus
                         @keyup.enter.native="submitForm('form')"></el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input v-model="form.password" placeholder="输入密码" type="password"
+              <el-input v-model="form.password" placeholder="请输入密码" type="password"
                         @keyup.enter.native="submitForm('form')"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-checkbox label="两周内免密登录" name="type" v-model="form.twoWeek"></el-checkbox>
+              <!--checked="true" -->
+              <el-checkbox label="记住用户名" name="type" v-model="form.twoWeek" style="color: #000"></el-checkbox>
+              <span v-model="form.twoWeek" class="forgetPwd">忘记密码 ? </span>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitForm('form')" class="login-btn">登录</el-button>
             </el-form-item>
           </el-form>
           <!--<el-button type="text" @click="forgetPwd" class="forget-btn">忘记密码</el-button>-->
-        </el-tab-pane>
-        <el-tab-pane label="注册" name="register">
-          <el-form :model="registerForm" :rules="registerRules" ref="registerForm" class="demo-ruleForm">
-            <el-form-item prop="username">
-              <input type="text" style="display:none;">
-              <el-input v-model="registerForm.username" placeholder="公司名称,推荐公司首字母缩写,例如觇智科技(CZKJ)"
-                        @blur="checkUserName"></el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input v-model="registerForm.password" placeholder="输入密码" type="password"></el-input>
-            </el-form-item>
-            <el-form-item prop="phone">
-              <el-input v-model="registerForm.phone" placeholder="输入手机号" style="width: 300px;"></el-input>
-              <el-button type="text" class="verify-code" @click="getVerifyCode" v-if="verifyText =='获取验证码'">获取验证码
-              </el-button>
-              <el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>
-            </el-form-item>
-            <el-form-item prop="verifyCode">
-              <el-input v-model="registerForm.code" placeholder="输入验证码"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="register('registerForm')" class="login-btn">注册</el-button>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-      </el-tabs>
+        <!--</el-tab-pane>-->
+        <!--<el-tab-pane label="注册" name="register">-->
+          <!--<el-form :model="registerForm" :rules="registerRules" ref="registerForm" class="demo-ruleForm">-->
+            <!--<el-form-item prop="username">-->
+              <!--<input type="text" style="display:none;">-->
+              <!--<el-input v-model="registerForm.username" placeholder="公司名称,推荐公司首字母缩写,例如觇智科技(CZKJ)"-->
+                        <!--@blur="checkUserName"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item prop="password">-->
+              <!--<el-input v-model="registerForm.password" placeholder="输入密码" type="password"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item prop="phone">-->
+              <!--<el-input v-model="registerForm.phone" placeholder="输入手机号" style="width: 300px;"></el-input>-->
+              <!--<el-button type="text" class="verify-code" @click="getVerifyCode" v-if="verifyText =='获取验证码'">获取验证码-->
+              <!--</el-button>-->
+              <!--<el-button type="text" class="verify-code" disabled v-else>{{verifyText}}秒后重发</el-button>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item prop="verifyCode">-->
+              <!--<el-input v-model="registerForm.code" placeholder="输入验证码"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item>-->
+              <!--<el-button type="primary" @click="register('registerForm')" class="login-btn">注册</el-button>-->
+            <!--</el-form-item>-->
+          <!--</el-form>-->
+        <!--</el-tab-pane>-->
+      <!--</el-tabs>-->
 
     </div>
   </div>
 </template>
 
 <script>
+  import ElButton from "../../../node_modules/element-ui/packages/button/src/button.vue";
+  import md5 from 'js-md5';
   export default{
+    components: {
+      ElButton,
+      md5,
+    },
     data(){
       return {
         bg: require('../../assets/images/login.jpg'),
@@ -116,8 +124,8 @@
             let self = this;
             let form = self.form;
             let requestData = {
-              loginId: form.username,
-              pwd: form.password
+              loginId: self.form.username,
+              pwd: md5(self.form.password)
             };
             self.httpApi.user.doLogin(requestData, function (data) {
               window.localStorage.setItem('token', data.data.token);

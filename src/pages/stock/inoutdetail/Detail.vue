@@ -131,7 +131,7 @@
         });
       },
       returnBrandList(){//返回列表主页
-        this.$router.push('/stock/inoutdetail/list')
+        this.$router.push('/stock/brand/list')
       },
 
     }
