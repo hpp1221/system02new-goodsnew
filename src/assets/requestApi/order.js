@@ -23,6 +23,20 @@ Vue.prototype.httpApi.order.addDeliveryInfo = function (params, successCallback)
       successCallback(data);
     })
 };
+//正向订单删除物流信息
+Vue.prototype.httpApi.order.deleteDeliveryInfo = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/order/deleteDeliveryInfo', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//正向订单修改订单价格
+Vue.prototype.httpApi.order.updateOrderItemPrice = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/order/updateOrderItemPrice', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //正向订单添加物流信息的回调列表
 Vue.prototype.httpApi.order.viewDeliveryInfoList = function (params, successCallback) {
   Vue.prototype.httpGet('/admin/order/viewDeliveryInfoList', params,

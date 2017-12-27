@@ -68,7 +68,7 @@
                   label="商品编码"
                   width="250">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.number">
+                    <el-input v-model="scope.row.number" :disabled="true">
 
                     </el-input>
                   </template>
@@ -76,7 +76,7 @@
 
                 <el-table-column
                   label="条形码"
-                  width="180">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
@@ -85,7 +85,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="180">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title">
 
@@ -156,28 +156,28 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="修改商品" name="second">
-          <el-form ref="goodsForm" :model="goodsForm" class="request-form" label-width="120px" inline>
+          <el-form ref="goodsForm" :model="goodsForm" class="request-form" label-width="120px" inline v-if="goodsForm.id">
             <h4 class="item-title">基础信息</h4>
             <el-form-item label="商品名称" style="margin-right: 210px">
               <el-input placeholder="请输入商品名称" v-model="goodsForm.name" class="form-input" style="margin:0;width:350px;">
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌" style="margin-right: 210px">
-              <!--<brandselect-->
-                <!--:outBrand="goodsForm.brand"-->
-                <!--@getBrandSelect="getGoodsFormBrandSelect"-->
-                <!--:isClickFetch="false"-->
-                <!--v-if="goodsForm.id"-->
-                <!--:selectAllVisible="false">-->
-              <!--</brandselect>-->
-              <el-select v-model="goodsForm.brandName" filterable placeholder="请选择" style="margin:0;width:350px;">
-                <el-option
-                  v-for="item in brandNameSelectData"
-                  :key="item.brandDealerId"
-                  :label="item.name"
-                  :value="item.name">
-                </el-option>
-              </el-select>
+              <!--{{goodsForm.brandName}}-->
+              <brandselect
+                @getBrandSelect="getGoodsFormBrandSelect"
+                :outBrand="goodsForm.brand"
+                :isClickFetch="false"
+                style="margin:0;width:350px;">
+              </brandselect>
+              <!--<el-select v-model="goodsForm.brandName" filterable placeholder="请选择" style="margin:0;width:350px;">-->
+                <!--<el-option-->
+                  <!--v-for="item in brandNameSelectData"-->
+                  <!--:key="item.brandDealerId"-->
+                  <!--:label="item.name"-->
+                  <!--:value="item.name">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
             </el-form-item>
             <br>
             <el-form-item label="商品分类" style="margin-right: 210px">
@@ -185,7 +185,6 @@
                 :key="goodsForm.cat"
                 @getCatSelect="getGoodsFormCatSelect"
                 :outCat="goodsForm.cat"
-                v-if="goodsForm.id"
                 style="margin:0;width:350px;"
               >
               </catselect>
@@ -195,13 +194,11 @@
                 @getUnitSelect="getGoodsFormUnitSelect"
                 :outUnit="goodsForm.unit"
                 :isClickFetch="false"
-                v-if="goodsForm.id"
                 :selectAllVisible="false"
                 style="margin:0;width:350px;">
               </unitselect>
             </el-form-item>
             <h4 class="item-title">商品规格</h4>
-
             <el-form-item label="商品规格">
               <div v-for="(s,sindex) in goodsForm.spec" :key="s.specName">
                 {{s.specName}}
@@ -217,6 +214,7 @@
                 </el-tag>
               </div>
             </el-form-item>
+            <br>
             <el-form-item>
               <el-table
                 :data="goodsForm.skus"
@@ -245,9 +243,9 @@
 
                 <el-table-column
                   label="商品编码"
-                  width="220">
+                  width="250">
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.number">
+                    <el-input v-model="scope.row.number" :disabled="true">
 
                     </el-input>
                   </template>
@@ -255,7 +253,7 @@
 
                 <el-table-column
                   label="条形码"
-                  width="180">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
@@ -264,7 +262,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="180">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title">
 
@@ -334,7 +332,7 @@
             <el-form-item>
               <ul>
                 <i class="el-icon-plus" @click="button1"></i>
-                <li v-for="item in goodsForm.goodsExtend.annex">
+                <li v-for="item in goodsForm.goodsExtend.annex" :key="item.value">
 
                   <el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>
                   <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"
@@ -362,6 +360,7 @@
     data(){
       return {
         brandNameSelectData:[],//商品品牌商
+
         form: {
           name: '',
           brand: '',
@@ -387,9 +386,10 @@
           }
         },
         goodsForm: {
+          brandNewSelectName:'',
           id: '',
           name: '',
-          brand: '',
+          brand: [],
           brandName: '',
           brandId: '',
           spec: [],
@@ -427,7 +427,6 @@
     },
     created(){
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      this.getBrandSelect()
 
 //      let self = this;
 //      self.getTagList(function (data) {
@@ -453,6 +452,11 @@
       }
     },
     methods: {
+      getGoodsFormBrandSelect(e) {
+        this.goodsForm.brand = e.brand;
+        this.goodsForm.brandId = e.brandDealerId;
+        this.goodsForm.brandName = e.brandName;
+      },
       button2() {//扩展属性
         this.goodsForm.goodsExtend.annex.check1 = false;
         this.goodsForm.goodsExtend.annex.check2 = true
@@ -460,15 +464,15 @@
       button1() {//扩展属性
         this.goodsForm.goodsExtend.annex.push({name: '', value: '', check1: false, check2: true});
       },
-      getBrandSelect() {
-        let self = this
-        let requestData = {
-          name: self.form.brandName
-        }
-        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
-          self.brandNameSelectData = data.data.list;
-        });
-      },
+//      getBrandSelect() {
+//        let self = this
+//        let requestData = {
+//          name: self.form.brandName
+//        }
+//        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
+//          self.brandNameSelectData = data.data.list;
+//        });
+//      },
       getGoodsFormUnitSelect(e){
         this.goodsForm.unit = e;
       },
@@ -502,7 +506,7 @@
         self.httpApi.goods.goodsDetail(requestData, function (data) {
           self.form = self.formPass(self.form, data.data);
           self.form.spec = JSON.parse(self.form.spec);
-//          self.form.brand = JSON.parse(self.form.brand);
+          self.form.brand = JSON.parse(self.form.brand);
 
           self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
           self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
@@ -523,7 +527,8 @@
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
-//          self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
+          self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
+          self.goodsForm.brand = {brandDealerId:self.goodsForm.brand.brandId,brandName:self.goodsForm.brand.brandName}
           // self.originCat = [JSON.parse(self.goodsForm.cat)];
 //          let cat = JSON.parse(self.goodsForm.cat);
 //
@@ -536,6 +541,7 @@
           for (let i = 0; i < self.goodsForm.skus.length; i++) {
             self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
           }
+          console.log(self.goodsForm)
         });
       },
       editorReady(editorInstance){//修改sku ueditor初始化
@@ -571,6 +577,8 @@
         self.goodsForm.cat = JSON.stringify(self.goodsForm.cat)
         self.goodsForm.spec = JSON.stringify(self.goodsForm.spec)
         self.goodsForm.skus = JSON.stringify(self.goodsForm.skus)
+        self.goodsForm.brand = JSON.stringify(self.goodsForm.brand)
+        console.log('brand',self.goodsForm.brand)
         self.goodsForm.goodsExtend.annex = JSON.stringify(self.goodsForm.goodsExtend.annex)
         self.goodsForm.goodsExtend.imgs = JSON.stringify(self.goodsForm.goodsExtend.imgs)
         let requestData = {goodsInfo: self.goodsForm};

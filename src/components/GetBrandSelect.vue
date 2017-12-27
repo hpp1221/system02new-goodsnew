@@ -1,15 +1,15 @@
 <template>
-  <el-select :placeholder="placeholderString" v-model="brand" value-key="brandId" @click.native="selectClick"
+  <el-select :placeholder="placeholderString" v-model="brand" value-key="brandDealerId" @click.native="selectClick"
              @change="getBrand" :disabled="disabled">
     <el-option label="全部" :value="''" v-if="selectAllVisible"></el-option>
-    <el-option :label="t.brandName" :value="t" :key="t.brandName" v-for="t in totalBrandList"></el-option>
+    <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
   </el-select>
 </template>
 <script>
   export default{
     data(){
       return {
-        brand: '',
+        brand: [],
         totalBrandList: [],
         dataFetchComplete: false,//数据是否
       }
@@ -43,9 +43,15 @@
     methods: {
       fetchData(){
         let self = this;
-        self.getBrandList(function (data) {
-          self.totalBrandList = data.list;
+        console.log(self.outBrand)
+        let requestData = {}
+        self.httpApi.brand.selectBrandDealerAllList(requestData,function (data) {
+          self.totalBrandList = data.data.list;
           self.dataFetchComplete = true;
+          for(let i = 0;i < self.totalBrandList.length;i++){
+            self.totalBrandList[i].brandDealerId += ''
+          }
+          console.log(self.totalBrandList)
         });//获取品牌列表
       },
       selectClick(){
@@ -54,7 +60,7 @@
         }
       },
       getBrand(brand){
-        this.$emit('getBrandSelect', {brand: brand, brandName: brand.brandName, brandId: brand.brandId});
+        this.$emit('getBrandSelect', {brand: brand, brandName: brand.name, brandDealerId: brand.brandDealerId});
       }
     }
   }

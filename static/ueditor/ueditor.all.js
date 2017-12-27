@@ -8167,6 +8167,7 @@ UE.ajax = function() {
     }
 
     function doAjax(url, ajaxOptions) {
+
         var xhr = creatAjaxRequest(),
         //是否超时
             timeIsOut = false,
@@ -15224,11 +15225,13 @@ UE.plugin.register('simpleupload', function (){
                 me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
 
                 function callback(){
+
                     try{
                         var link, json, loader,
                             body = (iframe.contentDocument || iframe.contentWindow.document).body,
                             result = body.innerText || body.textContent || '';
                         json = (new Function("return " + result))();
+                      var json =  changeDataToJson(json);
                         link = me.options.imageUrlPrefix + json.url;
                         if(json.state == 'SUCCESS' && json.url) {
                             loader = me.document.getElementById(loadingId);
@@ -15242,11 +15245,22 @@ UE.plugin.register('simpleupload', function (){
                             showErrorLoader && showErrorLoader(json.state);
                         }
                     }catch(er){
-                        showErrorLoader && showErrorLoader(me.getLang('simpleupload.loadError'));
+                      alert("你麻痹")
+                       // /* showErrorLoader && showErrorLoader(me.getLang('simpleupload.loadError'));*/
                     }
                     form.reset();
                     domUtils.un(iframe, 'load', callback);
                 }
+              function changeDataToJson(json){
+                var object = {"original":'',"size":'',
+                  "state":'',"title":'',"type":'',
+                  "url":''};
+
+                var _json = json;
+                //。。。。。自己真实项目的逻辑
+                //。。。。。自己真实项目的逻辑
+                return object;
+              }
                 function showErrorLoader(title){
                     if(loadingId) {
                         var loader = me.document.getElementById(loadingId);
@@ -18893,7 +18907,7 @@ UE.ui = baidu.editor.ui = {};
                     theme:editor.options.theme,
                     renderLabelHtml:function () {
                         return '<div class="edui-label %%-label">' + '<' + ck.tag + ' ' + (ck.className ? ' class="' + ck.className + '"' : "")
-                            + (ck.style ? ' style="' + ck.style + '"' : "") + '>' + ck.label + "<\/" + ck.tag + ">"
+                            + (ck.style ? ' style="' + ck.style + '"' : "") + '>' + ck.label + "<' + ck.tag + '>"
                             + '</div>';
                     }
                 });

@@ -39,7 +39,7 @@
         token: window.localStorage.getItem('token'),
         bucketName: 'sass'
       };
-      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+      self.httpApi.qiniuyun.imgSignature(requestData, function (data) {
         self.key.token = data.data;
       });
     },

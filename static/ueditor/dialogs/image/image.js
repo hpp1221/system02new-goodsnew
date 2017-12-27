@@ -264,6 +264,7 @@
             }
         },
         getInsertList: function () {
+          console.log("ssdfdggfhgf")
             var data = this.getData();
             if(data['url']) {
                 return [{
@@ -435,8 +436,10 @@
                     };
 
                 if (file.getStatus() === 'invalid') {
+                  console.log("xxxxxxx")
                     showError(file.statusText);
                 } else {
+                  console.log("xxxxxxx")
                     $wrap.text(lang.uploadPreview);
                     if (browser.ie && browser.version <= 7) {
                         $wrap.text(lang.uploadNoPreview);
@@ -701,6 +704,14 @@
             uploader.on('uploadBeforeSend', function (file, data, header) {
                 //这里可以通过data对象添加POST参数
                 header['X_Requested_With'] = 'XMLHttpRequest';
+                $.ajax({
+                  dataType:"json",
+                  async:false,
+                  url:"http://192.168.41.216:8083/oss/qiniuyun/oss/imgSignature",
+                  success:function (res) {
+                    data["token"] = res.data;
+                  }
+                })
             });
 
             uploader.on('uploadProgress', function (file, percentage) {

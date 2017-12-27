@@ -5,8 +5,8 @@
       <div class="goods-detail-top">
         <div class="goods-detail-top-left">
           <div class="goods-detail-big-img">
-            <img v-if="bigImg == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
-            <img v-else v-lazy="bigImg.url">
+            <img v-if="goodsDetail.skus[0].img == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
+            <img v-else v-lazy="goodsDetail.skus[0].img">
           </div>
           <div class="goods-detail-small-img">
             <img v-if="bigImg == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
@@ -67,7 +67,8 @@
               number: '',
               price: '',
               marketPrice: '',
-              count:''
+              count:'',
+              img:'',
             }
           ],
           goodsExtend: {
@@ -89,7 +90,6 @@
         let self = this;
         let requestData = {skuId: skuId};
         self.httpApi.goods.goodsDetail(requestData, function (data) {
-          console.log('detail',data)
           self.goodsDetail = data.data;
 
 //          self.form = self.formPass(self.form, data.data);
@@ -104,7 +104,8 @@
           self.bigImg = self.goodsDetail.goodsExtend.imgs[0];
           self.goodsDetail.skus = JSON.parse(self.goodsDetail.skus);
           //self.goodsDetail.skus[0].sku = JSON.parse(self.goodsDetail.skus[0].sku);
-          console.log(self.goodsDetail)
+          console.log('skus',self.goodsDetail.skus[0].img)
+          console.log('all',self.goodsDetail)
         });
       },
 //      clickSmallImg(img){

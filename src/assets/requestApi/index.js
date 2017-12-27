@@ -22,4 +22,5 @@ import './vip'
 import  './level'
 import  './feedback'
 import  './mail'
+import  './qiniuyun'
 

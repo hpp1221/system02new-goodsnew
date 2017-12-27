@@ -11,14 +11,15 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌" style="margin-right: 210px">
-              <el-select v-model="form.brandName" filterable placeholder="请选择" style="width:350px;">
-                <el-option
-                  v-for="item in brandNameSelectData"
-                  :key="item.brandDealerId"
-                  :label="item.name"
-                  :value="item.name">
-                </el-option>
-              </el-select>
+              <brandselect @getBrandSelect="getBrandSelect" style="width:350px;"></brandselect>
+              <!--<el-select v-model="form.brandName" filterable placeholder="请选择" style="width:350px;">-->
+                <!--<el-option-->
+                  <!--v-for="item in brandNameSelectData"-->
+                  <!--:key="item.brandDealerId"-->
+                  <!--:label="item.name"-->
+                  <!--:value="item.name">-->
+                <!--</el-option>-->
+              <!--</el-select>-->
             </el-form-item>
             <br>
             <el-form-item label="商品分类" style="margin-right: 210px">
@@ -180,9 +181,10 @@
               <!--<el-input class="form-input" size="small" v-model="form.goodsExtend.annex.name" ></el-input>-->
               <!--<el-input size="small" class="form-input" v-model="form.goodsExtend.annex.value" ></el-input>-->
               <ul>
-                <i class="el-icon-plus" @click="button1"></i>
-                <li v-for="item in form.goodsExtend.annex">
+                <i class="el-icon-plus" @click="button1"></i> <br>
 
+                <li v-for="(item,index) in form.goodsExtend.annex">
+                  <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
                   <el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>
                   <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"
                             placeholder="请输入属性名称"></el-input>
@@ -210,6 +212,7 @@
       return {
         brandNameSelectData: [],
         form: {
+//          goodsName:'',
           brandName: '',//品牌商下拉框
           name: '',
           brand: '',
@@ -261,12 +264,13 @@
       'uploadoneimg': require('../../components/uploadoneimg'),
       'unitselect': require('../../components/getunitselect'),
       'catselect': require('../../components/getcatselect'),
+      'brandselect': require('../../components/getbrandselect'),
     },
     created() {
-      this.getBrandSelect()
+//      this.getBrandSelect()
     },
     methods: {
-      getGoodsNumbers() {//自动生成商品编码
+      getGoodsNumbers(skuNum) {//自动生成商品编码
         //p开头 年月日时分秒一位或者两位数字
         let str = 'P-';
         let nowDate = new Date();
@@ -282,19 +286,33 @@
         let seconds = nowDate.getSeconds();
         if (seconds < 10) seconds = '0' + seconds;
         str = str + year + month + day + hour + minutes + seconds;
-        for (let i = 0; i < 6; i++) {
-          str += Math.floor(Math.random() * 10);
+        for (let i = 0; i < skuNum; i++) {
+          let currentStr = str;
+          let randomNum = Math.floor(Math.random() * 100000);
+          currentStr += randomNum.toString().substr(0, 4);
+          this.form.skus[i].number = currentStr;
+//          this.form.skus[i].number = '12471824712847148';
         }
-        return str;
       },
-      getBrandSelect() {
-        let self = this
-        let requestData = {
-          name: self.form.brandName
-        }
-        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
-          self.brandNameSelectData = data.data.list;
-        });
+//      getBrandSelect() {
+//        let self = this
+//        let requestData = {
+//          name: self.form.brandName,
+//
+//        }
+//        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
+//          console.log('id',data)
+//          self.brandNameSelectData = data.data.list;
+//        });
+//      },
+      getBrandSelect(e) {
+        console.log('ee',e)
+        this.form.brandId = e.brandDealerId;
+        this.form.brandName = e.brandName;
+        this.form.brand = e.brand;
+      },
+      deleteOneAnnex(index) {
+        this.form.goodsExtend.annex.splice(index, 1);
       },
       button2() {//扩展属性
         this.form.goodsExtend.annex.check1 = false;
@@ -353,28 +371,73 @@
               title: ''
             };
             singleSku.sku = tableMap;
-            singleSku.number = this.getGoodsNumbers();
             this.form.skus.push(JSON.parse(JSON.stringify(singleSku)));
           }
         }
+        this.getGoodsNumbers(this.form.skus.length);
+
       },
       submit() {//新增
         let self = this;
-        for (let i = 0; i < self.form.spec.length; i++) {//商品规格
-          self.$delete(self.form.spec[i], 'inputVisible');
+        let form = {
+          brandName: '',//商品名称
+          name: '',//品牌名称
+          brand: '',
+          brandId: '',
+          cat: [],
+          catId: '',
+          catName: '',
+          unit: '',
+          number: '',
+          spec: [],
+          skus: [],
+          goodsExtend: {
+            imgs: [],
+            content: '',
+            annex: [{
+              name: '',
+              value: '',
+              check1: false,
+              check2: true
+            }]
+          },
+          isPlatform: 0//是否为平台商品，1是0否
+        };
+        form = Object.assign({},this.form);
+        for (let i = 0; i < form.spec.length; i++) {//商品规格
+          self.$delete(form.spec[i], 'inputVisible');
         }
 //        for(let i = 0;i<self.form.goodsSkuList.length;i++){
 //          self.form.goodsSkuList[i].sku = JSON.stringify(self.form.goodsSkuList[i].sku)
 //        }
-        self.form.cat = JSON.stringify(self.form.cat)
-        self.form.spec = JSON.stringify(self.form.spec)
-        self.form.skus = JSON.stringify(self.form.skus)
-        self.form.goodsExtend.annex = JSON.stringify(self.form.goodsExtend.annex)
-        self.form.goodsExtend.imgs = JSON.stringify(self.form.goodsExtend.imgs);
+
+        if (form.cat.length === 0) {
+          this.$message({
+            message: '请选择分类',
+            center: true
+          });
+          return
+        }
+        form.cat = JSON.stringify(form.cat)
+        if (form.spec.length === 0) {
+          this.$message({
+            message: '请加入规格',
+            center: true
+          });
+          return
+        }
+
+        form.spec = JSON.stringify(form.spec)
+        form.skus = JSON.stringify(form.skus)
+        form.brand = JSON.stringify(form.brand)
+        form.goodsExtend.annex = JSON.stringify(form.goodsExtend.annex)
+        form.goodsExtend.imgs = JSON.stringify(form.goodsExtend.imgs);
 
         let requestData = {
-          goodsInfo: self.form,
+          goodsInfo: form,
         };
+//        console.log(self.form)
+//        return
         self.httpApi.goods.addGoods(requestData, function (data) {
           self.$router.push('/goods/goodslist');
 

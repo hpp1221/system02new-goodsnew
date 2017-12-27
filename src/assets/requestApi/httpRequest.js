@@ -31,6 +31,9 @@ axios.interceptors.response.use(function (response) {
 Vue.prototype.httpGet = function (url, params, successCallback, failCallback, errorCallback) {//get请求
   let self = this;
   self.$http.get(url, {params: params}).then(function (response) {
+    if(response.headers.refreshToken){
+      localStorage.setItem('token',response.headers.refreshToken);
+    }
     let data = response.data;
     switch (data.code) {
       case successCode:
@@ -62,6 +65,9 @@ Vue.prototype.httpGet = function (url, params, successCallback, failCallback, er
 Vue.prototype.httpPost = function (url, params, successCallback, failCallback, errorCallback) {//post请求
   let self = this;
   self.$http.post(url, params).then(function (response) {
+    if(response.headers.refreshToken){
+      localStorage.setItem('token',response.headers.refreshToken);
+    }
     let data = response.data;
     switch (data.code) {
       case successCode:

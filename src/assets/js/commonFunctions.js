@@ -79,13 +79,13 @@ Vue.prototype.accMul = function (arg1, arg2) {//精确计算乘法
 };
 Vue.prototype.checkImg = function (file) {
   const isIMG = file.type === 'image/jpeg' || file.type === 'image/png';
-  const isLt2M = file.size / 1024 / 1024 < 2;
+  const isLt2M = file.size / 1024 / 1024 < 5;
 
   if (!isIMG) {
     this.$message.error('图片格式错误!');
   }
   if (!isLt2M) {
-    this.$message.error('上传头像图片大小不能超过 2MB!');
+    this.$message.error('上传头像图片大小不能超过 5MB!');
   }
   return isIMG && isLt2M;
 };
