@@ -31,7 +31,7 @@
         // 服务器统一请求接口路径
         // , serverUrl: URL+'ue'
         ,
-        serverUrl: "http://192.168.41.216:8083/oss/qiniuyun/oss/ue/config"
+        serverUrl: "http://121.43.188.23:8083/oss/qiniuyun/oss/ue/config"
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的从新定义
 

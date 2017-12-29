@@ -19,16 +19,16 @@
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-dropdown trigger="click">
-            <el-button>导入</el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>
-              <el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+        <!--<el-form-item>-->
+          <!--<el-dropdown trigger="click">-->
+            <!--<el-button>导入</el-button>-->
+            <!--<el-dropdown-menu slot="dropdown">-->
+              <!--<el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>-->
+              <!--<el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>-->
+            <!--</el-dropdown-menu>-->
+          <!--</el-dropdown>-->
 
-        </el-form-item>
+        <!--</el-form-item>-->
         <el-form-item>
           <el-button @click="outputFile">导出</el-button>
         </el-form-item>
@@ -324,6 +324,7 @@
           }
         }
         let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
+//        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
         let str = '';
         if (arr.length === 0) {
           if (this.searchType === 1) {
@@ -332,9 +333,6 @@
             str = '&keyword=' + this.form.keyword +
               '&catId=' + JSON.stringify(this.form.catId) +
               '&brandId=' + this.form.brandId +
-              //              '&supplierName=' + this.form.supplierName +
-              //              '&tags' + JSON.stringify(this.form.goodsTags) +
-              //              '&addressList=' + JSON.stringify(this.form.addressList) +
               '&upLimit=' + this.form.upLimit +
               '&downLimit=' + this.form.downLimit +
               '&zero=' + this.form.zero +

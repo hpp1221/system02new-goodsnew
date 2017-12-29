@@ -181,14 +181,14 @@
               <!--<el-input class="form-input" size="small" v-model="form.goodsExtend.annex.name" ></el-input>-->
               <!--<el-input size="small" class="form-input" v-model="form.goodsExtend.annex.value" ></el-input>-->
               <ul>
-                <i class="el-icon-plus" @click="button1"></i> <br>
+                <i class="el-icon-plus" @click="addOneAnnex"></i> <br>
 
                 <li v-for="(item,index) in form.goodsExtend.annex">
                   <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
-                  <el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>
-                  <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"
+                  <!--<el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>-->
+                  <el-input type="text" class="item.num1 form-input" v-model="item.name"
                             placeholder="请输入属性名称"></el-input>
-                  <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.value"
+                  <el-input type="text" class="item.num1 form-input" v-model="item.value"
                             placeholder="请输入属性值"></el-input>
                 </li>
               </ul>
@@ -227,12 +227,7 @@
           goodsExtend: {
             imgs: [],
             content: '',
-            annex: [{
-              name: '',
-              value: '',
-              check1: false,
-              check2: true
-            }]
+            annex: []
           },
           isPlatform: 0//是否为平台商品，1是0否
         },
@@ -306,20 +301,20 @@
 //        });
 //      },
       getBrandSelect(e) {
-        console.log('ee',e)
         this.form.brandId = e.brandDealerId;
         this.form.brandName = e.brandName;
         this.form.brand = e.brand;
       },
       deleteOneAnnex(index) {
+        console.log('index',index)
         this.form.goodsExtend.annex.splice(index, 1);
       },
       button2() {//扩展属性
         this.form.goodsExtend.annex.check1 = false;
         this.form.goodsExtend.annex.check2 = true
       },
-      button1() {//扩展属性
-        this.form.goodsExtend.annex.push({name: '', value: '', check1: false, check2: true});
+      addOneAnnex() {//扩展属性
+        this.form.goodsExtend.annex.push({name: '', value: ''});
       },
       getUnitSelect(e) {//创建商品单位获取
         this.form.unit = e;
@@ -391,48 +386,59 @@
           number: '',
           spec: [],
           skus: [],
+
           goodsExtend: {
             imgs: [],
             content: '',
-            annex: [{
-              name: '',
-              value: '',
-              check1: false,
-              check2: true
-            }]
+            annex: []
           },
           isPlatform: 0//是否为平台商品，1是0否
         };
-        form = Object.assign({},this.form);
+
+        form = Object.assign({},self.form);
         for (let i = 0; i < form.spec.length; i++) {//商品规格
           self.$delete(form.spec[i], 'inputVisible');
         }
 //        for(let i = 0;i<self.form.goodsSkuList.length;i++){
 //          self.form.goodsSkuList[i].sku = JSON.stringify(self.form.goodsSkuList[i].sku)
 //        }
+        if (!form.brand) {
+          self.$message({
+            message: '请选择品牌',
+            center: true
+          });
 
+          return
+        }
         if (form.cat.length === 0) {
-          this.$message({
+          self.$message({
             message: '请选择分类',
             center: true
           });
+
           return
         }
         form.cat = JSON.stringify(form.cat)
         if (form.spec.length === 0) {
-          this.$message({
+          self.$message({
             message: '请加入规格',
             center: true
           });
           return
         }
-
+//
+//        if (self.inputValue.length === 0) {
+//          self.$message({
+//            message: '请加入规格属性',
+//            center: true,
+//          });
+//          return
+//        }
+//        self.form.spec=[];
         form.spec = JSON.stringify(form.spec)
         form.skus = JSON.stringify(form.skus)
         form.brand = JSON.stringify(form.brand)
-        form.goodsExtend.annex = JSON.stringify(form.goodsExtend.annex)
-        form.goodsExtend.imgs = JSON.stringify(form.goodsExtend.imgs);
-
+        form.goodsExtend = {annex:JSON.stringify(form.goodsExtend.annex),content:form.goodsExtend.content,imgs:JSON.stringify(form.goodsExtend.imgs)};
         let requestData = {
           goodsInfo: form,
         };

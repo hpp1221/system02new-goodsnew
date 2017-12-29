@@ -180,10 +180,11 @@
               <!--</el-select>-->
             </el-form-item>
             <br>
+            <!--:key="goodsForm.cat"-->
             <el-form-item label="商品分类" style="margin-right: 210px">
               <catselect
-                :key="goodsForm.cat"
                 @getCatSelect="getGoodsFormCatSelect"
+
                 :outCat="goodsForm.cat"
                 style="margin:0;width:350px;"
               >
@@ -377,12 +378,7 @@
           goodsExtend: {
             imgs: [],
             content: '',
-            annex: [
-              {
-                name:'',
-                value:''
-              }
-            ]
+            annex: [],
           }
         },
         goodsForm: {
@@ -477,6 +473,7 @@
         this.goodsForm.unit = e;
       },
       getGoodsFormCatSelect(e){
+        console.log('ee',e)
         this.goodsForm.cat = e.cat;
         this.goodsForm.catName = e.catName;
         this.goodsForm.catId = e.catId;

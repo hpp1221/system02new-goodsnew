@@ -193,7 +193,7 @@
         this.excelAnalysisStatus ? this.active++ : this.$message.error('请传入商品excel');
       },
       getExcel() {//下载excelmodel
-        location.href = '/admin/goods/exportGoodsDemo';
+        location.href = '/admin/goods/exportGoodsDemo?token='+localStorage.getItem('token');
       },
       uploadSuccess(response, file, fileList) {//成功上传的回调
         if (response.code == 10000) {

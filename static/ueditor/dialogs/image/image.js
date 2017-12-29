@@ -707,7 +707,7 @@
                 $.ajax({
                   dataType:"json",
                   async:false,
-                  url:"http://192.168.41.216:8083/oss/qiniuyun/oss/imgSignature",
+                  url:"http://121.43.188.23:8083/oss/qiniuyun/oss/imgSignature",
                   success:function (res) {
                     data["token"] = res.data;
                   }
