@@ -77,6 +77,9 @@
         <el-table-column prop="brandName" label="品牌">
 
         </el-table-column>
+        <el-table-column prop="mustBuyNum" label="起订量">
+
+        </el-table-column>
         <el-table-column prop="count" label="库存数量">
 
         </el-table-column>

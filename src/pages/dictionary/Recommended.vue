@@ -85,7 +85,7 @@
       return {
         active: 1,
         catData: [],//一级类目
-        catData1: [],//耳机类目
+        catData1: [],//二级类目
         catFirst: '',//选择的一级类目名称
         getNextCatVisibl: false,
         formLabelWidth: '80px',

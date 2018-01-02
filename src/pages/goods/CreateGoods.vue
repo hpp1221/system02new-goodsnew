@@ -137,6 +137,15 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="起订量"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.mustBuyNum">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="库存数量"
                   width="180">
                   <template slot-scope="scope">
@@ -363,6 +372,7 @@
               barCode: '',
               isUp: 0,
               count: '',
+              mustBuyNum:'',
               title: ''
             };
             singleSku.sku = tableMap;
