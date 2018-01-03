@@ -310,7 +310,7 @@
 //        });
 //      },
       getBrandSelect(e) {
-        this.form.brandId = e.brandDealerId;
+        this.form.brandId = e.brandId;
         this.form.brandName = e.brandName;
         this.form.brand = e.brand;
       },

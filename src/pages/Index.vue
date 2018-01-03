@@ -151,7 +151,7 @@
 
               <el-menu-item index="4" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
-                <span slot="title" style="margin-left: 3px;">品牌管理</span>
+                <span slot="title" style="margin-left: 3px;">品牌商管理</span>
               </el-menu-item>
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-group"></i>

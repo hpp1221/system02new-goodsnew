@@ -44,7 +44,6 @@
       fetchData(){
         let self = this;
         self.getUnitList(function (data) {
-            console.log('单位',data.list)
           self.totalUnitList = data.list;
           self.dataFetchComplete = true;
         });//获取品牌列表

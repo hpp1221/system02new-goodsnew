@@ -36,7 +36,7 @@
       let self = this;
       let requestData = {
         token: window.localStorage.getItem('token'),
-        bucketName: 'sass'
+        bucketName: 'management'
       };
       self.httpApi.aliyun.imgSignature(requestData, function (data) {
         self.key.token = data.data;

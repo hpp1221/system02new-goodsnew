@@ -145,7 +145,7 @@
       getImgAccess() {
         let self = this;
         let requestData = {
-          bucketName: 'sass'
+          bucketName: 'management'
         };
         self.httpApi.aliyun.imgSignature(requestData, function (data) {
           self.key.token = data.data;

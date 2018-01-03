@@ -37,7 +37,7 @@
       let self = this;
       let requestData = {
         token: window.localStorage.getItem('token'),
-        bucketName: 'sass'
+        bucketName: 'management'
       };
       self.httpApi.qiniuyun.imgSignature(requestData, function (data) {
         self.key.token = data.data;
