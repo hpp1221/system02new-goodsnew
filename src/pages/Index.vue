@@ -19,13 +19,13 @@
         <div class="avater-div">
           <el-button type="text" @click.native="logout" style="color: #fff;width: 60px;">注销</el-button>
           <!--<el-dropdown>-->
-         <!--<span class="el-dropdown-link">-->
-  <!--<i class="el-icon-circle-check" style="width: 50px;"></i>-->
-  <!--</span>-->
-            <!--<el-dropdown-menu slot="dropdown">-->
-              <!--&lt;!&ndash;<el-dropdown-item>个人信息</el-dropdown-item>&ndash;&gt;-->
-              <!--<el-dropdown-item @click.native="logout">注销</el-dropdown-item>-->
-            <!--</el-dropdown-menu>-->
+          <!--<span class="el-dropdown-link">-->
+          <!--<i class="el-icon-circle-check" style="width: 50px;"></i>-->
+          <!--</span>-->
+          <!--<el-dropdown-menu slot="dropdown">-->
+          <!--&lt;!&ndash;<el-dropdown-item>个人信息</el-dropdown-item>&ndash;&gt;-->
+          <!--<el-dropdown-item @click.native="logout">注销</el-dropdown-item>-->
+          <!--</el-dropdown-menu>-->
           <!--</el-dropdown>-->
         </div>
 
@@ -79,14 +79,21 @@
                 <i class="iconfont icon-shangpin"></i>
               </el-menu-item>
               <el-menu-item index="3" style="padding:0;">
+                <i class="iconfont icon-shangpin"></i>
+              </el-menu-item>
+              <el-menu-item index="4" style="padding:0;">
                 <i class="iconfont icon-dynamic" @click="iconClick"></i>
               </el-menu-item>
 
-              <el-menu-item index="4" style="padding:0;">
+              <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
                 <!--<span slot="title" style="margin-left: 3px;">品牌商管理</span>-->
               </el-menu-item>
-              <el-menu-item index="5" style="padding:0;">
+              <el-menu-item index="6" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
+              </el-menu-item>
+              <el-menu-item index="7" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
               </el-menu-item>
@@ -133,31 +140,34 @@
                 <i class="iconfont icon-shangpin"></i>
                 <span slot="title" style="margin-left: 3px;">商品管理</span>
               </el-menu-item>
-
-              <el-submenu index="3">
+              <el-menu-item index="3" style="padding:0;">
+                <i class="iconfont icon-shangpin"></i>
+                <span slot="title" style="margin-left: 3px;">组合营销管理</span>
+              </el-menu-item>
+              <el-submenu index="4">
                 <template slot="title">
                   <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
                   <span slot="title" style="margin-left: 3px">业务表维护</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="3-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
+                  <el-menu-item index="4-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
                   </el-menu-item>
-                  <el-menu-item index="3-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">计量单位
+                  <el-menu-item index="4-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">计量单位
                   </el-menu-item>
-                  <el-menu-item index="3-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">为你推荐
+                  <el-menu-item index="4-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">为你推荐
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
 
-              <el-menu-item index="4" style="padding:0;">
-                <i class="iconfont icon-addressbook"></i>
-                <span slot="title" style="margin-left: 3px;">品牌商管理</span>
-              </el-menu-item>
               <el-menu-item index="5" style="padding:0;">
+                <i class="iconfont icon-addressbook"></i>
+                <span slot="title" style="margin-left: 3px;">品牌管理</span>
+              </el-menu-item>
+              <el-menu-item index="6" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">客户管理</span>
               </el-menu-item>
-              <el-menu-item index="6" style="padding:0;">
+              <el-menu-item index="7" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">用户意见反馈</span>
               </el-menu-item>
@@ -278,22 +288,25 @@
           case '2':
             this.$router.push('/goods/goodslist');
             break;
-          case '3-1':
+          case '3':
+            this.$router.push('/combination/list');
+            break;
+          case '4-1':
             this.$router.push('/dictionary/dictionaryclassify');
             break;
-          case '3-2':
+          case '4-2':
             this.$router.push('/dictionary/measurementunit');
             break;
-          case '3-3':
+          case '4-3':
             this.$router.push('/dictionary/recommended');
             break;
-          case '4':
+          case '5':
             this.$router.push('/brand/list');
             break;
-          case '5':
+          case '6':
             this.$router.push('/client/clientmanagement');
             break;
-          case '6':
+          case '7':
             this.$router.push('/feedback/list');
             break;
         }
@@ -359,8 +372,8 @@
         let self = this;
 //        let requestData = {};
 //        self.httpApi.user.logout(requestData, function (data) {
-          localStorage.removeItem('token');
-          self.$router.push('/login');
+        localStorage.removeItem('token');
+        self.$router.push('/login');
 //        });
       }
     }

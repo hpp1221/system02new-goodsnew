@@ -46,16 +46,16 @@
           type="selection"
           width="55">
         </el-table-column>
-        <el-table-column label="商品图片">
+        <el-table-column label="组合图片">
           <template slot-scope="scope">
             <img v-lazy="scope.row.img" alt=""
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
-        <el-table-column prop="number" label="商品编码">
+        <el-table-column prop="number" label="组合编码">
 
         </el-table-column>
-        <el-table-column prop="name" label="商品名称">
+        <el-table-column prop="name" label="组合名称">
 
         </el-table-column>
         <el-table-column prop="sku" label="规格">

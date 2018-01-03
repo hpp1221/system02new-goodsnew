@@ -310,7 +310,7 @@
 //        });
 //      },
       getBrandSelect(e) {
-        this.form.brandId = e.brandId;
+        this.form.brandId = e.brandDealerId;
         this.form.brandName = e.brandName;
         this.form.brand = e.brand;
       },
@@ -371,8 +371,8 @@
               number: '',
               barCode: '',
               isUp: 0,
-              count: '',
               mustBuyNum:'',
+              count: '',
               title: ''
             };
             singleSku.sku = tableMap;
