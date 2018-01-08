@@ -26,7 +26,7 @@
       <div class="addGoods-classify" v-if="active == 2">
         <h4 class="addGoods-classify-title">增加商品图片</h4>
         <div style="overflow: hidden">
-          <el-checkbox label="t.id" v-for="t in tableData" :key="t.id" @change="checkImgChange(t.id)">
+          <el-checkbox label="t.id" v-for="t in tableData" :key="t.id" @change="checkImgChange(t.id)" style="margin-left: 30px">
             <img v-lazy="t.img" style="width: 150px;float:left;">
           </el-checkbox>
           <!--<el-checkbox v-model="checked4" label="2" border></el-checkbox>-->

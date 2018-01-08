@@ -111,6 +111,15 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="建议零售价"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.retailPrice">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="起订量"
                   width="180">
                   <template slot-scope="scope">
@@ -180,12 +189,12 @@
                 style="margin:0;width:350px;">
               </brandselect>
               <!--<el-select v-model="goodsForm.brandName" filterable placeholder="请选择" style="margin:0;width:350px;">-->
-                <!--<el-option-->
-                  <!--v-for="item in brandNameSelectData"-->
-                  <!--:key="item.brandDealerId"-->
-                  <!--:label="item.name"-->
-                  <!--:value="item.name">-->
-                <!--</el-option>-->
+              <!--<el-option-->
+              <!--v-for="item in brandNameSelectData"-->
+              <!--:key="item.brandDealerId"-->
+              <!--:label="item.name"-->
+              <!--:value="item.name">-->
+              <!--</el-option>-->
               <!--</el-select>-->
             </el-form-item>
             <br>
@@ -281,7 +290,7 @@
                 </el-table-column>
                 <el-table-column
                   label="市场价格"
-                  width="180">
+                  width="140">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.marketPrice">
 
@@ -290,7 +299,7 @@
                 </el-table-column>
                 <el-table-column
                   label="参考成本价"
-                  width="180">
+                  width="140">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
 
@@ -298,8 +307,26 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="建议零售价"
+                  width="140">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.retailPrice">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="起订量"
+                  width="140">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.mustBuyNum">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="库存数量"
-                  width="180">
+                  width="140">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.count">
 
@@ -308,7 +335,7 @@
                 </el-table-column>
                 <el-table-column
                   label="是否上架"
-                  width="180">
+                  width="140">
                   <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
@@ -336,18 +363,30 @@
             </el-form-item>
             <h4 class="item-title">扩展属性</h4>
             <!--<el-form-item v-for="item in goodsForm.goodsExtend.annex" :key="item.name">-->
-              <!--属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px"></el-input>-->
+            <!--属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px"></el-input>-->
             <!--属性值 : <el-input v-model="item.value" class="form-input" style="padding:0px 10px"></el-input>-->
             <!--</el-form-item>-->
             <el-form-item>
-              <ul>
-                <i class="el-icon-plus" @click="button1"></i>
-                <li v-for="item in goodsForm.goodsExtend.annex" :key="item.value">
+              <!--<ul>-->
+                <!--<i class="el-icon-plus" @click="button1"></i>-->
+                <!--<li v-for="item in goodsForm.goodsExtend.annex" :key="item.value">-->
 
-                  <el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>
-                  <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"
+                  <!--<el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>-->
+                  <!--<el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"-->
+                            <!--placeholder="请输入属性名称"></el-input>-->
+                  <!--<el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.value"-->
+                            <!--placeholder="请输入属性值"></el-input>-->
+                <!--</li>-->
+              <!--</ul>-->
+              <ul>
+                <i class="el-icon-plus" @click="addOneAnnex"></i> <br>
+
+                <li v-for="(item,index) in goodsForm.goodsExtend.annex">
+                  <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
+                  <!--<el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>-->
+                  <el-input type="text" class="item.num1 form-input" v-model="item.name"
                             placeholder="请输入属性名称"></el-input>
-                  <el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.value"
+                  <el-input type="text" class="item.num1 form-input" v-model="item.value"
                             placeholder="请输入属性值"></el-input>
                 </li>
               </ul>
@@ -462,12 +501,15 @@
         this.goodsForm.brandId = e.brandDealerId;
         this.goodsForm.brandName = e.brandName;
       },
+      deleteOneAnnex(index) {
+        this.goodsForm.goodsExtend.annex.splice(index, 1);
+      },
       button2() {//扩展属性
         this.goodsForm.goodsExtend.annex.check1 = false;
         this.goodsForm.goodsExtend.annex.check2 = true
       },
-      button1() {//扩展属性
-        this.goodsForm.goodsExtend.annex.push({name: '', value: '', check1: false, check2: true});
+      addOneAnnex() {//扩展属性
+        this.goodsForm.goodsExtend.annex.push({name: '', value: ''});
       },
 //      getBrandSelect() {
 //        let self = this
@@ -571,26 +613,104 @@
 //          self.form.skus
 //        };
         self.form.skus[0].sku= JSON.stringify(self.form.skus[0].sku);
-        self.httpApi.goods.editSku(self.form.skus, function (data) {
-          self.$router.push('/goods/goodslist');
+        self.$confirm('此操作将修改原有内容, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          self.httpApi.goods.editSku(self.form.skus, function (data) {
+            self.$router.push('/goods/goodslist');
+          });
+          self.$message({
+
+            type: 'success',
+            message: '修改成功!'
+          });
+        }).catch(() => {
+          self.$message({
+            type: 'info',
+            message: '已取消修改'
+          });
         });
+
       },
       updateGoods(){//修改商品
         let self = this;
+        let goodsForm = {
+          brandNewSelectName:'',
+          id: '',
+          name: '',
+          brand: [],
+          brandName: '',
+          brandId: '',
+          spec: [],
+          cat: [],
+          catId: '',
+          catName: '',
+          unit: '',
+          skus: [],
+          keyword: '',
+          goodsSkuList: [],
+          tags: [],
+          goodsExtend: {
+            imgs: [],
+            content: '',
+            annex: []
+          }
+        };
+
+        goodsForm.id = self.goodsForm.id;
+        goodsForm.name = self.goodsForm.name;
+        goodsForm.unit =self.goodsForm.unit;
+        goodsForm.cat =JSON.stringify(self.goodsForm.cat);
+        goodsForm.catId =self.goodsForm.catId;
+        goodsForm.catName = self.goodsForm.catName;
+        goodsForm.spec = JSON.stringify(self.goodsForm.spec);
+        goodsForm.skus =JSON.stringify(self.goodsForm.skus);
+        goodsForm.brand = JSON.stringify(self.goodsForm.brand);
+        goodsForm.brandId = self.goodsForm.brandId;
+        goodsForm.brandName = self.goodsForm.brandName;
+        goodsForm.goodsExtend= {annex:JSON.stringify(self.goodsForm.goodsExtend.annex),content:self.goodsForm.goodsExtend.content,imgs:JSON.stringify(self.goodsForm.goodsExtend.imgs)};
+        if(!self.goodsForm.brand){
+          self.$message({
+            message: '请选择品牌',
+            center: true
+          });
+          return
+        }
 //        if (!(self.goodsForm.cat instanceof Array)) {
 //          self.goodsForm.cat = [self.goodsForm.cat];
 //        }
-        self.goodsForm.cat = JSON.stringify(self.goodsForm.cat)
-        self.goodsForm.spec = JSON.stringify(self.goodsForm.spec)
-        self.goodsForm.skus = JSON.stringify(self.goodsForm.skus)
-        self.goodsForm.brand = JSON.stringify(self.goodsForm.brand)
-        console.log('brand',self.goodsForm.brand)
-        self.goodsForm.goodsExtend.annex = JSON.stringify(self.goodsForm.goodsExtend.annex)
-        self.goodsForm.goodsExtend.imgs = JSON.stringify(self.goodsForm.goodsExtend.imgs)
-        let requestData = {goodsInfo: self.goodsForm};
-        self.httpApi.goods.editGoods(requestData, function (data) {
-          self.$router.push('/goods/goodslist');
+//        self.goodsForm.cat = JSON.stringify(self.goodsForm.cat)
+//        self.goodsForm.spec = JSON.stringify(self.goodsForm.spec)
+//        self.goodsForm.skus = JSON.stringify(self.goodsForm.skus)
+//        self.goodsForm.brand = JSON.stringify(self.goodsForm.brand)
+//        console.log('brand',self.goodsForm.brand)
+//        self.goodsForm.goodsExtend.annex = JSON.stringify(self.goodsForm.goodsExtend.annex)
+//        self.goodsForm.goodsExtend.imgs = JSON.stringify(self.goodsForm.goodsExtend.imgs)
+
+        let requestData = {goodsInfo: goodsForm};
+        self.$confirm('操作将修改原有内容, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          self.httpApi.goods.editGoods(requestData, function (data) {
+
+            self.$router.push('/goods/goodslist');
+          });
+          self.$message({
+
+            type: 'success',
+            message: '修改成功!'
+          });
+        }).catch(() => {
+          self.$message({
+            type: 'info',
+            message: '已取消修改'
+          });
         });
+
       },
     }
   }

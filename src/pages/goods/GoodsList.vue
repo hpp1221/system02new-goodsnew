@@ -74,6 +74,9 @@
         <el-table-column prop="price" label="参考成本价">
 
         </el-table-column>
+        <el-table-column prop="retailPrice" label="建议零售价">
+
+        </el-table-column>
         <el-table-column prop="brandName" label="品牌">
 
         </el-table-column>

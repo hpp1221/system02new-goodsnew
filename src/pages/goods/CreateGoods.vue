@@ -137,6 +137,15 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="建议零售价"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.retailPrice">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="起订量"
                   width="180">
                   <template slot-scope="scope">
@@ -292,7 +301,7 @@
         str = str + year + month + day + hour + minutes + seconds;
         for (let i = 0; i < skuNum; i++) {
           let currentStr = str;
-          let randomNum = Math.floor(Math.random() * 100000);
+          let randomNum = Math.floor(Math.random() * 1000000);
           currentStr += randomNum.toString().substr(0, 4);
           this.form.skus[i].number = currentStr;
 //          this.form.skus[i].number = '12471824712847148';
@@ -310,12 +319,12 @@
 //        });
 //      },
       getBrandSelect(e) {
+        console.log('eeee',e)
         this.form.brandId = e.brandDealerId;
         this.form.brandName = e.brandName;
         this.form.brand = e.brand;
       },
       deleteOneAnnex(index) {
-        console.log('index',index)
         this.form.goodsExtend.annex.splice(index, 1);
       },
       button2() {//扩展属性
@@ -337,7 +346,6 @@
         this.form.goodsExtend.imgs.push(file);
       },
       getSkuImg(file) {//sku图片
-        console.log(file.url)
         this.form.skus[this.skuImgIndex].img = file.url;
       },
       rememberIndex(scope) {//点击sku图片记录index
@@ -372,6 +380,7 @@
               barCode: '',
               isUp: 0,
               mustBuyNum:'',
+              retailPrice:'',
               count: '',
               title: ''
             };
@@ -472,7 +481,6 @@
         }
         s.inputVisible = false;
         let index = s.specValue.indexOf(this.inputValue);
-        console.log(index)
         this.inputValue = '';
 //        let self = this;
 //        self.$nextTick(function () {

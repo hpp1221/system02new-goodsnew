@@ -6,7 +6,7 @@
         <el-form-item label="订单信息" style="margin-top: 20px;">
           <span v-for="item in totalOrderStatus" v-if="item.id == form.orderStatus"
                 style="color: #4dc44b;font-size: 20px;font-weight: 600;padding:0px 16px">{{item.name}}</span>
-          订单号：{{form.orderNumber}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 品牌商：{{form.sellerName}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;客户名称：{{form.memberName}}
+          订单号：{{form.orderNumber}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 品牌商：{{form.sellerName}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;客户名称：{{form.memberName}}&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;收货人姓名：{{form.orderDetail.contacts}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 收货人手机号：{{form.orderDetail.mobile}} &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;收货人地址：{{form.orderDetail.address}}
           <el-button style="float: right" @click="returnOrderList">返回</el-button>
         </el-form-item>
         <!--<el-form-item style="float: right">-->
@@ -246,10 +246,12 @@
           sellerName: '',
           memberName: '',
           createTime: '',
-//          orderDetail: {
-//            note: '',
-//
-//          },
+         orderDetail: {
+           contacts: '',
+           address:'',
+           mobile:''
+
+         },
           orderItemList: [{
             itemId:'',//订单项id
             goodsSkuNumber: '',//商品编号
@@ -265,12 +267,12 @@
             goodsSkuId: '',//规格id
           }],
           //customer: '',//客户名称
-          contacts: '',//收货人
-          cel: '',//联系方式
-          orderType: 2,//1是采购订单，2是销售订单
-          address: '',//收货地址
-          deliveryTime: '',//交货日期
-          invoiceType: '',//发票信息
+          // contacts: '',//收货人
+          // cel: '',//联系方式
+          // orderType: 2,//1是采购订单，2是销售订单
+          // address: '',//收货地址
+          // deliveryTime: '',//交货日期
+          // invoiceType: '',//发票信息
           remark: '',//备注
           att: [],//附件
 //          deliveryInfo:''
