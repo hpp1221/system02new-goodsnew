@@ -15,16 +15,6 @@
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
-        <!--<el-form-item>-->
-        <!--<el-dropdown trigger="click">-->
-        <!--<el-button>导入</el-button>-->
-        <!--<el-dropdown-menu slot="dropdown">-->
-        <!--<el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>-->
-        <!--<el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>-->
-        <!--</el-dropdown-menu>-->
-        <!--</el-dropdown>-->
-
-        <!--</el-form-item>-->
         <el-form-item>
           <el-button @click="outputFile">导出</el-button>
         </el-form-item>
@@ -64,19 +54,7 @@
         <el-table-column prop="unit" label="单位">
 
         </el-table-column>
-        <el-table-column prop="marketPrice" label="市场价">
-
-        </el-table-column>
-        <el-table-column prop="price" label="参考成本价">
-
-        </el-table-column>
-        <el-table-column prop="brandName" label="品牌">
-
-        </el-table-column>
-        <el-table-column prop="mustBuyNum" label="起订量">
-
-        </el-table-column>
-        <el-table-column prop="count" label="库存数量">
+        <el-table-column prop="price" label="价格">
 
         </el-table-column>
         <el-table-column label="操作">
@@ -84,9 +62,9 @@
             <el-dropdown trigger="click">
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
+                <el-dropdown-item @click.native="update(scope.row.id)">修改</el-dropdown-item>
                 <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
-                <!--<el-dropdown-item>删除</el-dropdown-item>-->
+                <el-dropdown-item @click.native="detele(scope.row.id)">删除</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -104,9 +82,11 @@
         tableData: [],
         brandNameSelectData:[],//商品品牌
         easyForm: {//简单查询
-          cat: [],//所属仓库
-          catId: '',
-          catName: '',
+          name:'',//组合名称
+          number:'',//组合编码
+          brand: [],//所属品牌
+          brandId: '',
+          brandName: '',
           type: '',//1是上架，0是下架
         },
         pageSize: 5,
@@ -115,7 +95,6 @@
         multipleSelection: [],
         upOrDownIds:[],//上下架ids
         selectionObj: {},
-        searchType: 1//1是简单搜索，2是高级搜索
       }
     },
     created() {
@@ -128,28 +107,18 @@
       'brandselect': require('../../components/getbrandselect'),
     },
     methods: {
+
       getBrandSelect(e) {
-        console.log('ee',e)
+        this.easyForm.brand = e.brand;
+        this.easyForm.brandId = e.brandId;
+        this.easyForm.brandName = e.brandName;
       },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+        this.select(page.size, page.num);
       },
-      getCatSelect(e) {
-        this.easyForm.cat = e.cat;
-        this.easyForm.catId = e.catId,
-          this.easyForm.catName = e.catName
-      },
-      getFormCatSelect(e) {
-        this.form.cat = e.cat;
-        this.form.catId = e.catId,
-          this.form.catName = e.catName
-      },
-      seeDetail(id) {
-        let url = '/goods/goodsDetail/' + id;
-        this.$router.push(url);
-      },
+
       select(size, num) {//查询
         let self = this;
         let requestData = {
@@ -162,28 +131,12 @@
         self.httpApi.goods.skuList(requestData, function (data) {
           self.tableData = data.data.list;
           self.totalPage = data.data.total;
-          self.searchType = 1;
           if (data.temp !== "{}") {
             let list = JSON.parse(data.temp);
             self.$nextTick(function () {
               self.toggleSelection(list[num]);
             })
           }
-        });
-      },
-      advanceSelect(size, num) {
-        let self = this;
-        let requestData = {
-          pageSize: size,
-          pageNo: num,
-          goodsSkuRequest: self.form
-        };
-//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
-        self.httpApi.goods.skuList(requestData, function (data) {
-          self.advanceSearch = false;
-          self.searchType = 2;
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
         });
       },
       toggleSelection(rows) {
@@ -222,12 +175,19 @@
 
         }
       },
-      update(id, goodsId) {//修改商品详情
-        let url = '/goods/updateGoods/' + id + '/' + goodsId;
+      seeDetail(id) {
+        let url = '/combination/detail/' + id;
         this.$router.push(url);
       },
-      createGoods() {
-        this.$router.push('/goods/createGoods');
+      update(id) {//修改组合详情
+        let url = '/combination/detail/' + id;
+        this.$router.push(url);
+      },
+      detele(id){//删除
+
+      },
+      createGoods() {//新增
+        this.$router.push('/combination/add');
       },
       outputFile() {//导出
         let arr = [];
@@ -237,7 +197,6 @@
           }
         }
         let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
-//        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
         let str = '';
         if (arr.length === 0) {
           if (this.searchType === 1) {
@@ -289,12 +248,6 @@
           });
 
         }
-      },
-      multipleInputGoods() {
-        this.$router.push('/goods/multipleInputGoods');
-      },
-      multipleInputImgs() {
-        this.$router.push('/goods/multipleInputImgs');
       },
       putOnSale() {//上架
         let self = this;

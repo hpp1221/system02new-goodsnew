@@ -56,7 +56,6 @@
           brandId: id
         }
         self.httpApi.brand.selectBrandById(requestData, function (data) {
-
           self.form = data.data;
         });
       },

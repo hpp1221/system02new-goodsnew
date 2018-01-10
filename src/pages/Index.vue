@@ -81,9 +81,9 @@
               <el-menu-item index="3" style="padding:0;">
                 <i class="iconfont icon-shangpin"></i>
               </el-menu-item>
-              <el-menu-item index="4" style="padding:0;">
-                <i class="iconfont icon-dynamic" @click="iconClick"></i>
-              </el-menu-item>
+              <!--<el-menu-item index="4" style="padding:0;">-->
+                <!--<i class="iconfont icon-dynamic" @click="iconClick"></i>-->
+              <!--</el-menu-item>-->
 
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
@@ -94,6 +94,10 @@
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
               </el-menu-item>
               <el-menu-item index="7" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
+              </el-menu-item>
+              <el-menu-item index="8" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
               </el-menu-item>
@@ -136,13 +140,22 @@
                 <i class="iconfont icon-order"></i>
                 <span slot="title" style="margin-left: 3px;">订单管理</span>
               </el-menu-item>
-              <el-menu-item index="2" style="padding:0;">
-                <i class="iconfont icon-shangpin"></i>
-                <span slot="title" style="margin-left: 3px;">商品管理</span>
+              <el-menu-item index="2" style="padding:0">
+                <i class="iconfont icon-shangpin" style="color: #878d99"></i>
+                <span slot="title" style="margin-left: 3px;;color: #fff">商品管理</span>
               </el-menu-item>
-              <el-menu-item index="3" style="padding:0;">
-                <i class="iconfont icon-shangpin"></i>
-                <span slot="title" style="margin-left: 3px;">组合营销管理</span>
+              <!--<el-menu-item index="3" style="padding:0;">-->
+                <!--<i class="iconfont icon-shangpin"></i>-->
+                <!--<span slot="title" style="margin-left: 3px;">组合营销管理</span>-->
+              <!--</el-menu-item>-->
+
+              <el-menu-item index="5" style="padding:0;">
+                <i class="iconfont icon-addressbook"></i>
+                <span slot="title" style="margin-left: 3px;">品牌管理</span>
+              </el-menu-item>
+              <el-menu-item index="6" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">客户管理</span>
               </el-menu-item>
               <el-submenu index="4">
                 <template slot="title">
@@ -159,17 +172,13 @@
                 </el-menu-item-group>
               </el-submenu>
 
-              <el-menu-item index="5" style="padding:0;">
-                <i class="iconfont icon-addressbook"></i>
-                <span slot="title" style="margin-left: 3px;">品牌管理</span>
-              </el-menu-item>
-              <el-menu-item index="6" style="padding:0;">
-                <i class="iconfont icon-group"></i>
-                <span slot="title" style="margin-left: 3px;">客户管理</span>
-              </el-menu-item>
               <el-menu-item index="7" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">用户意见反馈</span>
+              </el-menu-item>
+              <el-menu-item index="8" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">临时商品管理</span>
               </el-menu-item>
             </el-menu>
           </div>
@@ -280,7 +289,6 @@
         this.isCollapse = false;
       },
       handleOpen(key, keyPath) {
-        console.log(key, keyPath);
         switch (key) {
           case '1':
             this.$router.push('/order/saleorder/list');
@@ -308,6 +316,9 @@
             break;
           case '7':
             this.$router.push('/feedback/list');
+            break;
+          case '8':
+            this.$router.push('/temporary/list');
             break;
         }
       },

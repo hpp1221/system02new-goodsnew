@@ -294,9 +294,6 @@
           });
         }
       },
-      sureSetTags() {//确定设置标签
-
-      },
       handleSelectionChange(val) {
         let self = this;
         for(let i = 0 ; i < val.length;i++){
@@ -437,26 +434,9 @@
           });
         });
       },
-      deleteGoods() {//删除商品
-        this.$confirm('请确认是否批量删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '您已成功删除!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '您已取消删除'
-          });
-        });
-      },
-      setTags() {//设置标签
-        this.dialogTableVisible = true;
-      },
+      // setTags() {//设置标签
+      //   this.dialogTableVisible = true;
+      // },
       cancelSelect() {//取消选中
         this.$refs.multipleTable.clearSelection();
       }

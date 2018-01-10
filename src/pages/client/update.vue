@@ -28,15 +28,18 @@
           <el-input v-model="form.store.address" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
         <!--<el-form-item label="收货地址">-->
-          <!--&lt;!&ndash;<el-cascader&ndash;&gt;-->
-          <!--&lt;!&ndash;:options="addressName"&ndash;&gt;-->
-          <!--&lt;!&ndash;:change-on-select="true"&ndash;&gt;-->
-          <!--&lt;!&ndash;@change="addressName">&ndash;&gt;-->
-          <!--<el-input style="width:366px;margin-right: 200px" v-model="addressNameDetail + form.store.address"></el-input>-->
-          <!--&lt;!&ndash;</el-cascader>&ndash;&gt;-->
+        <!--&lt;!&ndash;<el-cascader&ndash;&gt;-->
+        <!--&lt;!&ndash;:options="addressName"&ndash;&gt;-->
+        <!--&lt;!&ndash;:change-on-select="true"&ndash;&gt;-->
+        <!--&lt;!&ndash;@change="addressName">&ndash;&gt;-->
+        <!--<el-input style="width:366px;margin-right: 200px" v-model="addressNameDetail + form.store.address"></el-input>-->
+        <!--&lt;!&ndash;</el-cascader>&ndash;&gt;-->
         <!--</el-form-item>-->
         <el-form-item label="认证状态" v-model="form.sysMember.authentication">
-          <el-input  :label="t.name" :key="t.value" :value="t.name" v-for="t in totalOrderStatus" v-if="form.sysMember.authentication == t.value" style="width:366px;margin-right: 200px" :disabled="true">{{t.name}}</el-input>
+          <el-input :label="t.name" :key="t.value" :value="t.name" v-for="t in totalOrderStatus"
+                    v-if="form.sysMember.authentication == t.value" style="width:366px;margin-right: 200px"
+                    :disabled="true">{{t.name}}
+          </el-input>
         </el-form-item>
         <el-form-item label="法人代表">
           <el-input v-model="form.store.legalName" style="width:366px;margin-right: 200px"></el-input>
@@ -51,7 +54,7 @@
           <el-input v-model="form.store.name" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
         <el-form-item label="门店面积">
-          <el-select  v-model="form.store.sellingArea" placeholder="请选择">
+          <el-select v-model="storeNameNew" placeholder="请选择">
             <el-option
               v-if="form.store.storeId"
               v-for="item in storeArea"
@@ -66,7 +69,8 @@
           <el-input v-model="form.points" style="width:366px;margin-right: 200px" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="凭证上传">
-          <div v-for="(u,index) in form.brandDealerVoucherList" :key="index" style="float: left;margin:20px 280px 50px 66px;width: 18%;text-align: center">
+          <div v-for="(u,index) in form.brandDealerVoucherList" :key="index"
+               style="float: left;margin:20px 280px 50px 66px;width: 18%;text-align: center">
             <uploadoneimg
               style="width:265px"
               :fileList="u.url"
@@ -79,8 +83,8 @@
           </div>
         </el-form-item>
         <!--<el-form-item style="float: right;margin-right: 100px">-->
-          <!--<el-button @click="returnBrandList">返回</el-button>-->
-          <!--<el-button @click="sureBrandList">确定</el-button>-->
+        <!--<el-button @click="returnBrandList">返回</el-button>-->
+        <!--<el-button @click="sureBrandList">确定</el-button>-->
         <!--</el-form-item>-->
       </el-form>
     </div>
@@ -95,28 +99,29 @@
       return {
         addressData: [],//所有省市区数据
         selectedOptions2: [],//地址
-        types:[],//凭证上传
+        types: [],//凭证上传
+        storeNameNew:'',
         form: {
-          store:{
-            legalName:'',
-            memberName:'',
-            name:'',
-            sellingArea:'',
-            address:'',
-            businessLicenseNo:'',
+          store: {
+            legalName: '',
+            memberName: '',
+            name: '',
+            sellingArea: '',
+            address: '',
+            businessLicenseNo: '',
             provinceId: '',
             cityId: '',
             areaId: '',
-            streetId:'',
-            num:'',
+            streetId: '',
+            num: '',
 
           },
-          sysMember:{
-            authentication:'',
-            loginId:'',
-            memberName:'',
-            mobile:'',
-            status:'',
+          sysMember: {
+            authentication: '',
+            loginId: '',
+            memberName: '',
+            mobile: '',
+            status: '',
 
           },
           brandDealerVoucherList: [],
@@ -127,7 +132,7 @@
           },
           {
             name: '未认证',
-            value:0
+            value: 0
           },
           {
             name: '待审核',
@@ -142,7 +147,7 @@
             value: -1
           },
         ],//认证状态,
-        storeArea:[],//门店面积
+        storeArea: [],//门店面积
       }
     },
     created() {
@@ -161,10 +166,11 @@
       getFileList(file) {//凭证上传图片
         this.form.brandDealerVoucherList[this.clickIndex].url = file.url;
       },
-      getStoreArea(){//门店面积
+      getStoreArea() {//门店面积
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_area'}, function (data) {
           self.storeArea = data.data.list;
+          console.log('sdddd', self.storeArea)
         })
       },
       getImgUploadType() {//凭证上传
@@ -176,7 +182,7 @@
       getAllAddress() {//所有省市区
         let self = this
         let requestData = {}
-        self.httpApi.dict.selectRegionTree(requestData,function (data) {
+        self.httpApi.dict.selectRegionTree(requestData, function (data) {
           self.addressData = data.data.regionTrees;
         })
       },
@@ -191,9 +197,19 @@
           memberId: id
         }
         self.httpApi.vip.selectStoreMemberInfoById(requestData, function (data) {
-          self.form.store= data.data.store;
+          console.log('arrea', data)
+          self.form.store = data.data.store;
+          console.log(' self.form.store',  self.form.store)
+          console.log(' self.form.store.sellingArea',  self.form.store.sellingArea)
+          console.log(' self.storeArea', self.storeArea)
+          for (let i = 0; i < self.storeArea.length; i++) {
+            if (self.form.store.sellingArea == self.storeArea[i].value) {
+              self.storeNameNew = self.storeArea[i].name
+            }
+          }
+          console.log('self.form.store.storeNameNew',self.storeNameNew)
           self.form.sysMember = data.data.sysMember;
-          self.form.brandDealerVoucherList= data.data.storeVouchers
+          self.form.brandDealerVoucherList = data.data.storeVouchers
           self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId)
 //          self.addressNameDetail = self.getAddressName(self.form.store.provinceId,self.form.store.cityId,self.form.store.areaId,self.form.store.streetId)
 //            self.httpApi.dict.selectDictByTypeAndValue({type:'store_area',value:self.form.store.sellingArea},function (data) {
@@ -202,18 +218,18 @@
         });
 
       },
-      sureBrandList(id){//修改确认
+      sureBrandList(id) {//修改确认
         let self = this
         let requestData = {
-          store:self.form.store,
-          storeVouchers:self.form.brandDealerVoucherList,
-          sysMember:self.form.sysMember
+          store: self.form.store,
+          storeVouchers: self.form.brandDealerVoucherList,
+          sysMember: self.form.sysMember
         }
-        self.httpApi.vip.updateStoreMemberById(requestData,function (data) {
+        self.httpApi.vip.updateStoreMemberById(requestData, function (data) {
           self.$router.push('/client/clientmanagement')
         })
       },
-      returnBrandList(){//返回列表主页
+      returnBrandList() {//返回列表主页
         this.$router.push('/client/clientmanagement')
       },
 

@@ -24,4 +24,5 @@ Vue.prototype.httpApi = {
   feedback:{},
   mail:{},
   qiniuyun:{},
+  temporary:{},
 };

@@ -58,7 +58,6 @@
         this.$emit('getCatSelect', {cat: [nowCat], catName: nowCat.name, catId: nowCat.id});
       },
       getCatList(val){
-
         let self = this;
         var requestData;
         if (val === undefined) {
@@ -66,6 +65,7 @@
         } else {
           requestData = {catId: val[val.length - 1].id};
         }
+
         self.httpApi.goods.catList(requestData, function (data) {
           for (let i = 0; i < data.data.length; i++) {
             data.data[i].res = JSON.parse(data.data[i].res);

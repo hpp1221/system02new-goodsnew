@@ -202,7 +202,6 @@
             <el-form-item label="商品分类" style="margin-right: 210px">
               <catselect
                 @getCatSelect="getGoodsFormCatSelect"
-
                 :outCat="goodsForm.cat"
                 style="margin:0;width:350px;"
               >
@@ -227,12 +226,15 @@
                   :closable="false"
                   :close-transition="false"
                   @close="handleClose(v,sindex)"
-                  style="margin-left: 10px"
+                  style="margin-left: 10px;margin-right: 330px;"
                 >
                   {{v}}
                 </el-tag>
+
               </div>
+
             </el-form-item>
+            <br>
             <br>
             <el-form-item>
               <el-table
@@ -524,7 +526,6 @@
         this.goodsForm.unit = e;
       },
       getGoodsFormCatSelect(e){
-        console.log('ee',e)
         this.goodsForm.cat = e.cat;
         this.goodsForm.catName = e.catName;
         this.goodsForm.catId = e.catId;
@@ -696,7 +697,6 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.goods.editGoods(requestData, function (data) {
-
             self.$router.push('/goods/goodslist');
           });
           self.$message({
