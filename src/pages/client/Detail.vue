@@ -54,7 +54,7 @@
           <el-input v-model="form.store.name" style="width:366px;margin-right: 200px" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="门店面积">
-          <el-select v-if="form.store"  v-model="storeNameNew" :disabled="true" @change="storeClickChange">
+          <el-select v-if="form.store"  v-model="storeNameNew" :disabled="true">
             <el-option
               v-for="item in storeArea"
               :key="item.value"
@@ -174,7 +174,7 @@
       },
       getImgUploadType() {//凭证上传
         let self = this;
-        self.httpApi.dict.selectDictByType({type: 'brand_dealer_voucher'}, function (data) {
+        self.httpApi.dict.selectDictByType({type: 'store_voucher'}, function (data) {
           self.types = data.data.list;
         })
       },
@@ -197,15 +197,34 @@
           memberId: id
         }
         self.httpApi.vip.selectStoreMemberInfoById(requestData, function (data) {
+          console.log('vip',data)
           self.form.store = data.data.store;
+          self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId);
           for (let i = 0; i < self.storeArea.length; i++) {
             if (self.form.store.sellingArea == self.storeArea[i].value) {
               self.storeNameNew = self.storeArea[i].name
             }
           }
           self.form.sysMember = data.data.sysMember;
-          self.form.brandDealerVoucherList = data.data.storeVouchers
-          self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId)
+          let brandDealerVoucherList = data.data.storeVouchers
+
+          // let brandDealerVoucherList = self.form.brandDealerVoucherList;
+          let brandDealerVouchers = [];
+          for (let i = 0; i < brandDealerVoucherList.length; i++) {
+            for (let j = 0; j < self.types.length; j++) {
+              if (brandDealerVoucherList[i].type == self.types[j].value) {
+                brandDealerVouchers.push({
+                  type: self.types[j].value,
+                  url: brandDealerVoucherList[i].url,
+                  name: self.types[j].name
+                })
+              }
+            }
+          }
+          self.form.brandDealerVoucherList = brandDealerVouchers;
+
+          console.log('randDealerVoucherList',self.form.brandDealerVoucherList);
+
         });
 
       },

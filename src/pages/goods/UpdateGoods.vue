@@ -164,8 +164,10 @@
             </el-form-item>
             <h4 class="item-title">扩展属性</h4>
             <el-form-item v-for="item in form.goodsExtend.annex" :key="item.name">
-              属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
-              属性值 : <el-input v-model="item.value" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
+              属性名称 :
+              <el-input v-model="item.name" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
+              属性值 :
+              <el-input v-model="item.value" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="updateSku">保存</el-button>
@@ -174,7 +176,8 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="修改商品" name="second">
-          <el-form ref="goodsForm" :model="goodsForm" class="request-form" label-width="120px" inline v-if="goodsForm.id">
+          <el-form ref="goodsForm" :model="goodsForm" class="request-form" label-width="120px" inline
+                   v-if="goodsForm.id">
             <h4 class="item-title">基础信息</h4>
             <el-form-item label="商品名称" style="margin-right: 210px">
               <el-input placeholder="请输入商品名称" v-model="goodsForm.name" class="form-input" style="margin:0;width:350px;">
@@ -218,19 +221,27 @@
             </el-form-item>
             <h4 class="item-title">商品规格</h4>
             <el-form-item label="商品规格">
-              <div v-for="(s,sindex) in goodsForm.spec" :key="s.specName">
+              <div v-for="(s,sindex) in goodsForm.spec" :key="s.specName" style="margin-right: 330px;">
                 {{s.specName}}
                 <el-tag
                   :key="v.name"
                   v-for="v in s.specValue"
-                  :closable="false"
+                  closable
                   :close-transition="false"
                   @close="handleClose(v,sindex)"
-                  style="margin-left: 10px;margin-right: 330px;"
+                  style="margin-left: 10px;"
                 >
                   {{v}}
                 </el-tag>
-
+                <el-input
+                  class="form-input"
+                  v-model="s.currentVal"
+                  size="mini"
+                  placeholder="添加属性"
+                  style="margin:0;"
+                  @keyup.enter.native="handleInputConfirm(s)"
+                  @blur="handleInputConfirm(s)">
+                </el-input>
               </div>
 
             </el-form-item>
@@ -254,6 +265,7 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
+                  width="130"
                   v-for="s in goodsForm.spec"
                   :key="s.specName">
                   <template slot-scope="scope">
@@ -264,7 +276,7 @@
 
                 <el-table-column
                   label="商品编码"
-                  width="250">
+                  width="220">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.number" :disabled="true">
 
@@ -274,7 +286,7 @@
 
                 <el-table-column
                   label="条形码"
-                  width="250">
+                  width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
@@ -283,7 +295,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="250">
+                  width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title">
 
@@ -292,7 +304,7 @@
                 </el-table-column>
                 <el-table-column
                   label="市场价格"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.marketPrice">
 
@@ -301,7 +313,7 @@
                 </el-table-column>
                 <el-table-column
                   label="参考成本价"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
 
@@ -310,7 +322,7 @@
                 </el-table-column>
                 <el-table-column
                   label="建议零售价"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.retailPrice">
 
@@ -319,7 +331,7 @@
                 </el-table-column>
                 <el-table-column
                   label="起订量"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.mustBuyNum">
 
@@ -328,7 +340,7 @@
                 </el-table-column>
                 <el-table-column
                   label="库存数量"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.count">
 
@@ -337,7 +349,7 @@
                 </el-table-column>
                 <el-table-column
                   label="是否上架"
-                  width="140">
+                  width="130">
                   <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
@@ -364,22 +376,7 @@
               </VueEditor>
             </el-form-item>
             <h4 class="item-title">扩展属性</h4>
-            <!--<el-form-item v-for="item in goodsForm.goodsExtend.annex" :key="item.name">-->
-            <!--属性名称 : <el-input v-model="item.name" class="form-input" style="padding:0px 10px"></el-input>-->
-            <!--属性值 : <el-input v-model="item.value" class="form-input" style="padding:0px 10px"></el-input>-->
-            <!--</el-form-item>-->
             <el-form-item>
-              <!--<ul>-->
-                <!--<i class="el-icon-plus" @click="button1"></i>-->
-                <!--<li v-for="item in goodsForm.goodsExtend.annex" :key="item.value">-->
-
-                  <!--<el-button class="item.num1" v-if="item.check1" @click="button2">添加属性</el-button>-->
-                  <!--<el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.name"-->
-                            <!--placeholder="请输入属性名称"></el-input>-->
-                  <!--<el-input type="text" class="item.num1 form-input" v-if="item.check2" v-model="item.value"-->
-                            <!--placeholder="请输入属性值"></el-input>-->
-                <!--</li>-->
-              <!--</ul>-->
               <ul>
                 <i class="el-icon-plus" @click="addOneAnnex"></i> <br>
 
@@ -407,10 +404,10 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
-        brandNameSelectData:[],//商品品牌商
+        brandNameSelectData: [],//商品品牌商
 
         form: {
           name: '',
@@ -432,7 +429,7 @@
           }
         },
         goodsForm: {
-          brandNewSelectName:'',
+          brandNewSelectName: '',
           id: '',
           name: '',
           brand: [],
@@ -468,10 +465,11 @@
         tabName: 'first',//当前选中的tab
         skuImgIndex: 0,
         getCat: false,//是否获取过cat数据
-        originCat: ''
+        originCat: '',
+        beforeChangeSku: []//修改之前的sku
       }
     },
-    created(){
+    created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
 
 //      let self = this;
@@ -495,6 +493,14 @@
         } else if (newVal === 'second') {
           this.selectGoods(this.$route.params.goodsId);
         }
+      },
+      'goodsForm.spec': {
+        handler: function (val, oldVal) {
+          this.goodsForm.skus = [];
+          this.createGoodsDetail({}, 0);
+        },
+        // 深度观察
+        deep: true
       }
     },
     methods: {
@@ -510,46 +516,54 @@
         this.goodsForm.goodsExtend.annex.check1 = false;
         this.goodsForm.goodsExtend.annex.check2 = true
       },
+      showInput(index) {//显示规格输入框
+        this.goodsForm.spec[index].inputVisible = true;
+        console.log(this.goodsForm.spec[index])
+
+      },
       addOneAnnex() {//扩展属性
         this.goodsForm.goodsExtend.annex.push({name: '', value: ''});
       },
-//      getBrandSelect() {
-//        let self = this
-//        let requestData = {
-//          name: self.form.brandName
-//        }
-//        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
-//          self.brandNameSelectData = data.data.list;
-//        });
-//      },
-      getGoodsFormUnitSelect(e){
+      handleInputConfirm(s) {//规格属性确定
+        let inputValue = s.currentVal;
+        if (inputValue) {
+          s.specValue.push(inputValue);
+        }
+        s.inputVisible = false;
+        let index = s.specValue.indexOf(inputValue);
+        s.currentVal = '';
+      },
+      handleClose(tag, index) {//删除某规格属性
+        this.goodsForm.spec[index].specValue.splice(this.goodsForm.spec[index].specValue.indexOf(tag), 1);
+      },
+      getGoodsFormUnitSelect(e) {
         this.goodsForm.unit = e;
       },
-      getGoodsFormCatSelect(e){
+      getGoodsFormCatSelect(e) {
         this.goodsForm.cat = e.cat;
         this.goodsForm.catName = e.catName;
         this.goodsForm.catId = e.catId;
       },
-      getFileList(file){//sku，商品图片
+      getFileList(file) {//sku，商品图片
         this.form.goodsExtend.imgs.push(file);
       },
-      getFileList2(file){//商品，商品图片
+      getFileList2(file) {//商品，商品图片
         this.goodsForm.goodsExtend.imgs.push(file);
       },
-      removeFileList(file){//商品移除某商品图片
+      removeFileList(file) {//商品移除某商品图片
         this.goodsForm.goodsExtend.imgs.splice(file, 1);
       },
-      getSkuImg(file){//sku,sku图片
+      getSkuImg(file) {//sku,sku图片
         console.log(this.form.skus[this.skuImgIndex].img)
         this.form.skus[this.skuImgIndex].img = file.url;
       },
-      getSkuImg2(file){//商品,sku图片
+      getSkuImg2(file) {//商品,sku图片
         this.goodsForm.skus[this.skuImgIndex].img = file.url;
       },
-      rememberIndex(scope){//点击sku图片记录index
+      rememberIndex(scope) {//点击sku图片记录index
         this.skuImgIndex = scope.$index;
       },
-      select(skuId){
+      select(skuId) {
         let self = this;
         let requestData = {skuId: skuId};
         self.httpApi.goods.goodsDetail(requestData, function (data) {
@@ -565,19 +579,25 @@
           console.log(self.form)
         });
       },
-      clickCat(){
+      clickCat() {
         if (!this.getCat) {
           this.getCatList();
         }
       },
-      selectGoods(goodsId){
+      selectGoods(goodsId) {
         let self = this;
         let requestData = {goodsId: goodsId};
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
+          for (let i = 0; i < self.goodsForm.spec.length; i++) {
+            self.goodsForm.spec[i].inputVisible = false;
+          }
           self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
-          self.goodsForm.brand = {brandDealerId:self.goodsForm.brand.brandId,brandName:self.goodsForm.brand.brandName}
+          self.goodsForm.brand = {
+            brandDealerId: self.goodsForm.brand.brandId,
+            brandName: self.goodsForm.brand.brandName
+          }
           // self.originCat = [JSON.parse(self.goodsForm.cat)];
 //          let cat = JSON.parse(self.goodsForm.cat);
 //
@@ -590,30 +610,95 @@
           for (let i = 0; i < self.goodsForm.skus.length; i++) {
             self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
           }
-          console.log(self.goodsForm)
+          self.beforeChangeSku = self.goodsForm.skus;
+          console.log('goodsForm', self.goodsForm)
         });
       },
-      editorReady(editorInstance){//修改sku ueditor初始化
+      editorReady(editorInstance) {//修改sku ueditor初始化
         editorInstance.setContent(this.form.goodsExtend.content);
         editorInstance.addListener('contentChange', () => {
           this.form.goodsExtend.content = editorInstance.getContent()
         });
       },
-      editorReady2(editorInstance){//修改商品ueditor初始化
+      editorReady2(editorInstance) {//修改商品ueditor初始化
         editorInstance.setContent(this.goodsForm.goodsExtend.content);
         editorInstance.addListener('contentChange', () => {
           this.goodsForm.goodsExtend.content = editorInstance.getContent()
         });
       },
-      cancel(){
+      cancel() {
         this.$router.push('/goods/goodslist');
       },
-      updateSku(){//修改sku
+      createGoodsDetail(tableMap, index) {
+        let size = this.goodsForm.spec.length;
+        let tableKey = this.goodsForm.spec[index].specName;
+        for (let i = 0; i < this.goodsForm.spec[index].specValue.length; i++) {//颜色
+          tableMap[tableKey] = this.goodsForm.spec[index].specValue[i];
+          if (index < size - 1) {
+            index++;
+            this.createGoodsDetail(tableMap, index);
+            index--;
+          } else {
+            let singleSku = {
+              sku: {},
+              marketPrice: '',
+              price: '',
+              img: '',
+              number: '',
+              barCode: '',
+              isUp: 0,
+              mustBuyNum: '',
+              retailPrice: '',
+              count: '',
+              title: ''
+            };
+            singleSku.sku = tableMap;
+            this.goodsForm.skus.push(JSON.parse(JSON.stringify(singleSku)));
+          }
+        }
+        this.getGoodsNumbers(this.goodsForm.skus.length);
+        for (let i = 0; i < this.goodsForm.skus.length; i++) {
+          for (let j = 0; j < this.beforeChangeSku.length; j++) {
+            console.log('1',this.goodsForm.skus[i].sku)
+            console.log('2',this.beforeChangeSku[j].sku)
+            if (JSON.stringify(this.goodsForm.skus[i].sku) == JSON.stringify(this.beforeChangeSku[j].sku)) {
+              this.goodsForm.skus[i] = this.beforeChangeSku[j];
+            }
+          }
+
+        }
+
+      },
+      getGoodsNumbers(skuNum) {//自动生成商品编码
+        //p开头 年月日时分秒一位或者两位数字
+        let str = 'P-';
+        let nowDate = new Date();
+        let year = nowDate.getFullYear();
+        let month = nowDate.getMonth() + 1;
+        if (month < 10) month = '0' + month;
+        let day = nowDate.getDate();
+        if (day < 10) day = '0' + day;
+        let hour = nowDate.getHours();
+        if (hour < 10) hour = '0' + hour;
+        let minutes = nowDate.getMinutes();
+        if (minutes < 10) minutes = '0' + minutes;
+        let seconds = nowDate.getSeconds();
+        if (seconds < 10) seconds = '0' + seconds;
+        str = str + year + month + day + hour + minutes + seconds;
+        for (let i = 0; i < skuNum; i++) {
+          let currentStr = str;
+          let randomNum = Math.floor(Math.random() * 1000000);
+          currentStr += randomNum.toString().substr(0, 4);
+          this.goodsForm.skus[i].number = currentStr;
+//          this.form.skus[i].number = '12471824712847148';
+        }
+      },
+      updateSku() {//修改sku
         let self = this;
 //        let requestData = {
 //          self.form.skus
 //        };
-        self.form.skus[0].sku= JSON.stringify(self.form.skus[0].sku);
+        self.form.skus[0].sku = JSON.stringify(self.form.skus[0].sku);
         self.$confirm('此操作将修改原有内容, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -635,10 +720,10 @@
         });
 
       },
-      updateGoods(){//修改商品
+      updateGoods() {//修改商品
         let self = this;
         let goodsForm = {
-          brandNewSelectName:'',
+          brandNewSelectName: '',
           id: '',
           name: '',
           brand: [],
@@ -662,17 +747,21 @@
 
         goodsForm.id = self.goodsForm.id;
         goodsForm.name = self.goodsForm.name;
-        goodsForm.unit =self.goodsForm.unit;
-        goodsForm.cat =JSON.stringify(self.goodsForm.cat);
-        goodsForm.catId =self.goodsForm.catId;
+        goodsForm.unit = self.goodsForm.unit;
+        goodsForm.cat = JSON.stringify(self.goodsForm.cat);
+        goodsForm.catId = self.goodsForm.catId;
         goodsForm.catName = self.goodsForm.catName;
         goodsForm.spec = JSON.stringify(self.goodsForm.spec);
-        goodsForm.skus =JSON.stringify(self.goodsForm.skus);
+        goodsForm.skus = JSON.stringify(self.goodsForm.skus);
         goodsForm.brand = JSON.stringify(self.goodsForm.brand);
         goodsForm.brandId = self.goodsForm.brandId;
         goodsForm.brandName = self.goodsForm.brandName;
-        goodsForm.goodsExtend= {annex:JSON.stringify(self.goodsForm.goodsExtend.annex),content:self.goodsForm.goodsExtend.content,imgs:JSON.stringify(self.goodsForm.goodsExtend.imgs)};
-        if(!self.goodsForm.brand){
+        goodsForm.goodsExtend = {
+          annex: JSON.stringify(self.goodsForm.goodsExtend.annex),
+          content: self.goodsForm.goodsExtend.content,
+          imgs: JSON.stringify(self.goodsForm.goodsExtend.imgs)
+        };
+        if (!self.goodsForm.brand) {
           self.$message({
             message: '请选择品牌',
             center: true

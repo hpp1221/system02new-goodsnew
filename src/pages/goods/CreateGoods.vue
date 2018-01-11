@@ -258,7 +258,6 @@
         originCat: '',
         dictionaryUnitCreate: false,
         formLabelWidth: '80px',
-
       }
     },
     watch: {
