@@ -85,7 +85,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="250">
+                  width="450">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title">
 
@@ -133,6 +133,15 @@
                   width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.count">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="物流运费"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.emsPrice">
 
                     </el-input>
                   </template>
@@ -221,17 +230,27 @@
             </el-form-item>
             <h4 class="item-title">商品规格</h4>
             <el-form-item label="商品规格">
-              <div v-for="(s,sindex) in goodsForm.spec" :key="s.specName" style="margin-right: 330px;">
+              <div v-for="(s,sindex) in specMap" :key="s.specName" style="margin-right: 330px;" v-model="specMap">
                 {{s.specName}}
+                <!--<el-tag-->
+                <!--:key="v.name"-->
+                <!--v-for="v in s.specValue"-->
+                <!--:close-transition="false"-->
+                <!--@close="handleClose(v,sindex)"-->
+                <!--style="margin-left: 10px;"-->
+                <!--&gt;-->
+                <!--{{v}}-->
+                <!--</el-tag>-->
                 <el-tag
-                  :key="v.name"
-                  v-for="v in s.specValue"
-                  closable
+                  :key="v.value"
+                  v-for="(v,index) in s.specValueItem"
+                  :closable = !v.close
+                  :disabled="true"
                   :close-transition="false"
-                  @close="handleClose(v,sindex)"
+                  @close="handleClose(sindex,index)"
                   style="margin-left: 10px;"
                 >
-                  {{v}}
+                  {{v.value}}
                 </el-tag>
                 <el-input
                   class="form-input"
@@ -239,11 +258,9 @@
                   size="mini"
                   placeholder="添加属性"
                   style="margin:0;"
-                  @keyup.enter.native="handleInputConfirm(s)"
                   @blur="handleInputConfirm(s)">
                 </el-input>
               </div>
-
             </el-form-item>
             <br>
             <br>
@@ -251,10 +268,13 @@
               <el-table
                 :data="goodsForm.skus"
                 border
-                v-if="goodsForm.skus.length > 0">
+                v-if="goodsForm.skus.length > 0"
+                style="width: 1700px;overflow: auto"
+                ref="tableData"
+              >
                 <el-table-column
                   label="主图"
-                  width="160">
+                  width="180">
                   <template slot-scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
@@ -265,7 +285,7 @@
                 </el-table-column>
                 <el-table-column
                   :label="s.specName"
-                  width="130"
+                  width="180"
                   v-for="s in goodsForm.spec"
                   :key="s.specName">
                   <template slot-scope="scope">
@@ -276,7 +296,7 @@
 
                 <el-table-column
                   label="商品编码"
-                  width="220">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.number" :disabled="true">
 
@@ -286,7 +306,7 @@
 
                 <el-table-column
                   label="条形码"
-                  width="200">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
@@ -295,7 +315,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="200">
+                  width="450">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title">
 
@@ -304,7 +324,7 @@
                 </el-table-column>
                 <el-table-column
                   label="市场价格"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.marketPrice">
 
@@ -313,7 +333,7 @@
                 </el-table-column>
                 <el-table-column
                   label="参考成本价"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.price">
 
@@ -322,7 +342,7 @@
                 </el-table-column>
                 <el-table-column
                   label="建议零售价"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.retailPrice">
 
@@ -331,7 +351,7 @@
                 </el-table-column>
                 <el-table-column
                   label="起订量"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.mustBuyNum">
 
@@ -340,7 +360,7 @@
                 </el-table-column>
                 <el-table-column
                   label="库存数量"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.count">
 
@@ -348,8 +368,17 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="物流运费"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.emsPrice">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="是否上架"
-                  width="130">
+                  width="180">
                   <template slot-scope="scope">
                     <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
                   </template>
@@ -408,7 +437,6 @@
     data() {
       return {
         brandNameSelectData: [],//商品品牌商
-
         form: {
           name: '',
           brand: '',
@@ -466,17 +494,21 @@
         skuImgIndex: 0,
         getCat: false,//是否获取过cat数据
         originCat: '',
-        beforeChangeSku: []//修改之前的sku
+        beforeChangeSku: [],//修改之前的sku
+        // closableDisable:false,
+        specMap:[
+          // {
+          //   "specName":"",
+          //   "specValueItem":[{
+          //     "value":"",
+          //     "close":"",
+          //   }],
+          // }
+        ],
       }
     },
     created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-
-//      let self = this;
-//      self.getTagList(function (data) {
-//        self.goodsTags = data;
-//      });//获取标签列表
-      //获取分类列表
     },
     components: {
       'uploadmultipleimg': require('../../components/uploadmultipleimg'),
@@ -494,8 +526,9 @@
           this.selectGoods(this.$route.params.goodsId);
         }
       },
-      'goodsForm.spec': {
+      'specMap': {
         handler: function (val, oldVal) {
+          console.log("specMap修改被调用");
           this.goodsForm.skus = [];
           this.createGoodsDetail({}, 0);
         },
@@ -518,23 +551,54 @@
       },
       showInput(index) {//显示规格输入框
         this.goodsForm.spec[index].inputVisible = true;
-        console.log(this.goodsForm.spec[index])
-
+        this.goodsForm.spec[index].closableDisable = true;
       },
       addOneAnnex() {//扩展属性
         this.goodsForm.goodsExtend.annex.push({name: '', value: ''});
       },
       handleInputConfirm(s) {//规格属性确定
+        console.log('ss', s)
         let inputValue = s.currentVal;
-        if (inputValue) {
-          s.specValue.push(inputValue);
+        if(!inputValue){
+          return;
         }
-        s.inputVisible = false;
-        let index = s.specValue.indexOf(inputValue);
-        s.currentVal = '';
+        let specValueArr = s.specValueItem;
+        let specValueItem = {};
+        specValueItem.value = inputValue;
+        specValueItem.close = false;
+        specValueArr.push(specValueItem);
+        s.currentVal = "";
+        // let inputAfterValue = s.specValue;
+        // for(let i= 0; i <inputAfterValue.length;i++){
+        //   for(let j = 0;j<self.goodsForm.spec){
+        //
+        //   }
+        // }
+        // console.log('inputAfterValue',inputAfterValue)
+        // inputValue.closable = true;
+        // console.log('inputValue', inputValue)
+        // let inputAfterValue = {};
+        // inputAfterValue['spec'] = inputValue;
+        // console.log('inputAfterValue',inputAfterValue)
+        // if (inputValue) {
+        //   s.specValue.push(inputValue);
+        // }
+        // s.inputVisible = false;
+        // let index = s.specValue.indexOf(inputValue);
+        // s.currentVal = '';
+        //下一步 修改goodsForm.skus
+        this.goodsForm.skus = [];
+        this.createGoodsDetail({}, 0);
+
+
       },
-      handleClose(tag, index) {//删除某规格属性
-        this.goodsForm.spec[index].specValue.splice(this.goodsForm.spec[index].specValue.indexOf(tag), 1);
+      handleClose(sindex,index) {//删除某规格属性 参数:sindex:行  index ： 列    tag ：{value：'',close:''}
+        this.specMap[sindex].specValueItem.splice(index, 1);
+
+
+        //let specValueItem = this.specMap.specValueItem[sindex].specValueItem;
+        // specValueItem.remove(index);
+        //this.goodsForm.spec[index].specValue.splice(this.goodsForm.spec[index].specValue.indexOf(tag), 1);
       },
       getGoodsFormUnitSelect(e) {
         this.goodsForm.unit = e;
@@ -551,10 +615,11 @@
         this.goodsForm.goodsExtend.imgs.push(file);
       },
       removeFileList(file) {//商品移除某商品图片
+        console.log('file',file)
         this.goodsForm.goodsExtend.imgs.splice(file, 1);
       },
       getSkuImg(file) {//sku,sku图片
-        console.log(this.form.skus[this.skuImgIndex].img)
+
         this.form.skus[this.skuImgIndex].img = file.url;
       },
       getSkuImg2(file) {//商品,sku图片
@@ -587,11 +652,42 @@
       selectGoods(goodsId) {
         let self = this;
         let requestData = {goodsId: goodsId};
+
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
+
+
+
+          let specMap = []; //添加的属性
+          let len = self.goodsForm.spec.length;
+          for(let i = 0;i<len;i++){
+            let specItem = {};
+            let spec = self.goodsForm.spec[i];
+            specItem.specName = spec.specName
+            console.log("self.goodsForm.spec[i]",self.goodsForm.spec[i]);
+            let sprcValues = spec.specValue;
+            let sprcValuesLen = spec.specValue.length;
+            let specValueArr = [];
+            for(let m = 0;m<sprcValuesLen;m++){
+
+              let value = spec.specValue[m];
+              let specValueItem = {};
+              specValueItem.value = value;
+              specValueItem.close = true;
+              specValueArr.push(specValueItem);
+            }
+            specItem.specValueItem=specValueArr;
+            specMap.push(specItem);
+          }
+          self.specMap = specMap;
+          console.log("specMap",specMap);
+
+
+
           for (let i = 0; i < self.goodsForm.spec.length; i++) {
             self.goodsForm.spec[i].inputVisible = false;
+            self.goodsForm.spec[i].closableDisable = false;
           }
           self.goodsForm.brand = JSON.parse(self.goodsForm.brand);
           self.goodsForm.brand = {
@@ -611,7 +707,8 @@
             self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
           }
           self.beforeChangeSku = self.goodsForm.skus;
-          console.log('goodsForm', self.goodsForm)
+          console.log('self.goodsForm.skus', self.goodsForm.skus)
+          // console.log('goodsForm', self.goodsForm)
         });
       },
       editorReady(editorInstance) {//修改sku ueditor初始化
@@ -629,12 +726,24 @@
       cancel() {
         this.$router.push('/goods/goodslist');
       },
+
       createGoodsDetail(tableMap, index) {
-        let size = this.goodsForm.spec.length;
-        let tableKey = this.goodsForm.spec[index].specName;
-        for (let i = 0; i < this.goodsForm.spec[index].specValue.length; i++) {//颜色
-          tableMap[tableKey] = this.goodsForm.spec[index].specValue[i];
-          if (index < size - 1) {
+        //         specMap:[
+        //   // {
+        //   //   "specName":"",
+        //   //   "specValueItem":[{
+        //   //     "value":"",
+        //   //     "close":"",
+        //   //   }],
+        //   // }
+        // ],
+        let rowLen = this.specMap.length; //规格数量
+        let tableKey = this.specMap[index].specName;
+        let colLen = this.specMap[index].specValueItem.length; //每种规格的种类
+
+        for (let i = 0; i < colLen ; i++) {//颜色
+          tableMap[tableKey] = this.specMap[index].specValueItem[i].value;
+          if (index < rowLen - 1) {
             index++;
             this.createGoodsDetail(tableMap, index);
             index--;
@@ -652,23 +761,100 @@
               count: '',
               title: ''
             };
+            console.log("tableMap",tableMap);
             singleSku.sku = tableMap;
+            // singleSku.spec.closable = false;
             this.goodsForm.skus.push(JSON.parse(JSON.stringify(singleSku)));
           }
         }
+
         this.getGoodsNumbers(this.goodsForm.skus.length);
         for (let i = 0; i < this.goodsForm.skus.length; i++) {
           for (let j = 0; j < this.beforeChangeSku.length; j++) {
-            console.log('1',this.goodsForm.skus[i].sku)
-            console.log('2',this.beforeChangeSku[j].sku)
-            if (JSON.stringify(this.goodsForm.skus[i].sku) == JSON.stringify(this.beforeChangeSku[j].sku)) {
+            console.log("JSON.stringify(this.goodsForm.skus[i].sku)",JSON.stringify(this.goodsForm.skus[i].sku));
+            console.log("JSON.stringify(this.beforeChangeSku[j].sku)",JSON.stringify(this.beforeChangeSku[j].sku));
+            //比较sku
+            let skus =   this.goodsForm.skus[i].sku;
+            let beforeChangeSku = this.beforeChangeSku[j].sku;
+            if(this.compare(skus,beforeChangeSku)){
               this.goodsForm.skus[i] = this.beforeChangeSku[j];
             }
+            // for(){
+
+            // }
+            // if (JSON.stringify(this.goodsForm.skus[i].sku) == JSON.stringify(this.beforeChangeSku[j].sku)) {
+            //   this.goodsForm.skus[i] = this.beforeChangeSku[j];
+            // }
           }
-
         }
-
+        let skusValue = [];
+        skusValue = this.goodsForm.skus;
+        this.goodsForm.skus = [];
+        var len = skusValue.length;
+        for (let i = 0; i < len; i++) {
+          if (skusValue[i].img) {
+            this.goodsForm.skus.push(skusValue[i]);
+          }
+        }
+        for (let i = 0; i < len; i++) {
+          if (!skusValue[i].img) {
+            this.goodsForm.skus.push(skusValue[i]);
+          }
+        }
       },
+      //--------------------------------------------------------------------
+      compare(objA, objB) {
+        console.log("objA",objA);
+        console.log("objB",objB);
+        if(!this.isObj(objA) || !this.isObj(objB)) return false; //判断类型是否正确
+        if(this.getLength(objA) != this.getLength(objB)) return false; //判断长度是否一致
+        return this.compareObj(objA, objB, true); //默认为true
+      },
+      compareObj(objA,objB,flag){
+        for(var key in objA) {
+          if(!flag) //跳出整个循环
+            break;
+          if(!objB.hasOwnProperty(key)) {
+            flag = false;
+            break;
+          }
+          if(!this.isArray(objA[key])) { //子级不是数组时,比较属性值
+            if(objB[key] != objA[key]) {
+              flag = false;
+              break;
+            }
+          } else {
+            if(!this.isArray(objB[key])) {
+              flag = false;
+              break;
+            }
+            var oA = objA[key],
+              oB = objB[key];
+            if(oA.length != oB.length) {
+              flag = false;
+              break;
+            }
+            for(var k in oA) {
+              if(!flag) //这里跳出循环是为了不让递归继续
+                break;
+              flag = this.CompareObj(oA[k], oB[k], flag);
+            }
+          }
+        }
+        return flag;
+      },
+      isObj(object) {
+        return object && typeof(object) == 'object' && Object.prototype.toString.call(object).toLowerCase() == "[object object]";
+      },
+      isArray(object) {
+        return object && typeof(object) == 'object' && object.constructor == Array;
+      },
+      getLength(object) {
+        var count = 0;
+        for(var i in object) count++;
+        return count;
+      },
+      //----------------------------------------------------------------------
       getGoodsNumbers(skuNum) {//自动生成商品编码
         //p开头 年月日时分秒一位或者两位数字
         let str = 'P-';
@@ -744,14 +930,47 @@
             annex: []
           }
         };
-
         goodsForm.id = self.goodsForm.id;
         goodsForm.name = self.goodsForm.name;
         goodsForm.unit = self.goodsForm.unit;
         goodsForm.cat = JSON.stringify(self.goodsForm.cat);
         goodsForm.catId = self.goodsForm.catId;
         goodsForm.catName = self.goodsForm.catName;
-        goodsForm.spec = JSON.stringify(self.goodsForm.spec);
+
+        //修改规格
+        //let specMap = self.specMap;
+        //         specMap:[
+        //   // {
+        //   //   "specName":"",
+        //   //   "specValueItem":[{
+        //   //     "value":"",
+        //   //     "close":"",
+        //   //   }],
+        //   // }
+        // ],
+        let resSpec = [];
+        let rowLen = self.specMap.length;
+        console.log('specMap',self.specMap)
+        console.log('rowlen',rowLen)
+        for(let i = 0 ; i < rowLen ; i++ ){
+          let spec = {};
+          spec.specName = self.specMap[i].specName;
+          console.log('spec',spec)
+          console.log('spec.specName',spec.specName)
+          let colLen =  self.specMap[i].specValueItem.length;
+          console.log('colLene',colLen)
+          let value =[];
+          for( let m = 0 ; m < colLen ; m++ ){
+            value.push(self.specMap[i].specValueItem[m].value);
+          }
+          console.log('value',value)
+          spec.specValue = value;
+          console.log('spec.specValue',spec.specValue)
+          resSpec.push(spec);
+          console.log('resSpec',resSpec)
+        }
+        // return;
+        goodsForm.spec = JSON.stringify(resSpec);
         goodsForm.skus = JSON.stringify(self.goodsForm.skus);
         goodsForm.brand = JSON.stringify(self.goodsForm.brand);
         goodsForm.brandId = self.goodsForm.brandId;

@@ -45,8 +45,10 @@
           <div v-for="(u,index) in form.brandDealerVoucherList" :key="index"
                style="float: left;margin-right: 100px;text-align: center">
             <uploadoneimg
+              v-if="form.brandDealerVoucherList.length > 0"
               :fileList="u.url"
               @getFileList="getFileList"
+
               @click.native="clickIndex = index"
               :title="u.name"
             >
@@ -99,9 +101,10 @@
     },
     created() {
 
-      this.getImgUploadType()//凭证上传
+
       this.getPrivence();
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      this.getImgUploadType()//凭证上传
 //      if (!this.$route.params.id) {
 //        this.$router.push('/error');
 //      }

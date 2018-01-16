@@ -34,8 +34,11 @@
       }
     },
     created(){
-      this.key.file = this.fileList || '';
       let self = this;
+      self.key.file = "";
+      if( self.fileList){
+        self.key.file = self.fileList;
+      }
       let requestData = {
         token: window.localStorage.getItem('token'),
         bucketName: 'management'

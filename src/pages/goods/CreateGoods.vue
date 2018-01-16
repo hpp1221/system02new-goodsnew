@@ -64,10 +64,11 @@
               <el-table
                 :data="form.skus"
                 v-if="form.skus.length > 0"
+                style="width: 1700px;overflow: auto"
               >
                 <el-table-column
                   label="主图"
-                  width="160">
+                  width="180">
                   <template slot-scope="scope">
                     <uploadoneimg
                       :fileList="scope.row.img"
@@ -89,7 +90,7 @@
 
                 <el-table-column
                   label="商品编码"
-                  width="220">
+                  width="250">
                   <template slot-scope="scope">
                     <!--<span v-if="form.number.length > 0">{{scope.row.number}}</span>-->
                     <!--<p>{{scope.row.number}}</p>-->
@@ -102,7 +103,7 @@
 
                 <el-table-column
                   label="条形码"
-                  width="180">
+                  width="250">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.barCode">
 
@@ -111,7 +112,7 @@
                 </el-table-column>
                 <el-table-column
                   label="关键字"
-                  width="180">
+                  width="350">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.title" placeholder="搜索关键字">
 
@@ -164,6 +165,15 @@
                   </template>
                 </el-table-column>
                 <el-table-column
+                  label="物流运费"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.emsPrice">
+
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="是否上架"
                   width="180">
                   <template slot-scope="scope">
@@ -179,6 +189,7 @@
               <uploadmultipleimg
                 :fileList="form.goodsExtend.imgs"
                 @getFileList="getFileList"
+                @removeFile="removeFileList"
                 style="margin-left:50px">
               </uploadmultipleimg>
             </el-form-item>
@@ -347,6 +358,10 @@
       getSkuImg(file) {//sku图片
         this.form.skus[this.skuImgIndex].img = file.url;
       },
+      removeFileList(file) {//商品移除某商品图片
+        console.log('file',file)
+        this.form.goodsExtend.imgs.splice(file, 1);
+      },
       rememberIndex(scope) {//点击sku图片记录index
         this.skuImgIndex = scope.$index;
       },
@@ -380,6 +395,7 @@
               isUp: 0,
               mustBuyNum:'',
               retailPrice:'',
+              emsPrice:'',
               count: '',
               title: ''
             };

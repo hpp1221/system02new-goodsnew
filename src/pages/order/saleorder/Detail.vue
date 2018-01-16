@@ -40,6 +40,9 @@
           <el-table-column label="单价" prop="putPrice">
 
           </el-table-column>
+          <el-table-column label="物流运费" prop="transportationFee">
+
+          </el-table-column>
           <el-table-column label="小计" prop="subTotalPrice">
 
           </el-table-column>
