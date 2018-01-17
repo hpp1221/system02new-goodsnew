@@ -46,14 +46,9 @@
           <el-table-column label="小计" prop="subTotalPrice">
 
           </el-table-column>
-          <el-table-column label="添加优惠" prop="subTotalPrice">
+          <el-table-column label="添加优惠">
             <template slot-scope="scope">
-              <el-dropdown trigger="click">
                 <i class="el-icon-plus" style="cursor: pointer" @click="openPriceModel(scope.row)"></i>
-                <!--<el-dropdown-menu slot="dropdown">-->
-                <!--<el-dropdown-item @click.native="seeDetail(scope.row.orderId)">订单详情</el-dropdown-item>-->
-                <!--</el-dropdown-menu>-->
-              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -146,24 +141,14 @@
       <!--修改价格弹框-->
       <el-dialog title="修改单价 ( 两种优惠方式只能选择一种 )" :visible.sync="openPriceModelVisable">
         <el-form :model="priceForm">
-          <!--<el-form-item v-if="priceForm.reducePrice == ''" label="是否折扣" :label-width="formLabelWidth">-->
-            <!--&lt;!&ndash;<el-radio :label="1">是否折扣</el-radio>&ndash;&gt;-->
-            <!--<el-input v-model="priceForm.discount" style="width: 80%;" :disabled="true"></el-input>  &nbsp;&nbsp;<span>%</span>-->
 
-          <!--</el-form-item>-->
           <el-form-item label="是否折扣" :label-width="formLabelWidth">
-            <!--<el-radio :label="1">是否折扣</el-radio>-->
             <el-input v-model="priceForm.discount" style="width: 80%;" @keyup.enter.native="handleInputConfirm(s)"
                       @blur="handleInputConfirm(s)"></el-input>  &nbsp;&nbsp;<span>%</span>
 
           </el-form-item>
 
-          <!--<el-form-item  v-if="priceForm.discount" label="现金优惠" :label-width="formLabelWidth">-->
-            <!--&lt;!&ndash;<el-radio :label="2">现金优惠</el-radio>&ndash;&gt;-->
-            <!--<el-input v-model="priceForm.reducePrice" style="width: 80%;"></el-input>-->
-          <!--</el-form-item>-->
           <el-form-item label="现金优惠" :label-width="formLabelWidth">
-            <!--<el-radio :label="2">现金优惠</el-radio>-->
             <el-input v-model="priceForm.reducePrice" style="width: 80%;" @keyup.enter.native="handleInputConfirm1(s)"
                       @blur="handleInputConfirm1(s)"></el-input>
           </el-form-item>
@@ -318,13 +303,6 @@
     components: {
       'uploadfiles': require('../../../components/uploadfiles'),
     },
-//    watch: {
-//      operationLogVisible: function (newVal, oldVal) {
-//        if (newVal && this.operationList.length === 0) {
-//          this.getOperationList();
-//        }
-//      }
-//    },
     created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
