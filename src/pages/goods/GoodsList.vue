@@ -105,7 +105,7 @@
       <el-dialog title="高级搜索" :visible.sync="advanceSearch">
         <el-form ref="form" :model="form" class="request-form">
           <el-form-item label="关键词">
-            <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model="form.keyword" class="long-input">
+            <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model.trim="form.keyword" class="long-input">
 
             </el-input>
           </el-form-item>
@@ -274,7 +274,6 @@
           pageNo: num,
           goodsSkuRequest: self.form
         };
-//        requestData = Object.assign(requestData, self.shallowCopy(self.form));
         self.httpApi.goods.skuList(requestData, function (data) {
           self.advanceSearch = false;
           self.searchType = 2;

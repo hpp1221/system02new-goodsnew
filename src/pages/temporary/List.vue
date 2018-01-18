@@ -7,10 +7,10 @@
           <catselect @getCatSelect="getCatSelect"></catselect>
         </el-form-item>
         <el-form-item label="商品编码">
-         <el-input v-model="easyForm.number"></el-input>
+         <el-input v-model.trim="easyForm.number"></el-input>
         </el-form-item>
         <el-form-item label="商品名称">
-          <el-input v-model="easyForm.name"></el-input>
+          <el-input v-model.trim="easyForm.name"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>

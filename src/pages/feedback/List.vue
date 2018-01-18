@@ -14,7 +14,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-input icon="search" v-model="easyForm.condition" placeholder="请输入客户账号/客户电话/反馈单号" style="width:255px">
+          <el-input icon="search" v-model.trim="easyForm.condition" placeholder="请输入客户账号/客户电话/反馈单号" style="width:255px">
           </el-input>
         </el-form-item>
         <el-form-item label="问题类型">

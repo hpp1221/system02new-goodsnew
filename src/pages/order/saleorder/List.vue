@@ -9,10 +9,10 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="easyForm.orderNumber" placeholder="请输入订单号"></el-input>
+          <el-input v-model.trim="easyForm.orderNumber" placeholder="请输入订单号"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="easyForm.memberName" placeholder="请输入客户名称"></el-input>
+          <el-input v-model.trim="easyForm.memberName" placeholder="请输入客户名称"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>

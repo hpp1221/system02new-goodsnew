@@ -4,16 +4,16 @@
       <h3 class="page-title">客户列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item label="请输入客户姓名 : ">
-          <el-input icon="search" v-model="easyForm.memberName">
+          <el-input icon="search" v-model.trim="easyForm.memberName">
           </el-input>
         </el-form-item>
 
         <el-form-item label="客户账号 : ">
-          <el-input icon="search" v-model="easyForm.loginId">
+          <el-input icon="search" v-model.trim="easyForm.loginId">
           </el-input>
         </el-form-item>
         <el-form-item label="门店名称 : ">
-          <el-input icon="search" v-model="easyForm.storeName">
+          <el-input icon="search" v-model.trim="easyForm.storeName">
           </el-input>
         </el-form-item>
         <el-form-item label="认证状态">
@@ -40,7 +40,7 @@
           </el-cascader>
         </el-form-item>
         <el-form-item>
-          <el-input icon="search" v-model="easyForm.address" placeholder="请输入详细地址">
+          <el-input icon="search" v-model.trim="easyForm.address" placeholder="请输入详细地址">
           </el-input>
         </el-form-item>
 

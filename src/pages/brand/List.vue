@@ -4,16 +4,16 @@
       <h3 class="page-title">品牌商</h3>
       <el-form ref="easyForm" :model="easyForm" inline>
         <el-form-item label="请输入品牌商名称 : ">
-          <el-input icon="search" v-model="easyForm.name">
+          <el-input icon="search" v-model.trim="easyForm.name">
           </el-input>
         </el-form-item>
 
         <el-form-item label="品牌商收款账号 : ">
-          <el-input icon="search" v-model="easyForm.bankAccount">
+          <el-input icon="search" v-model.trim="easyForm.bankAccount">
           </el-input>
         </el-form-item>
         <el-form-item label="品牌商联系人 : ">
-          <el-input icon="search" v-model="easyForm.contacts">
+          <el-input icon="search" v-model.trim="easyForm.contacts">
           </el-input>
         </el-form-item>
         <el-form-item label="创建时间:">
@@ -34,7 +34,7 @@
           </el-cascader>
         </el-form-item>
         <el-form-item>
-          <el-input icon="search" v-model="easyForm.address" placeholder="请输入详细地址">
+          <el-input icon="search" v-model.trim="easyForm.address" placeholder="请输入详细地址">
           </el-input>
         </el-form-item>
         <el-form-item style="float: right">

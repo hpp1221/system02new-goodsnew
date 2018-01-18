@@ -61,7 +61,6 @@
             <p style="float: right;padding:0px 50px 30px 0px;">应付金额 : {{form.paymentPrice}}</p>
           </div>
         </el-form-item>
-
         <!--<el-form-item label="备注说明" style="margin-top: 20px">-->
           <!--{{form.orderDetail.note}}-->
         <!--</el-form-item>-->
