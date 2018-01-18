@@ -52,75 +52,19 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-form-item>
+        <el-form-item style="padding:15px 15px">
 
           <div style="overflow: hidden">
-            <p style="float: right;padding:15px 50px;">总金额 : {{form.totalPrice}}</p>
+            <p style="float: right;">总金额 : {{form.totalPrice}}</p>
+          </div>
+          <div style="overflow: hidden" >
+            <p style="float: right;">优惠金额 : {{totalReducePrice}}</p>
           </div>
           <div style="overflow: hidden">
-            <p style="float: right;padding:0px 50px 30px 0px;">应付金额 : {{form.paymentPrice}}</p>
+            <p style="float: right;">应付金额 : {{form.paymentPrice}}</p>
           </div>
         </el-form-item>
-        <!--<el-form-item label="备注说明" style="margin-top: 20px">-->
-          <!--{{form.orderDetail.note}}-->
-        <!--</el-form-item>-->
-        <!--<div class="order-table-total">
-                    <div class="top">
-                        <el-checkbox class="checkbox"></el-checkbox>
-                        <p class="checkbox">已申请特价，请输入获批订单金额</p>
-                        <el-input class="input"></el-input>
-                    </div>
-                    <div class="bottom">
-                        <p class="first-p">应付金额：</p>
-                        <p class="second-p">86.40</p>
-                    </div>
-                </div>-->
-        <!--<el-form-item label="收货信息" style="margin-top: 20px;">-->
-        <!--<p>客户名称：{{form.customer}} 收货人：{{form.contacts}} 联系电话：{{form.cel}} 收货地址：{{form.address}}-->
-        <!--</p>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="交货日期">-->
-        <!--{{moment(form.deliveryTime).format('YYYY-MM-DD HH:mm:ss')}}-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="发票信息">-->
-        <!--<span v-for="i in invoiceTypes" v-if="form.invoiceType == i.id">{{i.name}}</span>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item style="margin-top: 20px;">-->
-        <!--<p>-->
-        <!--备注：<span>{{form.orderDetail.note}}</span>-->
-        <!--</p>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="附件信息">-->
-        <!--<uploadfiles-->
-        <!--:fileList="form.att"-->
-        <!--:disabled="true">-->
-        <!--</uploadfiles>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="操作日志" style="clear: both">-->
-        <!--<el-switch-->
-        <!--v-model="operationLogVisible"-->
-        <!--active-text=""-->
-        <!--inactive-text="">-->
-        <!--</el-switch>-->
-        <!--</el-form-item>-->
-        <!--<el-table v-if="operationLogVisible" :data="operationList">-->
-        <!--<el-table-column label="操作时间" prop="operateTime">-->
-        <!--<template slot-scope="scope">-->
-        <!--{{moment(scope.row.operateTime).format('YYYY-MM-DD HH:mm:ss')}}-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column label="操作人" prop="operaterName">-->
 
-        <!--</el-table-column>-->
-        <!--<el-table-column label="订单状态" prop="orderStatusAfter">-->
-        <!--<template slot-scope="scope">-->
-        <!--<span v-for="t in totalOrderStatus" v-if="t.id==scope.row.orderStatusAfter">{{t.name}}</span>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column label="备注" prop="operateLog">-->
-
-        <!--</el-table-column>-->
-        <!--</el-table>-->
         <el-form-item label="物流信息">
 
         </el-form-item>
@@ -142,14 +86,14 @@
         <el-form :model="priceForm">
 
           <el-form-item label="是否折扣" :label-width="formLabelWidth">
-            <el-input v-model="priceForm.discount" style="width: 80%;" @keyup.enter.native="handleInputConfirm(s)"
-                      @blur="handleInputConfirm(s)"></el-input>  &nbsp;&nbsp;<span>%</span>
+            <el-input v-model="priceForm.discount" style="width: 80%;" @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm"></el-input>  &nbsp;&nbsp;<span>%</span>
 
           </el-form-item>
 
           <el-form-item label="现金优惠" :label-width="formLabelWidth">
-            <el-input v-model="priceForm.reducePrice" style="width: 80%;" @keyup.enter.native="handleInputConfirm1(s)"
-                      @blur="handleInputConfirm1(s)"></el-input>
+            <el-input v-model="priceForm.reducePrice" style="width: 80%;" @keyup.enter.native="handleInputConfirm1"
+                      @blur="handleInputConfirm1"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -194,6 +138,7 @@
           discount:'',//折扣
 //          radio:1,
         },
+        totalReducePrice:'',
         itemId:'',//点击+号的itemid
         putPrice:'',//点击+号的putPrice
         addForm: {//添加物流信息弹框form
@@ -250,19 +195,12 @@
             number: '',
             subtotal: '',//小计
             putPrice: '',//价格
+            reducePrice:'',//优惠
             combination: '',//编号和名称组合
             goodsSkuId: '',//规格id
           }],
-          //customer: '',//客户名称
-          // contacts: '',//收货人
-          // cel: '',//联系方式
-          // orderType: 2,//1是采购订单，2是销售订单
-          // address: '',//收货地址
-          // deliveryTime: '',//交货日期
-          // invoiceType: '',//发票信息
           remark: '',//备注
           att: [],//附件
-//          deliveryInfo:''
         },
         formLabelWidth: '120px',
 //        operationLogVisible: false,//操作日志按钮
@@ -309,7 +247,7 @@
       returnOrderList() {
         this.$router.push('/order/saleorder/list')
       },
-      handleInputConfirm(s) {//输入折扣
+      handleInputConfirm() {//输入折扣
         this.priceForm.reducePrice = ""
       },
       handleInputConfirm1(){
@@ -323,7 +261,7 @@
         this.priceForm.discount = row.discount;
         this.priceForm.reducePrice = row.reducePrice;
         console.log('this.priceForm.discount',this.priceForm.discount)
-        if(this.priceForm.discount == 100){
+        if(this.priceForm.discount == 100 || this.priceForm.discount ==0){
           this.priceForm.discount = ""
         }
         if(this.priceForm.reducePrice == "0"){
@@ -384,17 +322,11 @@
         };
         self.httpApi.order.viewOrderInfo(requestData, function (data) {
           self.form = data.data;
+
+          self.totalReducePrice = self.form.totalPrice - self.form.paymentPrice;
+          self.totalReducePrice = self.totalReducePrice.toFixed(2);
         });
       },
-//      getOperationList() {
-//        let self = this;
-//        let requestData = {
-//          orderId: self.form.orderId,
-//        };
-//        self.httpApi.order.viewOrderLogList(requestData, function (data) {
-//          self.operationList = data.data;
-//        });
-//      },
     }
   }
 </script>

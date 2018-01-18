@@ -32,7 +32,6 @@
         </el-form-item>
       </el-form>
       <el-table
-        ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
@@ -58,9 +57,9 @@
         <el-table-column prop="sugMessage" label="反馈内容">
 
         </el-table-column>
-        <el-table-column prop="sugType" label="问题类型">
+        <el-table-column label="问题类型">
           <template slot-scope="scope">
-            <span v-if="scope.row.sugType == o.id" v-for="o in feedbackType">{{o.name}}</span>
+            <span v-for="o in feedbackType" :key="o.sugId" v-if="scope.row.sugProType == o.id">{{o.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="sugStatus" label="状态">
@@ -105,9 +104,6 @@
         },//简单查询
         tableData: [],//反馈列表
         feedbackType: [
-          {
-            name: '全部'
-          },
           {
             id: 1,
             name: '性能问题'

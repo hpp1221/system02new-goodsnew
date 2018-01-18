@@ -105,6 +105,9 @@
         }
         self.httpApi.temporary.selectFalseGoodsById(requestData, function (data) {
           self.form = data.data;
+          console.log('form',self.form)
+          self.catAll[0] = self.form.catPid;
+          self.catAll[1] = self.form.catId;
           self.catIdArr.push(self.form.catPid);
           self.catIdArr.push(self.form.catId);
         });
@@ -112,6 +115,7 @@
       handleChange(val) {
         let self = this;
         self.catAll = val;
+        console.log('catAll',self.catAll)
         for(let i = 0 ; i < self.totalCatList.length;i++){
           if(self.catAll[0] == self.totalCatList[i].value){
             self.form.catPname = self.totalCatList[i].label;
@@ -126,6 +130,10 @@
       },
       sureUpdate() {//修改确认
         let self = this;
+        console.log('catPid',self.catAll[0])
+        console.log('self.form.catPname',self.form.catPname)
+        console.log('catId',self.catAll[1])
+        console.log('self.form.catName',self.form.catName)
         let requestData = {
           id:self.form.id,
           catPid: self.catAll[0],
@@ -139,6 +147,7 @@
           number:self.form.number,
         }
         self.httpApi.temporary.updateFalseGoodsById(requestData, function (data) {
+
           self.$router.push('/temporary/list')
         });
       },

@@ -351,7 +351,6 @@
           }).then(() => {
             location.href = url + str;
             this.$message({
-
               type: 'success',
               message: '导出成功!'
             });

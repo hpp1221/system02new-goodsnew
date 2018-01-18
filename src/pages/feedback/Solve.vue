@@ -21,7 +21,7 @@
         </el-form-item>
 
         <el-form-item label="反馈类型">
-          <el-select placeholder="全部" style="width:300px" v-for="t in feedbackType" :key="t" v-if="t.id == ruleForm.sugType" v-model="t.name" :disabled="true">
+          <el-select placeholder="全部" style="width:300px" v-for="t in feedbackType" :key="t.id" v-if="t.id == ruleForm.sugProType" v-model="t.name" :disabled="true">
             <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in feedbackType">{{t.name}}</el-option>
           </el-select>
         </el-form-item>
@@ -49,7 +49,7 @@
           userId: '',
           sugId: '',
           createTime: '',
-          sugType: '',
+          sugProType: '',
           sugMessage: '',
           sugRepMessage: ''
         },
