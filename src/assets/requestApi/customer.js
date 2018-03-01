@@ -8,8 +8,8 @@ Vue.prototype.httpApi.customer.deleteCustomerById = function (params, successCal
     })
 };
 //添加客户信息
-Vue.prototype.httpApi.customer.insertCustomer = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/customer/insertCustomer', params,
+Vue.prototype.httpApi.customer.addStoreMember = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/sysMember/addStoreMember', params,
     function (data) {
       successCallback(data);
     })

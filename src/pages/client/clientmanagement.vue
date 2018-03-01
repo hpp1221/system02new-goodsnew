@@ -46,6 +46,7 @@
 
         <el-form-item style="float: right">
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
+          <el-button @click="addClinet">新增</el-button>
         </el-form-item>
         <el-form-item>
         </el-form-item>
@@ -235,7 +236,10 @@
       examine(id){
         let url = '/client/examine/' + id;
         this.$router.push(url);
-      }
+      },
+      addClinet(){//新增
+        this.$router.push('/client/create');
+      },
     }
   }
 </script>

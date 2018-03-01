@@ -113,15 +113,16 @@
             <catselect @getCatSelect="getFormCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
+            <brandselect @getBrandSelect="getBrandSelect" style="width:350px;"></brandselect>
             <!--<brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>-->
-            <el-select v-model="form.brandId" filterable placeholder="请选择">
-              <el-option
-                v-for="item in brandNameSelectData"
-                :key="item.brandDealerId"
-                :label="item.name"
-                :value="item.brandDealerId">
-              </el-option>
-            </el-select>
+            <!--<el-select v-model="form.brandId" filterable placeholder="请选择">-->
+              <!--<el-option-->
+                <!--v-for="item in brandNameSelectData"-->
+                <!--:key="item.brandDealerId"-->
+                <!--:label="item.name"-->
+                <!--:value="item.brandDealerId">-->
+              <!--</el-option>-->
+            <!--</el-select>-->
           </el-form-item>
           <!--<el-form-item label="库存状态">-->
             <!--<el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>-->
@@ -208,23 +209,17 @@
         searchType: 1//1是简单搜索，2是高级搜索
       }
     },
-    created() {
-      this.getBrandSelect()
-    },
     components: {
       'pagination': require('../../components/pagination'),
       'catselect': require('../../components/getcatselect'),
-      'getcheckbox': require('../../components/getcheckbox')
+      'getcheckbox': require('../../components/getcheckbox'),
+      'brandselect': require('../../components/getbrandselect')
     },
     methods: {
-      getBrandSelect() {
-        let self = this
-        let requestData = {
-          name: self.form.brandName
-        }
-        self.httpApi.brand.selectBrandDealerAllList(requestData, function (data) {
-          self.brandNameSelectData = data.data.list;
-        });
+      getBrandSelect(e) {
+        this.form.brandId = e.brandDealerId;
+        this.form.brandName = e.brandName;
+        this.form.brand = e.brand;
       },
       pageChanged(page) {
         this.pageSize = page.size;
@@ -232,7 +227,6 @@
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       getCatSelect(e) {
-        console.log('ee',e)
         this.easyForm.cat = e.cat;
         this.easyForm.catId = e.catId,
         this.easyForm.catName = e.catName

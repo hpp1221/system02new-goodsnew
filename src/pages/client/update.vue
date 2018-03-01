@@ -54,7 +54,7 @@
           <el-input v-model="form.store.name" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
         <el-form-item label="门店面积">
-          <el-select v-model="storeNameNew" placeholder="请选择">
+          <el-select v-model="form.store.sellingArea" placeholder="请选择">
             <el-option
               v-if="form.store.storeId"
               v-for="item in storeArea"
@@ -69,7 +69,7 @@
           <el-input v-model="form.points" style="width:366px;margin-right: 200px" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="凭证上传">
-          <div v-for="(u,index) in form.brandDealerVoucherList" :key="index"
+          <div v-if="form.brandDealerVoucherList" v-for="(u,index) in form.brandDealerVoucherList" :key="index"
                style="float: left;margin:20px 280px 50px 66px;width: 18%;text-align: center">
             <uploadoneimg
               style="width:265px"
@@ -82,6 +82,20 @@
             <span>{{u.name}}</span>
           </div>
         </el-form-item>
+        <!--<el-form-item>-->
+          <!--<div v-for="(u,index) in types" :key="index"-->
+               <!--style="float: left;margin:20px 280px 50px 66px;width: 18%;text-align: center">-->
+            <!--<uploadoneimg-->
+              <!--style="width:265px"-->
+              <!--:fileList="u.url"-->
+              <!--@getFileList="getFileListImg"-->
+              <!--@click.native="clickIndex = index"-->
+              <!--:title="u.name"-->
+            <!--&gt;-->
+            <!--</uploadoneimg>-->
+            <!--<span>{{u.name}}</span>-->
+          <!--</div>-->
+        <!--</el-form-item>-->
         <!--<el-form-item style="float: right;margin-right: 100px">-->
         <!--<el-button @click="returnBrandList">返回</el-button>-->
         <!--<el-button @click="sureBrandList">确定</el-button>-->
@@ -166,6 +180,9 @@
       getFileList(file) {//凭证上传图片
         this.form.brandDealerVoucherList[this.clickIndex].url = file.url;
       },
+      getFileListImg(file){
+        this.types[this.clickIndex].url = file.url;
+      },
       getStoreArea() {//门店面积
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_area'}, function (data) {
@@ -175,7 +192,7 @@
       },
       getImgUploadType() {//凭证上传
         let self = this;
-        self.httpApi.dict.selectDictByType({type: 'brand_dealer_voucher'}, function (data) {
+        self.httpApi.dict.selectDictByType({type: 'store_voucher'}, function (data) {
           self.types = data.data.list;
         })
       },
@@ -198,19 +215,32 @@
         }
         self.httpApi.vip.selectStoreMemberInfoById(requestData, function (data) {
           console.log('arrea', data)
-          self.form.store = data.data.store;
-          console.log(' self.form.store',  self.form.store)
-          console.log(' self.form.store.sellingArea',  self.form.store.sellingArea)
-          console.log(' self.storeArea', self.storeArea)
+          if(data.data.store){
+            self.form.store = data.data.store;
+          }
           for (let i = 0; i < self.storeArea.length; i++) {
             if (self.form.store.sellingArea == self.storeArea[i].value) {
               self.storeNameNew = self.storeArea[i].name
             }
           }
-          console.log('self.form.store.storeNameNew',self.storeNameNew)
+
           self.form.sysMember = data.data.sysMember;
           self.form.brandDealerVoucherList = data.data.storeVouchers
-          self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId)
+          self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId);
+          let brandDealerVoucherList = self.form.brandDealerVoucherList;
+          let brandDealerVouchers = [];
+          for (let i = 0; i < brandDealerVoucherList.length; i++) {
+            for (let j = 0; j < self.types.length; j++) {
+              if (brandDealerVoucherList[i].type == self.types[j].value) {
+                brandDealerVouchers.push({
+                  type: self.types[j].value,
+                  url: brandDealerVoucherList[i].url,
+                  name: self.types[j].name
+                })
+              }
+            }
+          }
+          self.form.brandDealerVoucherList = brandDealerVouchers;
 //          self.addressNameDetail = self.getAddressName(self.form.store.provinceId,self.form.store.cityId,self.form.store.areaId,self.form.store.streetId)
 //            self.httpApi.dict.selectDictByTypeAndValue({type:'store_area',value:self.form.store.sellingArea},function (data) {
 //              self.form.store.sellingArea = data.data.dict

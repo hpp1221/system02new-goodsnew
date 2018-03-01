@@ -22,10 +22,7 @@ export default [
     path: '/client/clientmanagement', //客户列表
     component: resolve => require(['@/pages/client/ClientManagement'], resolve)
   },
-  {
-    path: '/client/clientmanagement', //客户列表
-    component: resolve => require(['@/pages/client/ClientManagement'], resolve)
-  },
+
   {
     path: '/client/detail/:id', //客户详情
     component: resolve => require(['@/pages/client/Detail'], resolve)
@@ -38,7 +35,8 @@ export default [
     path: '/client/update/:id', //修改客户详情
     component: resolve => require(['@/pages/client/Update'], resolve)
   },
-
-
-
+  {
+    path: '/client/create', //新增客户
+    component: resolve => require(['@/pages/client/Create'], resolve)
+  },
 ]

@@ -1,7 +1,7 @@
 <template>
   <el-select :placeholder="placeholderString" v-model="brand" value-key="brandDealerId" @click.native="selectClick"
-             @change="getBrand" :disabled="disabled">
-    <el-option label="全部" :value="''" v-if="selectAllVisible"></el-option>
+             @change="getBrand" :disabled="disabled" filterable>
+    <el-option :value="''" v-if="selectAllVisible"></el-option>
     <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalBrandList"></el-option>
   </el-select>
 </template>
