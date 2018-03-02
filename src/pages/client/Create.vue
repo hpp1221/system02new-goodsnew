@@ -168,7 +168,8 @@
           num:self.form.num,
           sellingArea:self.form.sellingArea,
           storeVoucherList:self.form.brandDealerVoucherList,
-          pwd:md5(self.form.pwd)
+          pwd:md5(self.form.pwd),
+          creater:window.localStorage.getItem('memberId')
         }
         self.httpApi.customer.addStoreMember(requestData, function (data) {
           self.$router.push('/client/clientmanagement')
