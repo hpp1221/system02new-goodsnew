@@ -4,17 +4,22 @@
       <div style="overflow: hidden">
         <!--<el-button style="float: right;margin: 20px">审核</el-button>-->
         <!--<el-button v-model="form.sysMember.authentication" v-if="item.value == form.sysMember.authentication" @click="getGoodsExaminePass" v-for="item in totalOrderStatus"-->
-                   <!--:label="item.name" :key="item.name" style="float: right;margin: 20px">-->
-          <!--{{item.name}}-->
+        <!--:label="item.name" :key="item.name" style="float: right;margin: 20px">-->
+        <!--{{item.name}}-->
         <!--</el-button>-->
         <!--<el-button type="text" @click="returnBrandList" style="float: right;margin: 20px;color: #000;font-size: 16px">返回</el-button>-->
-        <el-button type="text" @click="returnBrandList" v-model="form.sysMember.authentication"  v-if="form.sysMember.authentication == 2" style="float: right;margin: 20px;font-size: 15px;color: #000">
+        <el-button type="text" @click="returnBrandList" v-model="form.sysMember.authentication"
+                   v-if="form.sysMember.authentication == 2"
+                   style="float: right;margin: 20px;font-size: 15px;color: #000">
           返回
         </el-button>
-        <el-button type="text" @click="getClientExamineCancel" v-model="form.sysMember.authentication"  v-if="form.sysMember.authentication == 2" style="float: right;margin: 20px;font-size: 16px;color: #000">
+        <el-button type="text" @click="getClientExamineCancel" v-model="form.sysMember.authentication"
+                   v-if="form.sysMember.authentication == 2"
+                   style="float: right;margin: 20px;font-size: 16px;color: #000">
           认证驳回
         </el-button>
-        <el-button type="text" @click="getClientExaminePass" v-model="form.sysMember.authentication"  v-if="form.sysMember.authentication == 2" style="float: right;margin: 20px;font-size: 17px;">
+        <el-button type="text" @click="getClientExaminePass" v-model="form.sysMember.authentication"
+                   v-if="form.sysMember.authentication == 2" style="float: right;margin: 20px;font-size: 17px;">
           认证通过
         </el-button>
 
@@ -56,9 +61,38 @@
         <el-form-item label="门店名称">
           <el-input v-model="form.store.name" style="width:366px;margin-right: 200px" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="经营规模">
+          <el-select v-model="form.store.num" style="width:366px;margin-right: 200px" :disabled="true">
+            <el-option
+              v-for="item in storeNum"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="门店面积">
-          <el-input v-model="form.store.sellingArea" style="width:366px;margin-right: 200px"
-                    :disabled="true"></el-input>
+          <el-select v-model="form.store.sellingArea" style="width:366px;margin-right: 200px" :disabled="true">
+            <el-option
+              v-for="item in storeArea"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="门店类型">
+          <el-select v-model="form.store.type" style="width:366px;margin-right: 200px" :disabled="true">
+            <el-option
+              v-for="item in storeType"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="客户积分">
           <el-input v-model="form.points" style="width:366px;margin-right: 200px" :disabled="true"></el-input>
@@ -83,7 +117,7 @@
           </div>
         </el-form-item>
         <!--<el-form-item>-->
-          <!--<el-button @click="returnBrandList">返回</el-button>-->
+        <!--<el-button @click="returnBrandList">返回</el-button>-->
         <!--</el-form-item>-->
       </el-form>
     </div>
@@ -103,7 +137,7 @@
         addressNameDetail: '',
         form: {
           store: {
-            storeId:'',
+            storeId: '',
             legalName: '',
             memberName: '',
             name: '',
@@ -115,14 +149,14 @@
             areaId: '',
             streetId: '',
             num: '',
-
+            type: '',
           },
           sysMember: {
-            id:'',
+            id: '',
             authentication: '',
             loginId: '',
             memberName: '',
-            memberId:'',
+            memberId: '',
             mobile: '',
             status: '',
 
@@ -150,12 +184,18 @@
             value: -1
           },
         ],//认证状态
+        storeArea: [],//门店面积
+        storeNum: [],//门店经营规模
+        storeType: [],//门店类型
       }
     },
     created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       this.getImgUploadType();//凭证上传
       this.getPrivence();//所有省市区
+      this.getStoreArea();//门店面积
+      this.getStoreNum();//门店经营规模
+      this.getStoreType();//门店类型
 //      this.getExamineType();//认证状态
     },
     components: {
@@ -167,24 +207,42 @@
 //      addressNameDetail(provinceId,cityId,areaId,streetId) {//列表中地址显示
 //        return this.getAddressName(provinceId,cityId,areaId,streetId);
 //      },
-      getClientExaminePass(){//认证通过
+      getClientExaminePass() {//认证通过
         let self = this
         let requestData = {
-          authentication:1,
-          id:self.form.sysMember.id
+          authentication: 1,
+          id: self.form.sysMember.id
         }
         self.httpApi.vip.doAuthentication(requestData, function (data) {
           self.$router.push('/client/clientmanagement')
         })
       },
-      getClientExamineCancel(){//认证驳回
+      getClientExamineCancel() {//认证驳回
         let self = this
         let requestData = {
-          authentication:-1,
-          id:self.form.sysMember.id
+          authentication: -1,
+          id: self.form.sysMember.id
         }
         self.httpApi.vip.doAuthentication(requestData, function (data) {
           self.$router.push('/client/clientmanagement')
+        })
+      },
+      getStoreNum() {//门店经营规模
+        let self = this;
+        self.httpApi.dict.selectDictByType({type: 'store_num'}, function (data) {
+          self.storeNum = data.data.list;
+        })
+      },
+      getStoreType() {//门店类型
+        let self = this;
+        self.httpApi.dict.selectDictByType({type: 'store_type'}, function (data) {
+          self.storeType = data.data.list;
+        })
+      },
+      getStoreArea() {//门店面积
+        let self = this;
+        self.httpApi.dict.selectDictByType({type: 'store_area'}, function (data) {
+          self.storeArea = data.data.list;
         })
       },
       getFileList(file) {//凭证上传图片

@@ -33,16 +33,33 @@
         <el-form-item label="门店名称">
           <el-input v-model="form.name" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
-        <el-form-item label="门店数量">
-          <el-input v-model="form.num" style="width:366px;margin-right: 200px"></el-input>
+        <el-form-item label="经营规模">
+          <el-select v-model="form.num" placeholder="请选择" style="width:366px;margin-right: 200px">
+            <el-option
+              v-for="item in storeNum"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="门店面积">
           <el-select v-model="form.sellingArea" placeholder="请选择" style="width:366px;margin-right: 200px">
             <el-option
               v-for="item in storeArea"
-              :key="item.value"
+              :key="item.id"
               :label="item.name"
-              :value="item.name">
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="门店类型">
+          <el-select v-model="form.type" placeholder="请选择" style="width:366px;margin-right: 200px">
+            <el-option
+              v-for="item in storeType"
+              :key="item.id"
+              :label="item.name"
+              :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -85,25 +102,30 @@
             memberName: '',
             memberId:'',
             name: '',
-            sellingArea: '',
+            sellingArea: '',//门店面积
             address: '',
             businessLicenseNo: '',
             provinceId: '',
             cityId: '',
             areaId: '',
             streetId: '',
-            num: '',
+            num: '',//门店数量
+          type:'',//门店类型
             pwd:'a123456',
           storeVoucherList: [],
           brandDealerVoucherList: [],
         },
         storeArea: [],//门店面积
+        storeNum: [],//门店经营规模
+        storeType: [],//门店经营规模
       }
     },
     created() {
       this.getImgUploadType();//凭证上传
       this.getAllAddress();//所有省市区
       this.getStoreArea();//门店面积
+      this.getStoreNum();//门店经营规模
+      this.getStoreType();//门店类型
     },
     components: {
       ElInput,
@@ -114,19 +136,23 @@
     methods: {
       getFileListImg(file){//凭证上传图片
         this.form.brandDealerVoucherList[this.clickIndex].url = file.url;
-        // let self = this;
-        // this.form.storeVoucherList.push(file);
-        // console.log('self.form.storeVoucherList',
-
-        // self.form.storeVoucherList);
-        // this.form.storeVoucherList[this.clickIndex].url = file.url;
-
+      },
+      getStoreNum(){//门店经营规模
+        let self = this;
+        self.httpApi.dict.selectDictByType({type: 'store_num'}, function (data) {
+          self.storeNum= data.data.list;
+        })
+      },
+      getStoreType(){//门店类型
+        let self = this;
+        self.httpApi.dict.selectDictByType({type: 'store_type'}, function (data) {
+          self.storeType= data.data.list;
+        })
       },
       getStoreArea() {//门店面积
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_area'}, function (data) {
           self.storeArea = data.data.list;
-          console.log('sdddd', self.storeArea)
         })
       },
       getImgUploadType() {//凭证上传
@@ -166,6 +192,7 @@
           name:self.form.name,
           provinceId:self.form.provinceId,
           num:self.form.num,
+          type:self.form.type,
           sellingArea:self.form.sellingArea,
           storeVoucherList:self.form.brandDealerVoucherList,
           pwd:md5(self.form.pwd),
