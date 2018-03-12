@@ -89,6 +89,9 @@
         <el-table-column prop="emsPrice" label="物流运费">
 
         </el-table-column>
+        <el-table-column prop="tradeName" label="贸易形态">
+
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-dropdown trigger="click">

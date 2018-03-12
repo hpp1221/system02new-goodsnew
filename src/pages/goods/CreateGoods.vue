@@ -28,7 +28,10 @@
             <el-form-item label="计量单位" style="margin-right: 210px">
               <unitselect @getUnitSelect="getUnitSelect" :selectAllVisible="false" style="width:350px;"></unitselect>
             </el-form-item>
+            <el-form-item label="计量单位" style="margin-right: 210px">
+              <gradetypeselect @getGradeTypeSelect="getGradeTypeSelect" :selectAllVisible="false" style="width:350px;"></gradetypeselect>
 
+            </el-form-item>
             <h4 class="item-title">商品规格</h4>
             <el-form-item label="商品规格" style="overflow: hidden">
               <el-button class="button-new-tag" size="small" @click="addSpec">添加规格</el-button>
@@ -250,6 +253,9 @@
           catId: '',
           catName: '',
           unit: '',
+          gradeType:'',
+          tradeName:'',
+          tradeType:'',
           number: '',
           spec: [],
           skus: [],
@@ -286,6 +292,7 @@
       'uploadmultipleimg': require('../../components/uploadmultipleimg'),
       'uploadoneimg': require('../../components/uploadoneimg'),
       'unitselect': require('../../components/getunitselect'),
+      'gradetypeselect': require('../../components/getgradetypeselect'),
       'catselect': require('../../components/getcatselect'),
       'brandselect': require('../../components/getbrandselect'),
     },
@@ -345,7 +352,14 @@
         this.form.goodsExtend.annex.push({name: '', value: ''});
       },
       getUnitSelect(e) {//创建商品单位获取
+        console.log('e-unit',e)
         this.form.unit = e;
+      },
+      getGradeTypeSelect(e){//贸易形态
+        console.log('gradetype',e);
+        this.form.gradeType = e.gradeType;
+        this.form.tradeName = e.tradeName;
+        this.form.tradeType = e.gradeType.value;
       },
       getCatSelect(e) {
         this.form.cat = e.cat;

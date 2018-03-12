@@ -18,6 +18,9 @@
             <el-form-item label="计量单位">
               {{form.unit}}
             </el-form-item>
+            <el-form-item label="贸易形态">
+              {{form.tradeName}}
+            </el-form-item>
 
             <h4 class="item-title">商品规格</h4>
 
@@ -228,6 +231,24 @@
                 style="margin:0;width:350px;">
               </unitselect>
             </el-form-item>
+            <el-form-item label="贸易形态" style="margin-right: 210px">
+              <!--{{goodsForm.brandName}}-->
+              <gradetypeselect
+                @getGradeTypeSelect="getGradeTypeSelect"
+                :outGradeType="goodsForm.tradeName"
+                :isClickFetch="false"
+                style="margin:0;width:350px;">
+              </gradetypeselect>
+              <!--<el-select v-model="goodsForm.brandName" filterable placeholder="请选择" style="margin:0;width:350px;">-->
+              <!--<el-option-->
+              <!--v-for="item in brandNameSelectData"-->
+              <!--:key="item.brandDealerId"-->
+              <!--:label="item.name"-->
+              <!--:value="item.name">-->
+              <!--</el-option>-->
+              <!--</el-select>-->
+            </el-form-item>
+            <br>
             <h4 class="item-title">商品规格</h4>
             <el-form-item label="商品规格">
               <div v-for="(s,sindex) in specMap" :key="s.specName" style="margin-right: 330px;" v-model="specMap">
@@ -447,6 +468,9 @@
           catId: '',
           catName: '',
           unit: '',
+          gradeType:'',
+          tradeName:'',
+          tradeType:'',
           skus: [],
           goodsSkuList: [],
           tags: [],
@@ -468,6 +492,9 @@
           catId: '',
           catName: '',
           unit: '',
+          gradeType:'',
+          tradeName:'',
+          tradeType:'',
           skus: [],
           keyword: '',
           goodsSkuList: [],
@@ -515,6 +542,7 @@
       'uploadfiles': require('../../components/uploadfiles'),
       'uploadoneimg': require('../../components/uploadoneimg'),
       'brandselect': require('../../components/getbrandselect'),
+      'gradetypeselect': require('../../components/getgradetypeselect'),
       'unitselect': require('../../components/getunitselect'),
       'catselect': require('../../components/getcatselectupdate'),
     },
@@ -541,6 +569,11 @@
         this.goodsForm.brand = e.brand;
         this.goodsForm.brandId = e.brandDealerId;
         this.goodsForm.brandName = e.brandName;
+      },
+      getGradeTypeSelect(e){//贸易形态
+        this.goodsForm.gradeType = e.gradeType;
+        this.goodsForm.tradeName = e.tradeName;
+        this.goodsForm.tradeType = e.gradeType.value;
       },
       deleteOneAnnex(index) {
         this.goodsForm.goodsExtend.annex.splice(index, 1);
@@ -635,6 +668,7 @@
           self.form = self.formPass(self.form, data.data);
           self.form.spec = JSON.parse(self.form.spec);
           self.form.brand = JSON.parse(self.form.brand);
+          self.form.gradeType = self.form.gradeType;
 
           self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
           self.form.goodsExtend.imgs = JSON.parse(self.form.goodsExtend.imgs);
@@ -656,6 +690,7 @@
         self.httpApi.goods.showGoodsDetail(requestData, function (data) {
           self.goodsForm = self.formPass(self.goodsForm, data.data);
           self.goodsForm.spec = JSON.parse(self.goodsForm.spec);
+          // self.goodsForm.gradeType = JSON.parse(self.goodsForm.gradeType);
 
 
 
@@ -933,6 +968,7 @@
         goodsForm.id = self.goodsForm.id;
         goodsForm.name = self.goodsForm.name;
         goodsForm.unit = self.goodsForm.unit;
+        goodsForm.gradetype = self.goodsForm.gradetype;
         goodsForm.cat = JSON.stringify(self.goodsForm.cat);
         goodsForm.catId = self.goodsForm.catId;
         goodsForm.catName = self.goodsForm.catName;
@@ -975,6 +1011,9 @@
         goodsForm.brand = JSON.stringify(self.goodsForm.brand);
         goodsForm.brandId = self.goodsForm.brandId;
         goodsForm.brandName = self.goodsForm.brandName;
+        goodsForm.gradeType = self.goodsForm.gradeType;
+        goodsForm.tradeName = self.goodsForm.tradeName;
+        goodsForm.tradeType = self.goodsForm.tradeType;
         goodsForm.goodsExtend = {
           annex: JSON.stringify(self.goodsForm.goodsExtend.annex),
           content: self.goodsForm.goodsExtend.content,
