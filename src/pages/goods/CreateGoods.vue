@@ -28,7 +28,7 @@
             <el-form-item label="计量单位" style="margin-right: 210px">
               <unitselect @getUnitSelect="getUnitSelect" :selectAllVisible="false" style="width:350px;"></unitselect>
             </el-form-item>
-            <el-form-item label="计量单位" style="margin-right: 210px">
+            <el-form-item label="贸易形态" style="margin-right: 210px">
               <gradetypeselect @getGradeTypeSelect="getGradeTypeSelect" :selectAllVisible="false" style="width:350px;"></gradetypeselect>
 
             </el-form-item>
