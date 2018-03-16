@@ -101,6 +101,10 @@
                 <i class="iconfont icon-group"></i>
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
               </el-menu-item>
+              <el-menu-item index="8" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
+              </el-menu-item>
             </el-menu>
             <!--<div v-for="(l,index) in menuList"-->
             <!--@click="clickMenu('leftsmallmenu'+l.permissionId,l.children,l.name)"-->
@@ -180,6 +184,10 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">临时商品管理</span>
               </el-menu-item>
+              <el-menu-item index="11" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">售后管理</span>
+              </el-menu-item>
             </el-menu>
           </div>
         </div>
@@ -215,7 +223,14 @@
         </el-aside>
       </transition>
       <el-main>
-        <router-view></router-view>
+        <!--<keep-alive>-->
+          <!--<router-view></router-view>-->
+        <!--</keep-alive>-->
+
+        <keep-alive>
+          <router-view v-if="$route.meta.keepAlive"></router-view>
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -319,6 +334,9 @@
             break;
           case '8':
             this.$router.push('/temporary/list');
+            break;
+          case '11':
+            this.$router.push('/aftersale/list');
             break;
         }
       },

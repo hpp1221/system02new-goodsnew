@@ -97,7 +97,7 @@
               style="width:265px"
               :fileList="u.url"
               @getFileList="getFileList"
-              @click.native="clickIndex = index"
+              @click.native="clickIndex(u)"
               :title="u.name"
               :disabled="true"
             >
@@ -110,6 +110,10 @@
         <!--<el-button @click="sureBrandList">确定</el-button>-->
         <!--</el-form-item>-->
       </el-form>
+      <!--//放大图片-->
+      <el-dialog title="图片信息" :visible.sync="dialogTableVisibleImg">
+        <img :src="imgBig" class="image">
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -124,6 +128,8 @@
         selectedOptions2: [],//地址
         types: [],//凭证上传
         storeNameNew:'',
+        dialogTableVisibleImg:false,//放大图片弹框
+        imgBig:'',
         form: {
           store: {
             legalName: '',
@@ -192,6 +198,13 @@
     methods: {
       getFileList(file) {//凭证上传图片
         this.form.brandDealerVoucherList[this.clickIndex].url = file.url;
+      },
+      clickIndex(img){
+        console.log('2222-----img',img);
+        this.dialogTableVisibleImg = true;
+        this.imgBig =  img.url.replace('/w/100/h/100','/w/500/h/500')
+        console.log(" this.imgBig ", this.imgBig );
+
       },
       getStoreNum() {//门店经营规模
         let self = this;

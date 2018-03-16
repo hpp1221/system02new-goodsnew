@@ -208,13 +208,10 @@
       getCheckList(e) {
         this.form.orderStatus = e;
       },
-//      addOrder(){
-//        this.$router.push('/order/saleorder/add');
-//      },
-//      verify(id){//审核
-//        let url = '/order/saleorder/verify/' + id;
-//        this.$router.push(url);
-//      },
+     // verify(id){//审核
+     //   let url = '/order/saleorder/verify/' + id;
+     //   this.$router.push(url);
+     // },
       select(size, num) {//查询
         let self = this;
         let requestData = {

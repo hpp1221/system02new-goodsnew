@@ -927,6 +927,7 @@
         }).then(() => {
           self.httpApi.goods.editSku(self.form.skus, function (data) {
             self.$router.push('/goods/goodslist');
+            // self.select(localStorage.getItem('pageSize'),localStorage.getItem('pageNum'));
           });
           self.$message({
 
@@ -1045,6 +1046,8 @@
         }).then(() => {
           self.httpApi.goods.editGoods(requestData, function (data) {
             self.$router.push('/goods/goodslist');
+            // this.$router.go({name:'detailgoods',params:{'/goods/goodslist'}});
+            // self.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
           });
           self.$message({
 

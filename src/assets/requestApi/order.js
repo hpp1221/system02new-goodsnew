@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import '../js'
-
-
 //订单创建
 Vue.prototype.httpApi.order.create = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/order/create', params,
@@ -9,6 +7,8 @@ Vue.prototype.httpApi.order.create = function (params, successCallback) {
       successCallback(data);
     })
 };
+
+
 //正向订单详情
 Vue.prototype.httpApi.order.viewOrderInfo = function (params, successCallback) {
   Vue.prototype.httpGet('/admin/order/viewOrderInfo', params,
@@ -30,6 +30,21 @@ Vue.prototype.httpApi.order.deleteDeliveryInfo = function (params, successCallba
       successCallback(data);
     })
 };
+//正向订单查询物流详情
+Vue.prototype.httpApi.order.searchLogisticsOrder = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/order/searchLogisticsOrder', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//正向订单查询订单物流情况
+Vue.prototype.httpApi.order.selectLogisticsByOrderId = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/order/selectLogisticsByOrderId', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
 //正向订单修改订单价格
 Vue.prototype.httpApi.order.updateOrderItemPrice = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/order/updateOrderItemPrice', params,

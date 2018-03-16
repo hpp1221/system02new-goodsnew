@@ -4,7 +4,10 @@
 export default [
   {
     path: '/goods/goodslist', //商品列表
-    component: resolve => require(['@/pages/goods/GoodsList'], resolve)
+    component: resolve => require(['@/pages/goods/GoodsList'], resolve),
+    meta : {
+      keepAlive:true
+    }
   },
   {
     path: '/goods/creategoods', //新增商品
@@ -12,11 +15,17 @@ export default [
   },
   {
     path: '/goods/goodsDetail/:id', //商品详情
-    component: resolve => require(['@/pages/goods/goodsDetail'], resolve)
+    component: resolve => require(['@/pages/goods/goodsDetail'], resolve),
+    meta : {
+      keepAlive:false
+    }
   },
   {
     path: '/goods/updategoods/:id/:goodsId', //修改商品详情
-    component: resolve => require(['@/pages/goods/UpdateGoods'], resolve)
+    component: resolve => require(['@/pages/goods/UpdateGoods'], resolve),
+    meta : {
+      keepAlive:false
+    }
   },
   {
     path: '/goods/multipleInputGoods', //批量导入商品

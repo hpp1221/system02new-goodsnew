@@ -61,3 +61,11 @@ Vue.prototype.httpApi.dict.selectRegionTree = function (params, successCallback)
       successCallback(data);
     })
 };
+
+//加载所有物流公司信息
+Vue.prototype.httpApi.dict.selectLogistics = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/dict/selectLogistics', params,
+    function (data) {
+      successCallback(data);
+    })
+};

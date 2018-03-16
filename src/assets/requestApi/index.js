@@ -24,4 +24,5 @@ import  './feedback'
 import  './mail'
 import  './qiniuyun'
 import  './temporary'
+import  './aftersale'
 

@@ -92,6 +92,12 @@
         <el-table-column prop="tradeName" label="贸易形态">
 
         </el-table-column>
+        <el-table-column prop="isUp" label="上下架">
+            <template slot-scope="scope">
+              <span v-if="scope.row.isUp === 0">下架</span>
+              <span v-else>下架</span>
+            </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-dropdown trigger="click">
@@ -218,6 +224,9 @@
       'getcheckbox': require('../../components/getcheckbox'),
       'brandselect': require('../../components/getbrandselect')
     },
+    activated(){
+      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+    },
     methods: {
       getBrandSelect(e) {
         this.form.brandId = e.brandDealerId;
@@ -227,6 +236,10 @@
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
+        localStorage.setItem('pageSizeList',page.size);
+        localStorage.setItem('pageNumList',page.num);
+        console.log('88888',localStorage.getItem('pageSizeList'));
+        console.log('9999',localStorage.getItem('pageNumList'));
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       getCatSelect(e) {

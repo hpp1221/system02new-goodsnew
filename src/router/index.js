@@ -13,6 +13,7 @@ import Feedback from './routes/feedback'//用户意见反馈模块
 import Mail from './routes/mail'//站内信模块
 import Tenant from './routes/tenant'//租户模块
 import Temporary from './routes/temporary'//临时商品模块
+import Aftersale from './routes/aftersale'//售后模块
 Vue.use(Router)
 
 export default new Router({
@@ -53,6 +54,7 @@ export default new Router({
         ...Feedback,
         ...Mail,
         ...Temporary,
+        ...Aftersale,
       ]
     },
   ]
