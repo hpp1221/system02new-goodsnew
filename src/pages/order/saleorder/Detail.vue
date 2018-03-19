@@ -64,13 +64,31 @@
             <p style="float: right;">应付金额 : {{form.paymentPrice}}</p>
           </div>
         </el-form-item>
+       <!-- 之前物流信息-->
+        <el-form-item label="之前物流">
+          <!--<i class="el-icon-plus" style="margin:0px 20px 0px 50px;font-weight: 700;font-size: 18px;"></i>-->
+          <el-button v-if="form.orderStatus === 2 || form.orderStatus === 3" style="margin-bottom: 10px" @click="addLogisticsOld">添加物流信息</el-button>
+          <el-button  v-else style="margin-bottom: 10px" @click="addLogisticsOld" :disabled="true">添加物流信息</el-button>
+
+        </el-form-item>
+        <!--</el-form-item>-->
+        <el-form-item v-for="item in form.deliveryInfoList" :key="item.deliveryInfoId">
+          <p style="color: #9599a0;">
+            <span>{{moment(item.operateTime).format('YYYY-MM-DD HH:mm:ss')}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>{{item.info}}</span>
+            <i class="el-icon-close" @click="deleteLogistics(item.deliveryInfoId)"></i>
+          </p>
+        </el-form-item>
+        <!-- 之前物流信息-->
 
         <el-form-item label="物流信息">
-          <el-button @click="addLogesticsForm">添加物流信息</el-button>
+          <el-button @click="addLogesticsFormNow" v-if="form.orderStatus === 2 || form.orderStatus === 3">添加物流信息</el-button>
+          <el-button @click="addLogesticsFormNow"  v-else :disabled="true">添加物流信息</el-button>
+
         </el-form-item>
 
         <el-form-item >
-          <div style="color: #9599a0;" v-for="item in deliveryInfoList" :key="item.id">
+          <div style="color: #9599a0;" v-for="item in deliveryInfoListNow" :key="item.id">
             物流公司 ： <span>{{item.logisticsName}}</span> &nbsp; &nbsp; &nbsp;  &nbsp;
            运单编号 ： <span>{{item.logsiticsNumber}}</span>
             <span @click="seeDevList(item)" style="margin-left: 20px;color: #6dbfff">查看详情</span>
@@ -126,6 +144,30 @@
           <span style="margin:10px 30px 30px 10px;">{{item.Time}}</span><span>{{item.Context}}</span>
         </div>
       </el-dialog>
+
+      <!--之前物流信息添加弹框-->
+      <el-dialog title="收货地址" :visible.sync="dialogFormVisibleOld">
+        <el-form :model="addFormOld">
+          <el-form-item label="选择时间" :label-width="formLabelWidth">
+            <el-date-picker
+              v-model="addFormOld.operateTime"
+              type="datetime"
+              placeholder="选择日期时间"
+              align="right"
+              style="width: 80%;"
+              :picker-options="pickerOptions1">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="快递状态" :label-width="formLabelWidth">
+            <el-input v-model="addFormOld.info" style="width: 80%;"></el-input>
+          </el-form-item>
+
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisibleOld = false">取 消</el-button>
+          <el-button type="primary" @click="addLogisticsSureOld">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -137,8 +179,9 @@
         LogisticsList:[],//物流列表
         // logsiticsNumber:'',//运单编号
         logsiticsId:'',//该订单的物流单id
-        deliveryInfoList: [],//物流列表
-        deliveryList: [],//物流列表
+        deliveryInfoListNow: [],//现在物流列表
+        deliveryInfoList: [],//之前物流列表
+        deliveryList: [],//物流列表中单条数据详情
         NumDisable:false,
         priceForm:{//修改价格form
           reducePrice:'',//优惠价格
@@ -148,6 +191,10 @@
         totalReducePrice:'',
         itemId:'',//点击+号的itemid
         putPrice:'',//点击+号的putPrice
+        addFormOld: {//之前添加物流信息弹框form
+          info: '',//信息
+          operateTime: '',//时间
+        },
         addForm: {//添加物流信息弹框form
           // logisticsCode: '',//运单编号
           companyCode: '',//物流公司代码
@@ -156,6 +203,7 @@
           logsiticsId:''
         },
         dialogFormVisible: false,//物流弹框
+        dialogFormVisibleOld: false,//物流弹框
         openPriceModelVisable: false,//修改价格弹框
         pickerOptions1: {
           shortcuts: [{
@@ -257,7 +305,7 @@
       this.getLogisticsList();
     },
     methods: {
-      seeDevList(val){
+      seeDevList(val){//现在物流信息的详情
         let self = this;
         this.NumDisable = true;
         let requestData12 = {
@@ -280,23 +328,19 @@
         };
         self.httpApi.order.viewOrderInfo(requestData, function (data) {
           self.form = data.data;
+          self.form.deliveryInfoList = data.data.deliveryInfoList;
+          console.log('form------item',self.form);
           self.totalReducePrice = self.form.totalPrice - self.form.paymentPrice;
           self.totalReducePrice = self.totalReducePrice.toFixed(2);
         });
         self.httpApi.order.selectLogisticsByOrderId(requestData, function (data) {
-          console.log('data-----deliveryInfoList',data);
-          self.deliveryInfoList = data.data;
-          // self.logsiticsNumber = data.data[0].logsiticsNumber;//运单编号
-          // self.logsiticsId = data.data[0].id;//运单id
+          console.log('data-----deliveryInfoListNow',data);
+          self.deliveryInfoListNow = data.data;
         });
 
       },
-      getListDe(){
-        let self = this;
-
-      },
       //新版物流模块 start
-      addLogesticsForm(){//添加物流
+      addLogesticsFormNow(){//添加物流
         this.dialogFormVisible = true;
       },
       getLogisticsList(){//物流列表
@@ -309,7 +353,6 @@
 
       },
       LogisticsListChange(val){
-        console.log('val',val);
         this.addForm.companyCode = val.companyCode;
         this.addForm.companyName = val.companyName;
       },
@@ -355,17 +398,7 @@
           self.$router.go(0);
         }, 500);
       },
-      // addLogistics() {//查询物流单号
-      //   let self = this;
-      //   let requestData = {
-      //     companyCode:self.companyCode,
-      //     orderId: self.form.orderId
-      //   }
-      //   self.httpApi.order.searchLogisticsOrder(requestData,function (data) {
-      //     console.log("data-logestic",data);
-      //       self.addForm.logisticsCode = data.data;//物流单号
-      //   })
-      // },
+
       addLogisticsSure() {//弹框确定
         let self = this;
         self.dialogFormVisible = false;
@@ -376,13 +409,54 @@
           number: self.addForm.logsiticsNumber
         };
         self.httpApi.order.searchLogisticsOrder(requestData, function (data) {
-          setTimeout(function () {
-            self.$router.go(0);
-          }, 500);
+          // self.select();
+          self.httpApi.order.selectLogisticsByOrderId(requestData, function (data) {
+            console.log('data-----deliveryInfoListNow',data);
+            self.deliveryInfoListNow = data.data;
+            // self.logsiticsNumber = data.data[0].logsiticsNumber;//运单编号
+            // self.logsiticsId = data.data[0].id;//运单id
+          });
         });
 
       },
+      addLogisticsOld(){
+        this.dialogFormVisibleOld = true;
+        this.addFormOld = {operateTime:'',info:''};
+      },
+      addLogisticsSureOld(){//之前添加物流弹窗确定
+        let self = this;
+        self.dialogFormVisibleOld = false;
+        let requestData = {
+          info: self.addFormOld.info,
+          operateTime: self.addFormOld.operateTime,
+          orderId: self.form.orderId,
+          orderNumber: self.form.orderNumber
+        };
+        self.httpApi.order.addDeliveryInfo(requestData, function (data) {
+          let requestDataOld = {
+            orderId: self.form.orderId,
+          };
+          self.httpApi.order.viewOrderInfo(requestDataOld, function (data) {
+            self.form.deliveryInfoList = data.data.deliveryInfoList;
+          });
+        });
+      },
+      deleteLogistics(id) {//删除物流
+        let self = this;
+        let requestData = {
+          deliveryInfoId: id,
+        };
 
+        self.httpApi.order.deleteDeliveryInfo(requestData, function (data) {
+          self.$message.success('删除成功');
+          let requestDataOld = {
+            orderId: self.form.orderId,
+          };
+          self.httpApi.order.viewOrderInfo(requestDataOld, function (data) {
+            self.form = data.data;
+          });
+        });
+      },
     }
   }
 </script>

@@ -59,7 +59,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-dropdown trigger="click">
-              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <i class="iconfont icon-more cursorpoint"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="seeDetail(scope.row.orderId)">订单详情</el-dropdown-item>
                 <!--<el-dropdown-item @click.native="verify(scope.row.orderId)">审核</el-dropdown-item>-->
@@ -189,6 +189,9 @@
       'pagination': require('../../../components/pagination'),
       'getcheckbox': require('../../../components/getcheckbox'),
     },
+    activated(){
+      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+    },
     methods: {
       clearOrder() {
         let self = this
@@ -204,6 +207,8 @@
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+        localStorage.setItem('pageSizeList',page.size);
+        localStorage.setItem('pageNumList',page.num);
       },
       getCheckList(e) {
         this.form.orderStatus = e;
@@ -261,3 +266,8 @@
     }
   }
 </script>
+<style>
+  .cursorpoint {
+    cursor: pointer;
+  }
+</style>

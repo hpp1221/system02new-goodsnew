@@ -94,8 +94,8 @@
         </el-table-column>
         <el-table-column prop="isUp" label="上下架">
             <template slot-scope="scope">
-              <span v-if="scope.row.isUp === 0">下架</span>
-              <span v-else>下架</span>
+              <span v-if="scope.row.isUp === '0'">下架</span>
+              <span v-if="scope.row.isUp === '1'">上架</span>
             </template>
         </el-table-column>
         <el-table-column label="操作">

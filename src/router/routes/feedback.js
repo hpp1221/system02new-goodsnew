@@ -4,7 +4,10 @@
 export default [
   {
     path: '/feedback/list', //用户意见反馈列表
-    component: resolve => require(['@/pages/feedback/List'], resolve)
+    component: resolve => require(['@/pages/feedback/List'], resolve),
+    meta:{
+      keepAlive:true
+    }
   },
   {
     path: '/feedback/detail/:id', //用户意见反馈详情

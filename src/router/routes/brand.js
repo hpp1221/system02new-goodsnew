@@ -4,7 +4,10 @@
 export default [
   {
     path: '/brand/list', //品牌商列表
-    component: resolve => require(['@/pages/brand/List'], resolve)
+    component: resolve => require(['@/pages/brand/List'], resolve),
+    meta:{
+      keepAlive:true
+    }
   },
   {
     path: '/brand/add', //品牌商新增
@@ -16,6 +19,9 @@ export default [
   },
   {
     path: '/brand/update/:id', //品牌商修改
-    component: resolve => require(['@/pages/brand/Update'], resolve)
+    component: resolve => require(['@/pages/brand/Update'], resolve),
+    meta:{
+      keepAlive:false
+    }
   },
 ]

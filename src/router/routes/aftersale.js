@@ -4,7 +4,10 @@
 export default [
   {
     path: '/aftersale/list', //售后列表
-    component: resolve => require(['@/pages/aftersale/List'], resolve)
+    component: resolve => require(['@/pages/aftersale/List'], resolve),
+    meta:{
+      keepAlive:true
+    }
   },
   {
     path: '/aftersale/orderdetail/:id', //订单详情

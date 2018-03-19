@@ -90,11 +90,16 @@
       'pagination': require('../../components/pagination'),
       'catselect': require('../../components/getcatselect'),
     },
+    activated(){
+      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+    },
     methods: {
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.select(page.size, page.num);
+        localStorage.setItem('pageSizeList',page.size);
+        localStorage.setItem('pageNumList',page.num);
       },
       getCatSelect(e) {
         this.easyForm.cat = e.cat;

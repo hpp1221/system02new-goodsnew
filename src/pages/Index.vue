@@ -82,7 +82,7 @@
                 <i class="iconfont icon-shangpin"></i>
               </el-menu-item>
               <!--<el-menu-item index="4" style="padding:0;">-->
-                <!--<i class="iconfont icon-dynamic" @click="iconClick"></i>-->
+              <!--<i class="iconfont icon-dynamic" @click="iconClick"></i>-->
               <!--</el-menu-item>-->
 
               <el-menu-item index="5" style="padding:0;">
@@ -149,8 +149,8 @@
                 <span slot="title" style="margin-left: 3px;;color: #fff">商品管理</span>
               </el-menu-item>
               <!--<el-menu-item index="3" style="padding:0;">-->
-                <!--<i class="iconfont icon-shangpin"></i>-->
-                <!--<span slot="title" style="margin-left: 3px;">组合营销管理</span>-->
+              <!--<i class="iconfont icon-shangpin"></i>-->
+              <!--<span slot="title" style="margin-left: 3px;">组合营销管理</span>-->
               <!--</el-menu-item>-->
 
               <el-menu-item index="5" style="padding:0;">
@@ -224,7 +224,7 @@
       </transition>
       <el-main>
         <!--<keep-alive>-->
-          <!--<router-view></router-view>-->
+        <!--<router-view></router-view>-->
         <!--</keep-alive>-->
 
         <keep-alive>

@@ -4,7 +4,10 @@
 export default [
   {
     path: '/temporary/list', //临时商品列表
-    component: resolve => require(['@/pages/temporary/List'], resolve)
+    component: resolve => require(['@/pages/temporary/List'], resolve),
+    meta:{
+      keepAlive:true
+    }
   },
   {
     path: '/temporary/create', //临时商品新增

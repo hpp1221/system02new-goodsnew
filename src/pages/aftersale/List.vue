@@ -119,6 +119,9 @@
     components: {
       'pagination': require('../../components/pagination'),
     },
+    activated(){
+      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+    },
     methods: {
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -126,7 +129,9 @@
       pageChanged(page) {//页码
         this.pageSize = page.size;
         this.pageNum = page.num;
-        this.select(page.size, page.num)
+        this.select(page.size, page.num);
+        localStorage.setItem('pageSizeList',page.size);
+        localStorage.setItem('pageNumList',page.num);
       },
       select(size, num) {//查询
         let self = this;

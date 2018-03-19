@@ -45,14 +45,15 @@
         <el-form-item label="凭证上传">
           <div v-for="(u,index) in form.brandDealerVoucherList" :key="index"
                style="float: left;margin-right: 100px;text-align: center">
-            <uploadoneimg
-              v-if="form.brandDealerVoucherList.length > 0"
-              :fileList="u.url"
+            <!--<uploadoneimg-->
+              <!--v-if="form.brandDealerVoucherList.length > 0"-->
+              <!--:fileList="u.url"-->
 
-              :disabled="true"
-              :title="u.name"
-            >
-            </uploadoneimg>
+              <!--:disabled="true"-->
+              <!--:title="u.name"-->
+            <!--&gt;-->
+            <!--</uploadoneimg>-->
+            <img :src="u.url + '?imageView2/1/w/400/h/400'" alt="" @click="getBigPic(u)"><br>
             <span>{{u.name}}</span>
           </div>
           <!--<div v-for="u in form.brandDealerVoucherList"-->
@@ -65,6 +66,9 @@
           <el-button @click="cancelUpdate">返回</el-button>
         </el-form-item>
       </el-form>
+      <el-dialog title="图片信息" :visible.sync="dialogTableVisibleImg">
+        <img :src="imgBig + '?imageView2/1/w/600/h/600'" class="image">
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -79,6 +83,8 @@
         selectedOptions2: [],//地址
         types: [],
         addressNameDetail: '',
+        dialogTableVisibleImg:false,//图片放大弹框
+        imgBig:'',//图片放大
         form: {
           brandDealerId:'',
           name: '',
@@ -115,6 +121,10 @@
       'uploadoneimg': require('../../components/uploadoneimg'),
     },
     methods: {
+      getBigPic(u){
+        this.dialogTableVisibleImg = true;
+        this.imgBig = u.url;
+      },
       getPrivence() {//所有省市区
         let self = this
         let requestData = {}

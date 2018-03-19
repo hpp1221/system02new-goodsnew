@@ -1,10 +1,7 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <div style="float: right;margin:22px 70px">
-        <el-button @click="returnList">取消</el-button>
-        <el-button @click="sureDetail" type="primary">完成</el-button>
-      </div>
+
 
       <el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="demo-ruleForm" inline style="padding:50px">
         <el-form-item label="客户名称">
@@ -14,12 +11,11 @@
         <el-form-item label="反馈单号">
           <el-input v-model="ruleForm.sugId" style="width: 300px;margin-right: 200px;" :disabled="true"></el-input>
         </el-form-item>
-
+        <br>
         <el-form-item label="反馈时间">
           <el-input v-model="moment(ruleForm.createTime).format('YYYY-MM-DD HH:mm:ss')" style="width: 300px;margin-right: 200px;" :disabled="true">
           </el-input>
         </el-form-item>
-
         <el-form-item label="反馈类型">
           <el-select placeholder="全部" style="width:300px" v-for="t in feedbackType" :key="t.id" v-if="t.id == ruleForm.sugProType" v-model="t.name" :disabled="true">
             <el-option :label="t.name" :key="t.id" :value="t.id" v-for="t in feedbackType">{{t.name}}</el-option>
@@ -36,6 +32,10 @@
         <br>
 
       </el-form>
+      <div style="float: right;margin:22px 70px">
+        <el-button @click="returnList">取消</el-button>
+        <el-button @click="sureDetail" type="primary">完成</el-button>
+      </div>
     </div>
   </div>
 </template>

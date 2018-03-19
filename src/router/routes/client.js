@@ -20,7 +20,10 @@ export default [
   },
   {
     path: '/client/clientmanagement', //客户列表
-    component: resolve => require(['@/pages/client/ClientManagement'], resolve)
+    component: resolve => require(['@/pages/client/ClientManagement'], resolve),
+    meta:{
+      keepAlive:true
+    }
   },
 
   {
