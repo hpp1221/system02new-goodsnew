@@ -225,7 +225,7 @@
       'brandselect': require('../../components/getbrandselect')
     },
     activated(){
-      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+      this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
     },
     methods: {
       getBrandSelect(e) {
@@ -312,11 +312,7 @@
           if(self.upOrDownIds.indexOf(self.upOrDownIds[i]) == -1){
             self.upOrDownIds.push(val[i].id);
           }
-
         }
-        console.log('ids',self.upOrDownIds)
-
-        console.log('vall',val)
         if (val.length > 0) {
 
           self.multipleSelection = val;

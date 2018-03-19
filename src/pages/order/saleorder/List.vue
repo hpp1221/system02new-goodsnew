@@ -182,7 +182,7 @@
           },
         ],//订单状态
         advanceSearch: false,
-        searchType: 1
+        searchType: 1//1是简单搜索，2是高级搜索
       }
     },
     components: {
@@ -190,7 +190,7 @@
       'getcheckbox': require('../../../components/getcheckbox'),
     },
     activated(){
-      this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'))
+      this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
     },
     methods: {
       clearOrder() {
