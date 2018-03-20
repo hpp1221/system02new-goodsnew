@@ -105,15 +105,9 @@
       }
     },
     created() {
-
-
-
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
-      this.getPrivence();
+      this.getPrivence();//所有省市区
       this.getImgUploadType()//凭证上传
-//      if (!this.$route.params.id) {
-//        this.$router.push('/error');
-//      }
     },
     components: {
       ElInput,

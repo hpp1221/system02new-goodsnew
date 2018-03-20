@@ -30,7 +30,6 @@
             </el-form-item>
             <el-form-item label="贸易形态" style="margin-right: 210px">
               <gradetypeselect @getGradeTypeSelect="getGradeTypeSelect" :selectAllVisible="false" style="width:350px;"></gradetypeselect>
-
             </el-form-item>
             <h4 class="item-title">商品规格</h4>
             <el-form-item label="商品规格" style="overflow: hidden">

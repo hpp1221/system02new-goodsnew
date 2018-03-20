@@ -93,7 +93,7 @@
         <el-form-item label="凭证上传">
           <div v-for="(u,index) in form.brandDealerVoucherList" :key="index"
                style="float: left;margin-right: 100px;text-align: center">
-            <img :src="u.url + '?imageView2/1/w/400/h/400'" alt="" @click="clickIndex(u)"> <br>
+            <img :src="u.url + '?imageView2/1/w/200/h/200'" alt="" @click="clickIndex(u)"> <br>
             <!--<uploadoneimg-->
               <!--style="width:265px"-->
               <!--:fileList="u.url"-->
