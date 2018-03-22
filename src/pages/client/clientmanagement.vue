@@ -78,7 +78,7 @@
         <el-table-column prop="storeName" label="门店名称">
 
         </el-table-column>
-        <el-table-column  label="收货地址">
+        <el-table-column  label="门店地址">
           <template slot-scope="scope">
             <span>{{scope.row.addressName + scope.row.address}}</span>
             <!--<AddressAll v-if="regionList.length > 0"  :cityId ="scope.row.cityId" :provinceId="scope.row.provinceId" :streetId="scope.row.streetId" :areaId="scope.row.areaId" :address="scope.row.address" :data="regionList" ></AddressAll>-->

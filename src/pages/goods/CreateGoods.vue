@@ -389,10 +389,10 @@
       },
       createGoodsDetail(tableMap, index) {
         let size = this.form.spec.length;
+        console.log('form.spec',this.form.spec)
         let tableKey = this.form.spec[index].specName;
         for (let i = 0; i < this.form.spec[index].specValue.length; i++) {//颜色
           tableMap[tableKey] = this.form.spec[index].specValue[i];
-
           if (index < size - 1) {
             index++;
             this.createGoodsDetail(tableMap, index);
