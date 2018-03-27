@@ -5,7 +5,7 @@ import Order from './routes/order'//订单模块
 import Goods from './routes/goods'//商品模块
 import Personal from './routes/personal'//个人中心模块
 import Dictionary from './routes/dictionary'//业务数据模块
-import Supplier from './routes/supplier'//供应商模块
+// import Supplier from './routes/supplier'//供应商模块
 // import Store from './routes/store'//门店模块
 import Client from './routes/client'//客户模块
 import Brand from './routes/brand'//品牌商模块
@@ -14,6 +14,7 @@ import Mail from './routes/mail'//站内信模块
 import Tenant from './routes/tenant'//租户模块
 import Temporary from './routes/temporary'//临时商品模块
 import Aftersale from './routes/aftersale'//售后模块
+import Coupon from './routes/coupon'//优惠券模块
 Vue.use(Router)
 
 export default new Router({
@@ -46,7 +47,7 @@ export default new Router({
         ...Goods,
         ...Personal,
         ...Dictionary,
-        ...Supplier,
+        // ...Supplier,
         // ...Store,
         ...Client,
         ...Brand,
@@ -55,6 +56,7 @@ export default new Router({
         ...Mail,
         ...Temporary,
         ...Aftersale,
+        ...Coupon,
       ]
     },
   ]

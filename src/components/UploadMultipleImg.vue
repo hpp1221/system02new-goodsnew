@@ -21,6 +21,7 @@
           token: '',
           file: ''
         },
+        imageNum:0
       }
     },
     props: {
@@ -59,6 +60,14 @@
         });
       },
       handleRemove(file, fileList){
+        if(this.imageNum>3){
+          this.imageNum--;
+          return
+        }
+        //this.cutimgurlMulti(this.imageUrlduo);
+        this.imageNum--;
+        console.log('delete---file',file);
+        console.log('delete---fileList',fileList);
         this.$emit('removeFile', {
           name: file.name,
           url: file.url

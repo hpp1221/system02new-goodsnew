@@ -45,6 +45,13 @@
                 v-if="form.skus.length > 0"
                 style="width: 100%">
                 <el-table-column
+                  label="是否上架"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="主图"
                   width="180">
                   <template slot-scope="scope">
@@ -149,13 +156,7 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="是否上架"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
-                  </template>
-                </el-table-column>
+
               </el-table>
             </el-form-item>
 
@@ -294,6 +295,13 @@
                 ref="tableData"
               >
                 <el-table-column
+                  label="是否上架"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="主图"
                   width="180">
                   <template slot-scope="scope">
@@ -397,13 +405,7 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="是否上架"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
-                  </template>
-                </el-table-column>
+
               </el-table>
             </el-form-item>
 

@@ -11,7 +11,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 收货人手机号：{{form.orderDetail.mobile}} &nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;&nbsp;&nbsp;收货人地址：{{form.orderDetail.address}}
 
-          <el-button  v-if="tradeType ==2 || tradeType ==3" @click="selectRealInfo" style="margin-left: 10px;">查看实名信息</el-button>
+          <el-button  v-if="tradeName == '跨境保税' || tradeName == '海外直邮'" @click="selectRealInfo" style="margin-left: 10px;">查看实名信息</el-button>
           <el-button style="float: right" @click="returnOrderList">返回</el-button>
         </el-form-item>
         <!--<el-form-item style="float: right">-->
@@ -238,7 +238,7 @@
           idCardImg:'',
           idCardBgImg:'',
         },
-        tradeType:'',//贸易形态
+        tradeName:'',//贸易形态
         pickerOptions1: {
           shortcuts: [{
             text: '今天',
@@ -328,6 +328,10 @@
             name: '取消订单',
             id: 6
           },
+          {
+            name: '退款和退货订单',
+            id: 7
+          },
         ],
       }
     },
@@ -368,9 +372,7 @@
         self.httpApi.order.viewOrderInfo(requestData, function (data) {
           self.form = data.data;
           self.addFormReal = data.data.orderDetail;
-          self.tradeType = data.data.tradeType;
-          console.log('self.addFormReal',self.addFormReal);
-          console.log('self.tradeType',self.tradeType);
+          self.tradeName = data.data.tradeName;
           self.form.deliveryInfoList = data.data.deliveryInfoList;
           self.totalReducePrice = self.form.totalPrice - self.form.paymentPrice;
           self.totalReducePrice = self.totalReducePrice.toFixed(2);

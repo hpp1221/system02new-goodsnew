@@ -13,6 +13,7 @@ axios.interceptors.request.use(function (config) {
   //loadingInstance = Loading.service({ fullscreen: true });
   config.headers.token = localStorage.getItem('token') || '';
   config.headers.memberId = localStorage.getItem('memberId')||'';
+  config.headers.loginId = localStorage.getItem('loginId')||'';
   return config;
 }, function (error) {
   // 对请求错误做些什么

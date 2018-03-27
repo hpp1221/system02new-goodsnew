@@ -180,6 +180,10 @@
             name: '取消订单',
             id: 6
           },
+          {
+            name: '退款和退货订单',
+            id: 7
+          },
         ],//订单状态
         advanceSearch: false,
         searchType: 1//1是简单搜索，2是高级搜索

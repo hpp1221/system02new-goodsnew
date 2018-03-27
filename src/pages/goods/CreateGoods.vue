@@ -69,6 +69,13 @@
                 style="width: 1700px;overflow: auto"
               >
                 <el-table-column
+                  label="是否上架"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
+                  </template>
+                </el-table-column>
+                <el-table-column
                   label="主图"
                   width="180">
                   <template slot-scope="scope">
@@ -175,13 +182,7 @@
                     </el-input>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="是否上架"
-                  width="180">
-                  <template slot-scope="scope">
-                    <el-checkbox v-model="scope.row.isUp" true-label="1" false-label="0"></el-checkbox>
-                  </template>
-                </el-table-column>
+
               </el-table>
 
             </el-form-item>

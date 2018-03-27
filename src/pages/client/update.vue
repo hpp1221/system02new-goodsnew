@@ -47,7 +47,7 @@
           <el-input v-model="form.sysMember.loginId" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
         <el-form-item label="门店名称">
-          <el-input v-model="form.store.name" style="width:366px;margin-right: 200px" ></el-input>
+          <el-input v-model="form.store.name" style="width:366px;margin-right: 200px"></el-input>
         </el-form-item>
         <el-form-item label="经营规模">
           <el-select v-model="form.store.num" style="width:366px;margin-right: 200px" placeholder="请选择">
@@ -100,6 +100,20 @@
             <span>{{u.name}}</span>
           </div>
         </el-form-item>
+        <el-form-item  v-if="form.brandDealerVoucherList == ''" label="凭证上传">
+          <div v-for="(u,index1) in typeStore" :key="index1"
+               style="float: left;margin:20px 280px 50px 66px;width: 18%;text-align: center">
+            <uploadoneimg
+              style="width:265px"
+              :fileList="u.url"
+              @getFileList="getFileListNull"
+              @click.native="clickIndex1 = index1"
+              :title="u.name"
+            >
+            </uploadoneimg>
+            <span>{{u.name}}</span>
+          </div>
+        </el-form-item>
 
       </el-form>
       <div style="float: right;margin: 10px 30px 0px 0px;">
@@ -119,7 +133,7 @@
         addressData: [],//所有省市区数据
         selectedOptions2: [],//地址
 
-        storeNameNew:'',
+        storeNameNew: '',
         form: {
           store: {
             legalName: '',
@@ -133,7 +147,7 @@
             areaId: '',
             streetId: '',
             num: '',
-            type:'',
+            type: '',
 
           },
           sysMember: {
@@ -145,6 +159,7 @@
 
           },
           brandDealerVoucherList: [],
+          brandDealerVoucherList1: [],
         },
         totalOrderStatus: [
           {
@@ -189,11 +204,13 @@
     methods: {
       getFileList(file) {//凭证上传图片
         this.form.brandDealerVoucherList[this.clickIndex].url = file.url;
+
       },
+
       getStoreNum() {//门店经营规模
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_num'}, function (data) {
-          self.storeNum= data.data.list;
+          self.storeNum = data.data.list;
         })
       },
       getStoreArea() {//门店面积
@@ -205,7 +222,7 @@
       getStoreType() {//门店类型
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_type'}, function (data) {
-          self.storeType= data.data.list;
+          self.storeType = data.data.list;
         })
       },
       getAllAddress() {//所有省市区
@@ -223,9 +240,35 @@
       getImgUploadType() {//凭证上传
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_voucher'}, function (data) {
+          console.log('555',data);
           self.typeStore = data.data.list;
-          console.log("types",self.typeStore);
+          let typeStore = self.typeStore;
+          for (let i = 0; i < typeStore.length; i++) {
+            self.form.brandDealerVoucherList1.push({type: typeStore[i].value, url: '', name: typeStore[i].name});
+          }
         })
+      },
+      getFileListNull(file) {
+
+        let self = this;
+        console.log('brandDealerVoucherList1',self.form.brandDealerVoucherList1);
+        self.form.brandDealerVoucherList1[this.clickIndex1].url = file.url;
+        console.log('click1',self.form.brandDealerVoucherList1);
+        let brandDealerVoucherList1 = self.form.brandDealerVoucherList1;
+        let brandDealerVouchers1 = [];
+        let typeStore = self.typeStore;
+        for (let i = 0; i < brandDealerVoucherList1.length; i++) {
+          for (let j = 0; j < typeStore.length; j++) {
+            if (brandDealerVoucherList1[i].type == typeStore[j].value) {
+              brandDealerVouchers1.push({
+                type: typeStore[j].value,
+                url: brandDealerVoucherList1[i].url,
+                name: typeStore[j].name
+              })
+            }
+          }
+        }
+        self.form.brandDealerVoucherList1 = brandDealerVouchers1;
       },
       select(id) {//详情接口
         let self = this
@@ -233,28 +276,29 @@
           memberId: id
         }
         self.httpApi.vip.selectStoreMemberInfoById(requestData, function (data) {
-          self.form.store = data.data.store;
-          self.form.sysMember = data.data.sysMember;
-          self.form.brandDealerVoucherList = data.data.storeVouchers
-          // console.log('self.form.brandDealerVoucherList',self.form.brandDealerVoucherList)
-          self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId)
-          let brandDealerVoucherList = self.form.brandDealerVoucherList;
-          console.log('brandDealerVoucherList',brandDealerVoucherList);
-          let brandDealerVouchers = [];
-          console.log('222---type',self.typeStore);
-          let typeStore = self.typeStore;
-          for (let i = 0; i < brandDealerVoucherList.length; i++) {
-            for (let j = 0; j < typeStore.length; j++) {
-              if (brandDealerVoucherList[i].type == typeStore[j].value) {
-                brandDealerVouchers.push({
-                  type: typeStore[j].value,
-                  url: brandDealerVoucherList[i].url,
-                  name: typeStore[j].name
-                })
+          console.log('id===detail', data);
+          if (data.data.store) {
+            self.form.store = data.data.store;
+            self.form.sysMember = data.data.sysMember;
+            self.form.brandDealerVoucherList = data.data.storeVouchers
+            // console.log('self.form.brandDealerVoucherList',self.form.brandDealerVoucherList)
+            self.selectedOptions2.push('' + self.form.store.provinceId, '' + self.form.store.cityId, '' + self.form.store.areaId)
+            let brandDealerVoucherList = self.form.brandDealerVoucherList;
+            let brandDealerVouchers = [];
+            let typeStore = self.typeStore;
+            for (let i = 0; i < brandDealerVoucherList.length; i++) {
+              for (let j = 0; j < typeStore.length; j++) {
+                if (brandDealerVoucherList[i].type == typeStore[j].value) {
+                  brandDealerVouchers.push({
+                    type: typeStore[j].value,
+                    url: brandDealerVoucherList[i].url,
+                    name: typeStore[j].name
+                  })
+                }
               }
             }
+            self.form.brandDealerVoucherList = brandDealerVouchers;
           }
-          self.form.brandDealerVoucherList = brandDealerVouchers;
 
           // self.form.brandDealerVoucherList = brandDealerVouchers;
           // console.log('brandDealerVouchers',brandDealerVouchers)
@@ -266,15 +310,28 @@
 
       },
       sureBrandList(id) {//修改确认
-        let self = this
-        let requestData = {
-          store: self.form.store,
-          storeVouchers: self.form.brandDealerVoucherList,
-          sysMember: self.form.sysMember
+        let self = this;
+        if(self.form.brandDealerVoucherList == ''){
+
+          let requestData = {
+            store: self.form.store,
+            storeVouchers: self.form.brandDealerVoucherList1,
+            sysMember: self.form.sysMember
+          }
+          self.httpApi.vip.updateStoreMemberById(requestData, function (data) {
+            self.$router.push('/client/clientmanagement')
+          })
+        }else{
+          let requestData = {
+            store: self.form.store,
+            storeVouchers: self.form.brandDealerVoucherList,
+            sysMember: self.form.sysMember
+          }
+          self.httpApi.vip.updateStoreMemberById(requestData, function (data) {
+            self.$router.push('/client/clientmanagement')
+          })
         }
-        self.httpApi.vip.updateStoreMemberById(requestData, function (data) {
-          self.$router.push('/client/clientmanagement')
-        })
+
       },
       returnBrandList() {//返回列表主页
         this.$router.push('/client/clientmanagement')
