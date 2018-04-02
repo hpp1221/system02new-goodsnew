@@ -126,7 +126,6 @@
             <el-date-picker
               v-model="formCouponAdd.fixTime"
               type="datetimerange"
-              :picker-options="pickerOptions2"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -433,18 +432,33 @@
             <el-input v-model="formCategoryUpdate.name" auto-complete="off" class="form-input"
                       placeholder="单行输入"></el-input>
           </el-form-item>
-          <el-form-item :label-width="formLabelWidth">
-                 <div v-if="IdsList.length > 0" v-for="(it,index) in IdsList" :key="index">
-                      <el-cascader
-                        :options="totalCatListAll"
-                        v-if="totalCatListAll.length > 0"
-                        :show-all-levels="false"
-                        v-model="it.ids"
-                        @change="getUpdateCatSelect(it.ids,index)"
-                        style="width:300px;margin-bottom: 20px;">
-                    </el-cascader>
-                  </div>
-          </el-form-item>
+          <div v-if="IdsList.length > 0" v-for="(it,index) in IdsList" :key="index" style="margin-left: 100px;">
+            <i class="el-icon-minus" @click="deleteOneUpdate(index)"></i>
+            <el-cascader
+              :options="totalCatListAll"
+              v-if="totalCatListAll.length > 0"
+              :show-all-levels="false"
+              v-model="it.ids"
+              @change="getUpdateCatSelect(it.ids,index)"
+              style="width:300px;margin-bottom: 20px;">
+            </el-cascader>
+          </div>
+         <!-- <div v-for="item in classUpdate" :key="item.id" class="createClass">
+            <i class="el-icon-minus" @click="deleteOneUpdate(index)"></i>
+            <el-cascader
+              :options="totalCatListUpdate"
+              v-if="totalCatListUpdate.length > 0"
+              v-model="item.cat"
+              @active-item-change="getCatListUpdate"
+              :show-all-levels="false"
+              @change="getCatUpdate(item)"
+              clearable
+              :props="props"
+              style="width:300px;"
+            >
+            </el-cascader>
+          </div>
+          <el-button @click="addOneUpdate" style="margin-left: 220px;">添加</el-button>-->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="categoryUpdateCancel">取 消</el-button>
@@ -459,7 +473,7 @@
   export default {
     data() {
       return {
-        IdsList:[],
+        IdsList: [],
         activeIndex: '1',//菜单切换
         /*优惠券配置部分 start*/
         tableDataCoupon: [],//优惠券list
@@ -541,32 +555,35 @@
         },
         dialogFormVisibleCategory: false,//品类规则新增弹框
         dialogFormVisibleCategoryUpdate: false,//品类规则修改弹框
-        formCategoryAdd: {//品类规则新增form
+        formCategoryAdd: {
           name: '',
           cat: [],
           catId: [],
           catName: [],
           class: [],//添加的总品类
-        },
-        formCategoryUpdate: {//品类规则修改form
+        },//品类规则新增form
+        formCategoryUpdate: {
           name: '',
           id: '',
           categoryIds: '',
           categoryNames: '',
-        },
-        formCategoryUpdateSure :{
-          ids:[],
-          names:[]
+        },//品类规则修改form
+/*        classUpdate:[],*/
+        formCategoryUpdateSure: {
+          ids: [],
+          names: []
         },
         cat: [],
         catUpdateSure: [],
+        totalCatList: [],
         totalCatListAll: [],
+ /*       totalCatListUpdate: [],*/
         props: {
           value: 'res',
           children: 'children',
           label: 'name'
         },
-        outCat:{id:"2",name:'婴幼儿奶粉'},
+        outCat: {id: "2", name: '婴幼儿奶粉'},
         /*品类规则配置部分 end*/
         pageSize: 5,
         pageNum: 1,
@@ -884,16 +901,19 @@
         this.dialogFormVisibleCategory = true;
         this.formCategoryAdd = {//品类规则新增form
           name: '',
-            cat: [],
-            catId: [],
-            catName: [],
-            class: [],//添加的总品类
+          cat: [],
+          catId: [],
+          catName: [],
+          class: [],//添加的总品类
         },
-        this.getCatList();
+          this.getCatList();
       },//品类规则新增弹框
-      addOneAnnex() {//新增品类规则中的添加类目
+      addOneAnnex() {
         this.formCategoryAdd.class.push({name: ''});
-      },
+      },//新增品类规则中的添加类目
+    /*  addOneUpdate() {
+        this.classUpdate.push({id:'',cat:[]});
+      },//修改品类规则中的添加类目*/
       getCatList(val) {
         let self = this;
         let requestData;
@@ -917,6 +937,29 @@
           }
         });
       },
+/*      getCatListUpdate(val) {
+        let self = this;
+        let requestData;
+        if (val === undefined) {
+          requestData = {catId: -1};
+        } else {
+          requestData = {catId: val[val.length - 1].id};
+        }
+
+        self.httpApi.goods.catList(requestData, function (data) {
+          for (let i = 0; i < data.data.length; i++) {
+            data.data[i].res = JSON.parse(data.data[i].res);
+            if (parseInt(data.data[i].hasChild) > 0) {
+              data.data[i].children = [];
+            }
+          }
+          if (val === undefined) {
+            self.totalCatListUpdate = data.data;
+          } else {
+            self.insertCat(self.totalCatListUpdate, val, data.data, 0);
+          }
+        });
+      },//修改中的新增*/
       insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
         for (let i = 0; i < arr.length; i++) {
           if (arr[i].id === val[level].id) {
@@ -945,8 +988,36 @@
         } else {
           this.cat.push(obj);
         }
-        console.log('this.cat-end',this.cat);
       },
+/*      getCatUpdate(val, index1) {
+        console.log('val-update',val);
+        console.log('this.IdsList-update',this.IdsList);
+        let arr = [];
+        for(let i = 0 ; i < val.cat.length;i++){
+          arr.push(val.cat[i].id);
+        }
+        let objUpdate = {};
+        objUpdate['ids'] = arr;
+        objUpdate['name'] = val.cat[1].name;
+        this.IdsList.push(objUpdate);
+        console.log('objUpdate',objUpdate);
+        return;
+        let valT = val.cat[val.cat.length - 1];
+        let index = index1;
+        let obj = {};
+        obj['index'] = index;
+        obj['name'] = valT;
+        let item = this.cat.findIndex(n => n.index === index);
+        if (item !== -1) {
+          for (let i = 0; i < this.cat.length; i++) {
+            if (index === this.cat[i].index) {
+              this.cat[i].name = valT;
+            }
+          }
+        } else {
+          this.cat.push(obj);
+        }
+      },//修改中的新增*/
       deleteOneAnnex(index) {
         this.formCategoryAdd.class.splice(index, 1);
         this.formCategoryAdd.catName.splice(index, 1);
@@ -959,7 +1030,8 @@
         for (let i = 0; i < this.cat.length; i++) {
           ids.push(this.cat[i].name.id);
           names.push(this.cat[i].name.name);
-        };
+        }
+        ;
         ids = ids.join(',');
         names = names.join(',');
         let requestData = {
@@ -994,29 +1066,59 @@
       },//条件查询不分页
       updateCategory(row) {
         let self = this;
+        self.IdsList = [];
+        self.formCategoryUpdateSure.ids = [];
+        self.formCategoryUpdateSure.names = [];
         self.dialogFormVisibleCategoryUpdate = true;
         self.getMapCatList();
-        self.httpApi.goodsCat.getGoodsCatTree({},function (data) {
+      /*  self.getCatListUpdate();*/
+        self.httpApi.goodsCat.getGoodsCatTree({}, function (data) {
           self.totalCatListAll = data.data.goodsCatTrees;
-          if(self.totalCatListAll.length > 0 ){
+          if (self.totalCatListAll.length > 0) {
             let requestData = {
-              id:row.id,
+              id: row.id,
             };
-            self.httpApi.coupon.selectCouponCategoryRuleById(requestData,function (data) {
+            self.httpApi.coupon.selectCouponCategoryRuleById(requestData, function (data) {
               self.IdsList = data.data.categoryIdsList;
-              console.log('IdsList---------5555',self.IdsList);
               self.formCategoryUpdate = data.data;
+              if (self.mapCatList) {
+                for (let j = 0; j < self.IdsList.length; j++) {
+                  for (let key in self.mapCatList) {
+                    if (key == self.IdsList[j].ids[1]) {
+                      self.IdsList[j].name = self.mapCatList[key].name;
+                    }
+                  }
+
+                }
+              }
             })
           }
         })
+
       },//打开修改弹框
-      getMapCatList(){
+      getMapCatList() {
         let self = this;
-        self.httpApi.goodsCat.selectGoodsCatMap({},function (data) {
+        self.httpApi.goodsCat.selectGoodsCatMap({}, function (data) {
           self.mapCatList = data.data;
         })
       },
-      getUpdateCatSelect(val,index2){
+      getUpdateCatSelect(val, index2) {
+        console.log('val', val);
+        console.log('index2', index2);
+        console.log('this.idsList', this.IdsList);
+        for (let i = 0; i < this.IdsList.length; i++) {
+          if (i === index2) {
+            this.IdsList[i].ids = val;
+            this.IdsList[i].name = this.mapCatList[val[1]].name;
+          } else {
+            this.IdsList[i].ids = this.IdsList[i].ids;
+            this.IdsList[i].name = this.IdsList[i].name;
+          }
+        }
+        console.log('this.IdsList-----3', this.IdsList);
+        return;
+
+
         let self = this;
         let ids = val[1];
         let index = index2;
@@ -1025,40 +1127,47 @@
         obj['id'] = ids;
         obj['name'] = self.mapCatList[ids].name;
         let item1 = self.catUpdateSure.findIndex(n => n.index === index);
-        if(item1 !== -1){
-          for(let i = 0 ; i < self.catUpdateSure.length; i++){
-            if(index === self.catUpdateSure[i].index){
+        if (item1 !== -1) {
+          for (let i = 0; i < self.catUpdateSure.length; i++) {
+            if (index === self.catUpdateSure[i].index) {
               self.catUpdateSure[i].id = ids;
               self.catUpdateSure[i].name = self.mapCatList[ids].name;
             }
           }
-        }else{
+        } else {
           self.catUpdateSure.push(obj);
         }
-        console.log('self.catUpdateSure',self.catUpdateSure);
+        console.log('self.catUpdateSure', self.catUpdateSure);
       },//修改类目
       categoryUpdateSure() {
         let self = this;
-        for(let  i=0;i<self.catUpdateSure.length;i++){
-          self.formCategoryUpdateSure.ids.push(self.catUpdateSure[i].id);
-          self.formCategoryUpdateSure.names.push(self.catUpdateSure[i].name);
+        for (let i = 0; i < self.IdsList.length; i++) {
+          self.formCategoryUpdateSure.ids.push(self.IdsList[i].ids[1]);
+          self.formCategoryUpdateSure.names.push(self.IdsList[i].name);
         }
-          let requestData = {
-            categoryIds:self.formCategoryUpdateSure.ids.join(','),
-            categoryNames:self.formCategoryUpdateSure.names.join(','),
-            id:self.formCategoryUpdate.id,
-            name:self.formCategoryUpdate.name,
-          };
-          self.httpApi.coupon.updateCouponCategoryRule(requestData,function (data) {
-            self.dialogFormVisibleCategoryUpdate = false;
-            self.$message.success('修改成功');
-            self.selectCategory(self.pageSize, self.pageNum);
-          })
+        let requestData = {
+          categoryIds: self.formCategoryUpdateSure.ids.join(','),
+          categoryNames: self.formCategoryUpdateSure.names.join(','),
+          id: self.formCategoryUpdate.id,
+          name: self.formCategoryUpdate.name,
+        };
+        self.httpApi.coupon.updateCouponCategoryRule(requestData, function (data) {
+          self.dialogFormVisibleCategoryUpdate = false;
+          self.$message.success('修改成功');
+          self.selectCategory(self.pageSize, self.pageNum);
+          self.IdsList = [];
+          self.formCategoryUpdateSure.ids = [];
+          self.formCategoryUpdateSure.names = [];
+        })
       },//修改确定
       categoryUpdateCancel() {
         this.dialogFormVisibleCategoryUpdate = false;
         this.selectCategory(this.pageSize, this.pageNum);
       },//修改取消
+      deleteOneUpdate(index) {//修改中删除一条
+        this.formCategoryAdd.class.splice(index, 1);
+        this.IdsList.splice(index, 1);
+      },
       deleteCategory(id) {
         let self = this;
         let requestData = {
