@@ -15,9 +15,6 @@ Vue.prototype.httpApi = {
   permission:{},
   returnOrder:{},
   role:{},
-  store:{},
-  stock:{},
-  supplier:{},
   user:{},
   vip:{},
   level:{},
@@ -26,4 +23,5 @@ Vue.prototype.httpApi = {
   qiniuyun:{},
   temporary:{},
   aftersale:{},
+  coupon:{},
 };

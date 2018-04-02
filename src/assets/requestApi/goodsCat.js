@@ -7,6 +7,22 @@ Vue.prototype.httpApi.goodsCat.createCategory = function (params, successCallbac
       successCallback(data);
     })
 };
+
+//获取类目树
+Vue.prototype.httpApi.goodsCat.getGoodsCatTree = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/goodsCat/getGoodsCatTree', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
+//获取所有类目 不分页 map 类型
+Vue.prototype.httpApi.goodsCat.selectGoodsCatMap = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/goodsCat/selectGoodsCatMap', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //新增单位
 Vue.prototype.httpApi.goodsCat.createUnit = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/goodsCat/createUnit', params,

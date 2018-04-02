@@ -184,8 +184,6 @@
       }
     },
     created() {
-
-
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
       this.getImgUploadType();//凭证上传
       this.getAllAddress();//所有省市区

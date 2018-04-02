@@ -238,8 +238,6 @@
         this.pageNum = page.num;
         localStorage.setItem('pageSizeList',page.size);
         localStorage.setItem('pageNumList',page.num);
-        console.log('88888',localStorage.getItem('pageSizeList'));
-        console.log('9999',localStorage.getItem('pageNumList'));
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
       },
       getCatSelect(e) {

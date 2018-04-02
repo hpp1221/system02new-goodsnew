@@ -7,7 +7,8 @@
     :show-all-levels="showAllLevels"
     @change="getCat"
     :props="props"
-    :disabled="disabled">
+    :disabled="disabled"
+  >
   </el-cascader>
   <!--@click.native="getCatListClick"-->
 
@@ -59,7 +60,7 @@
       },
       getCatList(val){
         let self = this;
-        var requestData;
+        let requestData;
         if (val === undefined) {
           requestData = {catId:-1};
         } else {

@@ -43,7 +43,6 @@
     methods: {
       fetchData(){
         let self = this;
-        console.log(self.outBrand)
         let requestData = {}
         self.httpApi.brand.selectBrandDealerAllList(requestData,function (data) {
           self.totalBrandList = data.data.list;

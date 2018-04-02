@@ -736,7 +736,10 @@
 //
 //          cat.res = cat;
 //          self.totalCategories = [cat];
+          console.log('1------',self.goodsForm.cat);
           self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
+          console.log('3------',self.goodsForm.cat);
+
           self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
           self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
           self.goodsForm.skus = JSON.parse(self.goodsForm.skus);

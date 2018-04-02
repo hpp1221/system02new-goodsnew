@@ -4,7 +4,10 @@
 export default [
   {
     path: '/coupon/list', //列表
-    component: resolve => require(['@/pages/coupon/List'], resolve)
+    component: resolve => require(['@/pages/coupon/List'], resolve),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/coupon/add', //新增
