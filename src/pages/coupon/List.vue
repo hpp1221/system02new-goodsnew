@@ -24,7 +24,7 @@
         <el-table
           :data="tableDataCoupon"
           border
-          style="width: 75%">
+          style="width: 100%">
           <el-table-column
             prop="id"
             label="优惠券ID"
@@ -37,7 +37,8 @@
           </el-table-column>
           <el-table-column
             prop="type"
-            label="优惠券规则">
+            label="优惠券规则"
+            width="180">
             <template slot-scope="scope">
               <span v-if="scope.row.type === 'brand'">品牌规则</span>
               <span v-if="scope.row.type === 'category'">品类规则</span>
@@ -47,15 +48,26 @@
           </el-table-column>
           <el-table-column
             prop="amountRuleId"
-            label="金额规则">
+            label="金额规则"
+            width="180">
             <template slot-scope="scope">
               <span v-for="item in tableDataMoney" :key="item.id" v-if="scope.row.amountRuleId === item.id">{{item.name}}</span>
             </template>
           </el-table-column>
           <el-table-column
+            prop="categoryRuleName"
+            label="品类规则"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="brandRuleName"
+            label="品牌规则"
+            width="180">
+          </el-table-column>
+          <el-table-column
             prop="days"
             label="有效期"
-            width="350">
+            width="330">
             <template slot-scope="scope">
               <span v-if="scope.row.dateRuleType === 'time-interval'">{{moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss')}}--{{moment(scope.row.endTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
               <span v-if="scope.row.dateRuleType === 'fixed-days'">{{scope.row.days + '     ' + '天'}}</span>
@@ -243,6 +255,11 @@
           <el-table-column
             prop="deduction"
             label="优惠金额">
+            <template slot-scope="scope">
+              <span v-if="scope.row.type === 'minus'">减{{scope.row.deduction}}</span>
+              <span v-if="scope.row.type === 'full-cut'">满{{scope.row.amount}}减{{scope.row.deduction}}</span>
+              <span v-if="scope.row.type === 'discount'">{{scope.row.deduction}}折</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="total"
@@ -406,14 +423,11 @@
           <div v-for="(item,index) in formCategoryAdd.class" :key="index" class="createClass">
             <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
             <el-cascader
-              :options="totalCatList"
-              v-if="totalCatList.length > 0"
+              :options="totalCatListAllAdd"
+              v-if="totalCatListAllAdd.length > 0"
               v-model="item.cat"
-              @active-item-change="getCatList"
               :show-all-levels="false"
               @change="getCat(item,index)"
-              clearable
-              :props="props"
               style="width:300px;"
             >
             </el-cascader>
@@ -443,22 +457,22 @@
               style="width:300px;margin-bottom: 20px;">
             </el-cascader>
           </div>
-         <!-- <div v-for="item in classUpdate" :key="item.id" class="createClass">
-            <i class="el-icon-minus" @click="deleteOneUpdate(index)"></i>
-            <el-cascader
-              :options="totalCatListUpdate"
-              v-if="totalCatListUpdate.length > 0"
-              v-model="item.cat"
-              @active-item-change="getCatListUpdate"
-              :show-all-levels="false"
-              @change="getCatUpdate(item)"
-              clearable
-              :props="props"
-              style="width:300px;"
-            >
-            </el-cascader>
-          </div>
-          <el-button @click="addOneUpdate" style="margin-left: 220px;">添加</el-button>-->
+          <!-- <div v-for="item in classUpdate" :key="item.id" class="createClass">
+             <i class="el-icon-minus" @click="deleteOneUpdate(index)"></i>
+             <el-cascader
+               :options="totalCatListUpdate"
+               v-if="totalCatListUpdate.length > 0"
+               v-model="item.cat"
+               @active-item-change="getCatListUpdate"
+               :show-all-levels="false"
+               @change="getCatUpdate(item)"
+               clearable
+               :props="props"
+               style="width:300px;"
+             >
+             </el-cascader>
+           </div>
+           <el-button @click="addOneUpdate" style="margin-left: 220px;">添加</el-button>-->
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="categoryUpdateCancel">取 消</el-button>
@@ -568,7 +582,7 @@
           categoryIds: '',
           categoryNames: '',
         },//品类规则修改form
-/*        classUpdate:[],*/
+        /*        classUpdate:[],*/
         formCategoryUpdateSure: {
           ids: [],
           names: []
@@ -577,7 +591,8 @@
         catUpdateSure: [],
         totalCatList: [],
         totalCatListAll: [],
- /*       totalCatListUpdate: [],*/
+        totalCatListAllAdd: [],
+        /*       totalCatListUpdate: [],*/
         props: {
           value: 'res',
           children: 'children',
@@ -897,24 +912,40 @@
       },//删除
       /*  -------------------  金额规则配置部分 end -------------------------------*/
       /*  -------------------  品类规则配置部分 start -------------------------------*/
+      getMapCatList() {//根据id获取name
+        let self = this;
+        self.httpApi.goodsCat.selectGoodsCatMap({}, function (data) {
+          self.mapCatList = data.data;
+        })
+      },
       categoryAdd() {
-        this.dialogFormVisibleCategory = true;
-        this.formCategoryAdd = {//品类规则新增form
+        let self = this;
+        self.dialogFormVisibleCategory = true;
+        self.getMapCatList();
+        self.formCategoryAdd = {//品类规则新增form
           name: '',
           cat: [],
           catId: [],
           catName: [],
           class: [],//添加的总品类
         },
-          this.getCatList();
+        self.httpApi.goodsCat.getGoodsCatTree({}, function (data) {
+            self.totalCatListAllAdd = data.data.goodsCatTrees;
+          })
+        self.httpApi.goodsCat.selectGoodsCatMap({}, function (data) {
+          console.log('mapCatList-add',self.mapCatList)
+          self.mapCatList = data.data;
+        })
+
       },//品类规则新增弹框
       addOneAnnex() {
-        this.formCategoryAdd.class.push({name: ''});
+        this.formCategoryAdd.class.push({index:'',name: '',cat:[]});
       },//新增品类规则中的添加类目
-    /*  addOneUpdate() {
-        this.classUpdate.push({id:'',cat:[]});
-      },//修改品类规则中的添加类目*/
-      getCatList(val) {
+      /*  addOneUpdate() {
+          this.classUpdate.push({id:'',cat:[]});
+        },//修改品类规则中的添加类目*/
+      /*getCatList(val) {
+        console.log('1111--val',val)
         let self = this;
         let requestData;
         if (val === undefined) {
@@ -936,73 +967,73 @@
             self.insertCat(self.totalCatList, val, data.data, 0);
           }
         });
-      },
-/*      getCatListUpdate(val) {
-        let self = this;
-        let requestData;
-        if (val === undefined) {
-          requestData = {catId: -1};
-        } else {
-          requestData = {catId: val[val.length - 1].id};
-        }
+      },*/
+      /*      getCatListUpdate(val) {
+              let self = this;
+              let requestData;
+              if (val === undefined) {
+                requestData = {catId: -1};
+              } else {
+                requestData = {catId: val[val.length - 1].id};
+              }
 
-        self.httpApi.goods.catList(requestData, function (data) {
-          for (let i = 0; i < data.data.length; i++) {
-            data.data[i].res = JSON.parse(data.data[i].res);
-            if (parseInt(data.data[i].hasChild) > 0) {
-              data.data[i].children = [];
+              self.httpApi.goods.catList(requestData, function (data) {
+                for (let i = 0; i < data.data.length; i++) {
+                  data.data[i].res = JSON.parse(data.data[i].res);
+                  if (parseInt(data.data[i].hasChild) > 0) {
+                    data.data[i].children = [];
+                  }
+                }
+                if (val === undefined) {
+                  self.totalCatListUpdate = data.data;
+                } else {
+                  self.insertCat(self.totalCatListUpdate, val, data.data, 0);
+                }
+              });
+            },//修改中的新增*/
+      /*  insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i].id === val[level].id) {
+              if (val.length === level + 1) {
+                arr[i].children = data;
+              } else {
+                level++;
+                this.insertCat(arr[i].children, val, data, level);
+              }
             }
           }
-          if (val === undefined) {
-            self.totalCatListUpdate = data.data;
-          } else {
-            self.insertCat(self.totalCatListUpdate, val, data.data, 0);
-          }
-        });
-      },//修改中的新增*/
-      insertCat(arr, val, data, level) {//val:所有父级的数组,data:当前获取到的数据
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].id === val[level].id) {
-            if (val.length === level + 1) {
-              arr[i].children = data;
-            } else {
-              level++;
-              this.insertCat(arr[i].children, val, data, level);
-            }
-          }
-        }
-      },
+        },*/
       getCat(val, index1) {
+        console.log('val',val);
+        console.log('index1',index1);
+        console.log('mapCatList',this.mapCatList);
         let valT = val.cat[val.cat.length - 1];
         let index = index1;
         let obj = {};
         obj['index'] = index;
-        obj['name'] = valT;
+        obj['id'] = valT;
+        obj['name'] = '';
         let item = this.cat.findIndex(n => n.index === index);
         if (item !== -1) {
           for (let i = 0; i < this.cat.length; i++) {
-            if (index === this.cat[i].index) {
-              this.cat[i].name = valT;
-            }
+              if (index === this.cat[i].index) {
+                this.cat[i].id = valT;
+              }
           }
         } else {
           this.cat.push(obj);
         }
-      },
-/*      getCatUpdate(val, index1) {
-        console.log('val-update',val);
-        console.log('this.IdsList-update',this.IdsList);
-        let arr = [];
-        for(let i = 0 ; i < val.cat.length;i++){
-          arr.push(val.cat[i].id);
+        console.log('cat----1',this.cat);
+        for(let i = 0 ;i<this.cat.length;i++){
+          for(let key in this.mapCatList){
+            if(this.cat[i].id === key){
+              this.cat[i].name = this.mapCatList[key].name
+            }
+          }
         }
-        let objUpdate = {};
-        objUpdate['ids'] = arr;
-        objUpdate['name'] = val.cat[1].name;
-        this.IdsList.push(objUpdate);
-        console.log('objUpdate',objUpdate);
+        console.log('cat----2',this.cat);
         return;
-        let valT = val.cat[val.cat.length - 1];
+       /* let valT = val.cat[val.cat.length - 1];
         let index = index1;
         let obj = {};
         obj['index'] = index;
@@ -1016,8 +1047,37 @@
           }
         } else {
           this.cat.push(obj);
-        }
-      },//修改中的新增*/
+        }*/
+      },
+      /*      getCatUpdate(val, index1) {
+              console.log('val-update',val);
+              console.log('this.IdsList-update',this.IdsList);
+              let arr = [];
+              for(let i = 0 ; i < val.cat.length;i++){
+                arr.push(val.cat[i].id);
+              }
+              let objUpdate = {};
+              objUpdate['ids'] = arr;
+              objUpdate['name'] = val.cat[1].name;
+              this.IdsList.push(objUpdate);
+              console.log('objUpdate',objUpdate);
+              return;
+              let valT = val.cat[val.cat.length - 1];
+              let index = index1;
+              let obj = {};
+              obj['index'] = index;
+              obj['name'] = valT;
+              let item = this.cat.findIndex(n => n.index === index);
+              if (item !== -1) {
+                for (let i = 0; i < this.cat.length; i++) {
+                  if (index === this.cat[i].index) {
+                    this.cat[i].name = valT;
+                  }
+                }
+              } else {
+                this.cat.push(obj);
+              }
+            },//修改中的新增*/
       deleteOneAnnex(index) {
         this.formCategoryAdd.class.splice(index, 1);
         this.formCategoryAdd.catName.splice(index, 1);
@@ -1028,10 +1088,9 @@
         let ids = [];
         let names = [];
         for (let i = 0; i < this.cat.length; i++) {
-          ids.push(this.cat[i].name.id);
-          names.push(this.cat[i].name.name);
-        }
-        ;
+          ids.push(this.cat[i].id);
+          names.push(this.cat[i].name);
+        };
         ids = ids.join(',');
         names = names.join(',');
         let requestData = {
@@ -1071,7 +1130,7 @@
         self.formCategoryUpdateSure.names = [];
         self.dialogFormVisibleCategoryUpdate = true;
         self.getMapCatList();
-      /*  self.getCatListUpdate();*/
+        /*  self.getCatListUpdate();*/
         self.httpApi.goodsCat.getGoodsCatTree({}, function (data) {
           self.totalCatListAll = data.data.goodsCatTrees;
           if (self.totalCatListAll.length > 0) {
@@ -1096,12 +1155,7 @@
         })
 
       },//打开修改弹框
-      getMapCatList() {
-        let self = this;
-        self.httpApi.goodsCat.selectGoodsCatMap({}, function (data) {
-          self.mapCatList = data.data;
-        })
-      },
+
       getUpdateCatSelect(val, index2) {
         console.log('val', val);
         console.log('index2', index2);

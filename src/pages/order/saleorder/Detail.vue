@@ -11,7 +11,9 @@
           &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 收货人手机号：{{form.orderDetail.mobile}} &nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;&nbsp;&nbsp;收货人地址：{{form.orderDetail.address}}
 
-          <el-button  v-if="tradeName == '跨境保税' || tradeName == '海外直邮'" @click="selectRealInfo" style="margin-left: 10px;">查看实名信息</el-button>
+          <el-button v-if="tradeName == '跨境保税' || tradeName == '海外直邮'" @click="selectRealInfo"
+                     style="margin-left: 10px;">查看实名信息
+          </el-button>
           <el-button style="float: right" @click="returnOrderList">返回</el-button>
         </el-form-item>
         <!--<el-form-item style="float: right">-->
@@ -44,6 +46,13 @@
           </el-table-column>
           <el-table-column label="单价" prop="putPrice">
 
+          </el-table-column>
+          <el-table-column label="折扣" prop="discount">
+              <template slot-scope="scope">
+                <span>{{scope.row.discount/10}}</span>
+              </template>
+          </el-table-column>
+          <el-table-column label="优惠金额" prop="reducePrice">
           </el-table-column>
           <el-table-column label="物流运费" prop="transportationFee">
 
@@ -187,12 +196,21 @@
             <span>{{addFormReal.idCard}}</span>
           </el-form-item>
           <el-form-item label="身份证正面照" :label-width="formLabelWidth">
-            <img :src="addFormReal.idCardImg" alt="">
+            <img :src="addFormReal.idCardImg" alt="" @click="clickImgFront(addFormReal)">
           </el-form-item>
           <el-form-item label="身份证反面照" :label-width="formLabelWidth">
-            <img :src="addFormReal.idCardImg" alt="">
+            <img :src="addFormReal.idCardBgImg" alt="" @click="clickImgBack(addFormReal)">
           </el-form-item>
         </el-form>
+      </el-dialog>
+      <!--<el-dialog title="身份证正面信息" :visible.sync="clickImgDisableFront">-->
+        <!--<img :src="idCardImg" class="image" style="width: 600px;">-->
+      <!--</el-dialog>-->
+      <el-dialog title="身份证正面信息" :visible.sync="clickImgDisableFront">
+        <img :src="idCardImg + '?imageView2/1/w/600/h/600'" class="image">
+      </el-dialog>
+      <el-dialog title="身份证反面信息" :visible.sync="clickImgDisableBack">
+        <img :src="idCardBgImg + '?imageView2/1/w/600/h/600'" class="image">
       </el-dialog>
     </div>
   </div>
@@ -209,6 +227,8 @@
         deliveryInfoList: [],//之前物流列表
         deliveryList: [],//物流列表中单条数据详情
         NumDisable: false,
+        clickImgDisableFront: false,//身份证放大默认正面
+        clickImgDisableBack: false,//身份证放大默认反面
         priceForm: {//修改价格form
           reducePrice: '',//优惠价格
           discount: '',//折扣
@@ -233,12 +253,14 @@
         openPriceModelVisable: false,//修改价格弹框
         selectRealInfoDisable: false,//查看实名信息弹框
         addFormReal: {//查看实名信息form
-          contacts:'',
-          idCard:'',
-          idCardImg:'',
-          idCardBgImg:'',
+          contacts: '',
+          idCard: '',
+          idCardImg: '',
+          idCardBgImg: '',
         },
-        tradeName:'',//贸易形态
+        idCardImg: '',
+        idCardBgImg: '',
+        tradeName: '',//贸易形态
         pickerOptions1: {
           shortcuts: [{
             text: '今天',
@@ -278,21 +300,7 @@
             mobile: ''
 
           },
-          orderItemList: [{
-            itemId: '',//订单项id
-            goodsSkuNumber: '',//商品编号
-            goodsTitle: '',//商品名
-            goodsSku: '',//规格
-            goodsSkuUnit: '',
-            catName: '',
-            catId: '',
-            number: '',
-            subtotal: '',//小计
-            putPrice: '',//价格
-            reducePrice: '',//优惠
-            combination: '',//编号和名称组合
-            goodsSkuId: '',//规格id
-          }],
+          orderItemList: [],
           remark: '',//备注
           att: [],//附件
         },
@@ -333,7 +341,7 @@
             id: 7
           },
           {
-            name: '已完成.',
+            name: '已完成 ',
             id: 98
           },
         ],
@@ -348,9 +356,19 @@
       this.getLogisticsList();
     },
     methods: {
+      clickImgFront(u) {//身份证正面放大
+        console.log('uuuuu',u)
+        this.clickImgDisableFront = true;
+        this.idCardImg = u.idCardImg;
+        this.idCardImg = this.idCardImg.replace('/w/100/h/100','/w/600/600');
+      },
+      clickImgBack(u) {//身份证反面放大
+        this.clickImgDisableBack = true;
+        this.idCardBgImg = u.idCardBgImg;
+        this.idCardBgImg = this.idCardBgImg.replace('/w/100/h/100','/w/600/600');
+      },
       selectRealInfo() {//查看实名信息
         this.selectRealInfoDisable = true;
-
       },
       seeDevList(val) {//现在物流信息的详情
         let self = this;
@@ -359,7 +377,6 @@
           id: val.id
         };
         self.httpApi.order.searchLogisticsOrder(requestData12, function (data) {
-          console.log('deliveryList', data);
           self.deliveryList = data.data;
           let arr = [];
           self.deliveryList.orderDetail.map(value => {
@@ -394,7 +411,6 @@
         let self = this;
         let requestData = {};
         self.httpApi.dict.selectLogistics(requestData, function (data) {
-          console.log('wuli', data);
           self.LogisticsList = data.data;
         })
 
@@ -414,7 +430,6 @@
         this.priceForm.discount = ""
       },
       openPriceModel(row) {//打开修改价格弹框
-        console.log('row', row)
         this.itemId = row.itemId
         this.putPrice = row.putPrice
         this.openPriceModelVisable = true;
@@ -455,7 +470,8 @@
           orderId: self.form.orderId,
           number: self.addForm.logsiticsNumber
         };
-        self.httpApi.order.searchLogisticsOrder(requestData, function (data) {;
+        self.httpApi.order.searchLogisticsOrder(requestData, function (data) {
+          ;
           self.httpApi.order.selectLogisticsByOrderId(requestData, function (data) {
             console.log('data-----deliveryInfoListNow', data);
             self.deliveryInfoListNow = data.data;

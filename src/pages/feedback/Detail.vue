@@ -54,16 +54,16 @@
           },
           {
             id: 1,
-            name: '性能问题'
-          }, {
-            id: 2,
             name: '功能建议'
           }, {
-            id: 3,
+            id: 2,
             name: '购买遇到其他问题'
           }, {
+            id: 3,
+            name: '性能问题'
+          }, {
             id: 4,
-            name: '其他'
+            name: '其他问题'
           }
         ],//问题类型
         feedbackStatus: [
