@@ -15,7 +15,7 @@
           <el-input v-model.trim="easyForm.memberName" placeholder="请输入客户名称"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
+          <el-button type="text" @click="getAdvanceSearch">高级搜索</el-button>
         </el-form-item>
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
@@ -28,10 +28,16 @@
         <!--</el-form-item>-->
       </el-form>
 
-      <el-table :data="tableData">
+      <el-table
+        :data="tableData"
+        v-loading="loading"
+        @selection-change="handleSelectionChange"
+        :row-key="getRowKeys">
         <el-table-column
           type="selection"
-          width="55">
+          width="55"
+          :reserve-selection="true"
+          prop="orderId">
         </el-table-column>
         <el-table-column prop="orderNumber" label="订单号">
 
@@ -123,6 +129,7 @@
         <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
         <el-button @click="advanceSearch = false">取消</el-button>
         <el-button @click="clearOrder">清空</el-button>
+        <el-button @click="outputFile">导出</el-button>
       </el-dialog>
     </div>
   </div>
@@ -190,17 +197,88 @@
           },
         ],//订单状态
         advanceSearch: false,
-        searchType: 1//1是简单搜索，2是高级搜索
+        searchType: 1,//1是简单搜索，2是高级搜索
+        selectedData: [],
+        loading: false,
+        getRowKeys(row) {
+          return row.orderId;
+        },
       }
     },
     components: {
       'pagination': require('../../../components/pagination'),
       'getcheckbox': require('../../../components/getcheckbox'),
     },
-    activated(){
-      this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
+    activated() {
+      this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
     },
     methods: {
+      getAdvanceSearch(){
+        this.advanceSearch = true;
+        this.form = {
+          orderNumber: '',//订单编号
+            orderStatus: '',//订单状态
+            dateRange: null,
+            memberName: '',//客户名称
+            goodsQueryInfo: '',//商品信息
+            beginDate: '',//开始日期
+            endDate: '',//结束日期
+        };
+      },
+      handleSelectionChange(rows) {
+        this.selectedData = [];
+        if (rows) {
+          rows.forEach(row => {
+            if (row) {
+              this.selectedData.push(row.orderId);
+            }
+          })
+        }
+      },
+      outputFile() {//导出
+        let url = 'admin/order/exportOrder?token=' + localStorage.getItem('token');
+        let str = '';
+        if (this.searchType === 1) {
+          this.$confirm('此操作将导出全部数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            this.advanceSearch = false;
+            location.href = url;
+            this.$message({
+              type: 'success',
+              message: '导出成功!'
+            });
+          }).catch(() => {
+            this.advanceSearch = false;
+            this.$message({
+              type: 'info',
+              message: '已取消导出'
+            });
+          });
+        } else {
+          str =
+            '&beginDate=' + this.form.beginDate +
+            '&endDate=' + this.form.endDate;
+          this.$confirm('此操作将导出已选数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }).then(() => {
+            location.href = url + str;
+            this.$message({
+              type: 'success',
+              message: '导出成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消导出'
+            });
+          });
+        }
+      },
       clearOrder() {
         let self = this
         self.form.orderNumber = '',//订单编号
@@ -215,16 +293,16 @@
         this.pageSize = page.size;
         this.pageNum = page.num;
         this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
-        localStorage.setItem('pageSizeList',page.size);
-        localStorage.setItem('pageNumList',page.num);
+        localStorage.setItem('pageSizeList', page.size);
+        localStorage.setItem('pageNumList', page.num);
       },
       getCheckList(e) {
         this.form.orderStatus = e;
       },
-     // verify(id){//审核
-     //   let url = '/order/saleorder/verify/' + id;
-     //   this.$router.push(url);
-     // },
+      // verify(id){//审核
+      //   let url = '/order/saleorder/verify/' + id;
+      //   this.$router.push(url);
+      // },
       select(size, num) {//查询
         let self = this;
         let requestData = {

@@ -63,7 +63,14 @@
             <span :key="t.id" :value="t.id" v-for="t in feedbackStatus" v-if="scope.row.orderAftersalesStatus == t.id">{{t.name}}</span>
           </template>
         </el-table-column>
-
+        <el-table-column
+          label="支付方式"
+          prop="orderAftersalesComment.payType">
+          <template slot-scope="scope">
+            <span v-if="scope.row.payType === 1 ">支付宝</span>
+            <span v-if="scope.row.payType === 2 ">微信</span>
+          </template>
+        </el-table-column>
         <el-table-column>
           <template slot-scope="scope">
             <el-dropdown trigger="click">

@@ -35,3 +35,10 @@ Vue.prototype.httpApi.customer.updateCustomerById = function (params, successCal
       successCallback(data);
     })
 };
+//更新客户信息
+Vue.prototype.httpApi.customer.selectMemberListByIds = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/sysMember/selectMemberListByIds', params,
+    function (data) {
+      successCallback(data);
+    })
+};

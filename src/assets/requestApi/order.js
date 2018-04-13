@@ -1,5 +1,13 @@
 import Vue from 'vue'
 import '../js'
+//更新备注
+Vue.prototype.httpApi.order.upateNotes = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/order/upateNotes', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
 //订单创建
 Vue.prototype.httpApi.order.create = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/order/create', params,

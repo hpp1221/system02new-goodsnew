@@ -144,6 +144,17 @@
             self.httpApi.user.doLogin(requestData, function (data) {
               window.localStorage.setItem('token', data.data.token);
               window.localStorage.setItem('memberId', data.data.memberId);
+              console.log('id',localStorage.getItem('memberId'));
+              if(data.data){
+                let requestData1 = {
+                  memberId:data.data.memberId
+                };
+                self.httpApi.user.selectMemberById(requestData1,function (data1) {
+                  let name = data1.data.member.name;
+                  window.localStorage.setItem('memberNameNew',name);
+                })
+              }
+
               self.$router.push('/index');
             });
           } else {

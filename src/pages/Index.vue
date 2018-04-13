@@ -95,7 +95,7 @@
 
 
               <el-menu-item index="12" style="padding:0;">
-                <i class="iconfont icon-group"></i>
+                <i class="iconfont icon-group" @click="iconClick"></i>
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
               </el-menu-item>
               <el-menu-item index="7" style="padding:0;">
@@ -180,10 +180,20 @@
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-              <el-menu-item index="12" style="padding:0;">
-                <i class="iconfont icon-group"></i>
-                <span slot="title" style="margin-left: 3px;">优惠券管理</span>
-              </el-menu-item>
+              <el-submenu index="12">
+                <template slot="title">
+                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
+                  <span slot="title" style="margin-left: 3px">优惠券管理</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="12-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">优惠券列表
+                  </el-menu-item>
+                  <el-menu-item index="12-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">自动发放
+                  </el-menu-item>
+                  <!--<el-menu-item index="12-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">已发放列表-->
+                  <!--</el-menu-item>-->
+                </el-menu-item-group>
+              </el-submenu>
               <el-menu-item index="7" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">用户意见反馈</span>
@@ -345,9 +355,15 @@
           case '11':
             this.$router.push('/aftersale/list');
             break;
-          case '12':
+          case '12-1':
             this.$router.push('/coupon/list');
             break;
+          case '12-2':
+            this.$router.push('/coupon/listout');
+            break;
+          // case '12-3':
+          //   this.$router.push('/coupon/outlist');
+          //   break;
         }
       },
       collapseMenu() {

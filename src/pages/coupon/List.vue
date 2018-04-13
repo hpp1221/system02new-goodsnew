@@ -16,6 +16,16 @@
         <el-form-item label="优惠券名称">
           <el-input v-model="formCoupon.name" placeholder="单行输入"></el-input>
         </el-form-item>
+        <el-form-item label="领取类型">
+          <el-select v-model="formCoupon.receiveType" filterable placeholder="请选择">
+            <el-option
+              v-for="item in receiveTypes"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item class="addButtonAndSelect">
           <el-button @click="selectCoupon(pageSize,pageNum)">查询</el-button>
           <el-button @click="couponAdd">新增</el-button>
@@ -28,17 +38,45 @@
           <el-table-column
             prop="id"
             label="优惠券ID"
-            width="200">
+            width="180">
           </el-table-column>
           <el-table-column
             prop="name"
             label="优惠券名称"
-            width="200">
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="count"
+            label="优惠券总数"
+            width="100">
+          </el-table-column>
+          <el-table-column
+            prop="num"
+            label="个人可领取数"
+            width="110">
+          </el-table-column>
+          <el-table-column
+            prop="receiveType"
+            label="领取类型"
+            width="90">
+            <template slot-scope="scope">
+              <span v-if="scope.row.receiveType === '0'">主动领取</span>
+              <span v-if="scope.row.receiveType === '1'">自动发放</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="hasLimit"
+            label="是否有上限"
+            width="100">
+            <template slot-scope="scope">
+              <span v-if="scope.row.hasLimit === '0'">无上限</span>
+              <span v-if="scope.row.hasLimit === '1'">有上限</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="type"
             label="优惠券规则"
-            width="180">
+            width="110">
             <template slot-scope="scope">
               <span v-if="scope.row.type === 'brand'">品牌规则</span>
               <span v-if="scope.row.type === 'category'">品类规则</span>
@@ -49,7 +87,7 @@
           <el-table-column
             prop="amountRuleId"
             label="金额规则"
-            width="180">
+            width="100">
             <template slot-scope="scope">
               <span v-for="item in tableDataMoney" :key="item.id" v-if="scope.row.amountRuleId === item.id">{{item.name}}</span>
             </template>
@@ -57,17 +95,17 @@
           <el-table-column
             prop="categoryRuleName"
             label="品类规则"
-            width="180">
+            width="100">
           </el-table-column>
           <el-table-column
             prop="brandRuleName"
             label="品牌规则"
-            width="180">
+            width="100">
           </el-table-column>
           <el-table-column
             prop="days"
             label="有效期"
-            width="330">
+            width="300">
             <template slot-scope="scope">
               <span v-if="scope.row.dateRuleType === 'time-interval'">{{moment(scope.row.startTime).format('YYYY-MM-DD HH:mm:ss')}}--{{moment(scope.row.endTime).format('YYYY-MM-DD HH:mm:ss')}}</span>
               <span v-if="scope.row.dateRuleType === 'fixed-days'">{{scope.row.days + '     ' + '天'}}</span>
@@ -75,13 +113,15 @@
           </el-table-column>
           <el-table-column
             prop="status"
+            width="80"
             label="状态">
             <template slot-scope="scope">
-              <span v-if="scope.row.status === 0">禁用状态</span>
-              <span v-if="scope.row.status === 1">启用状态</span>
+              <span v-if="scope.row.status === 0">禁用</span>
+              <span v-if="scope.row.status === 1">启用</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column
+            label="操作">
             <template slot-scope="scope">
               <el-dropdown trigger="click">
                 <i class="iconfont icon-more" style="cursor: pointer"></i>
@@ -147,6 +187,24 @@
           <el-form-item label="有效期" :label-width="formLabelWidth" v-if="formCouponAdd.dateRuleType === 'fixed-days'">
             <el-input v-model="formCouponAdd.days" auto-complete="off" class="form-input"></el-input>
           </el-form-item>
+          <el-form-item label="领取类型" :label-width="formLabelWidth">
+            <el-radio-group v-model="formCouponAdd.receiveType ">
+              <el-radio :label="0">主动领取</el-radio>
+              <el-radio :label="1">自动发放</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否有上限" :label-width="formLabelWidth">
+            <el-radio-group v-model="hasLimit">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="hasLimit === 1" label="优惠券总数" :label-width="formLabelWidth">
+            <el-input v-model="formCouponAdd.count" auto-complete="off" class="form-input"></el-input>
+          </el-form-item>
+          <el-form-item label="个人可领取数量" :label-width="formLabelWidth">
+            <el-input v-model="formCouponAdd.num" auto-complete="off" class="form-input"></el-input>
+          </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisibleCoupon = false">取 消</el-button>
@@ -209,6 +267,24 @@
           </el-form-item>
           <el-form-item label="有效期" :label-width="formLabelWidth" v-if="formCouponUpdate.dateRuleType === 'fixed-days'">
             <el-input v-model="formCouponUpdate.days" auto-complete="off" class="form-input"></el-input>
+          </el-form-item>
+          <el-form-item label="领取类型" :label-width="formLabelWidth">
+            <el-radio-group v-model="formCouponUpdate.receiveType">
+              <el-radio :label="0">主动领取</el-radio>
+              <el-radio :label="1">自动发放</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="是否有上限" :label-width="formLabelWidth">
+            <el-radio-group v-model="formCouponUpdate.hasLimit">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="formCouponUpdate.hasLimit === 1" label="优惠券总数" :label-width="formLabelWidth">
+            <el-input v-model="formCouponUpdate.count" auto-complete="off" class="form-input"></el-input>
+          </el-form-item>
+          <el-form-item label="个人可领取数量" :label-width="formLabelWidth">
+            <el-input v-model="formCouponUpdate.num" auto-complete="off" class="form-input"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -499,6 +575,7 @@
         dialogFormVisibleCouponUpdate: false,//优惠券修改弹框
         formLabelWidth: '120px',
         fixTime: ['', ''],
+        hasLimit: 0,//是否有上限
         formCouponAdd: {//优惠券新增form
           name: '',//优惠券名称
           type: '',//优惠券规则
@@ -509,6 +586,10 @@
           endTime: '',//结束时间
           amountRuleId: '',//金额规则id
           amountRuleName: '',//金额规则name
+          count: '',//优惠券总数
+          num: '',//个人可领取数量
+          hasLimit:'',
+          receiveType: '',//领取类型
           brand: '',
           brandRuleId: '',
           brandRuleName: '',
@@ -527,6 +608,10 @@
           endTime: '',//结束时间
           amountRuleId: '',//金额规则id
           amountRuleName: '',//金额规则name
+          count: '',//优惠券总数
+          num: '',//个人可领取数量
+          hasLimit: '',//是否有上限
+          receiveType: '',//领取类型
           brandRuleId: '',
           brandRuleName: '',
           categoryRuleName: '',
@@ -535,6 +620,16 @@
         couponRules: [],//优惠券规则select
         validTypes: [],//有效期
         couponBrandList: [],//品牌列表
+        receiveTypes:[
+          {
+            value:"1",
+            name:'自动发放'
+          },
+          {
+            value:"0",
+            name:'主动领取'
+          }
+        ],//领取类型
         /*优惠券配置部分 end*/
         /*金额规则配置部分 start*/
         tableDataMoney: [],//金额规则list
@@ -615,6 +710,8 @@
     },
     activated() {
       this.selectCategory(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
+      this.selectMoney(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
+      this.selectCoupon(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
     },
     created() {
       this.getMoneyType();
@@ -693,6 +790,7 @@
         let self = this;
         self.formCouponAdd.startTime = self.formCouponAdd.fixTime === null ? '' : self.formCouponAdd.fixTime[0];
         self.formCouponAdd.endTime = self.formCouponAdd.fixTime === null ? '' : self.formCouponAdd.fixTime[1];
+        self.formCouponAdd.hasLimit = self.hasLimit;
         self.httpApi.coupon.addCoupon(self.formCouponAdd, function (data) {
           self.dialogFormVisibleCoupon = false;
           self.$message.success('新增成功');
@@ -706,6 +804,7 @@
           pageSize: size,
           name: self.formCoupon.name,
           id: self.formCoupon.id,
+          receiveType: self.formCoupon.receiveType
         }
         self.httpApi.coupon.selectCouponList(requestData, function (data) {
           self.tableDataCoupon = data.data.pageInfo.list;
@@ -715,6 +814,8 @@
       updateCoupon(row) {
         this.dialogFormVisibleCouponUpdate = true;
         this.formCouponUpdate = row;
+        this.formCouponUpdate.receiveType = Number(this.formCouponUpdate.receiveType)
+        this.formCouponUpdate.hasLimit = Number(this.formCouponUpdate.hasLimit);
         let arr = [];
         arr.push(row.startTime);
         arr.push(row.endTime);
@@ -744,6 +845,9 @@
       },
       couponUpdateSure() {
         let self = this;
+        if(self.formCouponUpdate.hasLimit === 0){
+          self.formCouponUpdate.count = 0;
+        }
         self.httpApi.coupon.updateCoupon(self.formCouponUpdate, function (data) {
           self.dialogFormVisibleCouponUpdate = false;
           self.$message.success('修改成功');
@@ -929,17 +1033,16 @@
           catName: [],
           class: [],//添加的总品类
         },
-        self.httpApi.goodsCat.getGoodsCatTree({}, function (data) {
+          self.httpApi.goodsCat.getGoodsCatTree({}, function (data) {
             self.totalCatListAllAdd = data.data.goodsCatTrees;
           })
         self.httpApi.goodsCat.selectGoodsCatMap({}, function (data) {
-          console.log('mapCatList-add',self.mapCatList)
           self.mapCatList = data.data;
         })
 
       },//品类规则新增弹框
       addOneAnnex() {
-        this.formCategoryAdd.class.push({index:'',name: '',cat:[]});
+        this.formCategoryAdd.class.push({index: '', name: '', cat: []});
       },//新增品类规则中的添加类目
       /*  addOneUpdate() {
           this.classUpdate.push({id:'',cat:[]});
@@ -1004,9 +1107,6 @@
           }
         },*/
       getCat(val, index1) {
-        console.log('val',val);
-        console.log('index1',index1);
-        console.log('mapCatList',this.mapCatList);
         let valT = val.cat[val.cat.length - 1];
         let index = index1;
         let obj = {};
@@ -1016,38 +1116,20 @@
         let item = this.cat.findIndex(n => n.index === index);
         if (item !== -1) {
           for (let i = 0; i < this.cat.length; i++) {
-              if (index === this.cat[i].index) {
-                this.cat[i].id = valT;
-              }
+            if (index === this.cat[i].index) {
+              this.cat[i].id = valT;
+            }
           }
         } else {
           this.cat.push(obj);
         }
-        console.log('cat----1',this.cat);
-        for(let i = 0 ;i<this.cat.length;i++){
-          for(let key in this.mapCatList){
-            if(this.cat[i].id === key){
+        for (let i = 0; i < this.cat.length; i++) {
+          for (let key in this.mapCatList) {
+            if (this.cat[i].id === key) {
               this.cat[i].name = this.mapCatList[key].name
             }
           }
         }
-        console.log('cat----2',this.cat);
-        return;
-       /* let valT = val.cat[val.cat.length - 1];
-        let index = index1;
-        let obj = {};
-        obj['index'] = index;
-        obj['name'] = valT;
-        let item = this.cat.findIndex(n => n.index === index);
-        if (item !== -1) {
-          for (let i = 0; i < this.cat.length; i++) {
-            if (index === this.cat[i].index) {
-              this.cat[i].name = valT;
-            }
-          }
-        } else {
-          this.cat.push(obj);
-        }*/
       },
       /*      getCatUpdate(val, index1) {
               console.log('val-update',val);
@@ -1090,7 +1172,8 @@
         for (let i = 0; i < this.cat.length; i++) {
           ids.push(this.cat[i].id);
           names.push(this.cat[i].name);
-        };
+        }
+        ;
         ids = ids.join(',');
         names = names.join(',');
         let requestData = {
@@ -1155,7 +1238,6 @@
         })
 
       },//打开修改弹框
-
       getUpdateCatSelect(val, index2) {
         console.log('val', val);
         console.log('index2', index2);

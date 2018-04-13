@@ -46,7 +46,27 @@ Vue.prototype.httpApi.coupon.updateCouponStatus = function (params, successCallb
       successCallback(data);
     })
 };
-
+//查询定向派发优惠券信息
+Vue.prototype.httpApi.coupon.selectDistributeCouponList = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/coupon/selectDistributeCouponList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//指定用户派发优惠券
+Vue.prototype.httpApi.coupon.doDistributeCoupon = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/coupon/doDistributeCoupon', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//根据条件，查询优惠券发放信息
+Vue.prototype.httpApi.coupon.selectDistributeMemberCouponList = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/coupon/selectDistributeMemberCouponList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 /*--------------------------金额规则--------------------------------------*/
 
 

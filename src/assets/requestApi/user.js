@@ -1,5 +1,13 @@
 import Vue from 'vue'
 import '../js'
+//根据memberId查询会员信息
+Vue.prototype.httpApi.user.selectMemberById = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/member/selectMemberById', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+
 //添加用户
 Vue.prototype.httpApi.user.addUser = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/user/addUser.do', params,

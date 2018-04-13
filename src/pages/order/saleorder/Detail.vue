@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">订单详情</h3>
-      <el-form ref="form" :model="form" class="request-form" label-width="80px">
+      <el-form ref="form" :model="form" class="request-form" label-width="80px" style="overflow: hidden">
         <el-form-item label="订单信息" style="margin-top: 20px;">
           <span v-for="item in totalOrderStatus" v-if="item.id == form.orderStatus"
                 style="color: #4dc44b;font-size: 20px;font-weight: 600;padding:0px 16px">{{item.name}}</span>
@@ -48,9 +48,9 @@
 
           </el-table-column>
           <el-table-column label="折扣" prop="discount">
-              <template slot-scope="scope">
-                <span>{{scope.row.discount/10}}</span>
-              </template>
+            <template slot-scope="scope">
+              <span>{{scope.row.discount/10}}</span>
+            </template>
           </el-table-column>
           <el-table-column label="优惠金额" prop="reducePrice">
           </el-table-column>
@@ -66,18 +66,27 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-form-item style="padding:15px 15px">
-
-          <div style="overflow: hidden">
-            <p style="float: right;">总金额 : {{form.totalPrice}}</p>
+        <el-form-item label="备注说明" style="float: left;width: 85%;padding-top: 30px">
+          <el-input
+            type="textarea"
+            :rows="4"
+            v-model="form.orderDetail.note"
+            style="width: 40%;">
+          </el-input>
+          <el-button @click="updateNote" style="margin: 30px;">更新备注</el-button>
+        </el-form-item>
+        <el-form-item style="padding:15px 15px;float: right">
+          <div>
+            <p style="">总金额 : {{form.totalPrice}}</p>
           </div>
-          <div style="overflow: hidden">
-            <p style="float: right;">优惠金额 : {{totalReducePrice}}</p>
+          <div>
+            <p>优惠金额 : {{totalReducePrice}}</p>
           </div>
-          <div style="overflow: hidden">
-            <p style="float: right;">应付金额 : {{form.paymentPrice}}</p>
+          <div>
+            <p>应付金额 : {{form.paymentPrice}}</p>
           </div>
         </el-form-item>
+
         <!-- 之前物流信息-->
         <el-form-item label="之前物流">
           <!--<i class="el-icon-plus" style="margin:0px 20px 0px 50px;font-weight: 700;font-size: 18px;"></i>-->
@@ -203,9 +212,6 @@
           </el-form-item>
         </el-form>
       </el-dialog>
-      <!--<el-dialog title="身份证正面信息" :visible.sync="clickImgDisableFront">-->
-        <!--<img :src="idCardImg" class="image" style="width: 600px;">-->
-      <!--</el-dialog>-->
       <el-dialog title="身份证正面信息" :visible.sync="clickImgDisableFront">
         <img :src="idCardImg + '?imageView2/1/w/600/h/600'" class="image">
       </el-dialog>
@@ -295,10 +301,11 @@
           companyCode: '',//物流公司代码
 
           orderDetail: {
+            orderDetailId: '',
             contacts: '',
             address: '',
-            mobile: ''
-
+            mobile: '',
+            note: ''
           },
           orderItemList: [],
           remark: '',//备注
@@ -356,16 +363,42 @@
       this.getLogisticsList();
     },
     methods: {
+      updateNote() {
+        let self = this;
+        let requestData12 = {
+          note: self.form.orderDetail.note,
+          orderDetailId: self.form.orderDetailId,
+        };
+        self.$confirm('正在更新备注说明, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          self.httpApi.order.upateNotes(requestData12, function (data) {
+            self.select(self.$route.params.id);
+          });
+          self.$message({
+            type: 'success',
+            message: '更新成功!'
+          });
+        }).catch(() => {
+          self.select(self.$route.params.id);
+          self.$message({
+            type: 'info',
+            message: '已取消更新'
+          });
+        });
+
+      },//更新备注
       clickImgFront(u) {//身份证正面放大
-        console.log('uuuuu',u)
         this.clickImgDisableFront = true;
         this.idCardImg = u.idCardImg;
-        this.idCardImg = this.idCardImg.replace('/w/100/h/100','/w/600/600');
+        this.idCardImg = this.idCardImg.replace('/w/100/h/100', '/w/600/600');
       },
       clickImgBack(u) {//身份证反面放大
         this.clickImgDisableBack = true;
         this.idCardBgImg = u.idCardBgImg;
-        this.idCardBgImg = this.idCardBgImg.replace('/w/100/h/100','/w/600/600');
+        this.idCardBgImg = this.idCardBgImg.replace('/w/100/h/100', '/w/600/600');
       },
       selectRealInfo() {//查看实名信息
         this.selectRealInfoDisable = true;

@@ -327,6 +327,8 @@
       },
       outputFile() {//导出
         let arr = [];
+        console.log('selectionObj',this.selectionObj);
+        return;
         for (let i in this.selectionObj) {
           for (let j = 0; j < this.selectionObj[i].length; j++) {
             arr.push(this.selectionObj[i][j].id);
