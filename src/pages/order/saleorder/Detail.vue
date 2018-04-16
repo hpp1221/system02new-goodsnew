@@ -16,64 +16,54 @@
           </el-button>
           <el-button style="float: right" @click="returnOrderList">返回</el-button>
         </el-form-item>
-        <!--<el-form-item style="float: right">-->
-        <!--<el-button>返回</el-button>
-        <!--</el-form-item>-->
-        <el-table :data="form.orderItemList" border>
-          <el-table-column
-            type="index"
-            width="70">
-          </el-table-column>
-          <!--<el-table-column label="主图" width="80" prop="goodsImg">-->
-          <!--<template slot-scope="scope">-->
-          <!--<img v-lazy="scope.row.goodsImg" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>-->
-          <!--</template>-->
-          <!--</el-table-column>-->
-          <el-table-column label="商品编码" prop="goodsSkuNumber">
+        <el-form-item>
+          <el-table :data="form.orderItemList" border>
+            <el-table-column
+              type="index"
+              width="70">
+            </el-table-column>
+            <!--<el-table-column label="主图" width="80" prop="goodsImg">-->
+            <!--<template slot-scope="scope">-->
+            <!--<img v-lazy="scope.row.goodsImg" alt="" style="width: 40px;height: 40px;margin-top: 7px;"/>-->
+            <!--</template>-->
+            <!--</el-table-column>-->
+            <el-table-column label="商品编码" prop="goodsSkuNumber">
 
-          </el-table-column>
-          <el-table-column label="商品名称" prop="goodsTitle">
+            </el-table-column>
+            <el-table-column label="商品名称" prop="goodsTitle">
 
-          </el-table-column>
-          <el-table-column label="规格" prop="goodsSku">
+            </el-table-column>
+            <el-table-column label="规格" prop="goodsSku">
 
-          </el-table-column>
-          <el-table-column label="数量" prop="number">
+            </el-table-column>
+            <el-table-column label="数量" prop="number">
 
-          </el-table-column>
-          <el-table-column label="单位" prop="goodsSkuUnit">
+            </el-table-column>
+            <el-table-column label="单位" prop="goodsSkuUnit">
 
-          </el-table-column>
-          <el-table-column label="单价" prop="putPrice">
+            </el-table-column>
+            <el-table-column label="单价" prop="putPrice">
 
-          </el-table-column>
-          <el-table-column label="折扣" prop="discount">
-            <template slot-scope="scope">
-              <span>{{scope.row.discount/10}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="优惠金额" prop="reducePrice">
-          </el-table-column>
-          <el-table-column label="物流运费" prop="transportationFee">
+            </el-table-column>
+            <el-table-column label="折扣" prop="discount">
+              <template slot-scope="scope">
+                <span>{{scope.row.discount/10}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="优惠金额" prop="reducePrice">
+            </el-table-column>
+            <el-table-column label="物流运费" prop="transportationFee">
 
-          </el-table-column>
-          <el-table-column label="小计" prop="subTotalPrice">
+            </el-table-column>
+            <el-table-column label="小计" prop="subTotalPrice">
 
-          </el-table-column>
-          <el-table-column label="添加优惠">
-            <template slot-scope="scope">
-              <i class="el-icon-plus" style="cursor: pointer" @click="openPriceModel(scope.row)"></i>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-form-item label="备注说明" style="float: left;width: 85%;padding-top: 30px">
-          <el-input
-            type="textarea"
-            :rows="4"
-            v-model="form.orderDetail.note"
-            style="width: 40%;">
-          </el-input>
-          <el-button @click="updateNote" style="margin: 30px;">更新备注</el-button>
+            </el-table-column>
+            <el-table-column label="添加优惠">
+              <template slot-scope="scope">
+                <i class="el-icon-plus" style="cursor: pointer" @click="openPriceModel(scope.row)"></i>
+              </template>
+            </el-table-column>
+          </el-table>
         </el-form-item>
         <el-form-item style="padding:15px 15px;float: right">
           <div>
@@ -86,7 +76,15 @@
             <p>应付金额 : {{form.paymentPrice}}</p>
           </div>
         </el-form-item>
-
+        <el-form-item label="备注说明" style="width: 85%;padding-top: 30px">
+          <el-input
+            type="textarea"
+            :rows="4"
+            v-model="form.orderDetail.note"
+            style="width: 40%;">
+          </el-input>
+          <el-button @click="updateNote" style="margin: 30px;">更新备注</el-button>
+        </el-form-item>
         <!-- 之前物流信息-->
         <el-form-item label="之前物流">
           <!--<i class="el-icon-plus" style="margin:0px 20px 0px 50px;font-weight: 700;font-size: 18px;"></i>-->
@@ -197,7 +195,7 @@
       </el-dialog>
       <!--查看实名信息弹框-->
       <el-dialog title="实名信息" :visible.sync="selectRealInfoDisable">
-        <el-form :model="addFormReal">
+        <el-form :model="addFormReal" v-if="addFormReal">
           <el-form-item label="用户姓名" :label-width="formLabelWidth">
             <span>{{addFormReal.contacts}}</span>
           </el-form-item>
@@ -299,7 +297,7 @@
           memberName: '',
           createTime: '',
           companyCode: '',//物流公司代码
-
+          orderDetailId: '',
           orderDetail: {
             orderDetailId: '',
             contacts: '',
@@ -335,10 +333,10 @@
             name: '待评价订单',
             id: 4
           },
-          {
+          /*{
             name: '已完成',
             id: 5
-          },
+          },*/
           {
             name: '取消订单',
             id: 6

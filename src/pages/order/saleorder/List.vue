@@ -179,10 +179,10 @@
             name: '待评价订单',
             id: 4
           },
-          {
+          /*{
             name: '已完成',
             id: 5
-          },
+          },*/
           {
             name: '取消订单',
             id: 6
@@ -213,16 +213,16 @@
       this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
     },
     methods: {
-      getAdvanceSearch(){
+      getAdvanceSearch() {
         this.advanceSearch = true;
         this.form = {
           orderNumber: '',//订单编号
-            orderStatus: '',//订单状态
-            dateRange: null,
-            memberName: '',//客户名称
-            goodsQueryInfo: '',//商品信息
-            beginDate: '',//开始日期
-            endDate: '',//结束日期
+          orderStatus: '',//订单状态
+          dateRange: null,
+          memberName: '',//客户名称
+          goodsQueryInfo: '',//商品信息
+          beginDate: '',//开始日期
+          endDate: '',//结束日期
         };
       },
       handleSelectionChange(rows) {
@@ -238,7 +238,7 @@
       outputFile() {//导出
         let url = 'admin/order/exportOrder?token=' + localStorage.getItem('token');
         let str = '';
-        if (this.searchType === 1) {
+        if (this.form.dateRange === null) {
           this.$confirm('此操作将导出全部数据, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -258,20 +258,35 @@
             });
           });
         } else {
+
+          let beginDate = this.form.dateRange === null ? '' : this.form.dateRange[0];
+          beginDate = '"'+beginDate+'"';
+          beginDate =beginDate.split('+')[0]+'"';
+          let reg1 = /^[\'\"]+|[\'\"]+$/g;
+          this.form.beginDate = beginDate.replace(reg1,"");
+          let endDate = this.form.dateRange === null ? '' : this.form.dateRange[1];
+          endDate = '"'+endDate+'"';
+          endDate =endDate.split('+')[0]+'"';
+          let reg2 = /^[\'\"]+|[\'\"]+$/g;
+          this.form.endDate = endDate.replace(reg2,"");
           str =
             '&beginDate=' + this.form.beginDate +
-            '&endDate=' + this.form.endDate;
+            '&endDate=' + this.form.endDate +
+            '&orderStatus=' + this.form.orderStatus;
           this.$confirm('此操作将导出已选数据, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
           }).then(() => {
             location.href = url + str;
+            console.log('str', url + str);
+            this.advanceSearch = false;
             this.$message({
               type: 'success',
               message: '导出成功!'
             });
           }).catch(() => {
+            this.advanceSearch = false;
             this.$message({
               type: 'info',
               message: '已取消导出'
