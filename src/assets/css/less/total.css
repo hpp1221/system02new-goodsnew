@@ -207,14 +207,6 @@ input[type="number"] {
   text-align: center;
   cursor: pointer;
 }
-.index-left-menu > .menu-item-div {
-  height: 40px;
-  width: 160px;
-  line-height: 40px;
-  cursor: pointer;
-  position: relative;
-  font-size: 14px;
-}
 .index-left-menu > .menu-item-div i {
   margin-left: 30px;
 }

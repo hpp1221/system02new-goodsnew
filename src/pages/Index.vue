@@ -147,13 +147,8 @@
               </el-menu-item>
               <el-menu-item index="2" style="padding:0">
                 <i class="iconfont icon-shangpin" style="color: #878d99"></i>
-                <span slot="title" style="margin-left: 3px;;color: #fff">商品管理</span>
+                <span slot="title" style="margin-left: 3px;">商品管理</span>
               </el-menu-item>
-              <!--<el-menu-item index="3" style="padding:0;">-->
-              <!--<i class="iconfont icon-shangpin"></i>-->
-              <!--<span slot="title" style="margin-left: 3px;">组合营销管理</span>-->
-              <!--</el-menu-item>-->
-
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
                 <span slot="title" style="margin-left: 3px;">品牌管理</span>
@@ -202,9 +197,6 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">临时商品管理</span>
               </el-menu-item>
-
-
-
             </el-menu>
           </div>
         </div>
@@ -455,7 +447,7 @@
   }
 
   #menu-animate {
-    animate-duration: .1s !important;
+    /*animate-duration: .1s !important;*/
   }
 
   .router-class {
@@ -477,7 +469,7 @@
   }
 
   .left-hover {
-    background-color: #00c1e1 !important;
+    /*background-color: #00c1e1 !important;*/
   }
 
   .right-hover {
