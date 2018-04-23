@@ -90,7 +90,7 @@
                 <i class="iconfont icon-shangpin"></i>
               </el-menu-item>
               <el-menu-item index="4" style="padding:0;">
-              <i class="iconfont icon-dynamic" @click="iconClick"></i>
+                <i class="iconfont icon-dynamic" @click="iconClick"></i>
               </el-menu-item>
 
 
@@ -141,13 +141,13 @@
               background-color="#333745"
               text-color="#fff"
               active-text-color="#ffd04b">
-              <el-menu-item index="1" style="padding:0;">
-                <i class="iconfont icon-order"></i>
-                <span slot="title" style="margin-left: 3px;">订单管理</span>
-              </el-menu-item>
               <el-menu-item index="2" style="padding:0">
                 <i class="iconfont icon-shangpin" style="color: #878d99"></i>
                 <span slot="title" style="margin-left: 3px;">商品管理</span>
+              </el-menu-item>
+              <el-menu-item index="1" style="padding:0;">
+                <i class="iconfont icon-order"></i>
+                <span slot="title" style="margin-left: 3px;">订单管理</span>
               </el-menu-item>
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
@@ -173,6 +173,8 @@
                   </el-menu-item>
                   <el-menu-item index="4-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">为你推荐
                   </el-menu-item>
+                  <el-menu-item index="4-4" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">标签管理
+                  </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <el-submenu index="12">
@@ -196,6 +198,10 @@
               <el-menu-item index="8" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">临时商品管理</span>
+              </el-menu-item>
+              <el-menu-item index="13" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">新版商品管理</span>
               </el-menu-item>
             </el-menu>
           </div>
@@ -332,8 +338,11 @@
           case '4-3':
             this.$router.push('/dictionary/recommended');
             break;
+          case '4-4':
+            this.$router.push('/dictionary/tags');
+            break;
           case '5':
-            this.$router.push('/brand/list');
+            this.$router.push('/brands/list');
             break;
           case '6':
             this.$router.push('/client/clientmanagement');
@@ -353,9 +362,9 @@
           case '12-2':
             this.$router.push('/coupon/listout');
             break;
-          // case '12-3':
-          //   this.$router.push('/coupon/outlist');
-          //   break;
+          case '13':
+            this.$router.push('/commodit/goodslist');
+            break;
         }
       },
       collapseMenu() {

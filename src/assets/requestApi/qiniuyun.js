@@ -11,7 +11,6 @@ Vue.prototype.httpApi.qiniuyun.imgSignature = function (params, successCallback)
 Vue.prototype.httpApi.qiniuyun.config = function (params, successCallback) {
   Vue.prototype.httpPost('/oss/qiniuyun/oss/ue/config', params,
     function (data) {
-    console.log('config1111111112')
       successCallback(data);
     })
 };

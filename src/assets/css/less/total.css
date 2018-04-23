@@ -273,7 +273,7 @@ input[type="number"] {
   overflow: hidden;
 }
 .addGoods-classify {
-  width: 64%;
+  width: 80%;
   float: left;
   border: 1px dashed #ccc;
   margin: 100px 75px 10px 220px;
@@ -292,7 +292,7 @@ input[type="number"] {
   color: #67c23a;
 }
 .classify-list {
-  width: 320px;
+  width: 318px;
   height: 420px;
   border-right: 1px solid #ccc;
   padding: 25px 0px 25px 35px;
@@ -307,15 +307,11 @@ input[type="number"] {
   color: #00a2d4;
 }
 .addGoods-info-title {
+  font-size: 15px;
   padding: 30px 0px 20px 30px;
 }
-.addGoods-info-main {
-  width: 96%;
-  border: 1px dashed #ccc;
-  margin: auto;
-}
 .addGoods-info-main-item1 {
-  padding: 20px 50px 0px 50px;
+  padding: 20px 0px 0px 40px;
   margin: 0;
 }
 .addGoods-info-main-operation {
@@ -327,12 +323,6 @@ input[type="number"] {
 }
 .form-input {
   width: 300px;
-}
-.addGoods-spec {
-  width: 93%;
-  height: 600px;
-  margin: auto;
-  border: 1px solid #bbbbbb;
 }
 .addGoods-spec-checkbox {
   color: #000;
@@ -350,27 +340,17 @@ input[type="number"] {
 .addGoods-spec-info-span2 {
   text-align: right;
 }
-.addGoods-spec {
-  overflow: hidden;
-}
 .addGoods-spec-name {
   width: 40%;
   float: left;
   height: 74px;
-  padding: 8px 0px 0px 90px;
+  padding: 25px 0px 0px 90px;
   border-bottom: 1px solid #bbb;
-  border-right: 1px solid #bbb;
 }
 .addGoods-spec-value {
   width: 60%;
-  height: 66px;
   float: left;
-  margin: 0;
-  margin-top: 8px;
-  border-bottom: 1px solid #bbb;
-}
-.addGoods-spec-button {
-  padding: 0px 0px 12px 78px;
+  padding: 22px 0 0 0;
   border-bottom: 1px solid #bbb;
 }
 .addGoods-spec-buttonDetail {
@@ -387,15 +367,26 @@ input[type="number"] {
 }
 .addGoods-info-goodsimgs {
   overflow: hidden;
-  padding: 10px 0px 0px 70px;
+  padding: 10px 0px 0px 108px;
 }
 .addGoods-info-goodsimgs-img {
   float: left;
 }
+.isOrNotCommon {
+  float: left;
+  margin: 0px 15px;
+}
 .addGoods-info-five {
   float: left;
-  margin: 130px 0px 0px 20px;
   color: #bbbbbb;
+}
+.basicInfo {
+  display: inline-block;
+  width: 150px;
+  font-size: 14px;
+}
+.basicinfo-five {
+  width: 220px;
 }
 .goodsinout-detail-top {
   margin-bottom: 20px;
@@ -733,4 +724,22 @@ input[type="number"] {
 }
 .createClass {
   margin: 0px 0px 20px 100px;
+}
+.classify-top-title {
+  border-bottom: 1px solid #ccc;
+  padding: 20px 0px 20px 50px;
+  margin-bottom: 30px;
+}
+.current-selection {
+  padding-left: 60px;
+}
+.dialog-footer-base {
+  float: right;
+  padding: 30px 150px 0px 0px;
+}
+.selectform-add {
+  border: 0;
+  margin-left: 123px;
+  padding: 0;
+  font-size: 28px;
 }

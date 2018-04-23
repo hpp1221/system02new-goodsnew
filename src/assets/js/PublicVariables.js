@@ -2,7 +2,7 @@ import Vue from 'vue';
 Vue.prototype.imgDomain = 'http://qiniumanagement.metchange.com/';
 Vue.prototype.httpApi = {
   aliyun:{},
-  brand:{},
+  brands:{},
   company:{},
   customer:{},
   dict:{},
@@ -23,5 +23,7 @@ Vue.prototype.httpApi = {
   qiniuyun:{},
   temporary:{},
   aftersale:{},
+  commodit:{},
   coupon:{},
+
 };

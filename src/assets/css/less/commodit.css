@@ -1,0 +1,18 @@
+.classify-top-title {
+  border-bottom: 1px solid #ccc;
+  padding: 20px 0px 20px 50px;
+  margin-bottom: 30px;
+}
+.current-selection {
+  padding-left: 60px;
+}
+.dialog-footer-base {
+  float: right;
+  padding: 30px 150px 0px 0px;
+}
+.selectform-add {
+  border: 0;
+  margin-left: 123px;
+  padding: 0;
+  font-size: 28px;
+}

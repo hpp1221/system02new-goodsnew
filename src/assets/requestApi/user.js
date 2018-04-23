@@ -7,7 +7,6 @@ Vue.prototype.httpApi.user.selectMemberById = function (params, successCallback)
       successCallback(data);
     })
 };
-
 //添加用户
 Vue.prototype.httpApi.user.addUser = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/user/addUser.do', params,

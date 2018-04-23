@@ -4,16 +4,7 @@
       <h3 class="page-title">商品列表</h3>
       <el-form ref="easyForm" :model="easyForm" inline class="request-form">
         <el-form-item label="商品分类">
-          <el-cascader
-            :options="goodListCatList"
-            :show-all-levels="false"
-            @change="GoodListCatListChange"
-            :clearable="true"
-            filterable
-          >
-
-          </el-cascader>
-          <!--<catselect @getCatSelect="getCatSelect"></catselect>-->
+          <catselect @getCatSelect="getCatSelect"></catselect>
         </el-form-item>
         <el-form-item label="商品状态">
           <el-select placeholder="商品状态" v-model="easyForm.type">
@@ -36,7 +27,6 @@
               <!--<el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>-->
             <!--</el-dropdown-menu>-->
           <!--</el-dropdown>-->
-
         <!--</el-form-item>-->
         <el-form-item>
           <el-button @click="outputFile">导出</el-button>
@@ -128,16 +118,7 @@
             </el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            <el-cascader
-              :options="goodListCatList"
-              :show-all-levels="false"
-              @change="GoodListCatListChangeAdvance"
-              :clearable="true"
-              filterable
-            >
-
-            </el-cascader>
-            <!--<catselect @getCatSelect="getFormCatSelect"></catselect>-->
+            <catselect @getCatSelect="getFormCatSelect"></catselect>
           </el-form-item>
           <el-form-item label="商品品牌">
             <brandselect @getBrandSelect="getBrandSelect" style="width:350px;"></brandselect>
@@ -199,8 +180,6 @@
   export default {
     data() {
       return {
-        goodListCatList:[],//商品分类数组
-        selectGoodsCatMapName:{},//map对象,
         tableData: [],
         brandNameSelectData:[],//商品品牌
         advanceSearch: false,
@@ -248,68 +227,30 @@
       this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
     },
     methods: {
-      pageChanged(page) {
-        this.pageSize = page.size;
-        this.pageNum = page.num;
-        localStorage.setItem('pageSizeList',page.size);
-        localStorage.setItem('pageNumList',page.num);
-        this.getGoodListCatList();
-        this.getGoodListCatListName();
-        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
-      },
-      getGoodListCatList(){//商品列表中的商品分类级联选择器
-        let self = this;
-        let requestData = {};
-        self.httpApi.goodsCat.getGoodsCatTree(requestData, function (data) {
-          self.goodListCatList = data.data.goodsCatTrees;
-        });
-      },
-      getGoodListCatListName(){//根据分类id获取name 的
-        let self = this;
-        let requestData = {};
-        self.httpApi.goodsCat.selectGoodsCatMap(requestData, function (data) {
-          self.selectGoodsCatMapName = data.data;
-        });
-      },
-      GoodListCatListChange(val){//商品列表中的商品分类级联选择器回调函数
-        let self = this;
-        let catId = val[1];
-        let selectGoodsCatMapName = self.selectGoodsCatMapName;
-        let catName = '';
-        if(selectGoodsCatMapName){
-          for(let key in selectGoodsCatMapName){
-            if(catId === key){
-              catName = selectGoodsCatMapName[key].name;
-            }
-          }
-        }
-        self.easyForm.catId = catId;
-        self.easyForm.catName = catName;
-        console.log('id',self.easyForm.catId);
-        console.log('name',self.easyForm.catName);
-      },
-      GoodListCatListChangeAdvance(valAdvance){
-        let self = this;
-        let catId = valAdvance[1];
-        let selectGoodsCatMapName = self.selectGoodsCatMapName;
-        let catName = '';
-        if(selectGoodsCatMapName){
-          for(let key in selectGoodsCatMapName){
-            if(catId === key){
-              catName = selectGoodsCatMapName[key].name;
-            }
-          }
-        }
-        self.form.catId = catId;
-        self.form.catName = catName;
-      },
       getBrandSelect(e) {
         this.form.brandId = e.brandDealerId;
         this.form.brandName = e.brandName;
         this.form.brand = e.brand;
       },
+      pageChanged(page) {
+        this.pageSize = page.size;
+        this.pageNum = page.num;
+        localStorage.setItem('pageSizeList',page.size);
+        localStorage.setItem('pageNumList',page.num);
+        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+      },
+      getCatSelect(e) {
+        this.easyForm.cat = e.cat;
+        this.easyForm.catId = e.catId,
+        this.easyForm.catName = e.catName
+      },
+      getFormCatSelect(e) {
+        this.form.cat = e.cat;
+        this.form.catId = e.catId,
+          this.form.catName = e.catName
+      },
       seeDetail(id) {
-        let url = '/goods/goodsDetail/' + id;
+        let url = '/commodit/goodsDetail/' + id;
         this.$router.push(url);
       },
       select(size, num) {//查询
@@ -321,17 +262,17 @@
           goodsSkuRequest: self.easyForm,
         };
 //        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-        self.httpApi.goods.skuList(requestData, function (data) {
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-          self.searchType = 1;
-          if (data.temp !== "{}") {
-            let list = JSON.parse(data.temp);
-            self.$nextTick(function () {
-              self.toggleSelection(list[num]);
-            })
-          }
-        });
+//         self.httpApi.commodit.skuList(requestData, function (data) {
+//           self.tableData = data.data.list;
+//           self.totalPage = data.data.total;
+//           self.searchType = 1;
+//           if (data.temp !== "{}") {
+//             let list = JSON.parse(data.temp);
+//             self.$nextTick(function () {
+//               self.toggleSelection(list[num]);
+//             })
+//           }
+//         });
       },
       advanceSelect(size, num) {
         let self = this;
@@ -340,12 +281,12 @@
           pageNo: num,
           goodsSkuRequest: self.form
         };
-        self.httpApi.goods.skuList(requestData, function (data) {
-          self.advanceSearch = false;
-          self.searchType = 2;
-          self.tableData = data.data.list;
-          self.totalPage = data.data.total;
-        });
+        // self.httpApi.commodit.skuList(requestData, function (data) {
+        //   self.advanceSearch = false;
+        //   self.searchType = 2;
+        //   self.tableData = data.data.list;
+        //   self.totalPage = data.data.total;
+        // });
       },
       toggleSelection(rows) {
         if (rows) {
@@ -377,22 +318,20 @@
         }
       },
       update(id, goodsId) {//修改商品详情
-        let url = '/goods/updateGoods/' + id + '/' + goodsId;
+        let url = '/commodit/updateGoods/' + id + '/' + goodsId;
         this.$router.push(url);
       },
       createGoods() {
-        this.$router.push('/goods/createGoods');
+        this.$router.push('/commodit/createGoods');
       },
       outputFile() {//导出
         let arr = [];
-        console.log('selectionObj',this.selectionObj);
-        return;
         for (let i in this.selectionObj) {
           for (let j = 0; j < this.selectionObj[i].length; j++) {
             arr.push(this.selectionObj[i][j].id);
           }
         }
-        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
+        let url = 'admin/commodit/exportGoods?token=' + localStorage.getItem('token');
 //        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
         let str = '';
         if (arr.length === 0) {
@@ -446,10 +385,10 @@
         }
       },
       multipleInputGoods() {
-        this.$router.push('/goods/multipleInputGoods');
+        this.$router.push('/commodit/multipleInputGoods');
       },
       multipleInputImgs() {
-        this.$router.push('/goods/multipleInputImgs');
+        this.$router.push('/commodit/multipleInputImgs');
       },
       putOnSale() {//上架
         let self = this;
@@ -462,7 +401,7 @@
             skuList: JSON.stringify(self.upOrDownIds),
             type: 1
           };
-          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
+          self.httpApi.commodit.upOrDownGoods(requestData, function (data) {
             self.$message.success('操作成功');
             setTimeout(function () {
               self.$router.go(0);
@@ -486,7 +425,7 @@
             skuList: JSON.stringify(self.upOrDownIds),
             type: 0
           };
-          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
+          self.httpApi.commodit.upOrDownGoods(requestData, function (data) {
             self.$message.success('操作成功');
             setTimeout(function () {
               self.$router.go(0);

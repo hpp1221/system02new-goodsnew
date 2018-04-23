@@ -21,9 +21,5 @@ export default [
       keepAlive:false
     }
   },
-  {
-    path: '/order/saleorder/verify/:id', //销售订单审批
-    component: resolve => require(['@/pages/order/saleorder/verify'], resolve)
-  },
 
 ]

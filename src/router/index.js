@@ -8,12 +8,13 @@ import Dictionary from './routes/dictionary'//业务数据模块
 // import Supplier from './routes/supplier'//供应商模块
 // import Store from './routes/store'//门店模块
 import Client from './routes/client'//客户模块
-import Brand from './routes/brand'//品牌商模块
+import Brands from './routes/brands'//品牌商模块
 import Feedback from './routes/feedback'//用户意见反馈模块
 import Mail from './routes/mail'//站内信模块
 import Tenant from './routes/tenant'//租户模块
 import Temporary from './routes/temporary'//临时商品模块
 import Aftersale from './routes/aftersale'//售后模块
+import Commodit from './routes/commodit'//新版商品模块
 import Coupon from './routes/coupon'//优惠券模块
 Vue.use(Router)
 
@@ -50,12 +51,13 @@ export default new Router({
         // ...Supplier,
         // ...Store,
         ...Client,
-        ...Brand,
+        ...Brands,
         ...Tenant,
         ...Feedback,
         ...Mail,
         ...Temporary,
         ...Aftersale,
+        ...Commodit,
         ...Coupon,
       ]
     },

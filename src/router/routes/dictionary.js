@@ -14,4 +14,8 @@ export default [
     path: '/dictionary/recommended', //为你推荐
     component: resolve => require(['@/pages/dictionary/Recommended'], resolve)
   },
+  {
+    path: '/dictionary/tags', //标签管理
+    component: resolve => require(['@/pages/dictionary/Tags'], resolve)
+  },
 ]
