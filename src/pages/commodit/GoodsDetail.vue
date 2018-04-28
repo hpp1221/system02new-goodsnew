@@ -19,7 +19,9 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="商品详情" name="second">商品详情</el-tab-pane>
+        <el-tab-pane label="商品详情" name="second">
+
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
