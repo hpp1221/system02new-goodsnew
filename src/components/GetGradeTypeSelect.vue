@@ -1,7 +1,7 @@
 <template>
   <el-select :placeholder="placeholderString" v-model="gradeType" value-key="id" @click.native="selectClick"
              @change="getGradeType" :disabled="disabled" filterable>
-    <el-option :value="''" v-if="selectAllVisible"></el-option>
+    <el-option :value="'全部'" v-if="selectAllVisible"></el-option>
     <el-option :label="t.name" :value="t" :key="t.name" v-for="t in totalGradeTypeList"></el-option>
   </el-select>
 </template>

@@ -1,167 +1,142 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <h3 class="page-title">商品详情</h3>
-      <div class="goods-detail-top">
-        <div class="goods-detail-top-left">
-          <div class="goods-detail-big-img">
-            <img v-if="goodsDetail.skus[0].img == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
-            <img v-else v-lazy="goodsDetail.skus[0].img">
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="sku详情" name="first">
+          <div style="width: 28%;">
+            <el-carousel indicator-position="outside" ref="carousel" :autoplay="false" style="width: 450px;"
+                         height="450px">
+              <el-carousel-item v-for="(item,index) in goodsForm.goodsImgsList" :key="item.id" name="index">
+                <img :src="item.imgUrl" @click="picClick(index)" class="oneImgClass">
+              </el-carousel-item>
+            </el-carousel>
+            <div>
+              <ul class="lunBo-fuDong">
+                <li v-for="(item1,index1) in goodsForm.goodsImgsList" :key="item1.id">
+                  <img :src="item1.imgUrl" @click="picClick(index1)">
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="goods-detail-small-img">
-            <img v-if="bigImg == undefined && bigImg == null" src="/static/img/error.dff75d4.jpg">
-            <img v-else v-lazy="g.url" v-for="g in goodsDetail.goodsExtend.imgs">
-          </div>
-        </div>
-
-        <div class="goods-detail-top-right">
-          <p class="goods-detail-p">
-            <span>{{goodsDetail.name}}</span>
-          </p>
-          <p class="goods-detail-p" style="color:#bbb">
-            <span>分类:{{goodsDetail.catName}}</span>
-            <span>品牌:{{goodsDetail.brandName}}</span>
-            <span>编码:{{goodsDetail.skus[0].number}}</span>
-            <span>条形码:{{goodsDetail.skus[0].barCode}}</span>
-          </p>
-          <p class="goods-detail-p">
-            <span>市场价:{{goodsDetail.skus[0].marketPrice}}</span>
-            <span>成本价:{{goodsDetail.skus[0].price}}</span>
-          </p>
-          <p class="goods-detail-p">
-            <span>计量单位:{{goodsDetail.unit}}</span>
-            <span>库存:{{goodsDetail.skus[0].count}}</span>
-            <!--<span>预购:{{goodsDetail.skus[0].price}}</span>-->
-          </p>
-        </div>
-      </div>
-
-
-      <!--<el-tabs v-model="activeName">-->
-      <!--<el-tab-pane label="商品介绍" name="first">-->
-      <!---->
-      <!--</el-tab-pane>-->
-      <!--<el-tab-pane label="商品附件" name="second">-->
-
-      <!--</el-tab-pane>-->
-      <!--</el-tabs>-->
-
-
+        </el-tab-pane>
+        <el-tab-pane label="商品详情" name="second">商品详情</el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
-        bigImg: '',
-//        bigImgNull:'/static/img/error.dff75d4.jpg',
-        goodsDetail: {
-          brandName: '',
-          catName: '',
-          unit: '',
-          skus: [
-            {
-              barCode: '',
-              number: '',
-              price: '',
-              marketPrice: '',
-              count:'',
-              img:'',
-            }
-          ],
-          goodsExtend: {
-            imgs: [
-              {
-                url: ''
-              }
-            ]
-          },
-        },
-        activeName: 'first'
+        activeName: 'first',//当前选中的tab
+        skuForm: {
+          barCode: '',//条形码
+          goodsId: '',//商品id
+          id: '',//skuId
+          img: '',//主图图片url
+          marketPrice: '',//市场价格
+          mustBuyNum: '',//起订量
+          number: '',//商品编码
+          referencePrice: '',//参考价格
+          retailPrice: '',//零售价格
+          sku: '',//规格只有id
+          skuSpecInfos: '',//规格数组id和name
+          status: '',//上下架状态
+          title: '',//关键词
+          transportationPrice: '',//运费
+        },//sku  form
+        goodsForm: {
+          brandId: '',//品牌id
+          brandName: '',//品牌name
+          categoryId: '',//二级分类id
+          categoryName: '',//二级分类name
+          goodsAttributeList: [],//基本属性
+          goodsExtendWithBLOBs: [],//扩展属性和富文本编辑器
+          goodsImgsList: [],//走马灯图片数组
+          goodsSpecInfoList: [],//规格数组id和name
+          goodsTagList: [],//标签数组
+          id: '',//商品id
+          name: '',//商品名称
+          number: '',//商品编码
+          skus: '',//规格
+          specId: '',//选择分类后下的规格id
+          specName: '',//选择分类后下的规格name
+          supplierId: '',//供应商id
+          tradeName: '',//贸易形态name
+          tradeType: '',//贸易形态id
+          unit: '',//单位
+        },//goods form
+        othersForm: {
+          imgSList: [],//主图加上单个sku的组图的总图用于显示走马灯
+        }//others form
       }
     },
-    created(){
+    created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
+    components: {},
     methods: {
-      select(skuId){
-        let self = this;
-        let requestData = {skuId: skuId};
-        self.httpApi.goods.goodsDetail(requestData, function (data) {
-          self.goodsDetail = data.data;
-
-//          self.form = self.formPass(self.form, data.data);
-//          self.form.spec = JSON.parse(self.form.spec);
-//          self.form.brand = JSON.parse(self.form.brand);
-//          let cat = JSON.parse(self.form.cat);
-//          cat.res = cat;
-//          self.totalCategories = [cat];
-//          self.form.cat = [cat];
-//          self.form.goodsExtend.annex = JSON.parse(self.form.goodsExtend.annex);
-          self.goodsDetail.goodsExtend.imgs = JSON.parse(self.goodsDetail.goodsExtend.imgs);
-          self.bigImg = self.goodsDetail.goodsExtend.imgs[0];
-          self.goodsDetail.skus = JSON.parse(self.goodsDetail.skus);
-          //self.goodsDetail.skus[0].sku = JSON.parse(self.goodsDetail.skus[0].sku);
-          console.log('skus',self.goodsDetail.skus[0].img)
-          console.log('all',self.goodsDetail)
-        });
+      picClick(index) {
+        this.$refs.carousel.setActiveItem(index);
       },
-//      clickSmallImg(img){
-//        this.bigImg = img;
-//      }
+      select(skuId) {
+        let self = this;
+        let imgObj = {};
+        let requestData = {skuId: skuId};
+        self.httpApi.commodit.selectGoodsInfoBySkuId(requestData, function (data) {
+          self.skuForm = data.data.goodsSkuVO;
+          self.goodsForm = data.data.goodsVO;
+          imgObj['id'] = self.skuForm.id;
+          imgObj['imgUrl'] = self.skuForm.img;
+          self.goodsForm.goodsImgsList.unshift(imgObj);
+          console.log('self.goodsForm.goodsImgsList', self.goodsForm.goodsImgsList);
+        })
+      },
+
     }
   }
 </script>
-
 <style>
-  .goods-detail-top {
-    overflow: hidden;
-    /*width: 1000px;*/
+  .el-carousel__item h3 {
+    color: #475669;
+    font-size: 18px;
+    opacity: 0.75;
+    line-height: 300px;
+    margin: 0;
   }
 
-  .goods-detail-top-left {
+  .el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+  }
+
+  .el-carousel__item:nth-child(2n+1) {
+    background-color: #d3dce6;
+  }
+
+  .lunBo-fuDong {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+
+  .lunBo-fuDong > li {
+    width: 13%;
+    height: 66px;
     float: left;
+    border: 1px solid #ccc;
+    margin-right: 20px;
+    padding: 5px;
   }
 
-  .goods-detail-top-right {
-    /*float: left;*/
-    /*margin: 30px;*/
+  .lunBo-fuDong > li > img {
+    width: 100%;
+    height: 100%;
   }
 
-  .goods-detail-p {
-    margin-top: 20px;
-  }
-
-  .goods-detail-p span {
-    margin-left: 20px;
-  }
-
-  .goods-detail-big-img {
-    width: 460px;
-    margin-bottom: 10px;
-  }
-
-  .goods-detail-big-img img {
-    width: 460px;
-    height: 460px;
-  }
-
-  .goods-detail-small-img {
-    overflow: hidden;
-    width: 460px;
-  }
-
-  .goods-detail-small-img img {
-    float: left;
-    width: 80px;
-    height: 80px;
-    margin-left: 15px;
-    cursor: pointer;
-  }
-
-  .goods-detail-small-img img:first-child {
-    margin-left: 0px;
+  .oneImgClass {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #b4bccc;
   }
 </style>

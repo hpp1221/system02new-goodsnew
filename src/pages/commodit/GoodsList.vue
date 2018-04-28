@@ -2,32 +2,51 @@
   <div class="container">
     <div class="wrapper">
       <h3 class="page-title">商品列表</h3>
-      <el-form ref="easyForm" :model="easyForm" inline class="request-form">
+      <el-form ref="form" :model="form" inline class="request-form">
+        <el-form-item label="商品名称">
+          <el-input v-model="form.title" style="width: 170px;"></el-input>
+        </el-form-item>
+        <el-form-item label="商品编码">
+          <el-input v-model="form.number" style="width: 170px"></el-input>
+        </el-form-item>
         <el-form-item label="商品分类">
-          <catselect @getCatSelect="getCatSelect"></catselect>
+          <el-cascader
+            :options="goodListCatList"
+            :show-all-levels="false"
+            @change="GoodListCatListChange"
+            :clearable="true"
+            :change-on-select=true
+            filterable
+            style="width: 160px"
+          >
+          </el-cascader>
         </el-form-item>
         <el-form-item label="商品状态">
-          <el-select placeholder="商品状态" v-model="easyForm.type">
+          <el-select placeholder="商品状态" v-model="form.status" style="width: 130px">
             <el-option label="全部" :value="''"></el-option>
             <el-option label="上架" :value="1"></el-option>
             <el-option label="下架" :value="0"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="text" @click="advanceSearch = true">高级搜索</el-button>
+        <el-form-item label="商品品牌">
+          <brandselect @getBrandSelect="getBrandSelect" :clearable="true" style="width: 150px"></brandselect>
+        </el-form-item>
+        <el-form-item label="贸易形态">
+          <gradetypeselect @getGradeTypeSelect="getGradeTypeSelect" :clearable="true" :selectAllVisible="true" style="width: 150px"></gradetypeselect>
         </el-form-item>
         <el-form-item>
           <el-button @click="select(pageSize,pageNum)">查询</el-button>
         </el-form-item>
-        <!--<el-form-item>-->
-          <!--<el-dropdown trigger="click">-->
-            <!--<el-button>导入</el-button>-->
-            <!--<el-dropdown-menu slot="dropdown">-->
-              <!--<el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>-->
-              <!--<el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>-->
-            <!--</el-dropdown-menu>-->
-          <!--</el-dropdown>-->
-        <!--</el-form-item>-->
+        <!--     <el-form-item>
+             <el-dropdown trigger="click">
+             <el-button>导入</el-button>
+             <el-dropdown-menu slot="dropdown">
+             <el-dropdown-item @click.native="multipleInputGoods">批量导入商品</el-dropdown-item>
+             <el-dropdown-item @click.native="multipleInputImgs">批量导入图片</el-dropdown-item>
+             </el-dropdown-menu>
+             </el-dropdown>
+
+             </el-form-item>-->
         <el-form-item>
           <el-button @click="outputFile">导出</el-button>
         </el-form-item>
@@ -35,7 +54,6 @@
           <el-button @click="createGoods">新增</el-button>
         </el-form-item>
       </el-form>
-
       <div class="goodslist-check-div" v-if="multipleSelection.length > 0">
         <el-button icon="close" type="text" @click="cancelSelect"></el-button>
         <span>已选择{{multipleSelection.length}}项</span>
@@ -55,25 +73,28 @@
                  style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
           </template>
         </el-table-column>
-        <el-table-column prop="number" label="商品编码">
+        <el-table-column prop="number" label="商品编码" width="200">
 
         </el-table-column>
-        <el-table-column prop="name" label="商品名称">
+        <el-table-column prop="title" label="商品名称" width="180">
 
         </el-table-column>
-        <el-table-column prop="sku" label="规格">
+        <!--        <el-table-column prop="sku" label="规格">
+
+                </el-table-column>-->
+        <el-table-column prop="firstCategoryName" label="一级分类" width="120">
 
         </el-table-column>
-        <el-table-column prop="unit" label="单位">
+        <el-table-column prop="twoCategoryName" label="二级分类" width="120">
 
         </el-table-column>
         <el-table-column prop="marketPrice" label="市场价">
 
         </el-table-column>
-        <el-table-column prop="price" label="参考成本价">
+        <el-table-column prop="referencePrice" label="参考价">
 
         </el-table-column>
-        <el-table-column prop="retailPrice" label="建议零售价">
+        <el-table-column prop="retailPrice" label="零售价">
 
         </el-table-column>
         <el-table-column prop="brandName" label="品牌">
@@ -85,17 +106,17 @@
         <el-table-column prop="count" label="库存数量">
 
         </el-table-column>
-        <el-table-column prop="emsPrice" label="物流运费">
+        <el-table-column prop="transportationPrice" label="物流运费">
 
         </el-table-column>
         <el-table-column prop="tradeName" label="贸易形态">
 
         </el-table-column>
-        <el-table-column prop="isUp" label="上下架">
-            <template slot-scope="scope">
-              <span v-if="scope.row.isUp === '0'">下架</span>
-              <span v-if="scope.row.isUp === '1'">上架</span>
-            </template>
+        <el-table-column prop="status" label="上下架">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status === '0'">下架</span>
+            <span v-if="scope.row.status === '1'">上架</span>
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -104,73 +125,11 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
                 <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
-                <!--<el-dropdown-item>删除</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="高级搜索" :visible.sync="advanceSearch">
-        <el-form ref="form" :model="form" class="request-form">
-          <el-form-item label="关键词">
-            <el-input placeholder="请输入商品名称/编码/按商品合并/关键字/条形码" v-model.trim="form.keyword" class="long-input">
-
-            </el-input>
-          </el-form-item>
-          <el-form-item label="商品分类">
-            <catselect @getCatSelect="getFormCatSelect"></catselect>
-          </el-form-item>
-          <el-form-item label="商品品牌">
-            <brandselect @getBrandSelect="getBrandSelect" style="width:350px;"></brandselect>
-            <!--<brandselect @getBrandSelect="getBrandSelect" :outBrand="form.brand" :isClickFetch="false"></brandselect>-->
-            <!--<el-select v-model="form.brandId" filterable placeholder="请选择">-->
-              <!--<el-option-->
-                <!--v-for="item in brandNameSelectData"-->
-                <!--:key="item.brandDealerId"-->
-                <!--:label="item.name"-->
-                <!--:value="item.brandDealerId">-->
-              <!--</el-option>-->
-            <!--</el-select>-->
-          </el-form-item>
-          <!--<el-form-item label="库存状态">-->
-            <!--<el-checkbox v-model="form.upLimit" label="高于库存上限值" :true-label="1" :false-label="0"></el-checkbox>-->
-            <!--<el-checkbox v-model="form.downLimit" label="低于库存下限值" :true-label="1" :false-label="0"></el-checkbox>-->
-            <!--<el-checkbox v-model="form.zero" label="库存<=0商品" :true-label="1" :false-label="0"></el-checkbox>-->
-          <!--</el-form-item>-->
-          <el-form-item label="商品状态">
-            <el-radio class="radio" v-model="form.type" :label="''">全部</el-radio>
-            <el-radio class="radio" v-model="form.type" :label="1">上架</el-radio>
-            <el-radio class="radio" v-model="form.type" :label="0">下架</el-radio>
-          </el-form-item>
-          <el-form-item label="商品来源">
-            <el-radio class="radio" v-model="form.source" :label="''">全部</el-radio>
-            <el-radio class="radio" v-model="form.source" :label="0">手动新增</el-radio>
-            <el-radio class="radio" v-model="form.source" :label="1">批量导入</el-radio>
-          </el-form-item>
-        </el-form>
-        <el-button @click="advanceSelect(pageSize,pageNum)">确定</el-button>
-        <el-button @click="advanceSearch = false">取消</el-button>
-      </el-dialog>
-      <!--<el-dialog title="批量设置标签" :visible.sync="dialogTableVisible">-->
-        <!--<el-table :data="multipleSelection">-->
-          <!--<el-table-column label="商品编码" prop="barCode">-->
-
-          <!--</el-table-column>-->
-          <!--<el-table-column label="商品名称" prop="name">-->
-
-          <!--</el-table-column>-->
-          <!--<el-table-column label="规格" prop="sku">-->
-
-          <!--</el-table-column>-->
-          <!--<el-table-column label="商品上架">-->
-            <!--<template slot-scope="scope">-->
-              <!--<el-checkbox>新品上架</el-checkbox>-->
-            <!--</template>-->
-          <!--</el-table-column>-->
-        <!--</el-table>-->
-        <!--<el-button @click="sureSetTags">确定</el-button>-->
-        <!--<el-button @click="dialogTableVisible = false">取消</el-button>-->
-      <!--</el-dialog>-->
       <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float:right"></pagination>
     </div>
   </div>
@@ -180,158 +139,111 @@
   export default {
     data() {
       return {
-        tableData: [],
-        brandNameSelectData:[],//商品品牌
-        advanceSearch: false,
-        form: {
-          //        storeHouseAddress: '',//所属仓库
-//          storeStatus: -1,
-//          tagId: '',//商品标签
-          //       goodsStatus: '',//商品状态
-          keyword: '',//关键词
-          //       series: '',//商品分类
-          cat: [],
-          catId: '',
-          catName: '',
-          brand: '',
-          brandName: '',
-          brandId: '',
-          source: '',//商品来源,全部是-1，手动新增0，批量导入1
-          type: '',//1是上架，0是下架
-          upLimit: 0,
-          downLimit: 0,
-          zero: 0,
+        form: {//简单查询
+          number: '',//商品编号
+          brandId: '',//商品品牌id
+          firstCategoryId: '',//一级类目id
+          twoCategoryId: '',//二级类目id
+          supplierId: '',//供应商id
+          tradeType: '',//交易形态id
+          title:'',//商品名称
+          status: '',//1是上架，0是下架
+
         },
-        easyForm: {//简单查询
-          cat: [],//所属仓库
-          catId: '',
-          catName: '',
-          type: '',//1是上架，0是下架
-        },
+        goodListCatList: [],//商品分类数组
+        tableData: [],//商品列表
+        totalPage: 10,
         pageSize: 5,
         pageNum: 1,
-        totalPage: 10,
-        multipleSelection: [],
-        upOrDownIds:[],//上下架ids
-        selectionObj: {},
-        searchType: 1//1是简单搜索，2是高级搜索
+        multipleSelection: [],//选择上下架
+        upOrDownIds: [],//上下架ids
       }
     },
     components: {
       'pagination': require('../../components/pagination'),
-      'catselect': require('../../components/getcatselect'),
-      'getcheckbox': require('../../components/getcheckbox'),
+      'gradetypeselect': require('../../components/getgradetypeselect'),
       'brandselect': require('../../components/getbrandselect')
     },
-    activated(){
-      this.searchType === 1 ? this.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList')) : this.advanceSelect(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
+    activated() {
+      this.select(localStorage.getItem('pageSizeList'), localStorage.getItem('pageNumList'));
     },
     methods: {
-      getBrandSelect(e) {
-        this.form.brandId = e.brandDealerId;
-        this.form.brandName = e.brandName;
-        this.form.brand = e.brand;
-      },
       pageChanged(page) {
         this.pageSize = page.size;
         this.pageNum = page.num;
-        localStorage.setItem('pageSizeList',page.size);
-        localStorage.setItem('pageNumList',page.num);
-        this.searchType === 1 ? this.select(page.size, page.num) : this.advanceSelect(page.size, page.num);
+        localStorage.setItem('pageSizeList', page.size);
+        localStorage.setItem('pageNumList', page.num);
+        this.getGoodListCatList();
+        this.select(page.size, page.num);
       },
-      getCatSelect(e) {
-        this.easyForm.cat = e.cat;
-        this.easyForm.catId = e.catId,
-        this.easyForm.catName = e.catName
-      },
-      getFormCatSelect(e) {
-        this.form.cat = e.cat;
-        this.form.catId = e.catId,
-          this.form.catName = e.catName
-      },
+      getGradeTypeSelect(e){
+        this.form.tradeType = e.gradeType.value;
+      },//贸易形态
+      getGoodListCatList() {//商品列表中的商品分类级联选择器
+        let self = this;
+        let requestData = {};
+        self.httpApi.goodsCat.selectCategoryTreeNode(requestData, function (data) {
+          self.goodListCatList = data.data;
+        });
+      },//商品类目列表
+      GoodListCatListChange(val) {//商品列表中的商品分类级联选择器回调函数
+        this.form.firstCategoryId = val[0];
+        this.form.twoCategoryId = val[1];
+      },//商品分类函数
+      getBrandSelect(e) {
+        this.form.brandId = e.id;
+      },//商品品牌函数
       seeDetail(id) {
         let url = '/commodit/goodsDetail/' + id;
         this.$router.push(url);
-      },
-      select(size, num) {//查询
+      },//查看商品详情
+      select(size, num) {
         let self = this;
         let requestData = {
           pageSize: size,
           pageNo: num,
-          temp: JSON.stringify(self.selectionObj),
-          goodsSkuRequest: self.easyForm,
+          title:self.form.title,
+          number:self.form.number,
+          firstCategoryId:self.form.firstCategoryId,
+          twoCategoryId:self.form.twoCategoryId,
+          supplierId:self.form.supplierId,
+          tradeType:self.form.tradeType,
+          status:self.form.status,
+          brandId:self.form.brandId,
         };
 //        requestData = Object.assign(requestData, self.shallowCopy(self.easyForm));
-//         self.httpApi.commodit.skuList(requestData, function (data) {
-//           self.tableData = data.data.list;
-//           self.totalPage = data.data.total;
-//           self.searchType = 1;
-//           if (data.temp !== "{}") {
-//             let list = JSON.parse(data.temp);
-//             self.$nextTick(function () {
-//               self.toggleSelection(list[num]);
-//             })
-//           }
-//         });
-      },
-      advanceSelect(size, num) {
-        let self = this;
-        let requestData = {
-          pageSize: size,
-          pageNo: num,
-          goodsSkuRequest: self.form
-        };
-        // self.httpApi.commodit.skuList(requestData, function (data) {
-        //   self.advanceSearch = false;
-        //   self.searchType = 2;
-        //   self.tableData = data.data.list;
-        //   self.totalPage = data.data.total;
-        // });
-      },
-      toggleSelection(rows) {
-        if (rows) {
-          let arr = [];
-          for (let i = 0; i < this.tableData.length; i++) {
-            for (let j = 0; j < rows.length; j++) {
-              if (this.tableData[i].id === rows[j].id) {
-                arr.push(this.tableData[i]);
-              }
-            }
-          }
-          arr.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        }
-      },
+        self.httpApi.commodit.selectGoodsSkuList(requestData, function (data) {
+          self.tableData = data.data.pageInfo.list;
+          self.totalPage = data.data.pageInfo.total;
+        });
+      },//查询列表
       handleSelectionChange(val) {
         let self = this;
-        for(let i = 0 ; i < val.length;i++){
-          if(self.upOrDownIds.indexOf(self.upOrDownIds[i]) == -1){
+        for (let i = 0; i < val.length; i++) {
+          if (self.upOrDownIds.indexOf(self.upOrDownIds[i]) == -1) {
             self.upOrDownIds.push(val[i].id);
           }
         }
         if (val.length > 0) {
-
           self.multipleSelection = val;
           self.selectionObj[self.pageNum] = val;
-
         }
-      },
-      update(id, goodsId) {//修改商品详情
+      },//点击选择上下架
+      update(id,goodsId) {
         let url = '/commodit/updateGoods/' + id + '/' + goodsId;
         this.$router.push(url);
-      },
+      },//修改商品详情
       createGoods() {
         this.$router.push('/commodit/createGoods');
-      },
-      outputFile() {//导出
+      },//新增
+      outputFile() {
         let arr = [];
         for (let i in this.selectionObj) {
           for (let j = 0; j < this.selectionObj[i].length; j++) {
             arr.push(this.selectionObj[i][j].id);
           }
         }
-        let url = 'admin/commodit/exportGoods?token=' + localStorage.getItem('token');
+        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
 //        let url = 'admin/goods/exportGoods?token=' + localStorage.getItem('token');
         let str = '';
         if (arr.length === 0) {
@@ -383,7 +295,7 @@
           });
 
         }
-      },
+      },//导出
       multipleInputGoods() {
         this.$router.push('/commodit/multipleInputGoods');
       },
@@ -401,7 +313,7 @@
             skuList: JSON.stringify(self.upOrDownIds),
             type: 1
           };
-          self.httpApi.commodit.upOrDownGoods(requestData, function (data) {
+          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
             self.$message.success('操作成功');
             setTimeout(function () {
               self.$router.go(0);
@@ -425,7 +337,7 @@
             skuList: JSON.stringify(self.upOrDownIds),
             type: 0
           };
-          self.httpApi.commodit.upOrDownGoods(requestData, function (data) {
+          self.httpApi.goods.upOrDownGoods(requestData, function (data) {
             self.$message.success('操作成功');
             setTimeout(function () {
               self.$router.go(0);
@@ -438,9 +350,6 @@
           });
         });
       },
-      // setTags() {//设置标签
-      //   this.dialogTableVisible = true;
-      // },
       cancelSelect() {//取消选中
         this.$refs.multipleTable.clearSelection();
       }

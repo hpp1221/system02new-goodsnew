@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import '../js'
 //商品新增
-Vue.prototype.httpApi.commodit.addGoods = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/goods-v1/addGoods', params,
+Vue.prototype.httpApi.commodit.addGoodsV1 = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/goods-v1/addGoodsV1', params,
     function (data) {
       successCallback(data);
     })
 };
 //查询商品详情
-Vue.prototype.httpApi.commodit.selectGoodsDetailByGoodsId = function (params, successCallback) {
-  Vue.prototype.httpGet('/admin/goods-v1/selectGoodsDetailByGoodsId', params,
+Vue.prototype.httpApi.commodit.selectGoodsInfoBySkuId = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/goods-v1/selectGoodsInfoBySkuId', params,
     function (data) {
       successCallback(data);
     })

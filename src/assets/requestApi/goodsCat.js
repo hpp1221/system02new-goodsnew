@@ -157,6 +157,13 @@ Vue.prototype.httpApi.goodsCat.selectCategoryTreeList = function (params, succes
       successCallback(data);
     })
 };
+//查询类目树结构列表(label value)
+Vue.prototype.httpApi.goodsCat.selectCategoryTreeNode = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/category/selectCategoryTreeNode', params,
+    function (data) {
+      successCallback(data);
+    })
+};
 //根据id修改分类
 Vue.prototype.httpApi.goodsCat.updateCategory = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/category/updateCategory', params,

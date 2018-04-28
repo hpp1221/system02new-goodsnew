@@ -648,7 +648,6 @@
         this.goodsForm.goodsExtend.imgs.push(file);
       },
       removeFileList(file) {//商品移除某商品图片
-        console.log('file',file)
         this.goodsForm.goodsExtend.imgs.splice(file, 1);
       },
       getSkuImg(file) {//sku,sku图片
@@ -759,7 +758,7 @@
         });
       },
       cancel() {
-        this.$router.push('/goods/goodslist');
+        this.$router.push('/commodit/goodslist');
       },
 
       createGoodsDetail(tableMap, index) {
@@ -926,7 +925,7 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.goods.editSku(self.form.skus, function (data) {
-            self.$router.push('/goods/goodslist');
+            self.$router.push('/commodit/goodslist');
             // self.select(localStorage.getItem('pageSize'),localStorage.getItem('pageNum'));
           });
           self.$message({
@@ -1045,7 +1044,7 @@
           type: 'warning',
         }).then(() => {
           self.httpApi.goods.editGoods(requestData, function (data) {
-            self.$router.push('/goods/goodslist');
+            self.$router.push('/commodit/goodslist');
             // this.$router.go({name:'detailgoods',params:{'/goods/goodslist'}});
             // self.select(localStorage.getItem('pageSizeList'),localStorage.getItem('pageNumList'));
           });

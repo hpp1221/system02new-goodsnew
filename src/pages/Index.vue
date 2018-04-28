@@ -161,6 +161,18 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">售后管理</span>
               </el-menu-item>
+              <el-submenu index="13" style="padding:0;">
+                <template slot="title">
+                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
+                  <span slot="title" style="margin-left: 3px">新版商品</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="13-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
+                  </el-menu-item>
+                  <el-menu-item index="13-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品管理
+                  </el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
               <el-submenu index="4">
                 <template slot="title">
                   <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
@@ -199,10 +211,6 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">临时商品管理</span>
               </el-menu-item>
-              <el-menu-item index="13" style="padding:0;">
-                <i class="iconfont icon-group"></i>
-                <span slot="title" style="margin-left: 3px;">新版商品管理</span>
-              </el-menu-item>
             </el-menu>
           </div>
         </div>
@@ -238,10 +246,6 @@
         </el-aside>
       </transition>
       <el-main>
-        <!--<keep-alive>-->
-        <!--<router-view></router-view>-->
-        <!--</keep-alive>-->
-
         <keep-alive>
           <router-view v-if="$route.meta.keepAlive"></router-view>
         </keep-alive>
@@ -362,7 +366,10 @@
           case '12-2':
             this.$router.push('/coupon/listout');
             break;
-          case '13':
+          case '13-1':
+            this.$router.push('/commodit/classify');
+            break;
+          case '13-2':
             this.$router.push('/commodit/goodslist');
             break;
         }
