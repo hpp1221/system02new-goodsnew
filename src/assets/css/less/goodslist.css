@@ -81,7 +81,7 @@
   border-bottom: 1px solid #bbbbbb;
 }
 .addGoods-spec-info {
-  padding: 20px 200px ;
+  padding: 20px 200px;
   border-bottom: 1px solid #bbb;
 }
 .addGoods-spec-info-span1 {
@@ -137,4 +137,71 @@
 }
 .basicinfo-five {
   width: 240px;
+}
+.tab-1 {
+  width: 90%;
+  margin: 20px auto;
+  display: flex;
+}
+.tab-1-div1 {
+  flex: 0.3;
+}
+.carousel-width {
+  width: 100%;
+}
+.tab-1-div3 {
+  flex: 0.1;
+}
+.tab-1-div2 {
+  flex: 0.45;
+  color: #666;
+  margin-top: 50px;
+  overflow: hidden;
+}
+.tab-1-div2 > p {
+  width: 45%;
+  margin: 15px 0 10px 0 ;
+  float: left;
+}
+/*.tab-1-div2 > p > span {
+  font-weight: 600;
+
+}*/
+.goods-info-can {
+  width: 90%;
+  margin: 20px auto;
+  color: #666;
+}
+.goods-info-word {
+  color: #999;
+  margin-bottom: 20px;
+}
+.goods-info-word-p {
+  width: 60%;
+  margin-left: 10px;
+}
+.goods-info-word-p > span {
+  display: inline-block;
+  width: 32%;
+  margin: 10px 0;
+}
+.goods-info-all {
+  margin-bottom: 20px;
+}
+.fu-wen-ben {
+  margin: 10px;
+}
+.huo-dong-tag {
+  color: #FF0036;
+}
+.goods-info-word-p-detail {
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+.goods-detail-last {
+  width: 90%;
+  overflow: hidden;
+}
+.goods-detail-return {
+  float: right;
 }

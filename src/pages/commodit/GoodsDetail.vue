@@ -2,27 +2,86 @@
   <div class="container">
     <div class="wrapper">
       <el-tabs v-model="activeName">
-        <el-tab-pane label="sku详情" name="first">
-          <div style="width: 28%;">
-            <el-carousel indicator-position="outside" ref="carousel" :autoplay="false" style="width: 450px;"
-                         height="450px">
+        <el-tab-pane label="sku详情" name="first" class="tab-1">
+          <div class="tab-1-div1">
+            <el-carousel indicator-position="outside" ref="carousel" :autoplay="false" height="450px"
+                         class="carousel-width">
               <el-carousel-item v-for="(item,index) in goodsForm.goodsImgsList" :key="item.id" name="index">
-                <img :src="item.imgUrl" @click="picClick(index)" class="oneImgClass">
+                <img :src="item.imgUrl" @mouseenter="picMouseenter(index)" class="oneImgClass">
               </el-carousel-item>
             </el-carousel>
-            <div>
+            <div class="carousel-width">
               <ul class="lunBo-fuDong">
                 <li v-for="(item1,index1) in goodsForm.goodsImgsList" :key="item1.id">
-                  <img :src="item1.imgUrl" @click="picClick(index1)">
+                  <img :src="item1.imgUrl" @mouseenter="picMouseenter(index1)">
                 </li>
               </ul>
             </div>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="商品详情" name="second">
+          <div class="tab-1-div3"></div>
+          <div class="tab-1-div2">
+            <h3>{{skuForm.title}}</h3>
+            <p><span>sku规格 ：</span>{{skuForm.skuAllName}}</p>
+            <p v-if='skuForm.status === "1"'><span>sku状态 ：</span>已上架</p>
+            <p v-if='skuForm.status === "0"'><span>sku状态 ：</span>未上架</p>
+            <p><span>sku条码 ：</span>{{skuForm.barCode}}</p>
+            <p><span>sku编码 ：</span>{{skuForm.number}}</p>
+            <p><span>起订数量 ：</span>{{skuForm.mustBuyNum}}</p>
+            <p><span>sku库存 ：</span>{{skuForm.count}}</p>
+            <p><span>市场价格 ：</span>{{skuForm.marketPrice}}</p>
+            <p><span>参考价格 ：</span>{{skuForm.referencePrice}}</p>
+            <p><span>零售价格 ：</span>{{skuForm.retailPrice}}</p>
+            <p><span>物流运费 ：</span>{{skuForm.transportationPrice}}</p>
+            <p>活动标签 ：<span class="huo-dong-tag" v-for="item in goodsForm.goodsTagList" :key="item.id">{{item.tagName + '  '}}</span></p>
+          </div>
 
         </el-tab-pane>
+        <div class="goods-info-can">
+          <p><span>商品名称 ：</span>{{goodsForm.name}}</p> <br/>
+          <div class="goods-info-all">
+            <p class="goods-info-word">商品信息 ：</p>
+            <p class="goods-info-word-p">
+              <span>商品品牌：{{goodsForm.brandName}}</span>
+              <span>商品分类：{{goodsForm.categoryPName+'/'+goodsForm.categoryName}}</span>
+              <span>规格值 ：{{goodsForm.specName}}</span>
+              <br>
+              <span>贸易形态：{{goodsForm.tradeName}}</span>
+              <span>商品单位：{{goodsForm.unit}}</span>
+              <span>编码：{{goodsForm.number}}</span>
+            </p>
+          </div>
+          <div class="goods-info-all">
+            <p class="goods-info-word">基本属性 ：</p>
+            <p class="goods-info-word-p" >
+              <span v-for="item in goodsForm.goodsAttributeList" :key="item.attributeId">{{item.attributeName}}：{{item.attributeItemName}}</span>
+            </p>
+          </div>
+          <div class="goods-info-all">
+            <p class="goods-info-word">扩展属性：</p>
+            <p class="goods-info-word-p" >
+              <span v-for="item1 in goodsForm.goodsExtendWithBLOBs.annex" :key="item1.name">{{item1.name}}：{{item1.value}}</span>
+            </p>
+          </div>
+          <div class="goods-info-all">
+            <p class="goods-info-word">商品描述：</p>
+            <p class="goods-info-word-p goods-info-word-p-detail" >
+              <span v-html="goodsForm.goodsExtendWithBLOBs.describe"></span>
+            </p>
+          </div>
+          <div class="goods-info-all">
+            <p class="goods-info-word">商品详情：</p>
+            <p class="goods-info-word-p goods-info-word-p-detail" >
+              <span v-html="goodsForm.goodsExtendWithBLOBs.content"></span>
+
+            </p>
+          </div>
+        </div>
+
       </el-tabs>
+      <div class="goods-detail-last">
+        <el-button class="goods-detail-return" @click="returnList">返回</el-button>
+      </div>
+
     </div>
   </div>
 </template>
@@ -47,10 +106,13 @@
           status: '',//上下架状态
           title: '',//关键词
           transportationPrice: '',//运费
+          skuAllName: '',//规格名
         },//sku  form
         goodsForm: {
           brandId: '',//品牌id
           brandName: '',//品牌name
+          categoryPId: '',//一级分类id
+          categoryPName: '',//一级分类name
           categoryId: '',//二级分类id
           categoryName: '',//二级分类name
           goodsAttributeList: [],//基本属性
@@ -69,33 +131,38 @@
           tradeType: '',//贸易形态id
           unit: '',//单位
         },//goods form
-        othersForm: {
-          imgSList: [],//主图加上单个sku的组图的总图用于显示走马灯
-        }//others form
       }
     },
     created() {
       this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
     },
-    components: {},
+    components: { },
     methods: {
-      picClick(index) {
+      picMouseenter(index) {
         this.$refs.carousel.setActiveItem(index);
-      },
+      },//走马灯鼠标hover事件
       select(skuId) {
         let self = this;
         let imgObj = {};
+        let skuAllName = '';
         let requestData = {skuId: skuId};
         self.httpApi.commodit.selectGoodsInfoBySkuId(requestData, function (data) {
           self.skuForm = data.data.goodsSkuVO;
           self.goodsForm = data.data.goodsVO;
+          self.goodsForm.goodsImgsList = data.data.goodsImgsList;
+          self.goodsForm.goodsExtendWithBLOBs.annex = JSON.parse(self.goodsForm.goodsExtendWithBLOBs.annex);
           imgObj['id'] = self.skuForm.id;
           imgObj['imgUrl'] = self.skuForm.img;
-          self.goodsForm.goodsImgsList.unshift(imgObj);
-          console.log('self.goodsForm.goodsImgsList', self.goodsForm.goodsImgsList);
+          self.goodsForm.goodsImgsList.unshift(imgObj);//走马灯总图片
+          self.skuForm.skuSpecInfos.map(function (value, key) {
+            skuAllName += value.specItemName + ' '
+          });
+          self.skuForm.skuAllName = skuAllName;//规格名
         })
-      },
-
+      },//查询列表
+      returnList(){
+        this.$router.push('/commodit/goodslist');
+      }//返回
     }
   }
 </script>

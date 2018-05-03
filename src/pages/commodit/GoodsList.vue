@@ -124,7 +124,7 @@
               <i class="iconfont icon-more" style="cursor: pointer"></i>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="update(scope.row.id,scope.row.goodsId)">修改</el-dropdown-item>
-                <el-dropdown-item @click.native="seeDetail(scope.row.id)">明细</el-dropdown-item>
+                <el-dropdown-item @click.native="seeDetail(scope.row.id)">详情</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>

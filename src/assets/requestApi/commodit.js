@@ -7,9 +7,16 @@ Vue.prototype.httpApi.commodit.addGoodsV1 = function (params, successCallback) {
       successCallback(data);
     })
 };
-//查询商品详情
+//查询sku详情
 Vue.prototype.httpApi.commodit.selectGoodsInfoBySkuId = function (params, successCallback) {
   Vue.prototype.httpGet('/admin/goods-v1/selectGoodsInfoBySkuId', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//查询商品详情
+Vue.prototype.httpApi.commodit.selectGoodsInfoById = function (params, successCallback) {
+  Vue.prototype.httpGet('/admin/goods-v1/selectGoodsInfoById', params,
     function (data) {
       successCallback(data);
     })
@@ -17,6 +24,13 @@ Vue.prototype.httpApi.commodit.selectGoodsInfoBySkuId = function (params, succes
 //查询商品sku列表
 Vue.prototype.httpApi.commodit.selectGoodsSkuList = function (params, successCallback) {
   Vue.prototype.httpPost('/admin/goods-v1/selectGoodsSkuList', params,
+    function (data) {
+      successCallback(data);
+    })
+};
+//更改sku
+Vue.prototype.httpApi.commodit.updateSkuById = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/goods-v1/updateSkuById', params,
     function (data) {
       successCallback(data);
     })
