@@ -4,7 +4,7 @@
       <h3 class="page-title">修改商品详情</h3>
       <el-tabs v-model="tabName">
         <el-tab-pane label="修改sku" name="first">
-          <el-form ref="skuForm" :model="skuForm" class="request-form" label-width="120px">
+          <el-form ref="skuForm" :model="skuForm" class="request-form" label-width="120px" style="overflow: hidden">
             <h4 class="item-title">基本信息</h4>
             <el-form-item label="商品名称">
               {{skuForm.goodsVO.name}}
@@ -154,14 +154,14 @@
             </el-form-item>
             <h4 class="item-title">商品图片</h4>
             <el-form-item>
-              <img v-lazy="f.imgUrl" v-for="f in skuForm.goodsImgsList" :key="f.id"
+              <img v-lazy="f.imgUrl" v-for="f in skuForm.goodsSkuVO.goodsImgsList" :key="f.id"
                    style="width: 200px;height:200px;margin-right: 30px">
             </el-form-item>
             <h4 class="item-title">商品描述</h4>
             <el-form-item>
               <quill-editor
                 v-model="skuForm.goodsVO.goodsExtendWithBLOBs.content"
-                :options="skuForm.editorOption"
+                :options="otherForm.editorOption"
                 class="quill-editor"
                 :disabled="true">
               </quill-editor>
@@ -173,7 +173,7 @@
               属性值 :
               <el-input v-model="item.value" class="form-input" style="padding:0px 10px" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item style="float: right;margin-right: 18%;">
               <el-button @click="updateSku">确定</el-button>
               <el-button @click="cancelSku">取消</el-button>
             </el-form-item>
@@ -181,7 +181,7 @@
         </el-tab-pane>
         <el-tab-pane label="修改商品" name="second">
           <p class="addGoods-info-title">修改商品基本信息</p>
-          <el-form :inline="true" :model="goodsForm" ref="goodsForm" class="demo-form-inline">
+          <el-form :inline="true" :model="goodsForm" ref="goodsForm" class="demo-form-inline" style="overflow: hidden">
             <el-form-item label="商品编码" class="addGoods-info-main-item1">
               <el-input v-model="goodsForm.goodsVO.number" :disabled="true" class="basicinfo-five"></el-input>
             </el-form-item>
@@ -272,258 +272,242 @@
             <br>
             <div style="margin:20px 0px  10px 100px;" v-for="(s,sindex) in otherForm.mustSpec" :key="sindex"
                  v-if="otherForm.mustSpec.length > 0">
-              <div style="margin:20px 20px 0px 20px;overflow:hidden;">
-                <span style="font-size: 15px;float: left;margin-right: 15px">{{s.name}}</span>
-                <el-checkbox-group v-model="otherForm.checkList" style="float: left">
-                  <el-checkbox :label="v.id" style="width: 100px;" v-for="v in s.children" :key="v.id">{{v.name}}
-                  </el-checkbox>
-                </el-checkbox-group>
-              </div>
+              <span style="font-size: 15px;margin:20px 20px 0px 20px;">{{s.name}}</span>
+              <el-checkbox :label="v.id" style="width: 100px;" v-for="v in s.children" :key="v.id"
+                           @change="getSpecChange(s,v,sindex)" v-model="v.checked">{{v.name}}
+              </el-checkbox>
             </div>
-            <!--            <el-form-item>
-                          <el-table
-                            :data="form.skus"
-                            v-if="form.skus.length > 0"
-                            style="width: 1520px;overflow: auto"
-                          >
-                            <el-table-column
-                              label="是否上架"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-checkbox v-model="scope.row.status" true-label="1" false-label="0"></el-checkbox>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="主图"
-                              width="160">
-                              <template slot-scope="scope">
-                                <uploadoneimg
-                                  :fileList="scope.row.img"
-                                  @getFileList="getSkuImg"
-                                  @click.native="rememberIndex(scope)">
-                                </uploadoneimg>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              :label="s.specName"
-                              width="80"
-                              v-for="s in lastChecked"
-                              :key="s.specName">
-                              <template slot-scope="scope">
-                                <span>{{scope.row.skuShow[s.id].name}}</span>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="SKU编码"
-                              width="250">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.number">
+            <el-form-item>
+              <el-table
+                :data="goodsForm.goodsSkuVOList"
+                v-if="goodsForm.goodsSkuVOList.length > 0"
+                style="width: 1520px;overflow: auto"
+              >
+                <el-table-column
+                  label="是否上架"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-checkbox v-model="scope.row.status" true-label="1" false-label="0"></el-checkbox>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="主图"
+                  width="160">
+                  <template slot-scope="scope">
+                    <uploadoneimg
+                      :fileList="scope.row.img"
+                      @getFileList="getSkuImg"
+                      @click.native="rememberIndex(scope)">
+                    </uploadoneimg>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="规格"
+                  width="100">
+                  <template slot-scope="scope">
+                    <span v-for="s in scope.row.skuSpecInfos" :key="s.specId">{{s.specItemName+ '  '}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="SKU编码"
+                  width="250">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.number">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
+                    </el-input>
+                  </template>
+                </el-table-column>
 
-                            <el-table-column
-                              label="条形码"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.barCode">
+                <el-table-column
+                  label="条形码"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.barCode">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="关键字"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.title">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="关键字"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.title">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="市场价格"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.marketPrice">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="市场价格"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.marketPrice">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="参考成本价"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.referencePrice">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="参考成本价"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.referencePrice">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="建议零售价"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.retailPrice">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="建议零售价"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.retailPrice">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="起订量"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.mustBuyNum">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="起订量"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.mustBuyNum">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="库存数量"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.count">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="库存数量"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.count">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
-                            <el-table-column
-                              label="物流运费"
-                              width="180">
-                              <template slot-scope="scope">
-                                <el-input v-model="scope.row.transportationPrice">
+                    </el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="物流运费"
+                  width="180">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.transportationPrice">
 
-                                </el-input>
-                              </template>
-                            </el-table-column>
+                    </el-input>
+                  </template>
+                </el-table-column>
 
-                          </el-table>
+              </el-table>
 
-                        </el-form-item>-->
-            <!--          <el-form-item class="addGoods-info-main-item1">
-                        <br>
-                      </el-form-item>-->
-            <!--            <div class="addGoods-info-goodsimgs" style="overflow: hidden">
-                          <div>
-                            <div>
-                              <el-checkbox v-model="checked" class="isOrNotCommon">是否公用组图</el-checkbox>
-                              <span class="addGoods-info-five">(最多上传5张)</span>
-                            </div>
-                            <br>
-                            <el-upload
-                              action="http://upload.qiniu.com/"
-                              list-type="picture-card"
-                              :data="key"
-                              :limit="5"
-                              :file-list="fileList"
-                              :before-upload="beforeUploadImgCommon"
-                              :on-success="handleSuccessImgCommon"
-                              :on-remove="handleRemoveImgCommon"
-                              v-if="key.token && checked === true"
-                              style="margin:20px 0px 0px 10px">
-                              <i class="el-icon-plus"></i>
-                            </el-upload>
-                          </div>
-                          <br>
-                          <el-form-item>
-                            <el-table
-                              :data="form.skus"
-                              v-if="form.skus.length > 0 && checked === false"
-                              border
-                              style="width: 100%;">
-                              <el-table-column
-                                :label="s.specName"
-                                width="80"
-                                v-for="s in lastChecked"
-                                :key="s.specName">
-                                <template slot-scope="scope">
-                                  <span>{{scope.row.skuShow[s.id].name}}</span>
-                                </template>
-                              </el-table-column>
-                              &lt;!&ndash;<el-table-column&ndash;&gt;
-                              &lt;!&ndash;label="SKU编码"&ndash;&gt;
-                              &lt;!&ndash;width="300">&ndash;&gt;
-                              &lt;!&ndash;<template slot-scope="scope">&ndash;&gt;
-                              &lt;!&ndash;<el-input v-model="scope.row.number">&ndash;&gt;
-
-                              &lt;!&ndash;</el-input>&ndash;&gt;
-                              &lt;!&ndash;</template>&ndash;&gt;
-                              &lt;!&ndash;</el-table-column>&ndash;&gt;
-                              <el-table-column
-                                label="图片"
-                                width="800"
-                              >
-                                <template slot-scope="scope">
-                                  <uploadoneimg
-
-                                    @getFileList="getSkuImgNot"
-                                    @click.native="rememberIndexNot(scope)"
-                                    style="float: left;">
-                                  </uploadoneimg>
-                                  <uploadoneimg
-
-                                    @getFileList="getSkuImgNot"
-                                    @click.native="rememberIndexNot(scope)"
-                                    style="float: left;">
-                                  </uploadoneimg>
-                                  <uploadoneimg
-
-                                    @getFileList="getSkuImgNot"
-                                    @click.native="rememberIndexNot(scope)"
-                                    style="float: left;">
-                                  </uploadoneimg>
-                                  <uploadoneimg
-
-                                    @getFileList="getSkuImgNot"
-                                    @click.native="rememberIndexNot(scope)"
-                                    style="float: left;">
-                                  </uploadoneimg>
-                                  <uploadoneimg
-                                    @getFileList="getSkuImgNot"
-                                    @click.native="rememberIndexNot(scope)"
-                                    style="float: left;">
-                                  </uploadoneimg>
-                                </template>
-                              </el-table-column>
-                            </el-table>
-                          </el-form-item>
-                        </div>-->
+            </el-form-item>
+            <!-- <div style="margin:20px 0px  10px 100px;" v-for="(s,sindex) in otherForm.mustSpec" :key="sindex"
+                  v-if="otherForm.mustSpec.length > 0">
+               <div style="margin:20px 20px 0px 20px;overflow:hidden;">
+                 <span style="font-size: 15px;float: left;margin-right: 15px">{{s.name}}</span>
+                 <el-checkbox-group v-model="otherForm.checkList" style="float: left">
+                   <el-checkbox :label="v.id" style="width: 100px;" v-for="v in s.children" :key="v.id">{{v.name}}
+                   </el-checkbox>
+                 </el-checkbox-group>
+               </div>
+             </div>-->
+            <el-form-item class="addGoods-info-main-item1">
+              <br>
+            </el-form-item>
+            <div class="addGoods-info-goodsimgs" style="overflow: hidden">
+              <div v-if="goodsForm.isShareImg === 1">
+                <div>
+                  <el-checkbox v-model="otherForm.imgCommonChecked"
+                               class="isOrNotCommon">是否公用组图
+                  </el-checkbox>
+                  <span class="addGoods-info-five">(最多上传5张)</span>
+                </div>
+                <br>
+                <uploadmultipleimg
+                  :fileList="otherForm.imgCommonArr"
+                  @getFileList="getFileList2"
+                  @removeFile="removeFileList"
+                  style="margin-top: 7px">
+                </uploadmultipleimg>
+                <!--  <el-upload
+                    action="http://upload.qiniu.com/"
+                    list-type="picture-card"
+                    :data="key"
+                    :limit="5"
+                    :file-list="fileList"
+                    :before-upload="beforeUploadImgCommon"
+                    :on-success="handleSuccessImgCommon"
+                    :on-remove="handleRemoveImgCommon"
+                    v-if="key.token && goodsForm.isShareImg === 1"
+                    style="margin:20px 0px 0px 10px">
+                    <i class="el-icon-plus"></i>
+                  </el-upload>-->
+              </div>
+              <br>
+              <el-form-item v-if="goodsForm.isShareImg === 0">
+                <div>
+                  <el-checkbox
+                    class="isOrNotCommon">是否公用组图
+                  </el-checkbox>
+                  <span class="addGoods-info-five">(最多上传5张)</span>
+                </div>
+                <el-table
+                  :data="goodsForm.goodsSkuVOList"
+                  v-if="goodsForm.goodsSkuVOList.length > 0"
+                  border
+                  style="width: 100%;">
+                  <el-table-column
+                    label="规格"
+                    width="120">
+                    <template slot-scope="scope">
+                      <span v-for="s in scope.row.skuSpecInfos" :key="s.specId">{{s.specItemName+ '  '}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="图片"
+                    width="1000">
+                    <template slot-scope="scope">
+                      <uploadmultipleimg
+                        :fileList="scope.row.goodsImgsList"
+                        style="float: left;">
+                      </uploadmultipleimg>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form-item>
+            </div>
             <br>
-            <!--            <el-form-item label="商品详情" class="addGoods-info-main-item1" style="overflow: hidden">
-                          <quill-editor
-                            v-if="active === 2"
-                            v-model="form.goodsExtend.content"
-                            ref="myQuillEditor"
-                            :options="editorOption"
-                            @change="onEditorChange($event)"
-                            class="quill-editor">
-                          </quill-editor>
-                          <el-upload
-                            action="http://upload.qiniu.com/"
-                            :before-upload='beforeUpload'
-                            :data="key"
-                            :on-success='handleSuccess'
-                            v-if="key.token"
-                            ref="upload"
-                            style="display:none">
-                            <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">点击上传</el-button>
-                          </el-upload>
-                        </el-form-item>
-                        <br><br>-->
-            <!--            <el-form-item label="扩展属性" class="addGoods-info-main-item1">
-                          <ul>
-                            <i class="el-icon-plus" @click="addOneAnnex"></i> <br>
+            <el-form-item label="商品详情" class="addGoods-info-main-item1" style="overflow: hidden">
+              <quill-editor
+                v-model="goodsForm.goodsVO.goodsExtendWithBLOBs.content"
+                ref="myQuillEditor"
+                :options="otherForm.editorOption"
+                @change="onEditorChange($event)"
+                class="quill-editor">
+              </quill-editor>
+              <el-upload
+                action="http://upload.qiniu.com/"
+                :before-upload='beforeUpload'
+                :data="key"
+                :on-success='handleSuccess'
+                v-if="key.token"
+                ref="upload"
+                style="display:none">
+                <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">点击上传</el-button>
+              </el-upload>
+            </el-form-item>
+            <br><br>
+            <el-form-item label="扩展属性" class="addGoods-info-main-item1">
+              <ul>
+                <i class="el-icon-plus" @click="addOneAnnex"></i> <br>
 
-                            <li v-for="(item,index) in form.goodsExtend.annex">
-                              <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
-                              <el-input type="text" class="item.num1 form-input" v-model="item.name"
-                                        placeholder="请输入属性名称" style="margin: 0px 10px 10px 0px"></el-input>
-                              <el-input type="text" class="item.num1 form-input" v-model="item.value"
-                                        placeholder="请输入属性值" style="margin: 0px 10px 10px 0px"></el-input>
-                            </li>
-                          </ul>
-                        </el-form-item>-->
-
+                <li v-for="(item,index) in goodsForm.goodsVO.goodsExtendWithBLOBs.annex">
+                  <i class="el-icon-minus" @click="deleteOneAnnex(index)"></i>
+                  <el-input type="text" class="item.num1 form-input" v-model="item.name"
+                            placeholder="请输入属性名称" style="margin: 0px 10px 10px 0px"></el-input>
+                  <el-input type="text" class="item.num1 form-input" v-model="item.value"
+                            placeholder="请输入属性值" style="margin: 0px 10px 10px 0px"></el-input>
+                </li>
+              </ul>
+            </el-form-item>
           </el-form>
+          <div style="float: right;margin-right: 18%">
+            <el-button>确定</el-button>
+            <el-button>取消</el-button>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -598,14 +582,6 @@
           },//goods
           skuFormArr: [],//sku商品列表
           skuImgIndex: 0,//点击sku图片记录index
-          editorOption: {
-            theme: 'snow', //主题
-            modules: {
-              toolbar: toolbarOptions,  //工具栏
-            },
-            placeholder: "请输入商品详情......",
-            readOnly: false,
-          },//vue-quill-editor
         },//sku  form
         goodsForm: {
           goodsSkuVOList: [],//商品列表
@@ -618,7 +594,6 @@
             categoryName: '',//二级分类name
             goodsAttributeList: [],//基本属性
             goodsExtendWithBLOBs: {},//扩展属性和富文本编辑器
-            goodsImgsList: [],//走马灯图片数组
             goodsSpecInfoList: [],//规格数组id和name
             goodsTagList: [],//标签数组
             id: '',//商品id
@@ -632,7 +607,9 @@
             tradeType: '',//贸易形态id
             unit: '',//单位
           },//eg category brand
-          imgMap: {},//组图
+          skuIds: [],//后台传回的规格勾选的ids
+
+
         },//goods form
         otherForm: {
           brandList: [],//品牌列表
@@ -642,16 +619,51 @@
           checkListIds: [],//标签选择后的id数组
           mustBasicInfo: [],//基本属性数组
           mustSpec: [],//必有规格
-          checkedList: [],//规格选择后的id数组
+          checkedList: [],//修改--规格选择后的id数组
           checkList: [],
-        }
+          idArr: [],
+          lastChecked: [],
+          skusArrNew: [],
+          skuMust: [],
+          imgCommonChecked: true,//是否是共用组图 1\0
+          imgCommonArr: [],//由map改变后的img数组 isShareImg---1
+          imgNotCommonArr: [],//由map改变后的img数组 isShareImg---0
+          imgNotCommonArrNew: [],//由map改变后的img数组 isShareImg---0
+          editorOption: {
+            theme: 'snow', //主题
+            modules: {
+              toolbar: toolbarOptions,  //工具栏
+            },
+            placeholder: "请输入商品详情......",
+            readOnly: false,
+          },
+        },
+        isShareImg: '',//是否是共用组图
+        key: {
+          token: '',
+          file: ''
+        },
       }
     },
     created() {
-      this.$route.params.id ? this.select(this.$route.params.id) : this.$router.push('/error');
+      let self = this;
+      self.$route.params.id ? self.select(self.$route.params.id) : self.$router.push('/error');
+      self.key.file = "";
+      self.fullscreenLoading = true
+      if (self.fileList) {
+        self.key.file = self.fileList;
+      }
+      let requestData = {
+        token: window.localStorage.getItem('token'),
+        bucketName: 'management'
+      };
+      self.httpApi.aliyun.imgSignature(requestData, function (data) {
+        self.key.token = data.data;
+      });
     },
     components: {
       'uploadoneimg': require('../../components/uploadoneimg'),
+      'uploadmultipleimg': require('../../components/uploadmultipleimg'),
     },
     watch: {
       tabName: function (newVal, oldVal) {
@@ -667,7 +679,7 @@
       },
     },
     methods: {
-      /* -------------------------------------------------修改sku-----------------------------------------------------*/
+/* -------------------------------------------------修改sku-----------------------------------------------------*/
       select(id) {
         let self = this;
         let selectArr = [];
@@ -694,7 +706,7 @@
       cancelSku() {
         this.$router.push('/commodit/goodslist');
       },////修改sku取消
-      /* -------------------------------------------------修改goods---------------------------------------------------*/
+/* -------------------------------------------------修改goods---------------------------------------------------*/
       selectGoods(goodsId) {
         let self = this;
         let ids = [];
@@ -703,6 +715,7 @@
         };
         self.httpApi.commodit.selectGoodsInfoById(requestData, function (data) {
           self.goodsForm = data.data;
+          self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex = JSON.parse(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex);
           self.goodsForm.goodsVO.goodsTagList.map(function (value) {
             self.otherForm.checkListIds.push(value.tagName);
           });//标签ids
@@ -714,16 +727,45 @@
           });//基本属性接口
           self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData, function (data) {
             self.otherForm.mustSpec = data.data;
-            console.log('self.otherForm.mustSpec-----1', self.otherForm.mustSpec)
             self.otherForm.mustSpec.map(value => {
               self.otherForm.checkedList.push({
                 id: value.id,
                 specName: value.name,
                 specValue: []
               });
+              self.otherForm.idArr.push({
+                specName: value.id.toString(),
+                specValue: []
+              })
             });
-            console.log('self.otherForm.mustSpec-----2', self.otherForm.mustSpec)
+            let skuIds = self.goodsForm.skuIds;
+            let mustSpec = self.otherForm.mustSpec;
+            for (let j = 0; j < mustSpec.length; j++) {
+              for (let z = 0; z < mustSpec[j].children.length; z++) {
+                for (let i = 0; i < skuIds.length; i++) {
+                  if (mustSpec[j].children[z].id === skuIds[i]) {
+                    mustSpec[j].children[z].checked = true;
+                  }
+                }
+              }
+            }
           });//规格列表
+          let goodsSkuVOList = self.goodsForm.goodsSkuVOList;
+          if (self.goodsForm.isShareImg === 1) {
+            for (let i = 0; i < goodsSkuVOList[0].goodsImgsList.length; i++) {
+              self.otherForm.imgCommonArr.push({
+                'id': goodsSkuVOList[0].goodsImgsList[i].id,
+                'url': goodsSkuVOList[0].goodsImgsList[i].imgUrl,
+              })
+            }
+          }
+          if (self.goodsForm.isShareImg === 0) {
+            for (let i = 0; i < goodsSkuVOList.length; i++) {
+              for (let j = 0; j < goodsSkuVOList[i].goodsImgsList.length; j++) {
+                goodsSkuVOList[i].goodsImgsList[j].url = goodsSkuVOList[i].goodsImgsList[j].imgUrl;
+              }
+            }
+          }
         });
       },//sku列表
       getBrandList() {
@@ -750,8 +792,80 @@
           self.otherForm.tagsList = data.data.list;
         })
       },//标签
-      /*getSpecChange(svl, val, index) {
-        let item = this.otherForm.checkedList.find(n => n.id === svl.id);
+      // rememberIndex(scope) {//点击sku图片记录index
+      //   this.skuImgIndex = scope.$index;
+      // },
+      // getSkuImg(file) {//sku图片
+      //   this.form.skus[this.skuImgIndex].img = file.url;
+      // },
+      // getSkuImgNot(file) {//sku图片
+      //   this.form.skus[this.skuImgIndexNot].images.push(file);
+      //   console.log('images', this.form.skus[this.skuImgIndexNot].images);
+      // },
+      getGoodsNumbers(skuNum) {//自动生成商品编码 //p开头 年月日时分秒一位或者两位数字
+        let str = 'P-';
+        let nowDate = new Date();
+        let year = nowDate.getFullYear();
+        let month = nowDate.getMonth() + 1;
+        if (month < 10) month = '0' + month;
+        let day = nowDate.getDate();
+        if (day < 10) day = '0' + day;
+        let hour = nowDate.getHours();
+        if (hour < 10) hour = '0' + hour;
+        let minutes = nowDate.getMinutes();
+        if (minutes < 10) minutes = '0' + minutes;
+        let seconds = nowDate.getSeconds();
+        if (seconds < 10) seconds = '0' + seconds;
+        str = str + year + month + day + hour + minutes + seconds;
+        for (let i = 0; i < skuNum; i++) {
+          let currentStr = str;
+          let randomNum = Math.floor(Math.random() * 100000000);
+          currentStr += randomNum.toString().substr(0, 6);
+          this.otherForm.skus[i].number = currentStr;
+          this.otherForm.skus[i].images = []
+        }
+      },
+      createGoodsDetail(tableMap, index) {
+        let lastChecked = this.otherForm.lastChecked;
+        let size = lastChecked.length;
+        let tableKey = lastChecked[index].id;
+        for (let i = 0; i < lastChecked[index].specValue.length; i++) {//颜色
+          tableMap[tableKey] = lastChecked[index].specValue[i];
+          // tableMapImg
+          if (index < size - 1) {
+            index++;
+            this.createGoodsDetail(tableMap, index);
+            index--;
+          } else {
+            let singleSku = {
+              sku: {},
+              skuShow: {},
+              marketPrice: '',
+              referencePrice: '',
+              img: '',
+              number: '',
+              barCode: '',
+              status: 0,
+              isNew: 1,
+              mustBuyNum: '',
+              retailPrice: '',
+              transportationPrice: '',
+              count: '',
+              title: '',
+              images: []
+            };
+            singleSku.sku = tableMap;
+            singleSku.skuShow = tableMap;
+            // singleSku.images = tableMapImg;
+            this.form.skus.push(JSON.parse(JSON.stringify(singleSku)));
+          }
+        }
+        this.getGoodsNumbers(this.form.skus.length);
+      },
+      getSpecChange(svl, val, index) {
+        console.log("val", val);
+        // val.checked = false;
+        let item = this.checkedList.find(n => n.id === svl.id);
         let clickItem = item.specValue.findIndex(n => n.id === val.id);
         if (clickItem !== -1) {//点击后再点击已是取消时发生的状态
           item.specValue.splice(clickItem, 1);
@@ -759,16 +873,17 @@
           item.specValue.push(val);
         }
         let arr = [];
-        this.otherForm.checkedList.map(value => {
+        this.checkedList.map(value => {
           if (value.specValue.length > 0) {
             arr.push(value);
           }
         });
         this.lastChecked = arr;
+
         this.form.skus = [];
         this.createGoodsDetail({}, 0);
         // console.log('this.form.skus', this.form.skus);
-        let item1 = this.otherForm.idArr.find(n => n.specName === svl.id.toString());
+        let item1 = this.idArr.find(n => n.specName === svl.id.toString());
         let clickItem1 = item1.specValue.findIndex(n => n === val.id.toString());
         if (clickItem1 !== -1) {
           item1.specValue.splice(clickItem1, 1);
@@ -776,14 +891,66 @@
           item1.specValue.push(val.id.toString());
         }
         let arr1 = [];
-        this.otherForm.idArr.map(value => {
+        this.idArr.map(value => {
           if (value.specValue.length > 0) {
             arr1.push(value);
           }
         });
         this.skusArrNew = arr1;
         this.form.skuMust = this.form.skus;
-      },//点击规格多选框回调函数*/
+      },//点击规格多选框回调函数
+      getFileList2(file) {
+        this.otherForm.imgCommonArr.push(file);
+      },//商品，商品多图片
+      removeFileList(file) {
+        this.otherForm.imgCommonArr.splice(file, 1);
+      },//商品移除某商品图片
+      /* 富文本编辑器 start*/
+      // 图片上传之前调取的函数
+      beforeUpload(file) {
+        let checkFormat = this.checkImg(file);
+        if (!checkFormat) return false;
+        if (!this.key.token) return false;
+      },
+      // 图片上传成功回调 插入到编辑器中
+      handleSuccess(response, file, fileList) {
+        console.log('fileList', fileList)
+        let self = this;
+        let url = '';
+        self.fullscreenLoading = false;
+        // 获得文件上传后的URL地址
+        if (file.name.indexOf('.') > -1) {
+          url = file.name.substring(file.name.indexOf('.'));
+        }
+        self.key.file = self.imgDomain + response.key;
+        if (self.key.file != null && self.key.file.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
+          let value = self.key.file;
+          // self.$nextTick(function () {
+          // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+          self.addRange = self.$refs.myQuillEditor.quill.getSelection();
+          value = value.indexOf('http') !== -1 ? value : 'http:' + value;
+          console.log('value', value);
+          self.$refs.myQuillEditor.quill.insertEmbed(self.addRange.index, self.uploadType, value) // 调用编辑器的 insertEmbed 方法，插入URL
+        } else {
+          self.$message.error(`${self.uploadType}插入失败`)
+        }
+        self.$refs['upload'].clearFiles() // 插入成功后清除input的内容
+      },
+      onEditorChange({editor, html, text}) {
+        this.goodsForm.goodsVO.goodsExtendWithBLOBs.content = html;
+      },
+      /* 富文本编辑器 end*/
+      button2() {//扩展属性
+        this.form.goodsExtend.annex.check1 = false;
+        this.form.goodsExtend.annex.check2 = true
+
+      },
+      addOneAnnex() {
+        this.goodsForm.goodsVO.goodsExtendWithBLOBs.annex.push({name: '', value: ''});
+      },
+      deleteOneAnnex(index) {//扩展属性删除
+        this.goodsForm.goodsVO.goodsExtendWithBLOBs.annex.splice(index, 1);
+      },
     }
   }
 </script>
@@ -813,7 +980,7 @@
   .quill-editor {
     width: 80%;
     /*height: 500px;*/
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px dashed #ccc;
   }
 
   .ql-container {

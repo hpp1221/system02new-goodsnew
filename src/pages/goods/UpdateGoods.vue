@@ -698,6 +698,7 @@
 
           let specMap = []; //添加的属性
           let len = self.goodsForm.spec.length;
+          console.log("len",self.goodsForm.spec);
           for(let i = 0;i<len;i++){
             let specItem = {};
             let spec = self.goodsForm.spec[i];

@@ -240,7 +240,6 @@
       getImgUploadType() {//凭证上传
         let self = this;
         self.httpApi.dict.selectDictByType({type: 'store_voucher'}, function (data) {
-          console.log('555',data);
           self.typeStore = data.data.list;
           let typeStore = self.typeStore;
           for (let i = 0; i < typeStore.length; i++) {
@@ -249,11 +248,8 @@
         })
       },
       getFileListNull(file) {
-
         let self = this;
-        console.log('brandDealerVoucherList1',self.form.brandDealerVoucherList1);
         self.form.brandDealerVoucherList1[this.clickIndex1].url = file.url;
-        console.log('click1',self.form.brandDealerVoucherList1);
         let brandDealerVoucherList1 = self.form.brandDealerVoucherList1;
         let brandDealerVouchers1 = [];
         let typeStore = self.typeStore;
@@ -274,9 +270,8 @@
         let self = this
         let requestData = {
           memberId: id
-        }
+        };
         self.httpApi.vip.selectStoreMemberInfoById(requestData, function (data) {
-          console.log('id===detail', data);
           if (data.data.store) {
             self.form.store = data.data.store;
             self.form.sysMember = data.data.sysMember;

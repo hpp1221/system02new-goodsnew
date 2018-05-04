@@ -6,13 +6,13 @@
           <div class="tab-1-div1">
             <el-carousel indicator-position="outside" ref="carousel" :autoplay="false" height="450px"
                          class="carousel-width">
-              <el-carousel-item v-for="(item,index) in goodsForm.goodsImgsList" :key="item.id" name="index">
+              <el-carousel-item v-for="(item,index) in skuForm.goodsImgsList" :key="item.id" name="index">
                 <img :src="item.imgUrl" @mouseenter="picMouseenter(index)" class="oneImgClass">
               </el-carousel-item>
             </el-carousel>
             <div class="carousel-width">
               <ul class="lunBo-fuDong">
-                <li v-for="(item1,index1) in goodsForm.goodsImgsList" :key="item1.id">
+                <li v-for="(item1,index1) in skuForm.goodsImgsList" :key="item1.id">
                   <img :src="item1.imgUrl" @mouseenter="picMouseenter(index1)">
                 </li>
               </ul>
@@ -96,6 +96,7 @@
           goodsId: '',//商品id
           id: '',//skuId
           img: '',//主图图片url
+          goodsImgsList: [],//走马灯图片数组
           marketPrice: '',//市场价格
           mustBuyNum: '',//起订量
           number: '',//商品编码
@@ -117,7 +118,6 @@
           categoryName: '',//二级分类name
           goodsAttributeList: [],//基本属性
           goodsExtendWithBLOBs: [],//扩展属性和富文本编辑器
-          goodsImgsList: [],//走马灯图片数组
           goodsSpecInfoList: [],//规格数组id和name
           goodsTagList: [],//标签数组
           id: '',//商品id
@@ -153,7 +153,7 @@
           self.goodsForm.goodsExtendWithBLOBs.annex = JSON.parse(self.goodsForm.goodsExtendWithBLOBs.annex);
           imgObj['id'] = self.skuForm.id;
           imgObj['imgUrl'] = self.skuForm.img;
-          self.goodsForm.goodsImgsList.unshift(imgObj);//走马灯总图片
+          self.skuForm.goodsImgsList.unshift(imgObj);//走马灯总图片
           self.skuForm.skuSpecInfos.map(function (value, key) {
             skuAllName += value.specItemName + ' '
           });

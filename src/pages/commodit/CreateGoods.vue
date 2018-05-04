@@ -488,6 +488,7 @@
         imgArr: [],
         specValueArr: [],
         skusArrNew: [],
+        skuSListNew:[],
         specValueArrNewObj: {},
         /* skus*/
         /*扩展属性*/
@@ -532,6 +533,7 @@
       },
       // 图片上传成功回调 插入到编辑器中
       handleSuccess(response, file, fileList) {
+        console.log('fileList',fileList)
         let self = this;
         let url = '';
         self.fullscreenLoading = false;
@@ -591,6 +593,7 @@
         if (!this.key.token) return false;
       },
       handleSuccessImgCommon(response, file, fileList) {
+        console.log('fileList',fileList);
         let suffix = '';
         if (file.name.indexOf('.') > -1) {
           suffix = file.name.substring(file.name.indexOf('.'));
@@ -702,7 +705,8 @@
         this.getGoodsNumbers(this.form.skus.length);
       },
       getSpecChange(svl, val, index) {
-        let item = this.checkedList.find(n => n.id === svl.id);
+        let self = this;
+        let item = self.checkedList.find(n => n.id === svl.id);
         let clickItem = item.specValue.findIndex(n => n.id === val.id);
         if (clickItem !== -1) {//点击后再点击已是取消时发生的状态
           item.specValue.splice(clickItem, 1);
@@ -710,17 +714,17 @@
           item.specValue.push(val);
         }
         let arr = [];
-        this.checkedList.map(value => {
+        self.checkedList.map(value => {
           if (value.specValue.length > 0) {
             arr.push(value);
           }
         });
-        this.lastChecked = arr;
+        self.lastChecked = arr;
 
-        this.form.skus = [];
-        this.createGoodsDetail({}, 0);
+        self.form.skus = [];
+        self.createGoodsDetail({}, 0);
         // console.log('this.form.skus', this.form.skus);
-        let item1 = this.idArr.find(n => n.specName === svl.id.toString());
+        let item1 = self.idArr.find(n => n.specName === svl.id.toString());
         let clickItem1 = item1.specValue.findIndex(n => n === val.id.toString());
         if (clickItem1 !== -1) {
           item1.specValue.splice(clickItem1, 1);
@@ -728,13 +732,27 @@
           item1.specValue.push(val.id.toString());
         }
         let arr1 = [];
-        this.idArr.map(value => {
+        self.idArr.map(value => {
           if (value.specValue.length > 0) {
             arr1.push(value);
           }
         });
-        this.skusArrNew = arr1;
-        this.form.skuMust = this.form.skus;
+        self.skusArrNew = arr1;
+        self.form.skuMust = self.form.skus;
+        if(self.form.skuMust.length === self.form.skus.length){
+          let skuSList = self.form.skuMust;
+          for (let i = 0; i < skuSList.length; i++) {
+            for (let key in skuSList[i].sku) {
+              skuSList[i].sku[key] = skuSList[i].sku[key].id;
+              self.imgArr[skuSList[i].number] = skuSList[i].images;
+            }
+          }
+          //skus
+          for (let i = 0; i < skuSList.length; i++) {
+            skuSList[i].sku = JSON.stringify(skuSList[i].sku)
+          }
+          self.skuSListNew = skuSList;
+        }
       },//点击规格多选框回调函数
       basicOneAnnex() {
         let self = this;
@@ -950,17 +968,7 @@
           }
         }
         // 不共用组图的images
-        let skuSList = self.form.skuMust;
-        for (let i = 0; i < skuSList.length; i++) {
-          for (let key in skuSList[i].sku) {
-            skuSList[i].sku[key] = skuSList[i].sku[key].id;
-            self.imgArr[skuSList[i].number] = skuSList[i].images;
-          }
-        }
-        //skus
-        for (let i = 0; i < skuSList.length; i++) {
-          skuSList[i].sku = JSON.stringify(skuSList[i].sku)
-        }
+
         let requestData = {};
         if (self.checked === true) {
           requestData = {
@@ -978,7 +986,7 @@
             goodsAttributeList: arrAttributes,
             content: self.form.goodsExtend.content,
             annex: JSON.stringify(self.form.goodsExtend.annex),
-            skuVOList: skuSList,
+            skuVOList: self.skuSListNew,
             shareImg: 1,
             images: self.fileList,
             tags: tagArr,
@@ -1001,7 +1009,7 @@
             goodsAttributeList: arrAttributes,
             content: self.form.goodsExtend.content,
             annex: JSON.stringify(self.form.goodsExtend.annex),
-            skuVOList: skuSList,
+            skuVOList: self.skuSListNew,
             shareImg: 0,
             images: self.imgArr,
             tags: tagArr,
