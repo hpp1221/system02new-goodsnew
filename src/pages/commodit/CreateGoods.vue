@@ -293,7 +293,6 @@
               >
                 <template slot-scope="scope">
                   <uploadoneimg
-
                     @getFileList="getSkuImgNot"
                     @click.native="rememberIndexNot(scope)"
                     style="float: left;">

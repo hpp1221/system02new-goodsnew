@@ -197,30 +197,31 @@
               </el-input>
             </el-form-item>
             <el-form-item label="商品品牌" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.brandName" filterable>
+              <el-select v-model="goodsForm.goodsVO.brandName" filterable @change="clickBrand">
                 <el-option
                   v-for="item in otherForm.brandList"
                   :key="item.id"
                   :label="item.nameCn"
-                  :value="item.id">
+                  :value="item.id+','+item.nameCn">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="计量单位" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.unit">
-                <el-option :label="item1.name" :value="item1" v-for="item1 in otherForm.unitList" :key="item1.id">
+              <el-select v-model="goodsForm.goodsVO.unit" @change="clickUnit">
+                <el-option :label="item1.name" :value="item1.name" v-for="item1 in otherForm.unitList" :key="item1.id">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="贸易形态" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.tradeName">
+              <el-select v-model="goodsForm.goodsVO.tradeName" @change="clickTrade">
                 <el-option :label="item1.name" :value="item1" v-for="item1 in otherForm.tradeList" :key="item1.id">
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="标签" class="addGoods-info-main-item1">
               <el-checkbox-group v-model="otherForm.checkListIds">
-                <el-checkbox :label="item.name" v-for="item in otherForm.tagsList" :key="item.id"></el-checkbox>
+                <el-checkbox :label="item.name" v-for="item in otherForm.tagsList" :key="item.id"
+                             @change="changeTag(item)"></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <br>
@@ -249,7 +250,8 @@
                   <el-input type="text" class="item.num1 form-input"
                             v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
                             v-if="s.attributeId === item.id"
-                            v-model="s.attributeItemName" placeholder="请输入属性值">
+                            v-model="s.attributeItemName"
+                            @change=changeBasicInput(s,index)>
                   </el-input>
                   <br>
                 </div>
@@ -259,9 +261,10 @@
                     style="width: 300px;"
                     v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
                     v-if="s.attributeId === item.id"
-                    v-model="s.attributeItemName">
+                    v-model="s.attributeItemName"
+                    @change=changeBasicInput(s,index)>
                     <el-option v-for="item1 in item.children" :key="item1.id" :label="item1.name"
-                               :value="item1.id">
+                               :value="item1.name">
                     </el-option>
                   </el-select>
                   <br>
@@ -437,16 +440,32 @@
                   </el-upload>-->
               </div>
               <br>
-              <el-form-item v-if="goodsForm.isShareImg === 0">
+              <el-form-item v-if="goodsForm.isShareImg === 0" style="overflow: hidden">
                 <div>
-                  <el-checkbox
-                    class="isOrNotCommon">是否公用组图
+                  <el-checkbox class="isOrNotCommon" v-model="otherForm.isCommon">是否公用组图
                   </el-checkbox>
                   <span class="addGoods-info-five">(最多上传5张)</span>
                 </div>
+                <br>
+                <div>
+                  <!--非公用转公用-->
+                  <el-upload
+                    action="http://upload.qiniu.com/"
+                    list-type="picture-card"
+                    :data="key"
+                    :file-list="updateForm.images"
+                    :before-upload="beforeUploadCommonPicIsCommon"
+                    :on-success="handleSuccessCommonPicIsCommon"
+                    :on-remove="handleRemoveCommonPicIsCommon"
+                    :limit="5"
+                    v-if="key.token && otherForm.isCommon === true">
+                    <i class="el-icon-plus"></i>
+                  </el-upload>
+                  <!--非公用转公用-->
+                </div>
                 <el-table
                   :data="goodsForm.goodsSkuVOList"
-                  v-if="goodsForm.goodsSkuVOList.length > 0"
+                  v-if="goodsForm.goodsSkuVOList.length > 0 && otherForm.isCommon === false"
                   border
                   style="width: 100%;">
                   <el-table-column
@@ -460,10 +479,19 @@
                     label="图片"
                     width="1000">
                     <template slot-scope="scope">
-                      <uploadmultipleimg
-                        :fileList="scope.row.goodsImgsList"
-                        style="float: left;">
-                      </uploadmultipleimg>
+                      <el-upload
+                        action="http://upload.qiniu.com/"
+                        list-type="picture-card"
+                        :data="key"
+                        :file-list="scope.row.goodsImgsList"
+                        :before-upload="beforeUploadCommonPic"
+                        :on-success="handleSuccessCommonPic"
+                        :on-remove="handleRemoveCommonPic"
+                        :limit="5"
+                        @click.native="rememberIndexCommonPic(scope)"
+                        v-if="key.token && scope.row.goodsImgsList.length<5">
+                        <i class="el-icon-plus"></i>
+                      </el-upload>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -480,13 +508,14 @@
               </quill-editor>
               <el-upload
                 action="http://upload.qiniu.com/"
-                :before-upload='beforeUpload'
+                list-type="picture-card"
                 :data="key"
-                :on-success='handleSuccess'
+                :file-list="fileList"
+                :before-upload="beforeUpload"
+                :on-success="handleSuccess"
                 v-if="key.token"
-                ref="upload"
                 style="display:none">
-                <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">点击上传</el-button>
+                <i class="el-icon-plus"></i>
               </el-upload>
             </el-form-item>
             <br><br>
@@ -505,7 +534,7 @@
             </el-form-item>
           </el-form>
           <div style="float: right;margin-right: 18%">
-            <el-button>确定</el-button>
+            <el-button @click="updateGoodsSure">确定</el-button>
             <el-button>取消</el-button>
           </div>
         </el-tab-pane>
@@ -608,8 +637,6 @@
             unit: '',//单位
           },//eg category brand
           skuIds: [],//后台传回的规格勾选的ids
-
-
         },//goods form
         otherForm: {
           brandList: [],//品牌列表
@@ -637,12 +664,38 @@
             placeholder: "请输入商品详情......",
             readOnly: false,
           },
+          //update form
+          basicInfoObj: {},//基本属性map
+          commonPicIndex: 0,//非共用组图点击图片记录index
+          isCommon: false,//非公用变成公用时的单选框
         },
+        updateForm: {
+          brandId: '',//品牌id
+          brandName: '',//品牌name
+          unit: '',//单位
+          tradeType: '',//贸易id
+          tradeName: '',//贸易name
+          tags: [],//标签
+          name: '',//商品标题
+          describe: '',//商品描述
+          goodsAttributeList: [],//基本属性
+          images: [],//公用组图
+          content: '',//富文本编辑器
+          annex: [],//扩展属性
+          shareImg: '',//是否为公用组图
+          categoryPId: '',//一级分类id
+          categoryPName: '',//一级分类name
+          categoryId: '',//二级分类id
+          categoryName: '',//二级分类name
+          specName:'',//规格值
+          specId:'',//规格id
+        },//update form
         isShareImg: '',//是否是共用组图
         key: {
           token: '',
           file: ''
         },
+        fileList: [],
       }
     },
     created() {
@@ -664,6 +717,7 @@
     components: {
       'uploadoneimg': require('../../components/uploadoneimg'),
       'uploadmultipleimg': require('../../components/uploadmultipleimg'),
+      'brandselect': require('../../components/getbrandselect'),
     },
     watch: {
       tabName: function (newVal, oldVal) {
@@ -679,7 +733,7 @@
       },
     },
     methods: {
-/* -------------------------------------------------修改sku-----------------------------------------------------*/
+      /* -------------------------------------------------修改sku-----------------------------------------------------*/
       select(id) {
         let self = this;
         let selectArr = [];
@@ -706,7 +760,13 @@
       cancelSku() {
         this.$router.push('/commodit/goodslist');
       },////修改sku取消
-/* -------------------------------------------------修改goods---------------------------------------------------*/
+      /* -------------------------------------------------修改goods显示---------------------------------------------------*/
+      getTagsList() {
+        let self = this;
+        self.httpApi.goodsCat.selectTagList({}, function (data) {
+          self.otherForm.tagsList = data.data.list;
+        })
+      },//标签
       selectGoods(goodsId) {
         let self = this;
         let ids = [];
@@ -715,6 +775,14 @@
         };
         self.httpApi.commodit.selectGoodsInfoById(requestData, function (data) {
           self.goodsForm = data.data;
+          self.updateForm.name = self.goodsForm.goodsVO.name;//商品标题
+          self.updateForm.describe = self.goodsForm.goodsVO.goodsExtendWithBLOBs.describe;//商品描述
+          self.updateForm.categoryId = self.goodsForm.goodsVO.categoryId;//二级分类id
+          self.updateForm.categoryName = self.goodsForm.goodsVO.categoryName;//二级分类name
+          self.updateForm.categoryPId = self.goodsForm.goodsVO.categoryPId;//一级分类id
+          self.updateForm.specName = self.goodsForm.goodsVO.specName;//规格值
+          self.updateForm.specId = self.goodsForm.goodsVO.specId;//规格id
+          self.updateForm.categoryPName = self.goodsForm.goodsVO.categoryPName;//一级分类name
           self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex = JSON.parse(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex);
           self.goodsForm.goodsVO.goodsTagList.map(function (value) {
             self.otherForm.checkListIds.push(value.tagName);
@@ -766,6 +834,7 @@
               }
             }
           }
+          self.goodsForm.goodsSkuVOList = goodsSkuVOList;
         });
       },//sku列表
       getBrandList() {
@@ -786,22 +855,6 @@
           self.otherForm.tradeList = data.data.list;
         })
       },//贸易形态
-      getTagsList() {
-        let self = this;
-        self.httpApi.goodsCat.selectTagList({}, function (data) {
-          self.otherForm.tagsList = data.data.list;
-        })
-      },//标签
-      // rememberIndex(scope) {//点击sku图片记录index
-      //   this.skuImgIndex = scope.$index;
-      // },
-      // getSkuImg(file) {//sku图片
-      //   this.form.skus[this.skuImgIndex].img = file.url;
-      // },
-      // getSkuImgNot(file) {//sku图片
-      //   this.form.skus[this.skuImgIndexNot].images.push(file);
-      //   console.log('images', this.form.skus[this.skuImgIndexNot].images);
-      // },
       getGoodsNumbers(skuNum) {//自动生成商品编码 //p开头 年月日时分秒一位或者两位数字
         let str = 'P-';
         let nowDate = new Date();
@@ -899,12 +952,76 @@
         this.skusArrNew = arr1;
         this.form.skuMust = this.form.skus;
       },//点击规格多选框回调函数
-      getFileList2(file) {
-        this.otherForm.imgCommonArr.push(file);
-      },//商品，商品多图片
-      removeFileList(file) {
-        this.otherForm.imgCommonArr.splice(file, 1);
-      },//商品移除某商品图片
+      /* -------------------------------------------------修改goods确定---------------------------------------------------*/
+      clickBrand(item) {
+        let item1 = item.split(',');
+        this.updateForm.brandId = item1[0];
+        this.updateForm.brandName = item1[1];
+      },//修改品牌
+      clickUnit(unit) {
+        this.updateForm.unit = unit;
+      },//修改单位
+      clickTrade(trade) {
+        this.updateForm.tradeType = trade.id;
+        this.updateForm.tradeName = trade.name;
+      },//修改贸易形态
+      changeTag(tag) {
+        let self = this;
+        let tagSArr = [];
+        for (let i = 0; i < self.otherForm.tagsList.length; i++) {
+          for (let j = 0; j < self.otherForm.checkListIds.length; j++) {
+            if (self.otherForm.tagsList[i].name === self.otherForm.checkListIds[j]) {
+              tagSArr.push({
+                'tagId': self.otherForm.tagsList[i].id,
+                'tagName': self.otherForm.tagsList[i].name,
+              });
+            }
+          }
+        }
+        self.updateForm.tags = tagSArr;
+        console.log('self.updateForm.tags',self.updateForm.tags);
+      },//修改标签
+      changeBasicInput(info, index1) {
+        this.otherForm.basicInfoObj[index1] = info;
+      },//基本属性
+      rememberIndexCommonPic(scope) {
+        this.otherForm.commonPicIndex = scope.$index;
+      },//非公用组图修改
+      beforeUploadCommonPic(file) {
+        let checkFormat = this.checkImg(file);
+        if (!checkFormat) return false;
+        if (!this.key.token) return false;
+      },//非公用组图修改
+      handleSuccessCommonPic(response, file, fileList) {
+        this.goodsForm.goodsSkuVOList[this.otherForm.commonPicIndex].goodsImgsList = fileList;
+      },//非公用组图修改
+      handleRemoveCommonPic(file, fileList) {
+        if (this.imageNum > 3) {
+          this.imageNum--;
+          return
+        }
+        this.imageNum--;
+        this.goodsForm.goodsSkuVOList[this.otherForm.commonPicIndex].goodsImgsList = fileList;
+      },//非公用组图修改
+      beforeUploadCommonPicIsCommon(file) {
+        let checkFormat = this.checkImg(file);
+        if (!checkFormat) return false;
+        if (!this.key.token) return false;
+      },//非公用组图变公用
+      handleSuccessCommonPicIsCommon(response, file, fileList) {
+        this.updateForm.images = fileList;
+      },//非公用组图变公用
+      handleRemoveCommonPicIsCommon(file, fileList) {
+        if (this.imageNum > 3) {
+          this.imageNum--;
+          return
+        }
+        this.imageNum--;
+        console.log('delete---file', file);
+        console.log('delete---fileList', fileList);
+        this.updateForm.images = fileList;
+        console.log("this.updateForm.images", this.updateForm.images);
+      },//非公用组图变公用
       /* 富文本编辑器 start*/
       // 图片上传之前调取的函数
       beforeUpload(file) {
@@ -914,7 +1031,7 @@
       },
       // 图片上传成功回调 插入到编辑器中
       handleSuccess(response, file, fileList) {
-        console.log('fileList', fileList)
+        console.log('fileList', fileList);
         let self = this;
         let url = '';
         self.fullscreenLoading = false;
@@ -937,20 +1054,34 @@
         self.$refs['upload'].clearFiles() // 插入成功后清除input的内容
       },
       onEditorChange({editor, html, text}) {
-        this.goodsForm.goodsVO.goodsExtendWithBLOBs.content = html;
+        this.updateForm.content = html;
       },
       /* 富文本编辑器 end*/
-      button2() {//扩展属性
-        this.form.goodsExtend.annex.check1 = false;
-        this.form.goodsExtend.annex.check2 = true
-
-      },
       addOneAnnex() {
-        this.goodsForm.goodsVO.goodsExtendWithBLOBs.annex.push({name: '', value: ''});
-      },
-      deleteOneAnnex(index) {//扩展属性删除
-        this.goodsForm.goodsVO.goodsExtendWithBLOBs.annex.splice(index, 1);
-      },
+        this.updateForm.annex = JSON.parse(this.goodsForm.goodsVO.goodsExtendWithBLOBs.annex);
+        this.updateForm.annex.push({name: '', value: ''});
+        console.log('this.updateForm.annex', this.updateForm.annex);
+      },//扩展属性add
+      deleteOneAnnex(index) {
+        this.updateForm.annex.splice(index, 1);
+        console.log('this.updateForm.annex', this.updateForm.annex);
+      },//扩展属性删除
+      updateGoodsSure() {
+        let self = this;
+        let basicInfoObj = self.otherForm.basicInfoObj;
+        for (let key in basicInfoObj) {
+          self.updateForm.goodsAttributeList.push(basicInfoObj[key]);
+        }//基本属性
+        if (self.otherForm.isCommon === true) {
+          self.updateForm.shareImg = 1;
+        }
+        if (self.otherForm.isCommon === false) {
+          self.updateForm.shareImg = 0;
+        }
+        self.httpApi.commodit.updateGoods(self.updateForm, function (data) {
+          return;
+        })
+      },//修改确定
     }
   }
 </script>

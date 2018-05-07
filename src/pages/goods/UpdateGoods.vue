@@ -568,6 +568,7 @@
     },
     methods: {
       getGoodsFormBrandSelect(e) {
+        console.log('ee',e);
         this.goodsForm.brand = e.brand;
         this.goodsForm.brandId = e.brandDealerId;
         this.goodsForm.brandName = e.brandName;
