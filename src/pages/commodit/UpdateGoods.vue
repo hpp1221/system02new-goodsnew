@@ -929,7 +929,6 @@
         for (let i = 0; i < lastChecked[index].specValue.length; i++) {//颜色
           tableMap[tableKey] = lastChecked[index].specValue[i].id;
           tableMap1[tableKey] = lastChecked[index].specValue[i];
-          console.log("tableMap", tableMap);
           if (index < size - 1) {
             index++;
             this.createGoodsDetail(tableMap, index,tableMap1);
@@ -988,7 +987,7 @@
             }
           }
         }
-        console.log('last---',self.goodsForm.goodsSkuVOList);
+        // console.log('last---',self.goodsForm.goodsSkuVOList);
       },//点击规格多选框回调函数
       //----------------------------------------------------比较sku--------------------------------------------------
       compare(objA, objB) {
