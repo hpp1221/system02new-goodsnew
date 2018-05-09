@@ -487,7 +487,7 @@
         imgArr: [],
         specValueArr: [],
         skusArrNew: [],
-        skuSListNew:[],
+        skuSListNew: [],
         specValueArrNewObj: {},
         /* skus*/
         /*扩展属性*/
@@ -532,7 +532,7 @@
       },
       // 图片上传成功回调 插入到编辑器中
       handleSuccess(response, file, fileList) {
-        console.log('fileList',fileList)
+        console.log('fileList', fileList)
         let self = this;
         let url = '';
         self.fullscreenLoading = false;
@@ -592,7 +592,7 @@
         if (!this.key.token) return false;
       },
       handleSuccessImgCommon(response, file, fileList) {
-        console.log('fileList',fileList);
+        console.log('fileList', fileList);
         let suffix = '';
         if (file.name.indexOf('.') > -1) {
           suffix = file.name.substring(file.name.indexOf('.'));
@@ -702,6 +702,7 @@
           }
         }
         this.getGoodsNumbers(this.form.skus.length);
+        console.log("this.form.skus----------------3",this.form.skus);
       },
       getSpecChange(svl, val, index) {
         let self = this;
@@ -719,7 +720,7 @@
           }
         });
         self.lastChecked = arr;
-
+        console.log('self.lastChecked',self.lastChecked);
         self.form.skus = [];
         self.createGoodsDetail({}, 0);
         // console.log('this.form.skus', this.form.skus);
@@ -737,8 +738,9 @@
           }
         });
         self.skusArrNew = arr1;
+        console.log('self.skusArrNew',self.skusArrNew);
         self.form.skuMust = self.form.skus;
-        if(self.form.skuMust.length === self.form.skus.length){
+        if (self.form.skuMust.length === self.form.skus.length) {
           let skuSList = self.form.skuMust;
           for (let i = 0; i < skuSList.length; i++) {
             for (let key in skuSList[i].sku) {

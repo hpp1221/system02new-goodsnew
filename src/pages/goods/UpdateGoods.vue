@@ -699,12 +699,11 @@
 
           let specMap = []; //添加的属性
           let len = self.goodsForm.spec.length;
-          console.log("len",self.goodsForm.spec);
+          console.log("len----------------pp",self.goodsForm.spec);
           for(let i = 0;i<len;i++){
             let specItem = {};
             let spec = self.goodsForm.spec[i];
-            specItem.specName = spec.specName
-            console.log("self.goodsForm.spec[i]",self.goodsForm.spec[i]);
+            specItem.specName = spec.specName;
             let sprcValues = spec.specValue;
             let sprcValuesLen = spec.specValue.length;
             let specValueArr = [];
@@ -732,25 +731,17 @@
           self.goodsForm.brand = {
             brandDealerId: self.goodsForm.brand.brandId,
             brandName: self.goodsForm.brand.brandName
-          }
-          // self.originCat = [JSON.parse(self.goodsForm.cat)];
-//          let cat = JSON.parse(self.goodsForm.cat);
-//
-//          cat.res = cat;
-//          self.totalCategories = [cat];
-          console.log('1------',self.goodsForm.cat);
+          };
           self.goodsForm.cat = JSON.parse(self.goodsForm.cat);
-          console.log('3------',self.goodsForm.cat);
-
           self.goodsForm.goodsExtend.annex = JSON.parse(self.goodsForm.goodsExtend.annex);
           self.goodsForm.goodsExtend.imgs = JSON.parse(self.goodsForm.goodsExtend.imgs);
           self.goodsForm.skus = JSON.parse(self.goodsForm.skus);
+          console.log('goodsForm.skus ', self.goodsForm.skus )
           for (let i = 0; i < self.goodsForm.skus.length; i++) {
             self.goodsForm.skus[i].sku = JSON.parse(self.goodsForm.skus[i].sku);
           }
           self.beforeChangeSku = self.goodsForm.skus;
-          console.log('self.goodsForm.skus', self.goodsForm.skus)
-          // console.log('goodsForm', self.goodsForm)
+          console.log('beforeChangeSku', self.beforeChangeSku)
         });
       },
       editorReady(editorInstance) {//修改sku ueditor初始化
@@ -811,6 +802,7 @@
         }
 
         this.getGoodsNumbers(this.goodsForm.skus.length);
+        console.log('this.goodsForm.skus----------------------------3',this.goodsForm.skus);
         for (let i = 0; i < this.goodsForm.skus.length; i++) {
           for (let j = 0; j < this.beforeChangeSku.length; j++) {
             console.log("JSON.stringify(this.goodsForm.skus[i].sku)",JSON.stringify(this.goodsForm.skus[i].sku));
@@ -821,12 +813,6 @@
             if(this.compare(skus,beforeChangeSku)){
               this.goodsForm.skus[i] = this.beforeChangeSku[j];
             }
-            // for(){
-
-            // }
-            // if (JSON.stringify(this.goodsForm.skus[i].sku) == JSON.stringify(this.beforeChangeSku[j].sku)) {
-            //   this.goodsForm.skus[i] = this.beforeChangeSku[j];
-            // }
           }
         }
         let skusValue = [];
