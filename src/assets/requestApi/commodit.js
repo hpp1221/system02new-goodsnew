@@ -36,8 +36,8 @@ Vue.prototype.httpApi.commodit.updateSkuById = function (params, successCallback
     })
 };
 //更改商品
-Vue.prototype.httpApi.commodit.updateGoods = function (params, successCallback) {
-  Vue.prototype.httpPost('/admin/goods-v1/updateGoods', params,
+Vue.prototype.httpApi.commodit.updateGoodsV1 = function (params, successCallback) {
+  Vue.prototype.httpPost('/admin/goods-v1/updateGoodsV1', params,
     function (data) {
       successCallback(data);
     })

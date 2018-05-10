@@ -702,7 +702,7 @@
         let requestData={
           categoryId:node.data.id
         };
-        self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+        self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
           self.totalCategoriesSpec = data.data;
         })
       },
@@ -713,7 +713,7 @@
         let requestData={
           categoryId:node.data.id
         };
-        self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+        self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
           self.totalCategoriesBasicInfo = data.data;
         })
       },
@@ -749,13 +749,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.addCategorySpec(requestData, function (data) {
+          self.httpApi.commodit.addCategorySpec(requestData, function (data) {
             self.createOneDependentSpec = false;
             self.$message.success('添加成功');
             let requestData={
               categoryId:self.childFormSpec.categoryId
             };
-            self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
               self.totalCategoriesSpec = data.data;
             })
           });
@@ -788,13 +788,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.addCategoryAttribute(requestData, function (data) {
+          self.httpApi.commodit.addCategoryAttribute(requestData, function (data) {
             self.createOneDependentBasicInfo = false;
             self.$message.success('添加成功');
             let requestData={
               categoryId:self.childFormBasicInfo.categoryId
             };
-            self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
               self.totalCategoriesBasicInfo = data.data;
             })
           });
@@ -844,12 +844,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.deleteCategorySpecById(requestData, function (data) {
+            self.httpApi.commodit.deleteCategorySpecById(requestData, function (data) {
               self.$message.success('删除成功');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -870,12 +870,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.deleteCategorySpecItemById(requestData, function (data) {
+            self.httpApi.commodit.deleteCategorySpecItemById(requestData, function (data) {
               self.$message.success('删除成功');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -900,12 +900,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.deleteCategoryAttributeById(requestData, function (data) {
+            self.httpApi.commodit.deleteCategoryAttributeById(requestData, function (data) {
               self.$message.success('删除成功');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -926,12 +926,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.deleteAttributeItemById(requestData, function (data) {
+            self.httpApi.commodit.deleteAttributeItemById(requestData, function (data) {
               self.$message.success('删除成功');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -952,7 +952,7 @@
         let requestData = {
              id:node.data.id
         };
-        self.httpApi.commdit.selectCategorySpecById(requestData,function (data) {
+        self.httpApi.commodit.selectCategorySpecById(requestData,function (data) {
           self.updateFormSpec = data.data;
         })
       },
@@ -963,7 +963,7 @@
         let requestData = {
           id:node.data.id
         };
-        self.httpApi.commdit.selectCategoryAttributeById(requestData,function (data) {
+        self.httpApi.commodit.selectCategoryAttributeById(requestData,function (data) {
           self.updateFormBasicInfo = data.data;
         })
       },
@@ -981,13 +981,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.updateCategorySpec(requestData, function (data) {
+          self.httpApi.commodit.updateCategorySpec(requestData, function (data) {
             self.updateDictionaryClassifySpec = false;
             self.$message.success('修改成功');
             let requestData={
               categoryId:self.childFormSpec.categoryId
             };
-            self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
               self.totalCategoriesSpec = data.data;
             })
           });
@@ -1021,13 +1021,13 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.updateCategoryAttribute(requestData, function (data) {
+          self.httpApi.commodit.updateCategoryAttribute(requestData, function (data) {
             self.updateDictionaryClassifyBasicInfo = false;
             self.$message.success('修改成功');
             let requestData={
               categoryId:self.childFormBasicInfo.categoryId
             };
-            self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
               self.totalCategoriesBasicInfo = data.data;
             })
           });
@@ -1052,12 +1052,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategorySpecStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategorySpecStatus(requestData, function (data) {
               self.$message.success('已启用');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -1079,12 +1079,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategorySpecItemStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategorySpecItemStatus(requestData, function (data) {
               self.$message.success('已启用');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -1111,12 +1111,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategoryAttributeStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategoryAttributeStatus(requestData, function (data) {
               self.$message.success('已启用');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -1138,12 +1138,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateAttributeItemStatus(requestData, function (data) {
+            self.httpApi.commodit.updateAttributeItemStatus(requestData, function (data) {
               self.$message.success('已启用');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -1168,12 +1168,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategorySpecStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategorySpecStatus(requestData, function (data) {
               self.$message.success('已禁用');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -1195,12 +1195,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategorySpecItemStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategorySpecItemStatus(requestData, function (data) {
               self.$message.success('已禁用');
               let requestData={
                 categoryId:self.childFormSpec.categoryId
               };
-              self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
                 self.totalCategoriesSpec = data.data;
               })
             });
@@ -1226,12 +1226,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateCategoryAttributeStatus(requestData, function (data) {
+            self.httpApi.commodit.updateCategoryAttributeStatus(requestData, function (data) {
               self.$message.success('已禁用');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -1254,12 +1254,12 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            self.httpApi.commdit.updateAttributeItemStatus(requestData, function (data) {
+            self.httpApi.commodit.updateAttributeItemStatus(requestData, function (data) {
               self.$message.success('已禁用');
               let requestData={
                 categoryId:self.childFormBasicInfo.categoryId
               };
-              self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+              self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
                 self.totalCategoriesBasicInfo = data.data;
               })
             });
@@ -1296,7 +1296,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.addCategorySpecItem(requestData, function (data) {
+          self.httpApi.commodit.addCategorySpecItem(requestData, function (data) {
             self.createOneDependentSpecValue = false;
             self.$message.success('添加成功');
             self.childFormSpecValue.name='';
@@ -1304,7 +1304,7 @@
             let requestData={
               categoryId:self.childFormSpec.categoryId
             };
-            self.httpApi.commdit.selectCategorySpecListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData,function (data) {
               self.totalCategoriesSpec = data.data;
             })
           });
@@ -1333,7 +1333,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          self.httpApi.commdit.addAttributeItem(requestData, function (data) {
+          self.httpApi.commodit.addAttributeItem(requestData, function (data) {
             self.createOneDependentBasicInfoValue = false;
             self.$message.success('添加成功');
             self.childFormBasicInfoValue.name='';
@@ -1341,7 +1341,7 @@
             let requestData={
               categoryId:self.childFormBasicInfo.categoryId
             };
-            self.httpApi.commdit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
+            self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData,function (data) {
               self.totalCategoriesBasicInfo = data.data;
             })
           });

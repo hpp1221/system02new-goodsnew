@@ -367,6 +367,7 @@
         this.form.catId = e.catId;
       },
       getFileList(file) {//商品图片
+        console.log('file',file);
         this.form.goodsExtend.imgs.push(file);
       },
       getSkuImg(file) {//sku图片

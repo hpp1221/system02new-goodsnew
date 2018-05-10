@@ -4,9 +4,12 @@
       <div class="addGoods-top">
         <h4 class="addGoods-top-title">添加商品</h4>
         <el-steps :space="200" :active="active" finish-status="success" class="addGoods-top-detp">
-          <el-step title="选择分类" class="addGoods-top-step1" style="font-size: 12px"></el-step>
-          <el-step title="添加信息" class="addGoods-top-step1"></el-step>
-          <el-step title="上架" class="addGoods-top-step1"></el-step>
+          <el-step title="选择分类" class="addGoods-top-step1" style="font-size: 12px">
+          </el-step>
+          <el-step title="添加信息" class="addGoods-top-step1">
+          </el-step>
+          <el-step title="上架" class="addGoods-top-step1">
+          </el-step>
         </el-steps>
       </div>
       <!--active:1的选择分类和规格-->
@@ -36,7 +39,8 @@
       <p class="addGoods-info-title">添加商品基本信息</p>
       <el-form :inline="true" :model="form" ref="form" class="demo-form-inline">
         <el-form-item label="商品编码" class="addGoods-info-main-item1">
-          <el-input v-model="form.number" :disabled="true" class="basicinfo-five"></el-input>
+          <el-input v-model="form.number" :disabled="true" class="basicinfo-five">
+          </el-input>
         </el-form-item>
 
         <el-form-item label="商品类目" class="addGoods-info-main-item1">
@@ -46,18 +50,20 @@
             v-if="totalCatId"
             v-model="totalCatId"
             class="basicinfo-five"
-            :disabled="true"
-          ></el-cascader>
+            :disabled="true">
+          </el-cascader>
         </el-form-item>
         <el-form-item label=" 规格值  " class="addGoods-info-main-item1">
           <el-input v-model="catSecondSpecName" :disabled="true" class="basicinfo-five"></el-input>
         </el-form-item>
         <el-form-item label="商品品牌" class="addGoods-info-main-item1">
-          <brandselect @getBrandSelect="getBrandSelect" class="basicinfo-five"></brandselect>
+          <brandselect @getBrandSelect="getBrandSelect" class="basicinfo-five">
+          </brandselect>
         </el-form-item>
         <el-form-item label="计量单位" class="addGoods-info-main-item1">
           <el-select v-model="form.unit" placeholder="请选择" class="basicinfo-five">
-            <el-option :label="item.name" :value="item.name" v-for="item in unitList" :key="item.id"></el-option>
+            <el-option :label="item.name" :value="item.name" v-for="item in unitList" :key="item.id">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="贸易形态" class="addGoods-info-main-item1">
@@ -66,7 +72,8 @@
         </el-form-item>
         <el-form-item label="标签" class="addGoods-info-main-item1">
           <el-checkbox-group v-model="checkListTag" @change="groupCheckTags">
-            <el-checkbox :label="item.name" v-for="item in tagsList" :key="item.id"></el-checkbox>
+            <el-checkbox :label="item.name" v-for="item in tagsList" :key="item.id">
+            </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
         <br>
@@ -94,7 +101,8 @@
             <div v-if="item.input === 1">
               <p class="basicInfo">{{item.name}} : </p>
               <el-input type="text" class="item.num1 form-input" v-model="item.value" placeholder="请输入属性值"
-                        @change="getmustBasicInfo(index,item)"></el-input>
+                        @change="getmustBasicInfo(index,item)">
+              </el-input>
               <br>
             </div>
             <div v-if="item.checkbox === 1">
@@ -102,13 +110,15 @@
               <el-select v-model="item.value" placeholder="请选择" style="width: 300px;"
                          @change="getmustBasicInfo(index,item)">
                 <el-option v-for="item1 in item.children" :key="item1.id" :label="item1.name"
-                           :value="item1.id"></el-option>
+                           :value="item1.id">
+                </el-option>
               </el-select>
               <br>
             </div>
           </li>
         </ul>
-        <el-form-item label="销售属性 ( 规格 )" class="addGoods-info-main-item1"></el-form-item>
+        <el-form-item label="销售属性 ( 规格 )" class="addGoods-info-main-item1">
+        </el-form-item>
         <br>
         <div style="margin:20px 0px  10px 100px;" v-for="(s,sindex) in form.mustSpec" :key="sindex"
              v-if="form.mustSpec.length > 0">
@@ -127,7 +137,8 @@
               label="是否上架"
               width="180">
               <template slot-scope="scope">
-                <el-checkbox v-model="scope.row.status" true-label="1" false-label="0"></el-checkbox>
+                <el-checkbox v-model="scope.row.status" true-label="1" false-label="0">
+                </el-checkbox>
               </template>
             </el-table-column>
             <el-table-column
@@ -252,15 +263,29 @@
               action="http://upload.qiniu.com/"
               list-type="picture-card"
               :data="key"
-              :limit="5"
               :file-list="fileList"
-              :before-upload="beforeUploadImgCommon"
-              :on-success="handleSuccessImgCommon"
-              :on-remove="handleRemoveImgCommon"
-              v-if="key.token && checked === true"
-              style="margin:20px 0px 0px 10px">
+              :before-upload="beforeUploadCommonPicIsCommon"
+              :on-success="handleSuccessCommonPicIsCommon"
+              :on-remove="handleRemoveCommonPicIsCommon"
+              :limit="5"
+              v-if="key.token && checked === true">
               <i class="el-icon-plus"></i>
             </el-upload>
+<!--            <div v-if="checked === true">
+              <el-upload
+                action="http://upload.qiniu.com/"
+                list-type="picture-card"
+                :data="key"
+                :limit="5"
+                :before-upload="beforeUploadImgCommon"
+                :on-success="handleSuccessImgCommon"
+                :on-remove="handleRemoveImgCommon"
+                v-if="key.token"
+                style="margin:20px 0px 0px 10px">
+                <i class="el-icon-plus"></i>
+              </el-upload>
+            </div>-->
+
           </div>
           <br>
           <el-form-item>
@@ -360,7 +385,6 @@
             </li>
           </ul>
         </el-form-item>
-
       </el-form>
       <div style="float: right;margin:20px">
         <el-button @click="cancelSecond">取消</el-button>
@@ -490,9 +514,6 @@
         skuSListNew: [],
         specValueArrNewObj: {},
         /* skus*/
-        /*扩展属性*/
-
-        /*扩展属性*/
       }
     },
     components: {
@@ -507,9 +528,9 @@
     },
     created() {
       let self = this;
-      self.getCatList()//分类列表
+      self.getCatList();//分类列表
       self.key.file = "";
-      self.fullscreenLoading = true
+      self.fullscreenLoading = true;
       if (self.fileList) {
         self.key.file = self.fileList;
       }
@@ -522,7 +543,6 @@
       });
     },
     methods: {
-
       /* 富文本编辑器 start*/
       // 图片上传之前调取的函数
       beforeUpload(file) {
@@ -532,7 +552,7 @@
       },
       // 图片上传成功回调 插入到编辑器中
       handleSuccess(response, file, fileList) {
-        console.log('fileList', fileList)
+        console.log('fileList', fileList);
         let self = this;
         let url = '';
         self.fullscreenLoading = false;
@@ -558,11 +578,11 @@
         this.form.goodsExtend.content = html;
       },
       /* 富文本编辑器 end*/
-      getGradeTypeSelect(e) {//贸易形态
+      getGradeTypeSelect(e) {
         this.form.gradeType = e.gradeType;
         this.form.tradeName = e.tradeName;
         this.form.tradeType = e.gradeType.value;
-      },
+      },//贸易形态
       handleSelectionChange() {
       },
       getCatSelect(e) {
@@ -586,41 +606,38 @@
         this.checkListTag = val;
       },
       /*组图*/
-      beforeUploadImgCommon(file) {
+      beforeUploadCommonPicIsCommon(file) {
         let checkFormat = this.checkImg(file);
         if (!checkFormat) return false;
         if (!this.key.token) return false;
-      },
-      handleSuccessImgCommon(response, file, fileList) {
-        console.log('fileList', fileList);
-        let suffix = '';
-        if (file.name.indexOf('.') > -1) {
-          suffix = file.name.substring(file.name.indexOf('.'));
-        }
+      },//公用组图
+      handleSuccessCommonPicIsCommon(response, file, fileList) {
         this.fileList.push({
-          name: file.name,
-          url: this.imgDomain + response.key
-        })
-      },
-      handleRemoveImgCommon(file, fileList) {
+          'name':file.name,
+          'url':this.imgDomain + response.key
+        });
+      },//公用组图
+      handleRemoveCommonPicIsCommon(file, fileList) {
+        if (this.imageNum > 3) {
+          this.imageNum--;
+          return
+        }
+        this.imageNum--;
         this.fileList = fileList;
-      },
+      },//公用组图
       rememberIndex(scope) {//点击sku图片记录index
         this.skuImgIndex = scope.$index;
       },
       getSkuImg(file) {//sku图片
         this.form.skus[this.skuImgIndex].img = file.url;
       },
-      getSkuImgNot(file) {//sku图片
+      getSkuImgNot(file) {
         this.form.skus[this.skuImgIndexNot].images.push(file);
-        console.log('images', this.form.skus[this.skuImgIndexNot].images);
-      },
-      rememberIndexNot(scope) {//点击sku图片记录index
+      },//sku图片
+      rememberIndexNot(scope) {
         this.skuImgIndexNot = scope.$index;
-      },
-      //sku编码
-      getGoodsNumbers(skuNum) {//自动生成商品编码
-        //p开头 年月日时分秒一位或者两位数字
+      },//点击sku图片记录index
+      getGoodsNumbers(skuNum) {
         let str = 'P-';
         let nowDate = new Date();
         let year = nowDate.getFullYear();
@@ -642,10 +659,10 @@
           this.form.skus[i].number = currentStr;
           this.form.skus[i].images = []
         }
-      },
+      },//自动生成商品编码  //p开头 年月日时分秒一位或者两位数字
       /*组图*/
       // 图片上传之前调取的函数
-      basicSpecAnnex() {//g规格
+      basicSpecAnnex() {
         let self = this;
         let requestData = {
           categoryId: self.catDataNameId
@@ -665,7 +682,7 @@
           })
           // console.log(self.form.mustSpec)
         });
-      },
+      },//g规格
       createGoodsDetail(tableMap, index) {
         let lastChecked = this.lastChecked;
         let size = lastChecked.length;
@@ -702,8 +719,8 @@
           }
         }
         this.getGoodsNumbers(this.form.skus.length);
-        console.log("this.form.skus----------------3",this.form.skus);
-      },
+        console.log("this.form.skus----------------3", this.form.skus);
+      },//递归 笛卡尔积
       getSpecChange(svl, val, index) {
         let self = this;
         let item = self.checkedList.find(n => n.id === svl.id);
@@ -720,7 +737,7 @@
           }
         });
         self.lastChecked = arr;
-        console.log('self.lastChecked',self.lastChecked);
+        console.log('self.lastChecked', self.lastChecked);
         self.form.skus = [];
         self.createGoodsDetail({}, 0);
         // console.log('this.form.skus', this.form.skus);
@@ -738,7 +755,7 @@
           }
         });
         self.skusArrNew = arr1;
-        console.log('self.skusArrNew',self.skusArrNew);
+        console.log('self.skusArrNew', self.skusArrNew);
         self.form.skuMust = self.form.skus;
         if (self.form.skuMust.length === self.form.skus.length) {
           let skuSList = self.form.skuMust;
@@ -759,7 +776,7 @@
         let self = this;
         let requestData = {
           categoryId: self.catDataNameId
-        }
+        };
         self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData, function (data) {
           self.form.mustBasicInfo = data.data;
         });
@@ -784,32 +801,26 @@
         this.form.attributes[index] = mustObj;
       },//基本属性选择
       /*扩展属性*/
-      button2() {//扩展属性
-        this.form.goodsExtend.annex.check1 = false;
-        this.form.goodsExtend.annex.check2 = true
-
-      },
       addOneAnnex() {
         this.form.goodsExtend.annex.push({name: '', value: ''});
-      },
-      deleteOneAnnex(index) {//扩展属性删除
+      },//扩展属性add
+      deleteOneAnnex(index) {
         this.form.goodsExtend.annex.splice(index, 1);
-      },
+      },//扩展属性删除
       /*扩展属性*/
-      getCatList() {//分类列表
+      getCatList() {
         let self = this;
-        let requestData = {}
-        self.httpApi.goodsCat.selectCategoryTreeList(requestData, function (data) {
+        self.httpApi.goodsCat.selectCategoryTreeList({}, function (data) {
           self.catData = data.data;
         });
-      },
-      getNextCat(it) {//点击一级类目
+      },//分类列表
+      getNextCat(it) {
         let self = this;
         self.catFirst = it.name;
         self.catFirstId = it.id;
         let requestData = {
           id: it.id
-        }
+        };
         self.httpApi.goodsCat.selectCategoryListNodeById(requestData, function (data) {
           self.getNextCatVisibl = true;
           self.catData1 = data.data;
@@ -817,37 +828,39 @@
           self.catDataSpec = '';
           self.catDataSpecName = '';
         });
-      },
-      getNextCatSecondSpec(it) {//点击二级类目下规格
-        let self = this;
-        self.catDataSpecName = '(' + it.name + ')';
-        self.catDataSpecNameId = it.id;
-        self.catSecondSpecName = it.name;
-      },
-      getNextCatSecond(it) {//点击二级类目
+      },//点击一级类目
+      getNextCatSecond(it) {
         let self = this;
         self.catDataName = '>' + it.name;
         self.catDataNameId = it.id;
         self.catSecondName = it.name;
         let requestData = {
           categoryId: it.id
-        }
+        };
         self.httpApi.commodit.selectSpecItemListByCategoryId(requestData, function (data) {
           self.catDataSpec = data.data;
           self.catDataSpecName = '';
         });
-      },
-      getBrandSelect(e) {//商品品牌
+      },//点击二级类目
+      getNextCatSecondSpec(it) {
+        let self = this;
+        self.catDataSpecName = '(' + it.name + ')';
+        self.catDataSpecNameId = it.id;
+        self.catSecondSpecName = it.name;
+      },//点击二级类目下规格
+      getBrandSelect(e) {
         console.log('ee', e);
         this.form.brandId = e.id;
         this.form.brandName = e.nameCn;
         this.form.brand = e.brand;
-      },
-
-      nextFirst() {//选择分类中的下一步
+      },//商品品牌
+      nextFirst() {
         let self = this;
-        if (self.catDataName == '') {
+        if (self.catDataName === '') {
           self.$message('请选择下一级类目')
+        }
+        if (self.catSecondSpecName === '') {
+          self.$message('请选择分类下的规格值')
         } else {
           self.active = 2;
           self.catDataSecond = self.catData;
@@ -902,74 +915,84 @@
           //富文本编辑器
         }
 
-      },
-      gobackSecond() {//选择分类中的下一步
-        this.active++;
-      },
-      cancelFirst() {//选择分类的取消
-
-      },
-      cancelSecond() {//添加信息中的取消
-
-      },
-      returnFirst() {//添加信息中的返回上一步
+      },//选择分类中的下一步
+      cancelFirst() {
+        this.getCatList();
+      },//选择分类的取消
+      cancelSecond() {
+        this.$router.push('/commodit/goodslist');
+      },//添加信息中的取消
+      returnFirst() {
+        this.getCatList();
         this.active--;
-      },
+      },//添加信息中的返回上一步
       gobackThree() {//添加信息中的下一步  &&  商品新增确定
         let self = this;
+        // 条件判断
+        if (!self.form.brandId || !self.form.brandName) {
+          self.$message.info('品牌为必选项');
+          return;
+        }//brand判断
+        if (!self.form.unit) {
+          self.$message.info('单位为必选项');
+          return;
+        }//unit判断
+        if (!self.form.tradeName || !self.form.tradeType) {
+          self.$message.info('贸易形态为必选项');
+          return;
+        }//贸易形态判断
+        if (JSON.stringify(self.checkListTag) === "[]") {
+          self.$message.info('商品标签为必选项');
+          return;
+        }//标签
+        if (!self.form.name) {
+          self.$message.info('商品标题为必填项');
+          return;
+        }//商品标题
+        if (!self.form.describe) {
+          self.$message.info('商品描述为必填项');
+          return;
+        }//商品描述
+        if (JSON.stringify(self.form.attributes) === "{}") {
+          self.$message.info('商品基本属性为必选项');
+          return;
+        }//基本属性
+        if (JSON.stringify(self.skuSListNew) === "[]") {
+          self.$message.info('商品规格为必选项');
+          return;
+        }//商品规格
+
+        if (self.form.goodsExtend.content === '') {
+          self.$message.info('商品详情为必填项');
+          return;
+        }//商品详情
         let checkListTag = self.checkListTag;
         let tagsList = self.tagsList;
         let tagArr = [];
         let skuSArrNew = self.skusArrNew;
-        // 条件判断
-        /*        if (!self.form.brandId || !self.form.brandName) {
-                  self.$message.info('品牌为必填项');
-                  return;
-                }
-                if (!self.form.unit) {
-                  self.$message.info('单位为必填项');
-                  return;
-                }
-                if (!self.form.tradeName || !self.form.tradeType) {
-                  self.$message.info('贸易形态为必填项');
-                  return;
-                }
-                if (!self.form.name) {
-                  self.$message.info('商品标题为必填项');
-                  return;
-                }
-                if (!self.form.describe) {
-                  self.$message.info('商品描述为必填项');
-                  return;
-                }*/
         // 基本属性
         let attributes = self.form.attributes;
         let arrAttributes = [];
         for (let key in attributes) {
           arrAttributes.push(attributes[key]);
-        }
-        // 规格
+        }//基本属性
         let ibj = '';
         let name = '';
         let value = '';
         let objH = {};
         for (let i = 0; i < skuSArrNew.length; i++) {
-          console.log('skuSArrNew[i]', skuSArrNew[i]);
           ibj = skuSArrNew[i];
           name = ibj.specName;
           value = ibj.specValue;
           objH[name] = value;
-        }
-        // 标签多选
+        }//skus   // 规格
         for (let i = 0; i < checkListTag.length; i++) {
           for (let j = 0; j < tagsList.length; j++) {
             if (checkListTag[i] === tagsList[j].name) {
               tagArr.push(tagsList[j]);
             }
           }
-        }
-        // 不共用组图的images
-
+        }// 标签多选
         let requestData = {};
         if (self.checked === true) {
           requestData = {
