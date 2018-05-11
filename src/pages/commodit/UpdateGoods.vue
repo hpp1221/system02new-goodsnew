@@ -180,163 +180,118 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="修改商品" name="second">
-          <p class="addGoods-info-title">修改商品基本信息</p>
           <el-form :inline="true" :model="goodsForm" ref="goodsForm" class="demo-form-inline" style="overflow: hidden">
-            <el-form-item label="商品编码" class="addGoods-info-main-item1">
-              <el-input v-model="goodsForm.goodsVO.number" :disabled="true" class="basicinfo-five"></el-input>
-            </el-form-item>
-            <el-form-item label="商品类目" class="addGoods-info-main-item1">
-              <el-input
-                v-model="goodsForm.goodsVO.categoryPName + '/'+goodsForm.goodsVO.categoryName"
-                style="width: 220px;"
-                :disabled="true">
-              </el-input>
-            </el-form-item>
-            <el-form-item label=" 规格值  " class="addGoods-info-main-item1">
-              <el-input v-model="goodsForm.goodsVO.specName" :disabled="true" class="basicinfo-five">
-              </el-input>
-            </el-form-item>
-            <el-form-item label="商品品牌" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.brandName" filterable @change="clickBrand">
-                <el-option
-                  v-for="item in otherForm.brandList"
-                  :key="item.id"
-                  :label="item.nameCn"
-                  :value="item.id+','+item.nameCn">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="计量单位" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.unit" @change="clickUnit">
-                <el-option :label="item1.name" :value="item1.name" v-for="item1 in otherForm.unitList" :key="item1.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="贸易形态" class="addGoods-info-main-item1">
-              <el-select v-model="goodsForm.goodsVO.tradeName" @change="clickTrade">
-                <el-option :label="item1.name" :value="item1" v-for="item1 in otherForm.tradeList" :key="item1.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="标签" class="addGoods-info-main-item1">
-              <el-checkbox-group v-model="otherForm.checkListIds">
-                <el-checkbox :label="item.name" v-for="item in otherForm.tagsList" :key="item.id"
-                             @change="changeTag(item)"></el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <br>
-            <el-form-item label="商品标题" class="addGoods-info-main-item1">
-              <el-input v-model="goodsForm.goodsVO.name" placeholder="单行输入" style="width: 900px;"></el-input>
-              <em style="color: #aab1c7;padding-left: 15px;font-family: normal">0/60</em>
-            </el-form-item>
-            <br>
-            <el-form-item label="商品描述" class="addGoods-info-main-item1">
-              <el-input
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                placeholder="请输入内容"
-                v-model="goodsForm.goodsVO.goodsExtendWithBLOBs.describe"
-                style="width: 590px;">
-              </el-input>
-            </el-form-item>
-            <br>
-            <el-form-item label="商品基本属性 ( 根据二级类目 )" class="addGoods-info-main-item1">
-            </el-form-item>
-            <br>
-            <div style="padding:10px 95px;" v-for="(s,index) in otherForm.mustBasicInfoNew" :key="s.id">
-              <div v-if="s.checkbox === 1">
-                <div style="margin-bottom: 20px;display: block;" v-for="ss in goodsForm.goodsVO.goodsAttributeList" :key="ss.attributeId" v-if="ss.attributeId === s.id">
-                  <p class="basicInfo">{{s.name}} : </p>
-                  <el-select v-model="ss.attributeItemName" filterable placeholder="请选择" @change=changeBasicInput(ss,index) style="width: 300px;">
-                    <el-option
-                      v-for="item in s.children"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name">
-                    </el-option>
-                  </el-select>
+            <p class="addGoods-info-title">修改商品基本信息</p>
+              <el-form-item label="商品编码" class="addGoods-info-main-item1">
+                <el-input v-model="goodsForm.goodsVO.number" :disabled="true" class="basicinfo-five"></el-input>
+              </el-form-item>
+              <el-form-item label="商品类目" class="addGoods-info-main-item1">
+                <el-input
+                  v-model="goodsForm.goodsVO.categoryPName + '/'+goodsForm.goodsVO.categoryName"
+                  style="width: 220px;"
+                  :disabled="true">
+                </el-input>
+              </el-form-item>
+              <el-form-item label=" 规格值  " class="addGoods-info-main-item1">
+                <el-input v-model="goodsForm.goodsVO.specName" :disabled="true" class="basicinfo-five">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="商品品牌" class="addGoods-info-main-item1">
+                <el-select v-model="goodsForm.goodsVO.brandName" filterable @change="clickBrand">
+                  <el-option
+                    v-for="item in otherForm.brandList"
+                    :key="item.id"
+                    :label="item.nameCn"
+                    :value="item.id+','+item.nameCn">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="计量单位" class="addGoods-info-main-item1">
+                <el-select v-model="goodsForm.goodsVO.unit" @change="clickUnit">
+                  <el-option :label="item1.name" :value="item1.name" v-for="item1 in otherForm.unitList" :key="item1.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="贸易形态" class="addGoods-info-main-item1">
+                <el-select v-model="goodsForm.goodsVO.tradeName" @change="clickTrade">
+                  <el-option :label="item1.name" :value="item1" v-for="item1 in otherForm.tradeList" :key="item1.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="标签" class="addGoods-info-main-item1">
+                <el-checkbox-group v-model="otherForm.checkListIds">
+                  <el-checkbox :label="item.name" v-for="item in otherForm.tagsList" :key="item.id"
+                               @change="changeTag(item)"></el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <br>
+              <el-form-item label="商品标题" class="addGoods-info-main-item1">
+                <el-input v-model="goodsForm.goodsVO.name" placeholder="单行输入" style="width: 900px;"></el-input>
+                <em style="color: #aab1c7;padding-left: 15px;font-family: normal">0/60</em>
+              </el-form-item>
+              <br>
+              <el-form-item label="商品描述" class="addGoods-info-main-item1">
+                <el-input
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4}"
+                  placeholder="请输入内容"
+                  v-model="goodsForm.goodsVO.goodsExtendWithBLOBs.describe"
+                  style="width: 590px;">
+                </el-input>
+              </el-form-item>
+              <br>
+              <el-form-item label="商品基本属性 ( 根据二级类目 )" class="addGoods-info-main-item1">
+              </el-form-item>
+              <br>
+              <div style="padding:10px 95px;" v-for="s in otherForm.mustBasicInfoNew" :key="s.id">
+                <div v-if="s.checkbox === 1">
+                  <div style="margin-bottom: 20px;display: block;" v-for="ss in goodsForm.goodsVO.goodsAttributeList"
+                       :key="ss.attributeId" v-if="ss.attributeId === s.id">
+                    <p class="basicInfo">{{s.name}} : </p>
+                    <el-select v-model="ss.attributeItemName" filterable
+                               @change=changeBasicSelect(s.id,ss.attributeItemName) style="width: 300px;">
+                      <el-option v-for="item in s.children" :key="item.id" :label="item.name"
+                                 :value="item.id+','+item.name">
+                      </el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div v-if="s.input === 1">
+                  <div style="margin-bottom: 20px;display: block;" v-for="ss in goodsForm.goodsVO.goodsAttributeList"
+                       :key="ss.attributeId" v-if="ss.attributeId === s.id">
+                    <p class="basicInfo">{{s.name}} : </p>
+                    <el-input v-model="ss.attributeItemName" @change=changeBasicInput(s.id,s.name,ss.attributeItemName)
+                              type="text" class="item.num1 form-input">
+                    </el-input>
+                  </div>
                 </div>
               </div>
 
-              <div v-if="s.input === 1">
-                <div style="margin-bottom: 20px;display: block;" v-for="ss in goodsForm.goodsVO.goodsAttributeList" :key="ss.attributeId" v-if="ss.attributeId === s.id">
-                  <p class="basicInfo">{{s.name}} : </p>
-                  <el-input v-model="ss.attributeItemName" @change=changeBasicInput(ss,index) type="text" class="item.num1 form-input">
-                  </el-input>
+              <div style="padding:10px 95px;" v-for="(s,index) in updateForm.goodsAttributeListNew" :key="s.id">
+                <div v-if="s.checkbox === 1">
+                  <div style="margin-bottom: 20px;display: block;" v-for="ss in updateForm.goodsAttributeList"
+                       :key="ss.attributeId" v-if="ss.attributeId === s.id">
+                    <p class="basicInfo">{{s.name}} : </p>
+                    <el-select v-model="ss.attributeItemName" filterable
+                               @change=changeBasicSelectNew(s.id,s.name,ss.attributeItemName,index) style="width: 300px;">
+                      <el-option v-for="item in s.children" :key="item.id" :label="item.name"
+                                 :value="item.id+','+item.name">
+                      </el-option>
+                    </el-select>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div style="padding:10px 95px;" v-for="(s1,index1) in updateForm.goodsAttributeList" :key="s1.id">
-              <div v-if="s1.checkbox === 1">
-                <div style="margin-bottom: 20px;display: block;">
-                  <p class="basicInfo">{{s1.name}} : </p>
-                  <el-select v-model="updateForm.newBasicValue" filterable placeholder="请选择" style="width: 300px;">
-                    <el-option
-                      v-for="item in s1.children"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id">
-                    </el-option>
-                  </el-select>
-                  <!--                <div v-if="item.input === 1">
-                                    <p class="basicInfo">{{item.name}} : </p>
-                                    <el-input type="text" class="item.num1 form-input"
-                                              v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
-                                              v-if="s.attributeId === item.id"
-                                              v-model="s.attributeItemName"
-                                              @change=changeBasicInput(s,index)>
-                                    </el-input>
-                                    <br>
-                                  </div>
-                                  <div v-if="item.checkbox === 1">
-                                    <p class="basicInfo">{{item.name}} : </p>
-                                    <el-select
-                                      style="width: 300px;"
-                                      v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
-                                      v-if="s.attributeId === item.id"
-                                      v-model="s.attributeItemName"
-                                      @change=changeBasicInput(s,index)>
-                                      <el-option v-for="item1 in item.children" :key="item1.id" :label="item1.name"
-                                                 :value="item1.name">
-                                      </el-option>
-                                    </el-select>
-                                    <br>
-                                  </div>-->
-                </div>
-              </div>
-              <div v-if="s1.input === 1">
-                <div style="margin-bottom: 20px;display: block;">
-                  <p class="basicInfo">{{s1.name}} : </p>
-                  <el-input @change=changeBasicInput(s1,index) type="text" class="item.num1 form-input">
-                  </el-input>
-                  <!--                <div v-if="item.input === 1">
-                                    <p class="basicInfo">{{item.name}} : </p>
-                                    <el-input type="text" class="item.num1 form-input"
-                                              v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
-                                              v-if="s.attributeId === item.id"
-                                              v-model="s.attributeItemName"
-                                              @change=changeBasicInput(s,index)>
-                                    </el-input>
-                                    <br>
-                                  </div>
-                                  <div v-if="item.checkbox === 1">
-                                    <p class="basicInfo">{{item.name}} : </p>
-                                    <el-select
-                                      style="width: 300px;"
-                                      v-for="(s,index) in goodsForm.goodsVO.goodsAttributeList" :key="s.attributeId"
-                                      v-if="s.attributeId === item.id"
-                                      v-model="s.attributeItemName"
-                                      @change=changeBasicInput(s,index)>
-                                      <el-option v-for="item1 in item.children" :key="item1.id" :label="item1.name"
-                                                 :value="item1.name">
-                                      </el-option>
-                                    </el-select>
-                                    <br>
-                                  </div>-->
-                </div>
-              </div>
 
-            </div>
+                <div v-if="s.input === 1">
+                  <div style="margin-bottom: 20px;display: block;" v-for="ss in updateForm.goodsAttributeList"
+                       :key="ss.attributeId" v-if="ss.attributeId === s.id">
+                    <p class="basicInfo">{{s.name}} : </p>
+                    <el-input v-model="ss.attributeItemName"
+                              @change=changeBasicInputNew(s.id,s.name,ss.attributeItemName,index) type="text"
+                              class="item.num1 form-input">
+                    </el-input>
+                  </div>
+                </div>
+              </div>
             <el-form-item label="销售属性 ( 规格 )" class="addGoods-info-main-item1">
             </el-form-item>
             <br>
@@ -472,8 +427,7 @@
             <div class="addGoods-info-goodsimgs" style="overflow: hidden">
               <div v-if="goodsForm.isShareImg === 1">
                 <div>
-                  <el-checkbox v-model="otherForm.imgCommonChecked"
-                               class="isOrNotCommon">是否公用组图
+                  <el-checkbox v-model="updateForm.shareImg1" class="isOrNotCommon" @change="getCommonIsNotComm">是否公用组图
                   </el-checkbox>
                   <span class="addGoods-info-five">(最多上传5张)</span>
                 </div>
@@ -483,18 +437,18 @@
                   action="http://upload.qiniu.com/"
                   list-type="picture-card"
                   :data="key"
-                  :file-list="otherForm.imgCommonArr"
+                  :file-list="updateForm.images"
                   :before-upload="beforeUploadCommonPicNotCommon"
                   :on-success="handleSuccessCommonPicNotCommon"
                   :on-remove="handleRemoveCommonPicNotCommon"
                   :limit="5"
-                  v-if="key.token && otherForm.imgCommonChecked === true">
+                  v-if="key.token && updateForm.shareImg1 === true">
                   <i class="el-icon-plus"></i>
                 </el-upload>
                 <br>
                 <el-table
                   :data="goodsForm.goodsSkuVOList"
-                  v-if="goodsForm.goodsSkuVOList.length > 0 && otherForm.imgCommonChecked === false"
+                  v-if="goodsForm.goodsSkuVOList.length > 0 && updateForm.shareImg1 === false"
                   border
                   style="width: 100%;">
                   <el-table-column
@@ -526,18 +480,50 @@
                     </template>
                   </el-table-column>
                 </el-table>
-
               </div>
-              <br>
-              <el-form-item v-if="goodsForm.isShareImg === 0" style="overflow: hidden">
+              <div v-if="goodsForm.isShareImg === 0">
                 <div>
-                  <el-checkbox class="isOrNotCommon" v-model="otherForm.isCommon">是否公用组图
+                  <el-checkbox class="isOrNotCommon" v-model="updateForm.shareImg2" @change="getNotCommonIsCommon">
+                    是否公用组图
                   </el-checkbox>
                   <span class="addGoods-info-five">(最多上传5张)</span>
+                  <br>
+                  <el-table
+                    :data="goodsForm.goodsSkuVOList"
+                    v-if="goodsForm.goodsSkuVOList.length > 0 && updateForm.shareImg2 === false"
+                    border
+                    style="width: 100%;">
+                    <el-table-column
+                      :label="s.specName"
+                      v-for="s in lastChecked"
+                      :key="s.id"
+                      width="100">
+                      <template slot-scope="scope">
+                        <span> {{scope.row.skuShow[s.id].name}}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="图片"
+                      width="1000">
+                      <template slot-scope="scope">
+                        <el-upload
+                          action="http://upload.qiniu.com/"
+                          list-type="picture-card"
+                          :data="key"
+                          :file-list="scope.row.images"
+                          :before-upload="beforeUploadCommonPic"
+                          :on-success="handleSuccessCommonPic"
+                          :on-remove="handleRemoveCommonPic"
+                          :limit="5"
+                          @click.native="rememberIndexCommonPic(scope)"
+                          v-if="key.token">
+                          <i class="el-icon-plus"></i>
+                        </el-upload>
+                      </template>
+                    </el-table-column>
+                  </el-table>
                 </div>
-                <br>
                 <div>
-                  <!--非公用转公用-->
                   <el-upload
                     action="http://upload.qiniu.com/"
                     list-type="picture-card"
@@ -547,47 +533,12 @@
                     :on-success="handleSuccessCommonPicIsCommon"
                     :on-remove="handleRemoveCommonPicIsCommon"
                     :limit="5"
-                    v-if="key.token && otherForm.isCommon === true">
+                    v-if="key.token && updateForm.shareImg2 === true">
                     <i class="el-icon-plus"></i>
                   </el-upload>
-                  <!--非公用转公用-->
                 </div>
-                <el-table
-                  :data="goodsForm.goodsSkuVOList"
-                  v-if="goodsForm.goodsSkuVOList.length > 0 && otherForm.isCommon === false"
-                  border
-                  style="width: 100%;">
-                  <el-table-column
-                    :label="s.specName"
-                    v-for="s in lastChecked"
-                    :key="s.id"
-                    width="100">
-                    <template slot-scope="scope">
-                      <span> {{scope.row.skuShow[s.id].name}}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column
-                    label="图片"
-                    width="1000">
-                    <template slot-scope="scope">
-                      <el-upload
-                        action="http://upload.qiniu.com/"
-                        list-type="picture-card"
-                        :data="key"
-                        :file-list="scope.row.images"
-                        :before-upload="beforeUploadCommonPic"
-                        :on-success="handleSuccessCommonPic"
-                        :on-remove="handleRemoveCommonPic"
-                        :limit="5"
-                        @click.native="rememberIndexCommonPic(scope)"
-                        v-if="key.token">
-                        <i class="el-icon-plus"></i>
-                      </el-upload>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </el-form-item>
-            </div>
+              </div>
+              </div>
             <br>
             <el-form-item label="商品详情" class="addGoods-info-main-item1" style="overflow: hidden">
               <quill-editor
@@ -628,15 +579,14 @@
             <el-button @click="updateGoodsSure">确定</el-button>
             <el-button>取消</el-button>
           </div>
-        </el-tab-pane>
 
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
 </template>
 <script>
   import {quillEditor} from 'vue-quill-editor';
-
   let toolbarOptions = {
     container: [
       ['bold', 'italic', 'underline', 'strike'],
@@ -747,6 +697,7 @@
             unit: '',//单位
           },//eg category brand
           skuIds: [],//后台传回的规格勾选的ids
+          isShareImg: '',//是否是共用组图
         },//goods form
         otherForm: {
           brandList: [],//品牌列表
@@ -757,7 +708,7 @@
           mustBasicInfo: [],//基本属性数组
           mustBasicInfoNew: [],//基本属性数组
           checkList: [],
-          imgCommonChecked: true,//是否是共用组图 1\0
+          // imgCommonChecked: true,//是否是共用组图 1\0
           imgCommonArr: [],//由map改变后的img数组 isShareImg---1
           imgNotCommonArr: [],//由map改变后的img数组 isShareImg---0
           imgNotCommonArrNew: [],//由map改变后的img数组 isShareImg---0
@@ -767,16 +718,18 @@
           isCommon: false,//非公用变成公用时的单选框
           indexIsCommon: 0,//共用组图点击图片记录index
           checkboxMust: [],//规格可显示的name
+          BasicInputNewObj: {},//修改基本属性中的新增
         },
         updateForm: {
           goodsAttributeList: [],//基本属性
+          goodsAttributeListNew: [],//基本属性
           annex: [],//扩展属性
-          shareImg: '',//是否为公用组图
+          shareImg1: true,//共用转不共用
+          shareImg2: false,//与上面相反
           images: [],//共用转非共用images
           skuVOList: [],
-          newBasicValue:'',//新基本属性的model
+          newBasicValue: '',
         },//update form
-        isShareImg: '',//是否是共用组图
         fileList: [],
         form: {
           spec: [],//必有规格
@@ -904,6 +857,29 @@
         };
         self.httpApi.commodit.selectGoodsInfoById(requestData, function (data) {
           self.goodsForm = data.data;
+          let goodsSkuVOList = self.goodsForm.goodsSkuVOList;
+          if (self.goodsForm.isShareImg === 1) {
+            for (let i = 0; i < goodsSkuVOList.length; i++) {
+              goodsSkuVOList[i].images = goodsSkuVOList[i].goodsImgsList;
+            }
+            for (let i = 0; i < goodsSkuVOList.length; i++) {
+              for (let j = 0; j < goodsSkuVOList[i].images.length; j++) {
+                goodsSkuVOList[i].images[j].url = goodsSkuVOList[i].images[j].imgUrl;
+              }
+            }
+            self.updateForm.images = goodsSkuVOList[0].images;
+          }
+          if (self.goodsForm.isShareImg === 0) {
+            for (let i = 0; i < goodsSkuVOList.length; i++) {
+              goodsSkuVOList[i].images = goodsSkuVOList[i].goodsImgsList;
+            }
+            for (let i = 0; i < goodsSkuVOList.length; i++) {
+              for (let j = 0; j < goodsSkuVOList[i].goodsImgsList.length; j++) {
+                goodsSkuVOList[i].images[j].url = goodsSkuVOList[i].images[j].imgUrl;
+              }
+            }
+          }
+          self.goodsForm.goodsSkuVOList = goodsSkuVOList;
           self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex = JSON.parse(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex);
           self.goodsForm.goodsVO.goodsTagList.map(function (value) {
             self.otherForm.checkListIds.push(value.tagName);
@@ -933,28 +909,48 @@
             categoryId: self.goodsForm.goodsVO.categoryId
           };
           self.httpApi.commodit.selectCategoryAttributeListByCategoryId(requestData, function (data) {
-           self.otherForm.mustBasicInfo = data.data;
-           let mustBasicInfo = self.otherForm.mustBasicInfo;
-           let goodsAttributeList = self.goodsForm.goodsVO.goodsAttributeList;
-           for(let y=0;y<mustBasicInfo.length;y++){
-             let obj = mustBasicInfo[y];
-             let num = obj.id;
-             let isExist = false;
-             for(let b=0;b<goodsAttributeList.length;b++){
-             let aj = goodsAttributeList[b];
-             let n = aj.attributeId;
-             if(n === num){
-               self.otherForm.mustBasicInfoNew.push(obj);
-               isExist = true;
-               break;
-             }
-             }
-             if(!isExist){
-               self.updateForm.goodsAttributeList.push(obj);
-             }
-           }
-           console.log('self.otherForm.mustBasicInfoNew',self.otherForm.mustBasicInfoNew);
-           console.log('self.updateForm.goodsAttributeList',self.updateForm.goodsAttributeList);
+            self.otherForm.mustBasicInfo = data.data;
+            let mustBasicInfo = self.otherForm.mustBasicInfo;
+            let goodsAttributeList = self.goodsForm.goodsVO.goodsAttributeList;
+            for (let y = 0; y < mustBasicInfo.length; y++) {
+              for (let r = 0; r < goodsAttributeList.length; r++) {
+                if (mustBasicInfo[y].id === goodsAttributeList[r].attributeId) {
+                  if (mustBasicInfo[y].checkbox == 1) {
+                    goodsAttributeList[r].attributeType = 'checkbox';
+                  }
+                  if (mustBasicInfo[y].input == 1) {
+                    goodsAttributeList[r].attributeType = 'input';
+                  }
+                }
+              }
+            }
+            for (let y = 0; y < mustBasicInfo.length; y++) {
+              let obj = mustBasicInfo[y];
+              let num = obj.id;
+              let isExist = false;
+              for (let b = 0; b < goodsAttributeList.length; b++) {
+                let aj = goodsAttributeList[b];
+                let n = aj.attributeId;
+                if (n === num) {
+                  self.otherForm.mustBasicInfoNew.push(obj);
+                  isExist = true;
+                  break;
+                }
+              }
+              if (!isExist) {
+                self.updateForm.goodsAttributeListNew.push(obj);
+              }
+            }
+            console.log('self.otherForm.mustBasicInfoNew', self.otherForm.mustBasicInfoNew);
+            console.log('self.updateForm.goodsAttributeListNew', self.updateForm.goodsAttributeListNew);
+            for (let r = 0; r < self.updateForm.goodsAttributeListNew.length; r++) {
+              self.updateForm.goodsAttributeList.push({
+                'attributeId': self.updateForm.goodsAttributeListNew[r].id,
+                'attributeName': self.updateForm.goodsAttributeListNew[r].name,
+                'attributeItemId': '',
+                'attributeItemName': '',
+              })
+            }
           });//基本属性接口
           self.httpApi.commodit.selectCategorySpecListByCategoryId(requestData, function (data) {
             self.form.mustSpec = data.data;
@@ -973,45 +969,28 @@
               }
             }
           });
-          let goodsSkuVOList = self.goodsForm.goodsSkuVOList;
-          if (self.goodsForm.isShareImg === 1) {
-            for (let i = 0; i < goodsSkuVOList[0].images.length; i++) {
-              self.otherForm.imgCommonArr.push({
-                'id': goodsSkuVOList[0].images[i].id,
-                'url': goodsSkuVOList[0].images[i].imgUrl,
-              })
-            }
-          }
-          if (self.goodsForm.isShareImg === 0) {
-            for (let i = 0; i < goodsSkuVOList.length; i++) {
-              for (let j = 0; j < goodsSkuVOList[i].images.length; j++) {
-                goodsSkuVOList[i].images[j].url = goodsSkuVOList[i].images[j].imgUrl;
-              }
-            }
-          }
-          self.goodsForm.goodsSkuVOList = goodsSkuVOList;
           //富文本编辑器
-          self.$nextTick(function () {
-            let imgHandler = async function (value) {
-              self.addRange = self.$refs.myQuillEditor.quill.getSelection();
-              if (value) {
-                let fileInput = document.getElementById('imgInput') //隐藏的file文本ID
-                fileInput.click() //加一个触发事件
-              }
-              self.uploadType = 'image'
-            };
-            /*  let linkHandler = async function (value) {
-                if (value) {
-                  let href = prompt('Enter the URL');
-                  console.log("hrefhref", href);
-                  self.quill.format('link', href);
-                } else {
-                  self.quill.format('link', false);
-                }
-              }
-              self.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("link", linkHandler); //添加自定义的 链接方法*/
-            self.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("image", imgHandler); //添加自定义的 上传图片方法
-          });
+                  self.$nextTick(function () {
+                    let imgHandler = async function (value) {
+                      self.addRange = self.$refs.myQuillEditor.quill.getSelection();
+                      if (value) {
+                        let fileInput = document.getElementById('imgInput') //隐藏的file文本ID
+                        fileInput.click() //加一个触发事件
+                      }
+                      self.uploadType = 'image'
+                    };
+                    /*  let linkHandler = async function (value) {
+                        if (value) {
+                          let href = prompt('Enter the URL');
+                          console.log("hrefhref", href);
+                          self.quill.format('link', href);
+                        } else {
+                          self.quill.format('link', false);
+                        }
+                      }
+                      self.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("link", linkHandler); //添加自定义的 链接方法*/
+                    self.$refs.myQuillEditor.quill.getModule("toolbar").addHandler("image", imgHandler); //添加自定义的 上传图片方法
+                  });
           //富文本编辑器
         });
       },//sku列表
@@ -1206,11 +1185,45 @@
       rememberIndex(scope) {
         this.skuImgIndex = scope.$index;
       },//点击sku图片记录index
-      changeBasicInput(info, index1) {
-        console.log("info", info);
-        console.log("index1", index1);
-        console.log("goodsAttributeList", this.goodsForm.goodsVO.goodsAttributeList);
-      },//基本属性
+      changeBasicSelect(parentIdSelect, infoSelect) {
+        let self = this;
+        let infoBasic = infoSelect.split(',');
+        for (let i = 0; i < self.goodsForm.goodsVO.goodsAttributeList.length; i++) {
+          if (self.goodsForm.goodsVO.goodsAttributeList[i].attributeId === parentIdSelect) {
+            self.goodsForm.goodsVO.goodsAttributeList[i].attributeItemId = infoBasic[0];
+            self.goodsForm.goodsVO.goodsAttributeList[i].attributeItemName = infoBasic[1];
+            self.goodsForm.goodsVO.goodsAttributeList[i].attributeType = 'checkbox';
+          }
+        }
+      },//基本属性select
+      changeBasicInput(parentIdInput, parentNameInput, infoInput) {
+        for (let i = 0; i < this.goodsForm.goodsVO.goodsAttributeList.length; i++) {
+          if (this.goodsForm.goodsVO.goodsAttributeList[i].attributeId === parentIdInput) {
+            this.goodsForm.goodsVO.goodsAttributeList[i].attributeType = 'input';
+          }
+        }
+      },//基本属性input
+      changeBasicSelectNew(parentIdNew, parentNameNew, infoNew, indexInputNew) {
+        let self = this;
+        let infoNewS = infoNew.split(',');
+        let childrenObj = {};
+        childrenObj['attributeId'] = parentIdNew;
+        childrenObj['attributeName'] = parentNameNew;
+        childrenObj['attributeItemId'] = infoNewS[0];
+        childrenObj['attributeItemName'] = infoNewS[1];
+        childrenObj['attributeType'] = 'checkbox';
+        self.otherForm.BasicInputNewObj[indexInputNew] = childrenObj;
+      },//基本属性新增
+      changeBasicInputNew(parentIdNew, parentNameNew, infoNew, indexInputNew) {
+        let self = this;
+        let childrenObj = {};
+        childrenObj['attributeId'] = parentIdNew;
+        childrenObj['attributeName'] = parentNameNew;
+        childrenObj['attributeItemName'] = infoNew;
+        childrenObj['attributeType'] = 'input';
+        self.otherForm.BasicInputNewObj[indexInputNew] = childrenObj;
+        console.log("BasicInputNewObj", self.otherForm.BasicInputNewObj);
+      },//基本属性新增
       rememberIndexCommonPic(scope) {
         this.otherForm.commonPicIndex = scope.$index;
       },//非公用组图修改
@@ -1233,6 +1246,11 @@
         this.imageNum--;
         this.goodsForm.goodsSkuVOList[this.otherForm.commonPicIndex].images = fileList;
       },//非公用组图修改
+      getNotCommonIsCommon(val) {
+        if (val === true) {
+          this.updateForm.images = [];
+        }
+      },//本为不共用，点击要变为共用；
       beforeUploadCommonPicIsCommon(file) {
         let checkFormat = this.checkImg(file);
         if (!checkFormat) return false;
@@ -1271,6 +1289,13 @@
         this.imageNum--;
         this.updateForm.images = fileList;
       },//公用组图修改
+      getCommonIsNotComm(val) {
+        if (val === false) {
+          for (let i = 0; i < this.goodsForm.goodsSkuVOList.length; i++) {
+            this.goodsForm.goodsSkuVOList[i].images = [];
+          }
+        }
+      },//本为共用，点击要变为不共用；
       rememberIndexIsCommonPic(scope) {
         this.otherForm.indexIsCommon = scope.$index;
       },//记录图片index
@@ -1308,12 +1333,17 @@
           for (let t = 0; t < goodsSkuVOList.length; t++) {
             goodsSkuVOList[t].sku = JSON.stringify(goodsSkuVOList[t].sku)
           }
+        }//sku JSON.stringify
+        let newBasicInfo = [];
+        for (let t in self.otherForm.BasicInputNewObj) {
+          newBasicInfo.push(self.otherForm.BasicInputNewObj[t])
         }
-        for (let p = 0; p < self.updateForm.goodsAttributeList.length; p++) {
-          if (goodsAttributeListNew.indexOf(self.updateForm.goodsAttributeList[p]) === -1) {
-            goodsAttributeListNew.push(self.updateForm.goodsAttributeList[p]);
+        for (let p = 0; p < self.goodsForm.goodsVO.goodsAttributeList.length; p++) {
+          if (goodsAttributeListNew.indexOf(self.goodsForm.goodsVO.goodsAttributeList[p]) === -1) {
+            goodsAttributeListNew.push(self.goodsForm.goodsVO.goodsAttributeList[p]);
           }
-        }
+        }  //基本属性
+        goodsAttributeListNew = goodsAttributeListNew.concat(newBasicInfo);
         // self.skuStr
         for (let i = 0; i < self.lastChecked.length; i++) {
           let idsArrP = [];
@@ -1322,69 +1352,42 @@
             self.skuStr[self.lastChecked[i].id] = JSON.stringify(idsArrP);
           }
         }
-        if (self.otherForm.isCommon === true) {
-          requestData = {
-            annex: JSON.stringify(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex),
-            brandId: self.goodsForm.goodsVO.brandId,
-            brandName: self.goodsForm.goodsVO.brandName,
-            categoryId: self.goodsForm.goodsVO.categoryId,
-            categoryName: self.goodsForm.goodsVO.categoryName,
-            categoryPId: self.goodsForm.goodsVO.categoryPId,
-            categoryPName: self.goodsForm.goodsVO.categoryPName,
-            content: self.goodsForm.goodsVO.goodsExtendWithBLOBs.content,
-            describe: self.goodsForm.goodsVO.goodsExtendWithBLOBs.describe,
-            goodsAttributeList: self.updateForm.goodsAttributeList,
-            id: self.goodsForm.goodsVO.id,
-            images: self.updateForm.images,
-            name: self.goodsForm.goodsVO.name,
-            number: self.goodsForm.goodsVO.number,
-            shareImg: 1,
-            skuVOList: self.goodsForm.goodsSkuVOList,
-            skus: JSON.stringify(self.skuStr),
-            specId: self.goodsForm.goodsVO.specId,
-            specName: self.goodsForm.goodsVO.specName,
-            supplierId: '',
-            tags: self.goodsForm.goodsVO.goodsTagList,
-            tradeName: self.goodsForm.goodsVO.tradeName,
-            tradeType: self.goodsForm.goodsVO.tradeType,
-            unit: self.goodsForm.goodsVO.unit,
-          };
-          self.httpApi.commodit.updateGoodsV1(requestData, function (data) {
-            self.$message.success(data.message);
-            self.$router.push('/commodit/goodslist');
-          });
+        if (self.goodsForm.isShareImg === true) {
+          self.updateForm.shareImg = 1;
         }
-        if (self.otherForm.isCommon === false) {
-          requestData = {
-            annex: JSON.stringify(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex),
-            brandId: self.goodsForm.goodsVO.brandId,
-            brandName: self.goodsForm.goodsVO.brandName,
-            categoryId: self.goodsForm.goodsVO.categoryId,
-            categoryName: self.goodsForm.goodsVO.categoryName,
-            categoryPId: self.goodsForm.goodsVO.categoryPId,
-            categoryPName: self.goodsForm.goodsVO.categoryPName,
-            content: self.goodsForm.goodsVO.goodsExtendWithBLOBs.content,
-            describe: self.goodsForm.goodsVO.goodsExtendWithBLOBs.describe,
-            goodsAttributeList: self.updateForm.goodsAttributeList,
-            id: self.goodsForm.goodsVO.id,
-            name: self.goodsForm.goodsVO.name,
-            number: self.goodsForm.goodsVO.number,
-            shareImg: 0,
-            skuVOList: self.goodsForm.goodsSkuVOList,
-            skus: JSON.stringify(self.skuStr),
-            specId: self.goodsForm.goodsVO.specId,
-            specName: self.goodsForm.goodsVO.specName,
-            supplierId: '',
-            tags: self.goodsForm.goodsVO.goodsTagList,
-            tradeName: self.goodsForm.goodsVO.tradeName,
-            tradeType: self.goodsForm.goodsVO.tradeType,
-            unit: self.goodsForm.goodsVO.unit,
-          };
-          self.httpApi.commodit.updateGoodsV1(requestData, function (data) {
-            self.$message.success(data.message);
-            self.$router.push('/commodit/goodslist');
-          })
+        if (self.goodsForm.isShareImg === false) {
+          self.updateForm.shareImg = 0;
         }
+        requestData = {
+          annex: JSON.stringify(self.goodsForm.goodsVO.goodsExtendWithBLOBs.annex),
+          brandId: self.goodsForm.goodsVO.brandId,
+          brandName: self.goodsForm.goodsVO.brandName,
+          categoryId: self.goodsForm.goodsVO.categoryId,
+          categoryName: self.goodsForm.goodsVO.categoryName,
+          categoryPId: self.goodsForm.goodsVO.categoryPId,
+          categoryPName: self.goodsForm.goodsVO.categoryPName,
+          content: self.goodsForm.goodsVO.goodsExtendWithBLOBs.content,
+          describe: self.goodsForm.goodsVO.goodsExtendWithBLOBs.describe,
+          goodsAttributeList: goodsAttributeListNew,
+          id: self.goodsForm.goodsVO.id,
+          images: self.updateForm.images,
+          name: self.goodsForm.goodsVO.name,
+          number: self.goodsForm.goodsVO.number,
+          shareImg: self.updateForm.shareImg,
+          skuVOList: self.goodsForm.goodsSkuVOList,
+          skus: JSON.stringify(self.skuStr),
+          specId: self.goodsForm.goodsVO.specId,
+          specName: self.goodsForm.goodsVO.specName,
+          supplierId: '',
+          tags: self.goodsForm.goodsVO.goodsTagList,
+          tradeName: self.goodsForm.goodsVO.tradeName,
+          tradeType: self.goodsForm.goodsVO.tradeType,
+          unit: self.goodsForm.goodsVO.unit,
+        };
+        self.httpApi.commodit.updateGoodsV1(requestData, function (data) {
+          self.$message.success(data.message);
+          self.$router.push('/commodit/goodslist');
+        });
       },//修改确定
     }
   }
