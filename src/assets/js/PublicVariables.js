@@ -17,7 +17,7 @@ Vue.prototype.httpApi = {
   role:{},
   user:{},
   vip:{},
-  level:{},
+  recommed:{},
   feedback:{},
   mail:{},
   qiniuyun:{},

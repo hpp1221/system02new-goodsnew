@@ -1,81 +1,225 @@
 <template>
   <div class="container">
     <div class="wrapper">
-      <div class="addGoods-top">
-        <h4 class="addGoods-top-title">为你推荐</h4>
-        <el-steps :space="200" :active="active" finish-status="success" class="addGoods-top-detp" align-center>
-          <el-step title="选择分类" class="addGoods-top-step1" style="font-size: 12px"></el-step>
-          <el-step title="添加商品" class="addGoods-top-step1"></el-step>
-          <el-step title="完成" class="addGoods-top-step1"></el-step>
-        </el-steps>
-      </div>
-      <div class="addGoods-classify" v-if="active == 1">
-        <!--<div class="addGoods-classify-left">-->
-        <h4 class="addGoods-classify-title">选择分类</h4>
-        <div class="addGoods-classify-title-left">
-          <ul class="classify-list" style="float: left">
-            <li v-for="it in catData" @click="getNextCat(it.id)" :getNextCatVisibl="false">{{it.name}}</li>
-          </ul>
-          <ul class="classify-list" style="float: left" v-if="getNextCatVisibl == true">
-            <li v-for="it in catData1" @click="getNextCatSecond(it.id)">{{it.name}}</li>
-          </ul>
-          <!--</div>-->
-        </div>
+      <h3 class="page-title">为你推荐列表</h3>
+      <el-form ref="easyForm" :model="easyForm" inline>
+        <el-form-item label="商品名称">
+          <el-input v-model="easyForm.title" style="width: 170px;"></el-input>
+        </el-form-item>
+        <el-form-item label="商品编码">
+          <el-input v-model="easyForm.number" style="width: 170px"></el-input>
+        </el-form-item>
+        <el-form-item label="商品分类">
+          <el-cascader
+            :options="goodListCatList"
+            :show-all-levels="false"
+            @change="GoodListCatListChange"
+            :clearable="true"
+            :change-on-select=true
+            filterable
+            style="width: 160px"
+          >
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="商品品牌">
+          <brandselect @getBrandSelect="getBrandSelect" :clearable="true" style="width: 150px"></brandselect>
+        </el-form-item>
+        <el-form-item label="贸易形态">
+          <gradetypeselect @getGradeTypeSelect="getGradeTypeSelect" :clearable="true" :selectAllVisible="true"
+                           style="width: 150px"></gradetypeselect>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="select(pageSize,pageNum)">查询</el-button>
+          <el-button @click="recommedAdd">新增</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table :data="tableData" border v-if="tableData.length>0">
+        <el-table-column label="商品图片">
+          <template slot-scope="scope">
+            <img v-lazy="scope.row.img" alt=""
+                 style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
+          </template>
+        </el-table-column>
+        <el-table-column prop="number" label="商品编码" width="200">
 
-      </div>
-      <div class="addGoods-classify" v-if="active == 2">
-        <h4 class="addGoods-classify-title">增加商品图片</h4>
-        <div style="overflow: hidden">
-          <el-checkbox label="t.id" v-for="t in tableData" :key="t.id" @change="checkImgChange(t.id)" style="margin-left: 30px">
-            <img v-lazy="t.img" style="width: 150px;float:left;">
-          </el-checkbox>
-          <!--<el-checkbox v-model="checked4" label="2" border></el-checkbox>-->
-        </div>
-        <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float:right"></pagination>
-      </div>
-      <div class="addGoods-classify" v-if="active == 3">
-        <el-table :data="tableDataImg" @selection-change="handleSelectionChange" ref="multipleTable">
-          <!--<el-table-column-->
-          <!--type="selection"-->
-          <!--width="55">-->
-          <!--</el-table-column>-->
+        </el-table-column>
+        <el-table-column prop="title" label="商品名称" width="150">
+
+        </el-table-column>
+        <el-table-column label="分类" width="130">
+          <template slot-scope="scope">
+            <span>{{scope.row.firstCategoryName+'/'+scope.row.twoCategoryName}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="marketPrice" label="市场价">
+
+        </el-table-column>
+        <el-table-column prop="referencePrice" label="参考价">
+
+        </el-table-column>
+        <el-table-column prop="retailPrice" label="零售价">
+
+        </el-table-column>
+        <el-table-column prop="brandName" label="品牌">
+
+        </el-table-column>
+        <el-table-column prop="mustBuyNum" label="起订量">
+
+        </el-table-column>
+        <el-table-column prop="count" label="库存数量">
+
+        </el-table-column>
+        <el-table-column prop="transportationPrice" label="物流运费">
+
+        </el-table-column>
+        <el-table-column prop="tradeName" label="贸易形态">
+
+        </el-table-column>
+        <el-table-column prop="status" label="上下架">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status === '0'">下架</span>
+            <span v-if="scope.row.status === '1'">上架</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-dropdown trigger="click">
+              <i class="iconfont icon-more" style="cursor: pointer"></i>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="deleteRecommed(scope.row.id)">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination @setChanged="pageChanged" :totalPage="totalPage" style="float: right"></pagination>
+      <el-dialog title="未推荐列表" :visible.sync="dialogTableVisible" :fullscreen=true>
+        <el-form ref="form" :model="form" inline>
+          <el-form-item label="商品名称">
+            <el-input v-model="form.title" style="width: 170px;"></el-input>
+          </el-form-item>
+          <el-form-item label="商品编码">
+            <el-input v-model="form.number" style="width: 170px"></el-input>
+          </el-form-item>
+          <el-form-item label="商品分类">
+            <el-cascader
+              :options="goodListCatList"
+              :show-all-levels="false"
+              @change="GoodListCatListChangeNot"
+              :clearable="true"
+              :change-on-select=true
+              filterable
+              style="width: 160px"
+            >
+            </el-cascader>
+          </el-form-item>
+          <el-form-item label="商品品牌">
+            <brandselect @getBrandSelect="getBrandSelectNot" :clearable="true" style="width: 150px"></brandselect>
+          </el-form-item>
+          <el-form-item label="贸易形态">
+            <gradetypeselect @getGradeTypeSelect="getGradeTypeSelectNot" :clearable="true" :selectAllVisible="true"
+                             style="width: 150px"></gradetypeselect>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="selectNot(pageSize,pageNum)">查询</el-button>
+            <el-button @click="addMulti">批量加入推荐</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table :data="tableNotData" border style="height: 80%" v-if="tableNotData.length>0"
+                  @selection-change="handleSelectionChange" ref="multipleTable" v-loading="loading" :row-key="getRowKeys">
+          <el-table-column
+            type="selection"
+            width="55"
+            prop="id"
+            :reserve-selection="true">
+          </el-table-column>
           <el-table-column label="商品图片">
             <template slot-scope="scope">
               <img v-lazy="scope.row.img" alt=""
                    style="width: 60px;height: 60px;vertical-align: middle;text-align: center;"/>
             </template>
           </el-table-column>
-          <el-table-column prop="title" label="商品名称">
+          <el-table-column prop="number" label="商品编码" width="200">
 
           </el-table-column>
-          <el-table-column prop="price" label="单价">
+          <el-table-column prop="title" label="商品名称" width="150">
 
+          </el-table-column>
+          <!--        <el-table-column prop="sku" label="规格">
+
+                  </el-table-column>-->
+          <el-table-column prop="firstCategoryName" label="分类" width="130">
+            <template slot-scope="scope">
+              <span>{{scope.row.firstCategoryName+'/'+scope.row.twoCategoryName}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="marketPrice" label="市场价">
+
+          </el-table-column>
+          <el-table-column prop="referencePrice" label="参考价">
+
+          </el-table-column>
+          <el-table-column prop="retailPrice" label="零售价">
+
+          </el-table-column>
+          <el-table-column prop="brandName" label="品牌">
+
+          </el-table-column>
+          <el-table-column prop="mustBuyNum" label="起订量">
+
+          </el-table-column>
+          <el-table-column prop="count" label="库存数量">
+
+          </el-table-column>
+          <el-table-column prop="transportationPrice" label="物流运费">
+
+          </el-table-column>
+          <el-table-column prop="tradeName" label="贸易形态">
+
+          </el-table-column>
+          <el-table-column prop="status" label="上下架">
+            <template slot-scope="scope">
+              <span v-if="scope.row.status === '0'">下架</span>
+              <span v-if="scope.row.status === '1'">上架</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button @click.native="addRecommed(scope.row)">加入推荐</el-button>
+            </template>
           </el-table-column>
         </el-table>
-      </div>
+        <pagination @setChanged="pageChangedNot" :totalPage="totalPageNot" style="float: right"></pagination>
+      </el-dialog>
+      <el-dialog title="新增未推荐" :visible.sync="dialogTableVisibleRecommed" width="35%">
+        <el-form :model="addForm">
+          <el-form-item label="商品名称" :label-width="formLabelWidth">
+            {{addForm.name}}
+          </el-form-item>
+          <el-form-item label="商品排序" :label-width="formLabelWidth">
+            <el-input v-model="addForm.order" auto-complete="off" style="width: 200px"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogTableVisibleRecommed = false">取 消</el-button>
+          <el-button type="primary" @click="addRecommedSure">确 定</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="批量新增未推荐" :visible.sync="dialogTableVisibleRecommedMulti" width="35%" :show-close=false>
+        <el-form :model="addForm">
+          <el-form-item label="商品名称" :label-width="formLabelWidth">
+           <span v-for="item in selectedDataArr" :key="item.id" style="color: #f40;">{{item.title + '  '+ '   '}}</span>
+          </el-form-item>
+          <el-form-item label="商品排序" :label-width="formLabelWidth">
+            <el-input v-model="addForm.orderMulti" auto-complete="off" style="width: 200px"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="addRecommedMultiCancel">取 消</el-button>
+          <el-button type="primary" @click="addRecommedMultiSure">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
-    <div style="overflow: hidden" v-if="active == 1">
-      <span style="margin-left: 222px;float: left;">您当前选择的是 : </span><span style="color: #f40">{{catFirst + catDataName}}</span>
-      <el-button style="margin: 12px 420px 0px 0px;float: right" @click="nextFirst(pageSize,pageNo)">下一步</el-button>
-      <!--<el-button style="margin: 12px 30px 0px 0px;float: right" @click="cancelFirst">取消</el-button>-->
-    </div>
-    <div style="overflow: hidden" v-if="active == 2">
-      <el-button style="margin: 12px 420px 0px 0px;float: right" @click="nextSecond">下一步</el-button>
-      <el-button style="margin: 12px 30px 0px 0px;float: right" @click="gobackSecond">返回上一步</el-button>
-      <el-button style="margin: 12px 30px 0px 0px;float: right" @click="cancelFirst">取消</el-button>
-    </div>
-    <div v-if="active == 3">
-      <el-button style="margin: 12px 420px 0px 0px;float: right" @click="cancelFirst">返回</el-button>
-    </div>
-    <!--<div class="addGoods-info" v-if="active == 2">-->
-    <!--<p class="addGoods-info-title">添加商品基本信息</p>-->
-    <!--<div class="addGoods-info-main-operation">-->
-    <!--<el-button @click="cancelSecond">取消</el-button>-->
-    <!--<el-button @click="returnFirst">返回上一步</el-button>-->
-    <!--<el-button @click="gobackThree">下一步</el-button>-->
-    <!--</div>-->
-
-    <!--</div>-->
   </div>
 </template>
 
@@ -83,154 +227,229 @@
   export default {
     data() {
       return {
-        active: 1,
-        catData: [],//一级类目
-        catData1: [],//二级类目
-        catFirst: '',//选择的一级类目名称
-        getNextCatVisibl: false,
-        formLabelWidth: '80px',
-        catDataName: '',//选择的二级类目名称
-        NextCatSecondId: '',//选择的二级类目id
-        tableData: [],//添加图片列表
+        goodListCatList: [],//商品分类数组
+        tableData: [],//列表
+        tableNotData: [],//列表
+        loading: false,
+        // 获取row的key值
+        getRowKeys(row) {
+          return row.id;
+        },
+        selectedData:[],//多选的
+        selectedDataArr:[],//多选的
+        easyForm: {
+          brandId: '',
+          firstCategoryId: '',
+          number: '',
+          pageNo: '',
+          pageSize: '',
+          status: '',
+          title: '',
+          tradeType: '',
+          twoCategoryId: ''
+        },//推荐查询
+        form: {
+          brandId: '',
+          firstCategoryId: '',
+          number: '',
+          pageNo: '',
+          pageSize: '',
+          status: '',
+          title: '',
+          tradeType: '',
+          twoCategoryId: ''
+        },//未推荐查询
+        addForm: {
+          name: '',
+          order: '',
+          orderMulti:'',
+          skuId: ''
+        },//add form
         pageSize: 5,
-        pageNo: 1,
+        pageSizeNot: 5,
+        pageNum: 1,
+        pageNumNot: 1,
         totalPage: 10,
-        checkImgId: [],//选择添加图片的id
-        tableDataImg: [],//添加商品图片后的商品列表
+        totalPageNot: 10,
+        dialogTableVisible: false,
+        dialogTableVisibleRecommed: false,
+        dialogTableVisibleRecommedMulti: false,
+        formLabelWidth: '120px'
       }
     },
     components: {
-      'uploadmultipleimg': require('../../components/uploadmultipleimg'),
-      'uploadoneimg': require('../../components/uploadoneimg'),
-      'catselect': require('../../components/getcatselect'),
       'pagination': require('../../components/pagination'),
-    },
-    created() {
-      this.getCatList()//分类列表
+      'gradetypeselect': require('../../components/getgradetypeselect'),
+      'brandselect': require('../../components/getbrandselect')
     },
     methods: {
-      checkImgChange(imgId) {
-        let self = this;
-        for (let i = 0; i < self.tableData.length; i++) {
-          if (self.tableData[i].id == imgId) {
-            self.checkImgId.push(self.tableData[i].id);
-          }
-        }
-      },
       pageChanged(page) {
         this.pageSize = page.size;
-        this.pageNo = page.num;
-        this.nextFirst(page.size, page.num)
+        this.pageNum = page.num;
+        localStorage.setItem('pageSizeList', page.size);
+        localStorage.setItem('pageNumList', page.num);
+        this.getGoodListCatList();
+        this.select(page.size, page.num);
       },
-      getCatList() {//分类列表
+      getGoodListCatList() {
+        let self = this;
+        let requestData = {};
+        self.httpApi.goodsCat.selectCategoryTreeNode(requestData, function (data) {
+          self.goodListCatList = data.data;
+        });
+      },//为你推荐列表中的商品分类级联选择器
+      GoodListCatListChange(val) {
+        this.easyForm.firstCategoryId = val[0];
+        this.easyForm.twoCategoryId = val[1];
+      },//为你推荐列表中的商品分类级联选择器回调函数
+      getBrandSelect(e) {
+        this.easyForm.brandId = e.id;
+      },//商品品牌函数
+      getGradeTypeSelect(e) {
+        this.easyForm.tradeType = e.gradeType.value;
+      },//贸易形态
+      select(size, num) {
         let self = this;
         let requestData = {
-          catId: -1
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          self.catData = data.data;
-        });
-      },
-      getNextCat(id) {//点击一级类目
+          brandId: self.easyForm.brandId,
+          firstCategoryId: self.easyForm.firstCategoryId,
+          twoCategoryId: self.easyForm.twoCategoryId,
+          title: self.easyForm.title,
+          number: self.easyForm.number,
+          tradeType: self.easyForm.tradeType,
+          pageNo: num,
+          pageSize: size,
+        };
+        self.httpApi.recommed.selectGoodsSkuRecommendList(requestData, function (data) {
+          self.tableData = data.data.pageInfo.list;
+          self.totalPage = data.data.pageInfo.total;
+        })
+      },//为你推荐列表
+      deleteRecommed(id) {
         let self = this;
         let requestData = {
-          catId: id
-        }
-        self.httpApi.goods.catList(requestData, function (data) {
-          self.getNextCatVisibl = true;
-          self.catData1 = data.data;
-          self.catFirst = data.data[0].parentIds.split('/')[0] + '>';
+          skuId: id
+        };
+        self.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          self.httpApi.recommed.deleteGoodsRecommendBySkuId(requestData, function (data) {
+            self.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            self.select(self.pageSize, self.pageNum);
+          })
+        }).catch(() => {
+          self.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
         });
+      },//删除
+      /*------------------------------------------------未推荐---------------------------------------------------------*/
+      pageChangedNot(page) {
+        this.pageSizeNot = page.size;
+        this.pageNumNot = page.num;
+        localStorage.setItem('pageSizeList', page.size);
+        localStorage.setItem('pageNumList', page.num);
+        this.selectNot(page.size, page.num);
       },
-      getNextCatSecond(id) {//点击二级类目
+      recommedAdd() {
+        this.dialogTableVisible = true;
+        this.selectNot(this.pageSize, this.pageNum);
+      },//打开未推荐列表弹框
+      getBrandSelectNot(e) {
+        this.form.brandId = e.id;
+      },//商品品牌函数
+      getGradeTypeSelectNot(e) {
+        this.form.tradeType = e.gradeType.value;
+      },//贸易形态
+      GoodListCatListChangeNot(valNot) {
+        this.form.firstCategoryId = valNot[0];
+        this.form.twoCategoryId = valNot[1];
+      },////未推荐列表中的商品分类级联选择器回调函数
+      selectNot(size, num) {
+        let self = this;
+        let requestData = {
+          brandId: self.form.brandId,
+          firstCategoryId: self.form.firstCategoryId,
+          twoCategoryId: self.form.twoCategoryId,
+          title: self.form.title,
+          number: self.form.number,
+          tradeType: self.form.tradeType,
+          pageNo: num,
+          pageSize: size,
+        };
+        self.httpApi.recommed.selectNotGoodsRecommendList(requestData, function (data) {
+          self.tableNotData = data.data.pageInfo.list;
+          self.totalPageNot = data.data.pageInfo.total;
+        })
+      },//未推荐列表
+      addRecommed(row) {
+        this.dialogTableVisibleRecommed = true;
+        this.addForm.name = row.title;
+        this.addForm.skuId = row.id;
+        this.addForm.order='';
+      },//打开新增未推荐弹框
+      addRecommedSure() {
+        let self = this;
+        self.httpApi.recommed.addGoodsRecommend(self.addForm, function (data) {
+          self.dialogTableVisibleRecommed = false;
+          self.dialogTableVisible = false;
+          self.select(self.pageSize, self.pageNum);
 
-        let self = this;
-        self.NextCatSecondId = id;
-        for (let i = 0; i < self.catData1.length; i++) {
-          if (self.catData1[i].id == id) {
-            self.catDataName = self.catData1[i].name;
-          }
-        }
-      },
-      nextFirst(size, num) {//选择分类中的下一步
-        let self = this;
-        if (self.catDataName == '') {
-          self.$message('请选择下一级类目')
-        } else {
-          self.active = 2;
-          let requestData = {
-            goodsSkuRequest: {catId: self.NextCatSecondId},
-            pageNo: num,
-            pageSize: size
-          };
-          self.httpApi.goods.skuList(requestData, function (data) {
-            console.log('sku', data)
-            self.tableData = data.data.list;
-            self.totalPage = data.data.total;
+        })
+      },//新增未推荐弹框确定
+      handleSelectionChange(rows) {
+        this.selectedData = [];
+        if (rows) {
+          rows.forEach(row => {
+            if (row) {
+              this.selectedData.push(row.id);
+            }
           });
         }
-
       },
-      nextSecond() {//添加商品active:2中的下一步
+      addMulti(){
         let self = this;
-        let requestData = {
-          count: 10,
-          skuIds: self.checkImgId
-        }
-        self.httpApi.goodsCat.addRecommendedForYouGoods(requestData, function (data) {
-          if(self.tableData.length > 0) {
-            self.active++;
-            self.$message('添加成功');
-            self.getImgs();
-          }else{
-            self.$message('暂无商品');
+        if(JSON.stringify(self.selectedData) === "[]"){
+          self.$message.info('请选择未推荐商品!')
+        }else{
+          self.dialogTableVisibleRecommedMulti = true;
+          for(let i=0;i<self.tableNotData.length;i++){
+            for(let j=0;j<self.selectedData.length;j++){
+              if(self.tableNotData[i].id === self.selectedData[j]){
+                self.selectedDataArr.push({
+                  'skuId':self.tableNotData[i].id,
+                  'title':self.tableNotData[i].title
+                });
+              }
+            }
           }
-        });
+        }
       },
-      getImgs() {//完成后的列表页
+      addRecommedMultiCancel(){
+        this.selectedDataArr = [];
+        this.dialogTableVisibleRecommedMulti = false;
+      },//批量加入取消
+      addRecommedMultiSure(){
         let self = this;
-        let requestData = {
-          pageNum: 1,
-          pageSize: 10
+        for(let y=0;y<self.selectedDataArr.length;y++){
+          self.selectedDataArr[y].order = self.addForm.orderMulti
         }
-        self.httpApi.goodsCat.recommendedForYou(requestData, function (data) {
-          if(self.tableData.length > 0){
-            self.tableDataImg = data.data.list;
-          }
-        });
-      },
-      cancelFirst() {//选择分类的取消
-        this.active = 1;
-      },
-      cancelSecond() {//添加信息中的取消
-        this.active = 1;
-      },
-      gobackSecond() {//添加信息中的返回上一步
-        this.active--;
-      },
-    }
+        self.httpApi.recommed.addGoodsRecommendList(self.selectedDataArr, function (data) {
+          self.dialogTableVisibleRecommedMulti = false;
+          self.dialogTableVisible = false;
+          self.$message.success(data.message);
+          self.select(self.pageSize, self.pageNum);
+        })
+      }//批量加入确定
+  }
   }
 </script>
 <style>
-  .el-tag + .el-tag {
-    margin-left: 10px;
-  }
-
-  .button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
-  .input-new-tag {
-    width: 90px;
-    margin-left: 10px;
-    vertical-align: bottom;
-  }
-
-  .storeLabel {
-    padding: 50px 0px 0px 20px;
-  }
 </style>

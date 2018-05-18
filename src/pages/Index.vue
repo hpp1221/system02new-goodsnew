@@ -47,11 +47,8 @@
         <!--</div>-->
       </div>
     </el-header>
-
-
     <!--nav and content-->
     <el-container style="height: 100%">
-
       <!--收缩时的菜单-->
       <el-aside width="50px" class="left-aside" v-if="isCollapse">
         <i class="iconfont icon-enter"
@@ -118,8 +115,6 @@
           </div>
         </div>
       </el-aside>
-
-
       <!--展开时的菜单-->
       <el-aside width="160px" class="left-aside" v-if="!isCollapse">
         <i class="iconfont icon-enter"
@@ -141,10 +136,18 @@
               background-color="#333745"
               text-color="#fff"
               active-text-color="#ffd04b">
-              <el-menu-item index="2" style="padding:0">
-                <i class="iconfont icon-shangpin" style="color: #878d99"></i>
-                <span slot="title" style="margin-left: 3px;">商品管理</span>
-              </el-menu-item>
+              <el-submenu index="13" style="padding:0;">
+                <template slot="title">
+                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
+                  <span slot="title" style="margin-left: 3px">新版商品</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="13-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
+                  </el-menu-item>
+                  <el-menu-item index="13-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品管理
+                  </el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
               <el-menu-item index="1" style="padding:0;">
                 <i class="iconfont icon-order"></i>
                 <span slot="title" style="margin-left: 3px;">订单管理</span>
@@ -161,18 +164,6 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">售后管理</span>
               </el-menu-item>
-              <el-submenu index="13" style="padding:0;">
-                <template slot="title">
-                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
-                  <span slot="title" style="margin-left: 3px">新版商品</span>
-                </template>
-                <el-menu-item-group>
-                  <el-menu-item index="13-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品分类
-                  </el-menu-item>
-                  <el-menu-item index="13-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">商品管理
-                  </el-menu-item>
-                </el-menu-item-group>
-              </el-submenu>
               <el-submenu index="4">
                 <template slot="title">
                   <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
@@ -326,9 +317,6 @@
         switch (key) {
           case '1':
             this.$router.push('/order/saleorder/list');
-            break;
-          case '2':
-            this.$router.push('/goods/goodslist');
             break;
           case '3':
             this.$router.push('/combination/list');

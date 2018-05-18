@@ -140,32 +140,32 @@
           <el-form-item label="值排序" :label-width="formLabelWidth">
             <el-input v-model="childFormBasicInfo.orders"></el-input>(数字越小排序越靠前，0-99之内)
           </el-form-item>
-            <span style="margin-left:11px;">是否是必填属性 ：</span>
+<!--            <span style="margin-left:11px;">是否是必填属性 ：</span>
             <el-radio-group v-model="childFormBasicInfo.required">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
-            </el-radio-group>
-          <br>
+            </el-radio-group>-->
+<!--          <br>
           <br>
           <span style="margin-left:11px;">输入形态是文本框：</span>
           <el-radio-group v-model="childFormBasicInfo.input">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-          <br>
+          </el-radio-group>-->
+<!--          <br>
           <br>
             <span style="margin-left:11px;">输入形态是复选框 ：</span>
             <el-radio-group v-model="childFormBasicInfo.checkbox">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
-            </el-radio-group>
-          <br>
+            </el-radio-group>-->
+   <!--       <br>
           <br>
           <span style="margin-left:11px;">是否是颜色属性：</span>
           <el-radio-group v-model="childFormBasicInfo.color">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
+          </el-radio-group>-->
           <br>
           <br>
             <span style="margin-left:11px;">规格是否是查询条件 ：</span>
@@ -173,13 +173,13 @@
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
-          <br>
+       <!--   <br>
           <br>
             <span style="margin-left:11px;">是否是枚举 ：</span>
             <el-radio-group v-model="childFormBasicInfo.isEnum">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
-            </el-radio-group>
+            </el-radio-group>-->
           <br>
           <br>
             <span style="margin-left:11px;">是否是关键字 ：</span>
@@ -269,46 +269,46 @@
           <el-form-item label="值排序" :label-width="formLabelWidth">
             <el-input v-model="updateFormBasicInfo.orders"></el-input>(数字越小排序越靠前，0-99之内)
           </el-form-item>
-          <span style="margin-left:11px;">是否是必填属性 ：</span>
-          <el-radio-group v-model="updateFormBasicInfo.required">
+         <!-- <span style="margin-left:11px;">是否是必填属性 ：</span>-->
+     <!--     <el-radio-group v-model="updateFormBasicInfo.required">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-          <br>
+          </el-radio-group>-->
+  <!--        <br>
           <br>
           <span style="margin-left:11px;">输入形态是文本框：</span>
           <el-radio-group v-model="updateFormBasicInfo.input">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-          <br>
+          </el-radio-group>-->
+    <!--      <br>
           <br>
           <span style="margin-left:11px;">输入形态是复选框 ：</span>
           <el-radio-group v-model="updateFormBasicInfo.checkbox">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-          <br>
+          </el-radio-group>-->
+<!--          <br>
           <br>
           <span style="margin-left:11px;">是否是颜色属性：</span>
           <el-radio-group v-model="updateFormBasicInfo.color">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-          <br>
-          <br>
+          </el-radio-group>-->
+          <!--<br>-->
+          <!--<br>-->
           <span style="margin-left:11px;">规格是否是查询条件 ：</span>
           <el-radio-group v-model="updateFormBasicInfo.isCondition">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
           </el-radio-group>
-          <br>
+     <!--     <br>
           <br>
           <span style="margin-left:11px;">是否是枚举 ：</span>
           <el-radio-group v-model="updateFormBasicInfo.isEnum">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="0">否</el-radio>
-          </el-radio-group>
+          </el-radio-group>-->
           <br>
           <br>
           <span style="margin-left:11px;">是否是关键字 ：</span>
@@ -459,18 +459,20 @@
         this.childForm.img=file.url;
       },
       renderContent(h, {node, data, store}) {//商品分类
+        console.log("node",node);
           return (
             <span style="flex: 1; display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding-right: 8px;">
             <span>
             <span>{node.label}</span>
           </span>
           <span>
-          <el-button style="font-size: 12px;" type="text" on-click={ () => this.openCreateModal(node, data) }>新增</el-button>
+        {node.level === 1 ? <el-button style="font-size: 12px;" type="text" on-click={ () => this.openCreateModal(node, data) }>新增</el-button> : ''}
           <el-button style="font-size: 12px;" type="text" on-click={ () => this.updateModal(node, data) }>修改</el-button>
           <el-button style="font-size: 12px;" type="text" on-click={ () => this.deleteNode(node, data) }>删除</el-button>
           {node.data.status ===1 ? <el-button style="font-size: 12px;" type="text" on-click={ () => this.closeClassButton(node, data) }>禁用</el-button> : <el-button style="font-size: 12px;" type="text" on-click={ () => this.openClassButton(node, data) }>启用</el-button>}
-          <el-button style="font-size: 12px;" type="text" on-click={ () => this.basicInfoClassify(node, data) }>基本属性</el-button>
-          <el-button style="font-size: 12px;" type="text" on-click={ () => this.specClassify(node, data) }>规格</el-button>
+        {node.level !== 1 ? <el-button style="font-size: 12px;" type="text" on-click={ () => this.basicInfoClassify(node, data) }>基本属性</el-button> : ''}
+        {node.level !== 1 ? <el-button style="font-size: 12px;" type="text" on-click={ () => this.specClassify(node, data) }>规格</el-button> : ''}
+
           </span>
           </span>);
       },
@@ -507,7 +509,7 @@
       handleNodeClick(data) {//树形控件
       },
       openCreateModal(parentNode, now) {//打开类目弹框
-        event.stopPropagation()
+        event.stopPropagation();
         this.createChildDependent = true;
         this.childForm.parentId = parentNode.data.id;
         this.childForm.topName = parentNode.data.name;
@@ -771,12 +773,12 @@
         let self = this
         let requestData = {
           categoryId:self.childFormBasicInfo.categoryId,
-          checkbox:self.childFormBasicInfo.checkbox,
-          color:self.childFormBasicInfo.color,
-          input:self.childFormBasicInfo.input,
-          isEnum:self.childFormBasicInfo.isEnum,
+          checkbox:1,
+          color:0,
+          input:0,
+          isEnum:0,
           keyword:self.childFormBasicInfo.keyword,
-          required:self.childFormBasicInfo.required,
+          required:1,
           sales:self.childFormBasicInfo.sales,
           name:self.childFormBasicInfo.name,
           orders:self.childFormBasicInfo.orders,
@@ -1007,12 +1009,12 @@
           name:self.updateFormBasicInfo.name,
           isCondition:self.updateFormBasicInfo.isCondition,
           status:self.updateFormBasicInfo.status,
-          checkbox:self.updateFormBasicInfo.checkbox,
-          color:self.updateFormBasicInfo.color,
-          input:self.updateFormBasicInfo.input,
-          isEnum:self.updateFormBasicInfo.isEnum,
+          checkbox:1,
+          color:0,
+          input:0,
+          isEnum:0,
           keyword:self.updateFormBasicInfo.keyword,
-          required:self.updateFormBasicInfo.required,
+          required:1,
           sales:self.updateFormBasicInfo.sales,
           orders:self.updateFormBasicInfo.orders,
         };
