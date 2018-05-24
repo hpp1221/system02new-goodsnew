@@ -15,8 +15,8 @@
 </template>
 
 <script>
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         key: {
           token: '',
@@ -33,10 +33,10 @@
         default: false
       }
     },
-    created(){
+    created() {
       let self = this;
       self.key.file = "";
-      if( self.fileList){
+      if (self.fileList) {
         self.key.file = self.fileList;
       }
       let requestData = {
@@ -49,12 +49,12 @@
 
     },
     methods: {
-      beforeUpload(file){
+      beforeUpload(file) {
         let checkFormat = this.checkImg(file);
         if (!checkFormat) return false;
         if (!this.key.token) return false;
       },
-      handleSuccess(response, file, fileList){
+      handleSuccess(response, file, fileList) {
         let suffix = '';
         if (file.name.indexOf('.') > -1) {
           suffix = file.name.substring(file.name.indexOf('.'));
@@ -65,7 +65,7 @@
           url: this.imgDomain + response.key
         });
       },
-      handleRemove(file, fileList){
+      handleRemove(file, fileList) {
 
       }
     }

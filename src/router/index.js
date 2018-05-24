@@ -15,6 +15,7 @@ import Temporary from './routes/temporary'//临时商品模块
 import Aftersale from './routes/aftersale'//售后模块
 import Commodit from './routes/commodit'//新版商品模块
 import Coupon from './routes/coupon'//优惠券模块
+import Activitybar from './routes/activitybar'//优惠券模块
 Vue.use(Router)
 
 export default new Router({
@@ -57,6 +58,7 @@ export default new Router({
         ...Aftersale,
         ...Commodit,
         ...Coupon,
+        ...Activitybar,
       ]
     },
   ]

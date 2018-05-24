@@ -53,8 +53,7 @@
       <el-aside width="50px" class="left-aside" v-if="isCollapse">
         <i class="iconfont icon-enter"
            v-if="!rightMenuVisible && leftClick"
-           @click="changeRightMenuVisible"
-           id="icon-left">
+           @click="changeRightMenuVisible">
         </i>
 
         <div class="index-left-small-menu">
@@ -72,8 +71,8 @@
               <el-menu-item index="1" style="padding:0;">
                 <i class="iconfont icon-order"></i>
               </el-menu-item>
-              <el-menu-item index="2" style="padding:0;">
-                <i class="iconfont icon-shangpin"></i>
+              <el-menu-item index="13" style="padding:0;">
+                <i class="iconfont icon-shangpin" @click="iconClick"></i>
               </el-menu-item>
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
@@ -86,11 +85,12 @@
               <el-menu-item index="11" style="padding:0;">
                 <i class="iconfont icon-shangpin"></i>
               </el-menu-item>
+              <el-menu-item index="14" style="padding:0;">
+                <i class="iconfont icon-shangpin"></i>
+              </el-menu-item>
               <el-menu-item index="4" style="padding:0;">
                 <i class="iconfont icon-dynamic" @click="iconClick"></i>
               </el-menu-item>
-
-
               <el-menu-item index="12" style="padding:0;">
                 <i class="iconfont icon-group" @click="iconClick"></i>
                 <!--<span slot="title" style="margin-left: 3px;">客户管理</span>-->
@@ -136,6 +136,10 @@
               background-color="#333745"
               text-color="#fff"
               active-text-color="#ffd04b">
+              <el-menu-item index="1" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">订单管理</span>
+              </el-menu-item>
               <el-submenu index="13" style="padding:0;">
                 <template slot="title">
                   <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
@@ -148,10 +152,6 @@
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-              <el-menu-item index="1" style="padding:0;">
-                <i class="iconfont icon-order"></i>
-                <span slot="title" style="margin-left: 3px;">订单管理</span>
-              </el-menu-item>
               <el-menu-item index="5" style="padding:0;">
                 <i class="iconfont icon-addressbook"></i>
                 <span slot="title" style="margin-left: 3px;">品牌管理</span>
@@ -163,6 +163,10 @@
               <el-menu-item index="11" style="padding:0;">
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">售后管理</span>
+              </el-menu-item>
+              <el-menu-item index="14" style="padding:0;">
+                <i class="iconfont icon-group"></i>
+                <span slot="title" style="margin-left: 3px;">活动栏管理</span>
               </el-menu-item>
               <el-submenu index="4">
                 <template slot="title">
@@ -317,6 +321,9 @@
         switch (key) {
           case '1':
             this.$router.push('/order/saleorder/list');
+            break;
+          case '14':
+            this.$router.push('/activitybar/list');
             break;
           case '3':
             this.$router.push('/combination/list');

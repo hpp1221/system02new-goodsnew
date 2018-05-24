@@ -1,8 +1,7 @@
 {
   "name": "newivis",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A Vue.js project",
-  "author": "梁云斌 <yliang@ivisyt.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
@@ -24,6 +23,7 @@
     "jszip": "^3.1.4",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "lrz": "^4.9.40",
     "moment": "^2.18.1",
     "qs": "^6.5.0",
     "vue": "^2.5.16",

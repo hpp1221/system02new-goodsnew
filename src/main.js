@@ -22,6 +22,7 @@ import './assets/css/total.css'
 import './assets/font/iconfont.css'
 import './assets/icon/iconfont.css'
 import './assets/css/animate.min.css'
+import lrz from 'lrz'
 import Vuex from 'vuex'
 import {Loading,Message,MessageBox} from 'element-ui';
 import './assets/js'//引入全局js
@@ -35,6 +36,7 @@ Vue.component('VueEditor',VueEditor)
 
 var moment = require('moment');
 Vue.prototype.moment = moment;
+// Vue.use(lrz)
 Vue.use(ElementUI)
 Vue.use(Vuex);
 Vue.use(Crypto);

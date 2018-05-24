@@ -577,7 +577,7 @@
           </el-form>
           <div style="float: right;margin-right: 18%">
             <el-button @click="updateGoodsSure">确定</el-button>
-            <el-button>取消</el-button>
+            <el-button @click="cancelUpdateGoods">取消</el-button>
           </div>
 
         </el-tab-pane>
@@ -1459,6 +1459,9 @@
           });
         }
       },//修改确定
+      cancelUpdateGoods(){
+        this.$router.push('/commodit/goodslist');
+      },//修改取消
     }
   }
 </script>
