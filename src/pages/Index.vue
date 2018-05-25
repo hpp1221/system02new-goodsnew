@@ -164,10 +164,20 @@
                 <i class="iconfont icon-group"></i>
                 <span slot="title" style="margin-left: 3px;">售后管理</span>
               </el-menu-item>
-              <el-menu-item index="14" style="padding:0;">
-                <i class="iconfont icon-group"></i>
-                <span slot="title" style="margin-left: 3px;">活动栏管理</span>
-              </el-menu-item>
+              <el-submenu index="14" style="padding:0;">
+                <template slot="title">
+                  <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
+                  <span slot="title" style="margin-left: 3px">活动管理</span>
+                </template>
+                <el-menu-item-group>
+                  <el-menu-item index="14-1" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">活动栏管理
+                  </el-menu-item>
+                  <el-menu-item index="14-2" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">活动图标管理
+                  </el-menu-item>
+                  <el-menu-item index="14-3" style="margin:0;padding:0;margin-left: 60px;min-width: 0px">活动模块商品管理
+                  </el-menu-item>
+                </el-menu-item-group>
+              </el-submenu>
               <el-submenu index="4">
                 <template slot="title">
                   <i class="iconfont icon-dynamic" style="margin-left:10px;"></i>
@@ -322,9 +332,6 @@
           case '1':
             this.$router.push('/order/saleorder/list');
             break;
-          case '14':
-            this.$router.push('/activitybar/list');
-            break;
           case '3':
             this.$router.push('/combination/list');
             break;
@@ -366,6 +373,15 @@
             break;
           case '13-2':
             this.$router.push('/commodit/goodslist');
+            break;
+          case '14-1':
+            this.$router.push('/activitybar/list');
+            break;
+          case '14-2':
+            this.$router.push('/activityicon/list');
+            break;
+          case '14-3':
+            this.$router.push('/activitydemo/list');
             break;
         }
       },

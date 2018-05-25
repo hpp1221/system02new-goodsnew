@@ -25,6 +25,6 @@ Vue.prototype.httpApi = {
   aftersale:{},
   commodit:{},
   coupon:{},
-  activitybar:{},
+  activity:{},
 
 };
